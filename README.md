@@ -15,12 +15,22 @@ logins, CAPTCHAs, rate limits or private networks, and never submits forms.
 
 ## Android test APK
 
-The `Searchhh checks and APK` GitHub Actions workflow on branch
-`arena/01a0ea36-searchhh` runs framework tests, real backend integration, Android
-unit tests/lint/build, and an emulator launch check in sequence. A successful build
-produces the `searchhh-debug-apk` artifact, containing `app-universal-debug.apk`.
-This is an installable **debug-signed test build**, not a signed production release.
-The release/download URL will be recorded after a successful run; none is fabricated.
+**[Download Searchhh 0.1.0 test APK](https://github.com/regularshowrigby8-create/SEARCHHH/releases/download/v0.1.0-test-6/searchhh-0.1.0-test.apk)** — 23.8 MB.
+
+[Release and checksum](https://github.com/regularshowrigby8-create/SEARCHHH/releases/tag/v0.1.0-test-6)
+· [Successful validation run](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36499566556)
+· [Exact source](https://github.com/regularshowrigby8-create/SEARCHHH/tree/f9fc2e45022cbf1d57c80810738caf4b4166b84b)
+
+The pipeline passed framework tests, real backend integration, Android unit tests,
+lint, universal APK assembly, and an Android 35 install/launch/crash smoke check,
+then published the APK. This is an installable **debug-signed development build**,
+not a signed production release. AI mode is not implemented.
+
+Future builds use the `Searchhh checks and APK` workflow on branch
+`arena/01a0ea36-searchhh`. APK artifacts are gated on earlier checks; release
+publication is gated on the emulator check. Repository tag-creation permissions
+may require a maintainer to prepare the exact commit's tag using authenticated
+GitHub CLI before the workflow can publish a release. Never move a published tag.
 
 Minimum Android: 7.0 (API 24). Application ID: `app.searchhh.browser`.
 Keep Android System WebView updated. The APK does not bundle a full Chromium engine.
