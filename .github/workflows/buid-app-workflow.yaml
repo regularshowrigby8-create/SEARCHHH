@@ -144,6 +144,10 @@ jobs:
         with:
           name: searchhh-debug-apk
           path: apk
+      - uses: actions/download-artifact@v8
+        with:
+          name: device-smoke
+          path: device
       - name: Publish tested APK using GitHub CLI
         env:
           GH_TOKEN: ${{ github.token }}
@@ -155,4 +159,4 @@ jobs:
             --target "$GITHUB_SHA" --prerelease \
             --title "Searchhh 0.1.0 — tested development APK" \
             --notes "Reuse-first development build based on EinkBro. 33 configured keyless SearXNG adapters. Opportunity swarms require a separately deployed HTTPS backend; see the README at this release commit. Debug signed, not a production release. Framework tests, real service integration, Android unit tests/lint, and emulator launch smoke must pass before this release is published. AI mode is not implemented." \
-            apk/searchhh-0.1.0-test.apk apk/SHA256SUMS
+            apk/searchhh-0.1.0-test.apk apk/SHA256SUMS device/searchhh-screen.png

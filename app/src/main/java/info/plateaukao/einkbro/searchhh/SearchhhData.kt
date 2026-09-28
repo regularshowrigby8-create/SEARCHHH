@@ -31,6 +31,10 @@ interface SearchhhApi {
 }
 
 object ConnectionSettings {
+    private var cachedAddress = ""
+    private var cachedToken = ""
+    private var cachedApi: SearchhhApi? = null
+    private var cachedClient: OkHttpClient? = null
     @Suppress("DEPRECATION")
     fun prefs(context: Context) = EncryptedSharedPreferences.create(
         context.applicationContext, "searchhh_connection",
@@ -38,16 +42,21 @@ object ConnectionSettings {
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
-    fun api(context: Context): SearchhhApi {
+    @Synchronized fun api(context: Context): SearchhhApi {
         val p = prefs(context)
         val url = p.getString("url", "").orEmpty().trim().trimEnd('/') + "/"
         require(validServerUrl(url)) { "Set your HTTPS backend address in Settings first" }
         val token = p.getString("token", "").orEmpty()
         require(token.length >= 32) { "Enter the access token for your own server" }
+        if (url == cachedAddress && token == cachedToken) cachedApi?.let { return it }
+        cachedClient?.connectionPool?.evictAll()
+        cachedClient?.dispatcher?.executorService?.shutdown()
         val client = OkHttpClient.Builder().callTimeout(35, TimeUnit.SECONDS)
             .followRedirects(false).followSslRedirects(false)
             .addInterceptor { chain -> chain.proceed(chain.request().newBuilder().header("Authorization", "Bearer $token").build()) }.build()
-        return Retrofit.Builder().baseUrl(url).client(client).addConverterFactory(GsonConverterFactory.create()).build().create(SearchhhApi::class.java)
+        return Retrofit.Builder().baseUrl(url).client(client).addConverterFactory(GsonConverterFactory.create()).build().create(SearchhhApi::class.java).also {
+            cachedAddress = url; cachedToken = token; cachedApi = it; cachedClient = client
+        }
     }
     fun validServerUrl(value: String): Boolean = try {
         val uri = java.net.URI(value)

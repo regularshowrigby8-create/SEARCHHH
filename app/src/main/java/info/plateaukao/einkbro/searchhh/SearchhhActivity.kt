@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.SystemBarStyle
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.work.*
@@ -42,6 +44,10 @@ class SearchhhActivity : ComponentActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+        )
         setContent { Searchhh() }
     }
     @Composable private fun Searchhh() {
@@ -69,8 +75,10 @@ class SearchhhActivity : ComponentActivity() {
             suspend fun refresh() {
                 val id = jobId ?: return
                 try {
-                    status = ConnectionSettings.api(this@SearchhhActivity).status(id)
-                    prefs.edit().putString("last_status", gson.toJson(status)).apply()
+                    val latest = ConnectionSettings.api(this@SearchhhActivity).status(id)
+                    if (status?.round != latest.round || status?.status != latest.status)
+                        prefs.edit().putString("last_status", gson.toJson(latest)).apply()
+                    status = latest
                     message = ""
                 } catch (e: CancellationException) { throw e } catch (e: Exception) { message = "Cannot refresh: ${e.message}. Server status is unknown; use Stop when connected." }
             }
@@ -92,6 +100,7 @@ class SearchhhActivity : ComponentActivity() {
                 dismissButton = { TextButton(onClick = { forgetConnection = false }) { Text("Cancel") } }
             )
             Scaffold(
+                modifier = Modifier.background(MaterialTheme.colors.background).systemBarsPadding(),
                 topBar = { TopAppBar(title = { Column { Text("searchhh", fontWeight = FontWeight.Bold); Text("THE OPPORTUNITY HIVE", style = MaterialTheme.typography.overline) } }, backgroundColor = MaterialTheme.colors.background, elevation = 0.dp,
                     actions = { IconButton(onClick = { browse("https://duckduckgo.com") }) { Icon(Icons.Outlined.Language, "Open WebView browser") } }) },
                 bottomBar = { BottomNavigation(backgroundColor = MaterialTheme.colors.surface) {

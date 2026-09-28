@@ -32,11 +32,12 @@ engine configuration, executes a source pass and confirms Stop. A provider rate
 limit is reported separately from infrastructure failure; zero hits is not proof
 that a source is broken or that live opportunity quality is good.
 
-## 5. Android compile, lint, unit tests — pending CI
+## 5. Android compile, lint, unit tests — passed on CI run 36498668331
 
 Local sandbox has no JDK/Android SDK; direct SDK/package downloads failed. GitHub
-Actions uses an Android-capable runner. A configured workflow is not a completed
-build, and no APK download is claimed before an artifact exists.
+Actions uses an Android-capable runner. Run 36498668331 passed Android unit tests,
+lint and universal debug APK assembly after the Room/Retrofit import correction.
+Later changes must pass the same gates again before being published.
 
 ## 6. Device check — pending CI
 
