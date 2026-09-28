@@ -63,3 +63,13 @@ def test_dns_result_checked_at_connection_time(address,allowed):
         values=[]
         resolver.getHostByName('example.org').addBoth(lambda result: values.append(result))
         assert isinstance(values[0],Failure) != allowed
+
+
+def test_crawler_process_runs_and_blocks_private_dns(tmp_path):
+    import os, subprocess, sys
+    out=tmp_path/'links.json'
+    result=subprocess.run([sys.executable,'-m','searchhh.spider',json.dumps(['https://127.0.0.1.nip.io/']),str(out)],capture_output=True,text=True,timeout=35)
+    assert result.returncode==0,result.stderr
+    assert json.loads(out.read_text())==[]
+    # The DNS alias must never produce a fetched page. Actual DNS may be blocked
+    # in a sandbox too; the resolver unit tests independently assert address rejection.

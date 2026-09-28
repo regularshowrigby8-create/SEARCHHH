@@ -31,7 +31,7 @@ class OpportunitySpider(scrapy.Spider):
         'DEPTH_LIMIT':1,'CLOSESPIDER_PAGECOUNT':12,'CLOSESPIDER_TIMEOUT':75,
         'DOWNLOAD_TIMEOUT':12,'DOWNLOAD_MAXSIZE':2*1024*1024,'RETRY_ENABLED':False,
         'COOKIES_ENABLED':False,'REDIRECT_ENABLED':False,'METAREFRESH_ENABLED':False,
-        'DNS_RESOLVER':'searchhh.spider.PublicResolver',
+        'TWISTED_DNS_RESOLVER':'searchhh.spider.PublicResolver',
         'DOWNLOADER_MIDDLEWARES':{'searchhh.spider.PublicOnly':50},'LOG_LEVEL':'ERROR',
     }
     def __init__(self, seeds, **kwargs):
@@ -59,6 +59,7 @@ def is_form(url):
 
 if __name__=='__main__':
     seeds=json.loads(sys.argv[1]); output=sys.argv[2]
-    process=CrawlerProcess({'FEEDS':{output:{'format':'json','overwrite':True}}})
+    # DNS resolver is process-wide; spider settings alone do not install it.
+    process=CrawlerProcess({**OpportunitySpider.custom_settings,'FEEDS':{output:{'format':'json','overwrite':True}}})
     process.crawl(OpportunitySpider,seeds=seeds)
     process.start()
