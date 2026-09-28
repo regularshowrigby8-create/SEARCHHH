@@ -1,0 +1,746 @@
+package info.plateaukao.einkbro.browser
+
+import android.content.Context
+import android.util.Log
+import android.webkit.JavascriptInterface
+import android.webkit.WebView
+import androidx.lifecycle.LifecycleCoroutineScope
+import info.plateaukao.einkbro.activity.BrowserState
+import info.plateaukao.einkbro.data.remote.ApiResult
+import info.plateaukao.einkbro.database.BookmarkManager
+import info.plateaukao.einkbro.database.ChatSession
+import info.plateaukao.einkbro.data.remote.ChatMessage
+import info.plateaukao.einkbro.data.remote.OpenAiRepository
+import info.plateaukao.einkbro.data.remote.ToolCall
+import info.plateaukao.einkbro.data.remote.ToolChatMessage
+import info.plateaukao.einkbro.data.remote.ToolChatOutcome
+import info.plateaukao.einkbro.preference.ChatGPTActionInfo
+import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.preference.GptActionType
+import info.plateaukao.einkbro.task.AgentToolSchema
+import info.plateaukao.einkbro.task.BrowserTools
+import info.plateaukao.einkbro.task.BrowserToolsImpl
+import info.plateaukao.einkbro.task.InitialPageSnapshot
+import info.plateaukao.einkbro.task.TaskProgress
+import info.plateaukao.einkbro.task.ToolTextWindow
+import info.plateaukao.einkbro.viewmodel.TtsViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import org.json.JSONArray
+import org.json.JSONObject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import timber.log.Timber
+
+class ChatWebInterface(
+    val lifecycleScope: LifecycleCoroutineScope,
+    private val webView: WebView,
+    private var webContent: String,
+    private var webTitle: String,
+    private var webUrl: String,
+    onOpenNewTab: ((String) -> Unit)? = null,
+    // Agent-mode extensions: when [agentMode] is true, every user message is routed
+    // through a tool-calling loop (chatWithTools) instead of the regular chatStream
+    // path. The extra deps are only touched in agent mode.
+    private val agentMode: Boolean = false,
+    private val initialSnapshot: InitialPageSnapshot? = null,
+    private val agentContext: Context? = null,
+    private val agentWebViewCallback: WebViewCallback? = null,
+    private val agentBrowserState: BrowserState? = null,
+    private val agentTtsViewModel: TtsViewModel? = null,
+) : KoinComponent {
+    private val openAiRepository: OpenAiRepository = OpenAiRepository()
+    private val configManager: ConfigManager by inject()
+    private val bookmarkManager: BookmarkManager by inject()
+
+    // Non-agent mode: plain text chat history (role/content pairs).
+    private val chatHistory: MutableList<ChatMessage> = mutableListOf()
+
+    // Agent mode: tool-calling chat history (supports tool_call_id + tool_calls).
+    private val toolHistory: MutableList<ToolChatMessage> = mutableListOf()
+
+    private val jsHelper = JsHelper(webView, lifecycleScope, onOpenNewTab)
+
+    private val json = Json { ignoreUnknownKeys = true }
+
+    /**
+     * Off-screen browser tool façade for agent mode. Lazy so non-agent chat tabs never
+     * allocate one. Captures [initialSnapshot] so the agent can inspect the originating
+     * page even after the chat tab has replaced it as the active tab.
+     */
+    private val agentTools: BrowserToolsImpl by lazy {
+        require(agentContext != null && agentWebViewCallback != null &&
+            agentBrowserState != null && agentTtsViewModel != null) {
+            "agent-mode deps not wired; check setupAiPage call site"
+        }
+        BrowserToolsImpl(
+            context = agentContext,
+            webViewCallback = agentWebViewCallback,
+            browserState = agentBrowserState,
+            config = configManager,
+            openAiRepository = openAiRepository,
+            ttsViewModel = agentTtsViewModel,
+            progressSink = { /* step lines are emitted directly via appendBubble */ },
+            finishSink = { /* finish is handled in the agent loop, not through the sink */ },
+            initialSnapshot = initialSnapshot,
+        )
+    }
+    private var agentToolsInitialized = false
+
+    companion object {
+        private const val WEB_CONTENT_MESSAGE_SUFFIX = "\n this is the web content;"
+        // Bulk workflows legitimately need many turns: filing 650 links page-by-page
+        // is ~13 fetch+add rounds plus overhead. Each turn is one LLM call, so the
+        // cap bounds cost, not correctness — finish/no-tool-call exits end earlier.
+        private const val MAX_AGENT_ITERATIONS = 40
+        private const val MAX_TOOL_RESULT_CHARS = 8_000
+        private const val MAX_LINKS_RETURNED = 50
+        private const val TAG = "ChatWebInterface"
+    }
+
+    @JavascriptInterface
+    fun sendMessage(message: String) {
+        val chatGptActionInfo = createChatGptActionInfo(message)
+        lifecycleScope.launch(Dispatchers.Main) {
+            sendMessageWithGptActionInfo(chatGptActionInfo)
+        }
+    }
+
+    @JavascriptInterface
+    fun getWebMetadata(): String {
+        return """{"title": "${escapeJsonString(webTitle)}", "url": "${escapeJsonString(webUrl)}"}"""
+    }
+
+    @JavascriptInterface
+    fun openUrlInNewTab(url: String) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            jsHelper.openUrlInNewTab(url)
+        }
+    }
+
+    // ── Chat session persistence ───────────────────────────────────────
+    // The chat page keeps sessions in the app database (not page localStorage)
+    // so they survive WebView storage clearing and are included in backups.
+    // The map shape returned here matches the page's in-memory `sessions` object.
+
+    /** Synchronous by design: runs on the WebView's JS-bridge binder thread. */
+    @JavascriptInterface
+    fun loadChatSessions(): String = runBlocking {
+        val result = JSONObject()
+        try {
+            bookmarkManager.getAllChatSessions().forEach { session ->
+                result.put(session.id, JSONObject().apply {
+                    put("id", session.id)
+                    put("title", session.title)
+                    put("created", session.created)
+                    put("lastUpdated", session.lastUpdated)
+                    put("webTitle", session.webTitle)
+                    put("webUrl", session.webUrl)
+                    put("messages", JSONArray(session.messages))
+                })
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "loadChatSessions failed")
+        }
+        result.toString()
+    }
+
+    @JavascriptInterface
+    fun saveChatSession(sessionJson: String) {
+        // Agent task transcripts (tool-call bubbles, progress lines) are working
+        // output, not conversations to revisit — only real chat-with-web sessions
+        // belong in the persisted history.
+        if (agentMode) return
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val obj = JSONObject(sessionJson)
+                val id = obj.getString("id")
+                // The page never sends webContent (it can be hundreds of KB and
+                // never changes after creation): an existing row keeps its
+                // stored copy; a new row is seeded from this tab's capture.
+                val storedWebContent = bookmarkManager.getChatSessionById(id)?.webContent
+                bookmarkManager.upsertChatSession(
+                    ChatSession(
+                        id = id,
+                        title = obj.optString("title"),
+                        created = obj.optLong("created"),
+                        lastUpdated = obj.optLong("lastUpdated"),
+                        webTitle = obj.optString("webTitle"),
+                        webUrl = obj.optString("webUrl"),
+                        messages = obj.optJSONArray("messages")?.toString() ?: "[]",
+                        webContent = storedWebContent ?: webContent,
+                    )
+                )
+            } catch (e: Exception) {
+                Timber.e(e, "saveChatSession failed")
+            }
+        }
+    }
+
+    /**
+     * The page switched to a stored session (chat.html loadSession): rebuild
+     * the LLM-facing state from the row so follow-ups continue the restored
+     * conversation — its history AND its page text, not the tab's. Freshly
+     * created sessions have no row yet and no-op.
+     */
+    @JavascriptInterface
+    fun restoreChatSession(sessionId: String) {
+        if (agentMode) return
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val session = bookmarkManager.getChatSessionById(sessionId) ?: return@launch
+                webTitle = session.webTitle
+                webUrl = session.webUrl
+                webContent = session.webContent
+                chatHistory.clear()
+                val array = JSONArray(session.messages)
+                for (i in 0 until array.length()) {
+                    val message = array.optJSONObject(i) ?: continue
+                    val content = message.optString("content")
+                    if (content.isEmpty()) continue
+                    chatHistory.add(
+                        if (message.optBoolean("isUser")) content.toUserMessage()
+                        else content.toAssistantMessage()
+                    )
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "restoreChatSession failed")
+            }
+        }
+    }
+
+    @JavascriptInterface
+    fun deleteChatSession(sessionId: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                bookmarkManager.deleteChatSession(sessionId)
+            } catch (e: Exception) {
+                Timber.e(e, "deleteChatSession failed")
+            }
+        }
+    }
+
+    @JavascriptInterface
+    fun deleteAllChatSessions() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                bookmarkManager.deleteAllChatSessions()
+            } catch (e: Exception) {
+                Timber.e(e, "deleteAllChatSessions failed")
+            }
+        }
+    }
+
+    private fun escapeJsonString(str: String): String {
+        return str.replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
+    }
+
+    fun updateWebContent(
+        newWebContent: String,
+        newWebTitle: String = webTitle,
+        newWebUrl: String = webUrl,
+    ) {
+        this.webContent = newWebContent
+        this.webTitle = newWebTitle
+        this.webUrl = newWebUrl
+    }
+
+    fun sendMessageWithGptActionInfo(gptActionInfo: ChatGPTActionInfo) {
+        if (agentMode) {
+            runAgentTurn(gptActionInfo.userMessage)
+            return
+        }
+
+        val currentUserMessage = gptActionInfo.userMessage.toUserMessage()
+
+        val messagesForApi = mutableListOf<ChatMessage>().apply {
+            if (gptActionInfo.systemMessage.isNotEmpty()) {
+                add(gptActionInfo.systemMessage.toSystemMessage())
+            }
+            // Blank after restoring a session saved before webContent was
+            // persisted — send no page context rather than an empty code block.
+            if (webContent.isNotBlank()) add(createWebContentMessage(webContent))
+            addAll(chatHistory)
+            add(currentUserMessage)
+        }
+
+        val assistantResponseAggregator = StringBuilder()
+        // Fire the JS-side "Thinking…" label at most once per request; the first
+        // real content chunk hides the whole typing indicator again.
+        var thinkingSignaled = false
+
+        jsHelper.startMessageStream {
+            lifecycleScope.launch(Dispatchers.IO) {
+                openAiRepository.chatStream(
+                    messages = messagesForApi,
+                    gptActionInfo = gptActionInfo,
+                    appendResponseAction = { responseChunk ->
+                        jsHelper.sendStreamUpdate(responseChunk)
+                        assistantResponseAggregator.append(responseChunk)
+                    },
+                    thinkingAction = {
+                        if (!thinkingSignaled) {
+                            thinkingSignaled = true
+                            jsHelper.sendThinkingUpdate()
+                        }
+                    },
+                    doneAction = {
+                        jsHelper.sendFinalEmptyUpdate()
+                        chatHistory.add(currentUserMessage)
+                        chatHistory.add(assistantResponseAggregator.toString().toAssistantMessage())
+                    },
+                    failureAction = { failure ->
+                        Timber.e("AI stream failure: ${failure.kind} ${failure.message}")
+                        val userMessage = when (failure.kind) {
+                            ApiResult.Kind.MissingKey -> failure.message
+                            ApiResult.Kind.RateLimited -> failure.retryAfterSeconds
+                                ?.let { "Rate limited — retry after ${it}s" }
+                                ?: "Rate limited — try again shortly"
+                            ApiResult.Kind.Network -> "Network error — check connection"
+                            else -> "AI request failed: ${failure.message}"
+                        }
+                        jsHelper.sendErrorUpdate(userMessage)
+                    }
+                )
+            }
+        }
+    }
+
+    // ── Agent mode ─────────────────────────────────────────────────────
+
+    /**
+     * Public entry point used by `EBWebView.setupAiPage` to kick off an initial agent
+     * turn after the chat HTML has finished loading.
+     */
+    fun runAgentTurn(userMessage: String) {
+        jsHelper.startMessageStream {
+            lifecycleScope.launch { agentLoop(userMessage) }
+        }
+    }
+
+    private suspend fun agentLoop(userMessage: String) {
+        val actionInfo = buildAgentActionInfo()
+
+        // First turn seeds the history with a system prompt that includes the
+        // originating-page hint so the model can orient itself without a tool call.
+        if (toolHistory.isEmpty()) {
+            toolHistory += ToolChatMessage(
+                role = "system",
+                content = AgentToolSchema.SYSTEM_PROMPT + buildSnapshotHint(),
+            )
+        }
+        toolHistory += ToolChatMessage(role = "user", content = userMessage)
+
+        var iter = 0
+        while (iter < MAX_AGENT_ITERATIONS) {
+            iter++
+            val outcome = withContext(Dispatchers.IO) {
+                openAiRepository.chatWithTools(toolHistory, AgentToolSchema.tools, actionInfo)
+            }
+            if (outcome is ToolChatOutcome.Failure) {
+                appendBubble("\n\n_(LLM call failed on turn $iter: ${escapeMd(outcome.message)})_")
+                jsHelper.sendFinalEmptyUpdate()
+                return
+            }
+            val resp = (outcome as ToolChatOutcome.Success).completion
+            val msg = resp.choices.firstOrNull()?.message
+            if (msg == null) {
+                appendBubble("\n\n_(empty response)_")
+                jsHelper.sendFinalEmptyUpdate()
+                return
+            }
+
+            val toolCalls = msg.toolCalls.orEmpty()
+
+            if (toolCalls.isEmpty()) {
+                val text = msg.content.orEmpty().ifBlank { "_(no response)_" }
+                // toolCalls = null (not a decoded empty array) so the replayed turn
+                // never serializes "tool_calls": []; rawItems survives the copy.
+                toolHistory += msg.copy(content = text, toolCalls = null)
+                appendBubble("\n\n$text")
+                jsHelper.sendFinalEmptyUpdate()
+                return
+            }
+
+            // Record the assistant tool-call turn as-is so subsequent API calls see
+            // a valid conversation transcript (including any raw Responses-API items).
+            toolHistory += msg
+
+            for (call in toolCalls) {
+                val preview = call.function.arguments.take(120)
+                appendBubble("\n\n🔧 `${call.function.name}` — $preview")
+                val result = dispatchAgentTool(call)
+                toolHistory += ToolChatMessage(
+                    role = "tool",
+                    toolCallId = call.id,
+                    content = result,
+                )
+                if (call.function.name == "finish") {
+                    // finish already streamed its summary via dispatchAgentTool.
+                    jsHelper.sendFinalEmptyUpdate()
+                    return
+                }
+            }
+        }
+
+        appendBubble("\n\n_(task did not complete within $MAX_AGENT_ITERATIONS turns)_")
+        jsHelper.sendFinalEmptyUpdate()
+    }
+
+    private suspend fun dispatchAgentTool(call: ToolCall): String {
+        return try {
+            val args: JsonObject = try {
+                json.parseToJsonElement(call.function.arguments.ifBlank { "{}" }).jsonObject
+            } catch (e: Exception) {
+                return "error: invalid JSON arguments: ${e.message}"
+            }
+            when (call.function.name) {
+                "get_initial_page_links" -> {
+                    val links = agentTools.initialPageLinks()
+                    agentToolsInitialized = true
+                    encodeLinks(links, linkOffset(args))
+                }
+                "read_initial_page" -> {
+                    agentToolsInitialized = true
+                    val text = agentTools.initialPageText().trim()
+                    if (text.isBlank()) "error: no initial page text captured"
+                    else windowToolResult(text, args)
+                }
+                "open_url" -> {
+                    val url = args["url"]?.jsonPrimitive?.contentOrNull
+                        ?: return "error: missing url"
+                    agentToolsInitialized = true
+                    val ok = agentTools.openUrlInBg(url)
+                    if (ok) "ok: loaded $url" else "error: failed to load $url"
+                }
+                "web_search" -> {
+                    val query = args["query"]?.jsonPrimitive?.contentOrNull
+                        ?.takeIf { it.isNotBlank() }
+                        ?: return "error: missing query"
+                    agentToolsInitialized = true
+                    val ok = agentTools.searchInBg(query)
+                    if (!ok) "error: search results page failed to load"
+                    else encodeLinks(agentTools.currentBgPageLinks())
+                }
+                "run_javascript" -> {
+                    val code = args["code"]?.jsonPrimitive?.contentOrNull
+                        ?.takeIf { it.isNotBlank() }
+                        ?: return "error: missing code"
+                    val target = args["target"]?.jsonPrimitive?.contentOrNull ?: "tab"
+                    agentToolsInitialized = true
+                    val result = when (target) {
+                        "background" -> agentTools.runJavascriptInBg(code)
+                            ?: "error: no page loaded — call open_url first"
+                        else -> agentTools.runJavascriptInInitialTab(code)
+                            ?: "error: the originating tab is no longer available"
+                    }
+                    if (result.length > MAX_TOOL_RESULT_CHARS) windowToolResult(result, args)
+                    else result
+                }
+                "save_epub" -> {
+                    val bookTitle = args["book_title"]?.jsonPrimitive?.contentOrNull
+                        ?.takeIf { it.isNotBlank() }
+                        ?: return "error: missing book_title"
+                    val chapterSpecs = (args["chapters"] as? JsonArray).orEmpty().mapNotNull { el ->
+                        val obj = el as? JsonObject ?: return@mapNotNull null
+                        val url = obj["url"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
+                        BrowserTools.EpubChapterSpec(
+                            url = url,
+                            title = obj["title"]?.jsonPrimitive?.contentOrNull.orEmpty(),
+                        )
+                    }
+                    if (chapterSpecs.isEmpty()) return "error: chapters array has no valid entries"
+                    agentToolsInitialized = true
+                    var loadedCount = 0
+                    val location = agentTools.saveEpub(bookTitle, chapterSpecs) { index, total, title ->
+                        loadedCount++
+                        appendBubble("\n\n_📖 chapter $index/$total: ${escapeMd(title)}_")
+                    }
+                    when {
+                        location == null -> "error: failed to save epub (no chapters loaded or write failed)"
+                        loadedCount < chapterSpecs.size ->
+                            "ok: saved $loadedCount of ${chapterSpecs.size} chapters to $location " +
+                                "(the other pages failed to load)"
+                        else -> "ok: saved $loadedCount chapters to $location"
+                    }
+                }
+                "read_current_page" -> {
+                    agentToolsInitialized = true
+                    val text = agentTools.currentBgPageText().trim()
+                    if (text.isBlank()) "error: no page loaded or page body is empty"
+                    else windowToolResult(text, args)
+                }
+                "get_page_links" -> {
+                    agentToolsInitialized = true
+                    val links = agentTools.currentBgPageLinks()
+                    encodeLinks(links, linkOffset(args))
+                }
+                "list_bookmark_folders" -> {
+                    val names = agentTools.bookmarkFolderNames()
+                    if (names.isEmpty()) "(no bookmark folders yet)"
+                    else names.joinToString("\n")
+                }
+                "add_bookmark_folder" -> {
+                    val name = args["name"]?.jsonPrimitive?.contentOrNull
+                        ?.takeIf { it.isNotBlank() }
+                        ?: return "error: missing name"
+                    if (agentTools.ensureBookmarkFolder(name)) "ok: created folder '$name'"
+                    else "ok: folder '$name' already exists"
+                }
+                "add_bookmarks" -> {
+                    val specs = (args["bookmarks"] as? JsonArray).orEmpty().mapNotNull { el ->
+                        val obj = el as? JsonObject ?: return@mapNotNull null
+                        val url = obj["url"]?.jsonPrimitive?.contentOrNull
+                            ?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                        val title = obj["title"]?.jsonPrimitive?.contentOrNull
+                            ?.takeIf { it.isNotBlank() } ?: url
+                        Triple(title, url, obj["folder"]?.jsonPrimitive?.contentOrNull.orEmpty())
+                    }
+                    if (specs.isEmpty()) return "error: bookmarks array has no valid entries"
+                    var added = 0
+                    var skipped = 0
+                    for ((title, url, folder) in specs) {
+                        if (agentTools.addBookmark(title, url, folder)) added++ else skipped++
+                    }
+                    appendBubble("\n\n_🔖 added $added bookmark(s)_")
+                    "ok: added $added bookmark(s)" +
+                        if (skipped > 0) ", skipped $skipped already-bookmarked url(s)" else ""
+                }
+                "note" -> {
+                    val text = args["text"]?.jsonPrimitive?.contentOrNull.orEmpty()
+                    if (text.isNotBlank()) appendBubble("\n\n_${escapeMd(text)}_")
+                    "ok"
+                }
+                "speak" -> {
+                    val text = args["text"]?.jsonPrimitive?.contentOrNull.orEmpty()
+                    val title = args["title"]?.jsonPrimitive?.contentOrNull.orEmpty()
+                    if (text.isBlank()) {
+                        "error: missing text"
+                    } else {
+                        agentToolsInitialized = true
+                        agentTools.speak(text, title)
+                        "ok: queued ${text.length} chars for TTS"
+                    }
+                }
+                "read_initial_html" -> {
+                    agentToolsInitialized = true
+                    val html = agentTools.initialPageRawHtml()
+                    if (html.isBlank()) "error: no initial page HTML captured"
+                    else windowToolResult(html, args)
+                }
+                "read_page_source" -> {
+                    agentToolsInitialized = true
+                    val url = args["url"]?.jsonPrimitive?.contentOrNull
+                        ?.takeIf { it.isNotBlank() }
+                        ?: agentTools.initialPageUrl()
+                    if (url.isBlank()) {
+                        "error: no url available — pass a url argument"
+                    } else {
+                        val html = agentTools.fetchPageSource(url)
+                        when {
+                            html == null -> "error: failed to download $url"
+                            html.isBlank() -> "error: empty document at $url"
+                            else -> windowToolResult(html, args)
+                        }
+                    }
+                }
+                "get_domain_javascript" -> {
+                    agentToolsInitialized = true
+                    val js = agentTools.getInitialDomainJavascript()
+                    if (js.isBlank()) "(no postLoadJavascript saved for this host)" else js
+                }
+                "get_domain_css" -> {
+                    agentToolsInitialized = true
+                    val css = agentTools.getInitialDomainCss()
+                    if (css.isBlank()) "(no customCss saved for this host)" else css
+                }
+                "set_domain_javascript" -> {
+                    val code = args["code"]?.jsonPrimitive?.contentOrNull
+                        ?: return "error: missing code"
+                    agentToolsInitialized = true
+                    agentTools.setInitialDomainJavascript(code)
+                    val host = android.net.Uri.parse(agentTools.initialPageUrl()).host.orEmpty()
+                    if (code.isBlank()) "ok: cleared postLoadJavascript for $host"
+                    else "ok: saved ${code.length} chars of postLoadJavascript for $host"
+                }
+                "set_domain_css" -> {
+                    val code = args["code"]?.jsonPrimitive?.contentOrNull
+                        ?: return "error: missing code"
+                    agentToolsInitialized = true
+                    agentTools.setInitialDomainCss(code)
+                    val host = android.net.Uri.parse(agentTools.initialPageUrl()).host.orEmpty()
+                    if (code.isBlank()) "ok: cleared customCss for $host"
+                    else "ok: saved ${code.length} chars of customCss for $host"
+                }
+                "finish" -> {
+                    val summary = args["summary"]?.jsonPrimitive?.contentOrNull.orEmpty()
+                    if (summary.isNotBlank()) appendBubble("\n\n---\n\n$summary")
+                    "ok"
+                }
+                else -> "error: unknown tool ${call.function.name}"
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Tool dispatch failed", e)
+            "error: ${e.message}"
+        }
+    }
+
+    /** Windows a large tool result, honoring the optional `offset`/`search` tool args. */
+    private fun windowToolResult(content: String, args: JsonObject): String =
+        ToolTextWindow.window(
+            content = content,
+            maxChars = MAX_TOOL_RESULT_CHARS,
+            offset = args["offset"]?.jsonPrimitive?.intOrNull ?: 0,
+            search = args["search"]?.jsonPrimitive?.contentOrNull,
+        )
+
+    /** Honors the optional `offset` tool arg for paging through long link lists. */
+    private fun linkOffset(args: JsonObject): Int =
+        (args["offset"]?.jsonPrimitive?.intOrNull ?: 0).coerceAtLeast(0)
+
+    private fun encodeLinks(links: List<BrowserTools.Link>, offset: Int = 0): String {
+        if (links.isEmpty()) return "[]"
+        val window = links.drop(offset).take(MAX_LINKS_RETURNED)
+        val array: JsonArray = buildJsonArray {
+            window.forEach { link ->
+                add(buildJsonObject {
+                    put("text", JsonPrimitive(link.text))
+                    put("href", JsonPrimitive(link.href))
+                })
+            }
+        }
+        // Prose prefix keeps truncation visible to the model so it pages instead
+        // of treating a 50-link window as the whole page.
+        return if (offset == 0 && links.size <= MAX_LINKS_RETURNED) array.toString()
+        else "links ${offset + 1}-${offset + window.size} of ${links.size} " +
+            "(pass offset to continue):\n" + array.toString()
+    }
+
+    private fun buildSnapshotHint(): String {
+        val s = initialSnapshot ?: return ""
+        return "\n\nThe user is currently viewing: \"${s.title}\" at ${s.url}."
+    }
+
+    private fun buildAgentActionInfo(): ChatGPTActionInfo = ChatGPTActionInfo(
+        name = "agent",
+        systemMessage = AgentToolSchema.SYSTEM_PROMPT,
+        userMessage = "",
+        actionType = when {
+            configManager.ai.useGeminiApi -> GptActionType.Gemini
+            configManager.ai.useCustomGptUrl -> GptActionType.SelfHosted
+            else -> GptActionType.OpenAi
+        },
+        model = when {
+            configManager.ai.useGeminiApi -> configManager.ai.geminiModel
+            configManager.ai.useCustomGptUrl -> configManager.ai.alternativeModel
+            else -> configManager.ai.gptModel
+        },
+    )
+
+    private fun appendBubble(chunk: String) {
+        jsHelper.sendStreamUpdate(chunk)
+    }
+
+    private fun escapeMd(s: String): String = s.replace("_", "\\_").replace("*", "\\*")
+
+    /**
+     * Call this from [EBWebView.destroy] to tear down the off-screen tool WebView.
+     * Safe to call even if agent mode was never used.
+     */
+    fun disposeAgent() {
+        if (agentToolsInitialized) {
+            try {
+                agentTools.dispose()
+            } catch (e: Exception) {
+                Log.e(TAG, "disposeAgent failed", e)
+            }
+        }
+    }
+
+    private fun createWebContentMessage(content: String): ChatMessage =
+        "```$content```$WEB_CONTENT_MESSAGE_SUFFIX".toUserMessage()
+
+    private fun createChatGptActionInfo(message: String): ChatGPTActionInfo =
+        ChatGPTActionInfo(
+            actionType = configManager.ai.gptForChatWeb,
+            userMessage = message,
+            model = configManager.ai.getGptTypeModelMap()[configManager.ai.gptForChatWeb]
+                ?: configManager.ai.gptModel,
+        )
+}
+
+/**
+ * Helper class to manage JavaScript interactions with WebView.
+ * This class is now stateless regarding message content, only forwarding to JS.
+ */
+class JsHelper(
+    private val webView: WebView,
+    private val lifecycleScope: LifecycleCoroutineScope,
+    private val onOpenNewTab: ((String) -> Unit)? = null,
+) {
+    fun startMessageStream(postAction: () -> Unit = {}) {
+        webView.evaluateJavascript("javascript:startMessageStream()") {
+            postAction()
+        }
+    }
+
+    fun sendStreamUpdate(messageChunk: String) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            webView.evaluateJavascript(
+                "javascript:receiveMessageFromAndroid('${escapeJsString(messageChunk)}', true, false)",
+                null
+            )
+        }
+    }
+
+    fun sendFinalEmptyUpdate() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            webView.evaluateJavascript("javascript:receiveMessageFromAndroid('', true, true)", null)
+        }
+    }
+
+    fun sendThinkingUpdate() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            webView.evaluateJavascript("javascript:showThinkingIndicator()", null)
+        }
+    }
+
+    fun sendErrorUpdate(errorMessage: String) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            webView.evaluateJavascript(
+                "javascript:receiveMessageFromAndroid('${escapeJsString(errorMessage)}', true, true)",
+                null
+            )
+        }
+    }
+
+    fun openUrlInNewTab(url: String) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            onOpenNewTab?.invoke(url)
+        }
+    }
+
+    private fun escapeJsString(str: String): String {
+        return str.replace("\\", "\\\\")
+            .replace("'", "\\'")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\"", "\\\"")
+    }
+}

@@ -1,0 +1,737 @@
+package info.plateaukao.einkbro.view.dialog.compose
+
+import android.graphics.Bitmap
+import android.graphics.Point
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DragHandle
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.res.vectorResource
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleCoroutineScope
+import info.plateaukao.einkbro.R
+import info.plateaukao.einkbro.database.Bookmark
+import info.plateaukao.einkbro.database.BookmarkManager
+import info.plateaukao.einkbro.unit.ViewUnit
+import info.plateaukao.einkbro.view.EBToast
+import info.plateaukao.einkbro.view.compose.MyTheme
+import info.plateaukao.einkbro.view.compose.NormalTextModifier
+import info.plateaukao.einkbro.view.dialog.BookmarkEditDialog
+import info.plateaukao.einkbro.viewmodel.BookmarkViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyGridState
+import info.plateaukao.einkbro.view.compose.ebItemFrame
+
+class BookmarksDialogFragment(
+    private val lifecycleScope: LifecycleCoroutineScope,
+    private val bookmarkViewModel: BookmarkViewModel,
+    private val gotoUrlAction: (String) -> Unit,
+    private val bookmarkIconClickAction: (String, String, Boolean) -> Unit,
+    private val splitScreenAction: (String) -> Unit,
+) : ComposeDialogFragment(), KoinComponent {
+
+    private lateinit var bookmarksUpdateJob: Job
+
+    private var activeContextMenu: BookmarkContextMenuDlgFragment? = null
+
+    private val bookmarks = mutableStateOf(emptyList<Bookmark>())
+
+    private val shouldShowDragHandle = mutableStateOf(false)
+
+    private val isGridView = mutableStateOf(false)
+
+    override fun beforeComposing() {
+        isGridView.value = config.ui.isBookmarkGridView
+        // Seed with the current list so the first composition already shows it;
+        // otherwise the dialog flashes "no bookmarks" and the items appear a frame later.
+        bookmarks.value = bookmarkViewModel.uiState.value
+        bookmarksUpdateJob = lifecycleScope.launch {
+            bookmarkViewModel.uiState.collect { bookmarks.value = it }
+        }
+    }
+
+    @Composable
+    override fun Content() {
+        val context = LocalContext.current
+        val showTwoColumn = ViewUnit.isWideLayout(context)
+
+        DialogPanel(
+            folder = bookmarkViewModel.currentFolder.value,
+            inSortMode = shouldShowDragHandle.value,
+            isGridView = isGridView.value,
+            upParentAction = { bookmarkViewModel.outOfFolder() },
+            toggleGridViewAction = {
+                isGridView.value = !isGridView.value
+                config.ui.isBookmarkGridView = isGridView.value
+            },
+            reorderBookmarkAction = {
+                if (shouldShowDragHandle.value) {
+                    // Exiting sort mode - persist the current order
+                    bookmarkViewModel.updateBookmarksOrder(bookmarks.value)
+                }
+                shouldShowDragHandle.value = !shouldShowDragHandle.value
+                if (shouldShowDragHandle.value) {
+                    EBToast.show(context, getString(R.string.drag_to_reorder))
+                }
+            },
+            closeAction = { dialog?.dismiss() }) {
+            if (bookmarks.value.isEmpty()) {
+                Text(
+                    modifier = NormalTextModifier,
+                    text = getString(R.string.no_bookmarks),
+                    color = MaterialTheme.colors.onBackground
+                )
+            } else {
+                BookmarkList(
+                    bookmarks = bookmarks.value,
+                    bookmarkViewModel = bookmarkViewModel,
+                    showTwoColumn = showTwoColumn,
+                    isGridView = isGridView.value,
+                    shouldReverse = !config.ui.isToolbarOnTop,
+                    shouldShowDragHandle = shouldShowDragHandle.value,
+                    onItemMoved = { from, to ->
+                        bookmarks.value =
+                            if (!isGridView.value && showTwoColumn) moveItemInTwoColumns(bookmarks.value, from, to)
+                            else bookmarks.value.toMutableList().apply { add(to, removeAt(from)) }
+                    },
+                    onBookmarkClick = {
+                        if (!it.isDirectory) {
+                            gotoUrlAction(it.url)
+                            config.addRecentBookmark(it)
+                            dialog?.dismiss()
+                        } else {
+                            bookmarkViewModel.intoFolder(it)
+                        }
+                    },
+                    onBookmarkIconClick = {
+                        if (!it.isDirectory) bookmarkIconClickAction(
+                            it.title,
+                            it.url,
+                            true
+                        ); dialog?.dismiss()
+                    },
+                    onBookmarkLongClick = { bookmark, offSet -> showBookmarkContextMenu(bookmark, offSet) },
+                    enableDragToAction = config.touch.enableDragUrlToAction,
+                    onBookmarkLongPressMove = { point ->
+                        activeContextMenu?.updateHoveredItem(point.x.toFloat(), point.y.toFloat())
+                    },
+                    onBookmarkLongPressEnd = {
+                        activeContextMenu?.onFingerLifted()
+                        activeContextMenu = null
+                    },
+                )
+            }
+        }
+    }
+
+
+    override fun onDestroy() {
+        if (shouldShowDragHandle.value) {
+            bookmarkViewModel.updateBookmarksOrder(bookmarks.value)
+        }
+        bookmarksUpdateJob.cancel()
+        bookmarkViewModel.toRootFolder()
+        super.onDestroy()
+    }
+
+    private fun showBookmarkContextMenu(bookmark: Bookmark, point: Point) {
+        val contextMenu = BookmarkContextMenuDlgFragment(
+            bookmark,
+            anchorPoint = point
+        ) {
+            when (it) {
+                ContextMenuItemType.NewTabForeground -> {
+                    bookmarkIconClickAction(
+                        bookmark.title,
+                        bookmark.url,
+                        true
+                    )
+                    dialog?.dismiss()
+                }
+
+                ContextMenuItemType.NewTabBackground -> {
+                    bookmarkIconClickAction(
+                        bookmark.title,
+                        bookmark.url,
+                        false
+                    )
+                    dialog?.dismiss()
+                }
+
+                ContextMenuItemType.SplitScreen -> {
+                    splitScreenAction(bookmark.url)
+                    dialog?.dismiss()
+                }
+
+                ContextMenuItemType.Edit -> BookmarkEditDialog(
+                    bookmarkViewModel,
+                    bookmark,
+                    { ViewUnit.hideKeyboard(requireActivity()) },
+                    { ViewUnit.hideKeyboard(requireActivity()) }
+                ).show(parentFragmentManager, "bookmark_edit")
+
+                ContextMenuItemType.Delete -> lifecycleScope.launch {
+                    bookmarkViewModel.deleteBookmark(bookmark)
+                }
+
+                ContextMenuItemType.RefreshIcon -> bookmarkViewModel.refreshFavicon(bookmark) { found ->
+                    if (!found) context?.let { EBToast.show(it, getString(R.string.toast_favicon_not_found)) }
+                }
+
+                else -> Unit
+            }
+        }
+        activeContextMenu = contextMenu
+        contextMenu.show(parentFragmentManager, "bookmark_context_menu")
+    }
+}
+
+@Composable
+fun DialogPanel(
+    folder: Bookmark,
+    inSortMode: Boolean = false,
+    isGridView: Boolean = false,
+    upParentAction: (Bookmark) -> Unit,
+    closeAction: () -> Unit,
+    reorderBookmarkAction: () -> Unit,
+    toggleGridViewAction: () -> Unit = {},
+    content: @Composable () -> Unit,
+) {
+    // Cap the panel to the usable screen height: without a bound the grid
+    // measures at full content height, the window overflows the screen, and
+    // the bottom action bar lands under (or past) the dialog frame. With the
+    // cap, the weighted list shrinks and scrolls while the bar stays visible.
+    val configuration = LocalConfiguration.current
+    val maxPanelHeight = (configuration.screenHeightDp - 120).dp
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(max = maxPanelHeight)
+    ) {
+        Box(Modifier.weight(1F, fill = false)) {
+            content()
+        }
+        HorizontalSeparator()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            if (folder.id != 0) {
+                ActionIcon(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    iconResId = R.drawable.icon_arrow_left_gest,
+                    action = { upParentAction(folder) }
+                )
+            } else {
+                Spacer(modifier = Modifier.size(36.dp))
+            }
+            Text(
+                if (folder.id == 0) "" else folder.title,
+                Modifier
+                    .weight(1F)
+                    .padding(horizontal = 5.dp)
+                    .align(Alignment.CenterVertically)
+                    .clickable { if (folder.id != 0) upParentAction(folder) },
+                color = MaterialTheme.colors.onBackground
+            )
+            ActionIcon(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(horizontal = 5.dp),
+                iconResId = if (inSortMode) R.drawable.icon_list else R.drawable.ic_sort,
+                action = { reorderBookmarkAction() },
+            )
+            ActionIcon(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(horizontal = 5.dp),
+                iconResId = if (isGridView) R.drawable.ic_hamburger else R.drawable.ic_grid_view,
+                action = toggleGridViewAction
+            )
+            ActionIcon(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(horizontal = 5.dp),
+                iconResId = R.drawable.icon_arrow_down_gest,
+                action = closeAction
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun BookmarkList(
+    bookmarks: List<Bookmark>,
+    bookmarkViewModel: BookmarkViewModel,
+    showTwoColumn: Boolean = false,
+    isGridView: Boolean = false,
+    shouldReverse: Boolean = true,
+    shouldShowDragHandle: Boolean = false,
+    onItemMoved: (from: Int, to: Int) -> Unit,
+    onBookmarkClick: OnBookmarkClick,
+    onBookmarkIconClick: OnBookmarkIconClick,
+    onBookmarkLongClick: OnBookmarkLongClick,
+    enableDragToAction: Boolean = false,
+    onBookmarkLongPressMove: (point: Point) -> Unit = {},
+    onBookmarkLongPressEnd: () -> Unit = {},
+) {
+    // key() forces full recreation (no animation) when folder or view mode changes
+    key(bookmarkViewModel.currentFolder.value.id, isGridView) {
+        val lazyGridState = rememberLazyGridState()
+        val reorderableLazyGridState =
+            rememberReorderableLazyGridState(lazyGridState) { from, to ->
+                onItemMoved(from.index, to.index)
+            }
+
+        // Use RTL layout direction for grid mode so items fill right-to-left within each row
+        CompositionLocalProvider(
+            LocalLayoutDirection provides if (isGridView) LayoutDirection.Rtl else LayoutDirection.Ltr
+    ) {
+        LazyVerticalGrid(
+            modifier = Modifier.wrapContentHeight(),
+            state = lazyGridState,
+            columns = if (isGridView) GridCells.Adaptive(73.dp) else GridCells.Fixed(if (showTwoColumn) 2 else 1),
+            reverseLayout = shouldReverse
+        ) {
+            itemsIndexed(bookmarks, key = { _, bookmark -> bookmark.id }) { _, bookmark ->
+                val interactionSource = remember { MutableInteractionSource() }
+                val isPressed by interactionSource.collectIsPressedAsState()
+                // for getting long click point
+                var longClickPosition = remember { mutableStateOf(Offset.Zero) }
+                // Resolved to a screen position at event time: the dialog window can
+                // settle after layout, so a position captured in onGloballyPositioned
+                // would be stale.
+                val boxCoordinates = remember { mutableStateOf<LayoutCoordinates?>(null) }
+                val toScreen = { local: Offset ->
+                    local.toScreenPoint(boxCoordinates.value?.positionOnScreen() ?: Offset.Zero)
+                }
+
+
+                ReorderableItem(reorderableLazyGridState, key = bookmark.id) { isDragging ->
+                    if (isGridView) {
+                        // Restore LTR for grid item content (text, icons)
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                            BookmarkGridItem(
+                                bookmark = bookmark,
+                                bitmap = remember(bookmark.url, bookmarkViewModel.faviconVersion.value) { bookmarkViewModel.getFavicon(bookmark) },
+                                isPressed = isPressed || isDragging,
+                                shouldShowDragHandle = shouldShowDragHandle,
+                                iconDragModifier = if (shouldShowDragHandle) Modifier.draggableHandle() else Modifier,
+                                modifier = Modifier.then(
+                                    when {
+                                        shouldShowDragHandle -> Modifier
+                                            .longPressDraggableHandle()
+                                            .clickable(
+                                                interactionSource = interactionSource,
+                                                indication = null,
+                                            ) { onBookmarkClick(bookmark) }
+
+                                        enableDragToAction -> Modifier
+                                            .pointerInput(Unit) {
+                                                detectTapGestures(
+                                                    onTap = { onBookmarkClick(bookmark) }
+                                                )
+                                            }
+                                            .pointerInput(Unit) {
+                                                // Long press shows the context menu; keep the finger
+                                                // down and move onto an action to trigger it on lift.
+                                                detectDragGesturesAfterLongPress(
+                                                    onDragStart = { offset ->
+                                                        longClickPosition.value = offset
+                                                        onBookmarkLongClick(bookmark, toScreen(offset))
+                                                    },
+                                                    onDrag = { change, _ ->
+                                                        onBookmarkLongPressMove(toScreen(change.position))
+                                                    },
+                                                    onDragEnd = { onBookmarkLongPressEnd() },
+                                                    onDragCancel = { onBookmarkLongPressEnd() },
+                                                )
+                                            }
+                                            .onGloballyPositioned {
+                                                boxCoordinates.value = it
+                                            }
+
+                                        else -> Modifier
+                                            .pointerInput(Unit) {
+                                                detectTapGestures(
+                                                    onTap = { onBookmarkClick(bookmark) },
+                                                    onLongPress = { offset ->
+                                                        longClickPosition.value = offset
+                                                        onBookmarkLongClick(
+                                                            bookmark,
+                                                            toScreen(offset)
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                            .onGloballyPositioned {
+                                                boxCoordinates.value = it
+                                            }
+                                    }
+                                ),
+                            )
+                        }
+                    } else {
+                        BookmarkItem(
+                            bookmark = bookmark,
+                            bitmap = remember(bookmark.url, bookmarkViewModel.faviconVersion.value) { bookmarkViewModel.getFavicon(bookmark) },
+                            isPressed = isPressed || isDragging,
+                            shouldShowDragHandle = shouldShowDragHandle,
+                            dragModifier = Modifier.draggableHandle(),
+                            modifier = Modifier.then(
+                                if (shouldShowDragHandle) {
+                                    Modifier
+                                        .longPressDraggableHandle()
+                                        .clickable(
+                                            interactionSource = interactionSource,
+                                            indication = null,
+                                        ) { onBookmarkClick(bookmark) }
+                                } else {
+                                    Modifier
+                                        .pointerInput(Unit) {
+                                            detectTapGestures(
+                                                onTap = { offset -> onBookmarkClick(bookmark) },
+                                                onLongPress = { offset ->
+                                                    longClickPosition.value = offset
+                                                    onBookmarkLongClick(
+                                                        bookmark,
+                                                        toScreen(offset)
+                                                    )
+                                                }
+                                            )
+                                        }
+                                        .onGloballyPositioned {
+                                            boxCoordinates.value = it
+                                        }
+                                }
+                            ),
+                            iconClick = {
+                                if (!bookmark.isDirectory) onBookmarkIconClick(bookmark)
+                                else onBookmarkClick(bookmark)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+    }
+}
+
+@Composable
+fun BookmarkItem(
+    modifier: Modifier,
+    bitmap: Bitmap? = null,
+    isPressed: Boolean = false,
+    shouldShowDragHandle: Boolean = false,
+    bookmark: Bookmark,
+    dragModifier: Modifier = Modifier,
+    iconClick: () -> Unit,
+) {
+    val borderWidth = if (isPressed) 1.dp else (-1).dp
+
+    Row(
+        modifier = modifier
+            .height(54.dp)
+            .padding(4.dp)
+            .ebItemFrame(borderWidth)
+            .padding(4.dp),
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        if (shouldShowDragHandle) {
+            Icon(
+                modifier = dragModifier.padding(8.dp),
+                imageVector = Icons.Outlined.DragHandle,
+                contentDescription = null,
+                tint = MaterialTheme.colors.onBackground
+            )
+        }
+        if (bitmap != null) {
+            Image(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .size(36.dp)
+                    .padding(end = 5.dp)
+                    .clickable { iconClick() },
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = null,
+            )
+        } else if (bookmark.isDirectory) {
+            ActionIcon(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                iconResId = R.drawable.ic_folder,
+                action = iconClick
+            )
+        } else {
+            val context = LocalContext.current
+            val launcherDrawable = remember(context) {
+                context.packageManager.getApplicationIcon(context.packageName)
+            }
+            Image(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .size(36.dp)
+                    .padding(end = 5.dp)
+                    .clickable { iconClick() },
+                painter = rememberDrawablePainter(drawable = launcherDrawable),
+                contentDescription = null,
+            )
+        }
+        Text(
+            modifier = Modifier
+                .weight(1.0f)
+                .align(Alignment.CenterVertically),
+            text = bookmark.title,
+            fontSize = 18.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colors.onBackground,
+        )
+    }
+}
+
+@Composable
+fun BookmarkGridItem(
+    modifier: Modifier,
+    bitmap: Bitmap? = null,
+    isPressed: Boolean = false,
+    shouldShowDragHandle: Boolean = false,
+    iconDragModifier: Modifier = Modifier,
+    bookmark: Bookmark,
+) {
+    val borderWidth = if (isPressed) 1.dp else (-1).dp
+
+    Column(
+        modifier = modifier
+            .padding(4.dp)
+            .ebItemFrame(borderWidth)
+            .padding(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        if (bitmap != null) {
+            Image(
+                modifier = Modifier
+                    .then(iconDragModifier)
+                    .size(48.dp)
+                    .padding(4.dp),
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = null,
+            )
+        } else if (bookmark.isDirectory) {
+            Icon(
+                modifier = Modifier
+                    .then(iconDragModifier)
+                    .size(48.dp)
+                    .padding(4.dp),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_folder),
+                contentDescription = null,
+                tint = MaterialTheme.colors.onBackground,
+            )
+        } else {
+            val context = LocalContext.current
+            val launcherDrawable = remember(context) {
+                context.packageManager.getApplicationIcon(context.packageName)
+            }
+            Image(
+                modifier = Modifier
+                    .then(iconDragModifier)
+                    .size(48.dp)
+                    .padding(4.dp),
+                painter = rememberDrawablePainter(drawable = launcherDrawable),
+                contentDescription = null,
+            )
+        }
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = bookmark.title,
+            fontSize = 10.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colors.onBackground,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+    }
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ActionIcon(
+    modifier: Modifier,
+    iconResId: Int,
+    action: (() -> Unit)? = null,
+    longClickAction: (() -> Unit)? = null,
+) {
+    Icon(
+        modifier = modifier
+            .size(36.dp)
+            .padding(end = 5.dp)
+            .combinedClickable(
+                onClick = { action?.invoke() },
+                onLongClick = { longClickAction?.invoke() },
+            ),
+        imageVector = ImageVector.vectorResource(id = iconResId),
+        contentDescription = null,
+        tint = MaterialTheme.colors.onBackground
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewBookmarkList() {
+    MyTheme {
+        BookmarkList(
+            bookmarks = listOf(Bookmark("test 1", "https://www.google.com", false)),
+            bookmarkViewModel = BookmarkViewModel(bookmarkManager = BookmarkManager(LocalContext.current)),
+            showTwoColumn = true,
+            shouldReverse = true,
+            shouldShowDragHandle = false,
+            onItemMoved = { _, _ -> },
+            onBookmarkClick = {},
+            onBookmarkIconClick = {},
+            onBookmarkLongClick = { _, _ -> }
+        )
+    }
+}
+
+// preview dialog panel
+@Preview
+@Composable
+private fun PreviewDialogPanel() {
+    MyTheme {
+        DialogPanel(
+            folder = Bookmark("test 1", "https://www.google.com", false),
+            //{},
+            inSortMode = false,
+            upParentAction = {},
+            closeAction = {},
+            reorderBookmarkAction = {},
+        ) {
+            BookmarkList(
+                bookmarks = listOf(Bookmark("test 1", "https://www.google.com", false)),
+                bookmarkViewModel = BookmarkViewModel(bookmarkManager = BookmarkManager(LocalContext.current)),
+                showTwoColumn = true,
+                shouldReverse = true,
+                shouldShowDragHandle = false,
+                onItemMoved = { _, _ -> },
+                onBookmarkClick = {},
+                onBookmarkIconClick = {},
+                onBookmarkLongClick = { _, _ -> }
+            )
+        }
+    }
+}
+
+typealias OnBookmarkClick = (bookmark: Bookmark) -> Unit
+typealias OnBookmarkLongClick = (bookmark: Bookmark, point: Point) -> Unit
+typealias OnBookmarkIconClick = (bookmark: Bookmark) -> Unit
+
+fun Offset.toScreenPoint(boxPosition: Offset): Point {
+    return Point((x + boxPosition.x).toInt(), (y + boxPosition.y).toInt())
+}
+
+private fun <T> moveItemInTwoColumns(
+    originalList: List<T>,
+    fromIndex: Int,
+    toIndex: Int,
+): List<T> {
+    // Divide the original list into two lists: odd-positioned and even-positioned items
+    val evenList = originalList.filterIndexed { index, _ -> index % 2 == 0 }.toMutableList()
+    val oddList = originalList.filterIndexed { index, _ -> index % 2 != 0 }.toMutableList()
+
+    if (fromIndex < 0 || fromIndex >= originalList.size || toIndex < 0 || toIndex >= originalList.size) {
+        return originalList
+    }
+
+    val fromItem = if (fromIndex.isEven()) {
+        evenList.removeAt(fromIndex / 2)
+    } else {
+        oddList.removeAt(fromIndex / 2)
+    }
+
+    // move item to the target position
+    if (toIndex.isEven()) {
+        evenList.add(toIndex / 2, fromItem)
+    } else {
+        oddList.add(toIndex / 2, fromItem)
+    }
+
+    // Ensure both lists are balanced (list2 can have up to 2 more items than list1)
+    // removeAt(lastIndex) instead of removeLast(): under Kotlin 2.x the latter
+    // resolves to java.util.List.removeLast, which only exists on API 35+.
+    while (oddList.size > evenList.size + 1) {
+        evenList.add(oddList.removeAt(oddList.lastIndex))
+    }
+
+    while (evenList.size > oddList.size + 1) {
+        oddList.add(evenList.removeAt(evenList.lastIndex))
+    }
+
+    // Merge the lists into one
+    val resultList = mutableListOf<T>()
+    val maxSize = maxOf(evenList.size, oddList.size)
+
+    for (i in 0 until maxSize) {
+        if (i < evenList.size) resultList.add(evenList[i])
+        if (i < oddList.size) resultList.add(oddList[i])
+    }
+
+    return resultList
+}
+
+private fun Int.isEven(): Boolean = this % 2 == 0

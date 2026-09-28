@@ -1,0 +1,85 @@
+package info.plateaukao.einkbro.searchhh
+
+import android.content.Context
+import androidx.room.*
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import androidx.work.CoroutineWorker
+import androidx.work.WorkerParameters
+import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.*
+import java.util.concurrent.TimeUnit
+
+// Integration contracts, not a replacement browser/search engine implementation.
+data class Source(val id: String, val name: String, val category: String, val default: Boolean = false)
+data class StartRequest(val query: String, val mode: String, val engines: List<String>, val crawl: Boolean)
+data class JobStarted(val id: String, val status: String)
+data class Opportunity(val id: String, val url: String, val title: String, val description: String, val kind: String, val sources: List<String>, val published: String?, val discovered: String, val score: Int, val verified: Boolean)
+data class JobStatus(val id: String, val status: String, val round: Int, val duplicates: Int, val filtered: Int, val errors: List<String>, val results: List<Opportunity>)
+interface SearchhhApi {
+    @GET("v1/engines") suspend fun sources(): List<Source>
+    @POST("v1/jobs") suspend fun start(@Body request: StartRequest): JobStarted
+    @GET("v1/jobs/{id}") suspend fun status(@Path("id") id: String): JobStatus
+    @POST("v1/jobs/{id}/stop") suspend fun stop(@Path("id") id: String): JobStarted
+}
+
+object ConnectionSettings {
+    @Suppress("DEPRECATION")
+    fun prefs(context: Context) = EncryptedSharedPreferences.create(
+        context.applicationContext, "searchhh_connection",
+        MasterKey.Builder(context.applicationContext).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build(),
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
+    fun api(context: Context): SearchhhApi {
+        val p = prefs(context)
+        val url = p.getString("url", "").orEmpty().trim().trimEnd('/') + "/"
+        require(validServerUrl(url)) { "Set your HTTPS backend address in Settings first" }
+        val token = p.getString("token", "").orEmpty()
+        require(token.length >= 32) { "Enter the access token for your own server" }
+        val client = OkHttpClient.Builder().callTimeout(35, TimeUnit.SECONDS)
+            .followRedirects(false).followSslRedirects(false)
+            .addInterceptor { chain -> chain.proceed(chain.request().newBuilder().header("Authorization", "Bearer $token").build()) }.build()
+        return Retrofit.Builder().baseUrl(url).client(client).addConverterFactory(GsonConverterFactory.create()).build().create(SearchhhApi::class.java)
+    }
+    fun validServerUrl(value: String): Boolean = try {
+        val uri = java.net.URI(value)
+        uri.scheme == "https" && !uri.host.isNullOrBlank() && uri.userInfo == null && uri.query == null && uri.fragment == null
+    } catch (_: Exception) { false }
+}
+
+@Entity(tableName = "saved_opportunities")
+data class SavedOpportunity(@PrimaryKey val id: String, val payload: String, val savedAt: Long = System.currentTimeMillis())
+@Dao
+interface SavedDao {
+    @Query("SELECT * FROM saved_opportunities ORDER BY savedAt DESC") fun all(): Flow<List<SavedOpportunity>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun save(row: SavedOpportunity)
+    @Query("DELETE FROM saved_opportunities WHERE id = :id") suspend fun remove(id: String)
+}
+@Database(entities = [SavedOpportunity::class], version = 1, exportSchema = true)
+abstract class SearchhhDatabase : RoomDatabase() {
+    abstract fun saved(): SavedDao
+    companion object {
+        @Volatile private var instance: SearchhhDatabase? = null
+        fun get(context: Context): SearchhhDatabase = instance ?: synchronized(this) {
+            instance ?: Room.databaseBuilder(context.applicationContext, SearchhhDatabase::class.java, "searchhh.db").build().also { instance = it }
+        }
+    }
+}
+
+/** WorkManager only refreshes status; continuous crawling belongs on the server. */
+class SearchhhSyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+    override suspend fun doWork(): Result = try {
+        val p = ConnectionSettings.prefs(applicationContext)
+        val id = p.getString("job", null)
+        if (id == null) Result.success() else {
+            val state = ConnectionSettings.api(applicationContext).status(id)
+            p.edit().putString("last_status", Gson().toJson(state)).apply()
+            Result.success()
+        }
+    } catch (_: Exception) { Result.retry() }
+}

@@ -1,0 +1,115 @@
+use_default_settings:
+  engines:
+    keep_only:
+    - bing
+    - duckduckgo
+    - brave
+    - google
+    - yahoo
+    - qwant
+    - wiby
+    - github
+    - gitlab
+    - hackernews
+    - stackoverflow
+    - npm
+    - pypi
+    - sourcehut
+    - huggingface
+    - wikipedia
+    - wikibooks
+    - wikiversity
+    - wikidata
+    - arxiv
+    - crossref
+    - pubmed
+    - semantic scholar
+    - openlibrary
+    - crowdview
+    - lemmy posts
+    - lemmy communities
+    - docker hub
+    - fdroid
+    - mwmbl
+    - yep
+    - searchmysite
+    - seznam
+general:
+  instance_name: Searchhh sources
+search:
+  formats:
+  - html
+  - json
+  safe_search: 0
+server:
+  bind_address: 0.0.0.0
+  port: 8080
+  limiter: false
+  secret_key: overridden-by-SEARXNG_SECRET
+engines:
+- name: bing
+  disabled: false
+- name: duckduckgo
+  disabled: false
+- name: brave
+  disabled: false
+- name: google
+  disabled: false
+- name: yahoo
+  disabled: false
+- name: qwant
+  disabled: false
+- name: wiby
+  disabled: false
+- name: github
+  disabled: false
+- name: gitlab
+  disabled: false
+- name: hackernews
+  disabled: false
+- name: stackoverflow
+  disabled: false
+- name: npm
+  disabled: false
+- name: pypi
+  disabled: false
+- name: sourcehut
+  disabled: false
+- name: huggingface
+  disabled: false
+- name: wikipedia
+  disabled: false
+- name: wikibooks
+  disabled: false
+- name: wikiversity
+  disabled: false
+- name: wikidata
+  disabled: false
+- name: arxiv
+  disabled: false
+- name: crossref
+  disabled: false
+- name: pubmed
+  disabled: false
+- name: semantic scholar
+  disabled: false
+- name: openlibrary
+  disabled: false
+- name: crowdview
+  disabled: false
+- name: lemmy posts
+  disabled: false
+- name: lemmy communities
+  disabled: false
+- name: docker hub
+  disabled: false
+- name: fdroid
+  disabled: false
+- name: mwmbl
+  disabled: false
+- name: yep
+  disabled: false
+- name: searchmysite
+  disabled: false
+- name: seznam
+  disabled: false

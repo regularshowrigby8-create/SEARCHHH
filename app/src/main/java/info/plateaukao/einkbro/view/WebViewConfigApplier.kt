@@ -1,0 +1,282 @@
+package info.plateaukao.einkbro.view
+
+import android.graphics.Color
+import android.os.Build
+import android.view.View
+import android.webkit.CookieManager
+import android.webkit.WebSettings
+import androidx.webkit.ScriptHandler
+import androidx.webkit.UserAgentMetadata
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature
+import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.browser.EBWebViewClient
+import info.plateaukao.einkbro.unit.BrowserUnit
+import info.plateaukao.einkbro.unit.HelperUnit
+
+class WebViewConfigApplier(
+    private val webView: EBWebView,
+    private val config: ConfigManager,
+) {
+    private val cookieManager: CookieManager = CookieManager.getInstance()
+    private var autoplayBlockerHandler: ScriptHandler? = null
+    private var webSpeechPolyfillHandler: ScriptHandler? = null
+    private var dragStartBlockerHandler: ScriptHandler? = null
+    private var defaultUserAgentMetadata: UserAgentMetadata? = null
+    private var uaMetadataOverridden = false
+
+    fun updateDarkMode(url: String? = webView.url) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+
+        val wantDark = config.getWebViewDarkMode(url.orEmpty())
+            ?: config.isAppDarkMode(webView.context)
+
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+            WebSettingsCompat.setAlgorithmicDarkeningAllowed(webView.settings, wantDark)
+            webView.setBackgroundColor(
+                if (wantDark) Color.parseColor("#000000") else Color.parseColor("#ffffff")
+            )
+        } else if (wantDark) {
+            @Suppress("DEPRECATION")
+            if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
+                WebSettingsCompat.setForceDarkStrategy(
+                    webView.settings,
+                    WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING
+                )
+            }
+            @Suppress("DEPRECATION")
+            webView.settings.forceDark = WebSettings.FORCE_DARK_ON
+            webView.setBackgroundColor(Color.parseColor("#000000"))
+        } else {
+            @Suppress("DEPRECATION")
+            webView.settings.forceDark = WebSettings.FORCE_DARK_OFF
+            webView.setBackgroundColor(Color.parseColor("#ffffff"))
+        }
+    }
+
+    fun initWebSettings() {
+        with(webView.settings) {
+            builtInZoomControls = true
+            displayZoomControls = false
+            setSupportZoom(true)
+            setSupportMultipleWindows(true)
+            loadWithOverviewMode = true
+            useWideViewPort = true
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    fun initPreferences() {
+
+        updateUserAgentString()
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null) // Enable hardware acceleration
+
+        with(webView.settings) {
+            // don't load cache by default, so that it won't cause some issues
+            if (config.browser.webLoadCacheFirst)
+                cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+
+            textZoom = config.display.fontSize
+            // Local HTML/EPUB files must still open (allowFileAccess), but a file:// page
+            // reading other local files or reaching other origins is opt-in (off by
+            // default): with these on, any page that lands on a file:// URL can XHR the
+            // app's private storage (shared_prefs, databases) and exfiltrate it. Nothing in
+            // the app relies on it — start/error pages use loadDataWithBaseURL and the
+            // custom font is served by shouldInterceptRequest on a same-origin URL.
+            allowFileAccessFromFileURLs = config.browser.enableRemoteAccess
+            allowFileAccess = true
+            allowUniversalAccessFromFileURLs = config.browser.enableRemoteAccess
+            domStorageEnabled = true
+            databaseEnabled = true
+            // Network images are intercepted and replaced with a transparent local image
+            // when disabled. Keeping this false lets the interceptor avoid Chromium's
+            // built-in broken-image glyph.
+            blockNetworkImage = false
+            javaScriptEnabled = config.browser.enableJavascript
+            javaScriptCanOpenWindowsAutomatically = config.browser.enableJavascript
+            setSupportMultipleWindows(config.browser.enableJavascript)
+            setGeolocationEnabled(config.browser.shareLocation)
+            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            mediaPlaybackRequiresUserGesture = !config.browser.enableVideoAutoplay
+            setRenderPriority(WebSettings.RenderPriority.HIGH)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                webView.importantForAutofill =
+                    if (config.browser.autoFillForm) View.IMPORTANT_FOR_AUTOFILL_YES else View.IMPORTANT_FOR_AUTOFILL_NO
+            } else {
+                saveFormData = config.browser.autoFillForm
+            }
+        }
+        webView.webViewClient.enableAdBlock(config.browser.adBlock)
+        toggleCookieSupport(config.browser.cookies)
+        applyAutoplayBlocker()
+        applyWebSpeechPolyfill()
+        applyDragStartBlocker()
+    }
+
+    // WebView 131+ turns a long-press on an image into a system drag, and on
+    // Android 8.x releasing that drag freezes the entire device until a forced
+    // reboot (issue #629; chromium android-webview-dev "Severe freeze bug -
+    // drag image in WebView freezes entire UI"). WebView for Android 9- is
+    // EOL, so no upstream fix will ever ship. View.startDragAndDrop is final,
+    // so the drag is cancelled renderer-side instead: Blink fires a cancelable
+    // dragstart before any drag, and the blocker preventDefaults it in every
+    // frame. No fallback for WebViews without DOCUMENT_START_SCRIPT (< 91):
+    // those predate the regression (131+). The long-press context menu is
+    // driven by our own gesture detector and is unaffected.
+    private fun applyDragStartBlocker() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) return
+        if (!supportsDocumentStartScript()) return
+        if (dragStartBlockerHandler == null) {
+            dragStartBlockerHandler = WebViewCompat.addDocumentStartJavaScript(
+                webView,
+                HelperUnit.loadAssetFile("disable_drag_start.js"),
+                setOf("*"),
+            )
+        }
+    }
+
+    // mediaPlaybackRequiresUserGesture alone can't stop feed sites: muted
+    // playback is exempt from the gesture requirement, and IG/FB/X/Threads
+    // autoplay muted via JS play(). The blocker script must run before any
+    // page script and in every frame (embedded players), which only
+    // addDocumentStartJavaScript guarantees; older WebViews fall back to
+    // onPageStarted injection in EBWebViewClient.
+    private fun applyAutoplayBlocker() {
+        if (!supportsDocumentStartScript()) return
+        if (!config.browser.enableVideoAutoplay) {
+            if (autoplayBlockerHandler == null) {
+                autoplayBlockerHandler = WebViewCompat.addDocumentStartJavaScript(
+                    webView,
+                    HelperUnit.loadAssetFile("disable_video_autoplay.js"),
+                    setOf("*"),
+                )
+            }
+        } else {
+            autoplayBlockerHandler?.remove()
+            autoplayBlockerHandler = null
+        }
+    }
+
+    // WebView ships no Web Speech synthesis backend, so pages with their own
+    // read-aloud (speechSynthesis) stay silent. The polyfill must be installed
+    // before page scripts capture window.speechSynthesis at load time; older
+    // WebViews fall back to onPageStarted injection in NinjaWebViewClient.
+    private fun applyWebSpeechPolyfill() {
+        if (!supportsDocumentStartScript()) return
+        if (webSpeechPolyfillHandler == null) {
+            webSpeechPolyfillHandler = WebViewCompat.addDocumentStartJavaScript(
+                webView,
+                HelperUnit.loadAssetFile("speech_synthesis_polyfill.js"),
+                setOf("*"),
+            )
+        }
+    }
+
+    companion object {
+        fun supportsDocumentStartScript(): Boolean =
+            WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)
+    }
+
+    /**
+     * Applies the UA string, client hints, and viewport flags for the effective
+     * desktop mode of [url] (per-site override, falling back to the global
+     * setting). Defaults to the currently loaded page.
+     */
+    fun updateUserAgentString(url: String? = webView.url) {
+        val defaultUserAgentString = EBWebView.getDefaultUserAgent(webView.context)
+        val prefix: String =
+            defaultUserAgentString.substring(0, defaultUserAgentString.indexOf(")") + 1)
+
+        val isDesktopMode = config.getDesktopMode(url.orEmpty())
+        lastAppliedDesktopMode = isDesktopMode
+        try {
+            when {
+                isDesktopMode ->
+                    // the trailing "Mobile Safari" token must go too — sites
+                    // like zhihu/xiaohongshu match "Mobile" server-side and
+                    // keep serving the app-jump page (issue #498)
+                    webView.settings.userAgentString = defaultUserAgentString
+                        .replace(prefix, BrowserUnit.UA_DESKTOP_PREFIX)
+                        .replace(" Mobile ", " ")
+
+                config.browser.enableCustomUserAgent && config.browser.customUserAgent.isNotBlank() ->
+                    webView.settings.userAgentString = config.browser.customUserAgent
+
+                else ->
+                    webView.settings.userAgentString =
+                        defaultUserAgentString.replace(prefix, BrowserUnit.UA_MOBILE_PREFIX)
+            }
+            updateUserAgentClientHints(isDesktopMode)
+        } catch (e: Exception) {
+        }
+
+        webView.settings.useWideViewPort = isDesktopMode
+        webView.settings.loadWithOverviewMode = isDesktopMode
+    }
+
+    private var lastAppliedDesktopMode: Boolean? = null
+
+    /**
+     * Rewrites the UA only when the effective desktop mode for [url] differs
+     * from what is currently applied. Needed because per-site overrides make
+     * the UA URL-dependent.
+     */
+    fun applyDesktopMode(url: String) {
+        if (desktopModeChanged(url)) {
+            updateUserAgentString(url)
+        }
+    }
+
+    fun desktopModeChanged(url: String): Boolean =
+        config.getDesktopMode(url) != lastAppliedDesktopMode
+
+    // Overriding the UA string doesn't stop WebView from sending the system
+    // default client hints (Sec-CH-UA-Mobile: ?1, Sec-CH-UA-Platform:
+    // "Android") and exposing navigator.userAgentData.mobile == true, so
+    // sites reading client hints still detect mobile in desktop mode.
+    private fun updateUserAgentClientHints(isDesktopMode: Boolean) {
+        if (!WebViewFeature.isFeatureSupported(WebViewFeature.USER_AGENT_METADATA)) return
+        // don't touch metadata until desktop mode is first enabled: setting it
+        // (even to defaults) makes WebView expose high-entropy hints it would
+        // otherwise keep empty while the UA string is overridden
+        if (!isDesktopMode && !uaMetadataOverridden) return
+
+        val defaultMetadata = defaultUserAgentMetadata
+            ?: WebSettingsCompat.getUserAgentMetadata(webView.settings)
+                .also { defaultUserAgentMetadata = it }
+
+        val metadata = if (isDesktopMode) {
+            // the brand list is sent on every request too, and "Android
+            // WebView" in it gives the platform away just like the UA string
+            val desktopBrands = defaultMetadata.brandVersionList.map { brandVersion ->
+                if (brandVersion.brand.contains("Android"))
+                    UserAgentMetadata.BrandVersion.Builder(brandVersion)
+                        .setBrand("Google Chrome")
+                        .build()
+                else brandVersion
+            }
+            UserAgentMetadata.Builder(defaultMetadata)
+                .setBrandVersionList(desktopBrands)
+                .setMobile(false)
+                .setPlatform("Linux")
+                .setModel("")
+                .setArchitecture("x86")
+                .setBitness(64)
+                .build()
+        } else {
+            defaultMetadata
+        }
+        WebSettingsCompat.setUserAgentMetadata(webView.settings, metadata)
+        uaMetadataOverridden = isDesktopMode
+    }
+
+    fun toggleCookieSupport(isEnabled: Boolean) {
+        EBWebViewClient.lastAcceptCookies = isEnabled
+        with(cookieManager) {
+            setAcceptCookie(isEnabled)
+            setAcceptThirdPartyCookies(webView, isEnabled)
+        }
+    }
+}

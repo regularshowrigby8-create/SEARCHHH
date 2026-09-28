@@ -1,0 +1,41 @@
+# built application files
+# files for the dex VM
+# Java class files
+# generated files
+gen/
+
+.kotlin/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Play upload-key signing secrets (see keystore.properties.sample)
+keystore.properties
+*.keystore
+
+# Eclipse project files
+# Android Studio
+.idea/
+.gradle
+build
+*.iml
+app/release
+.DS_Store
+.idea/gradle.xml
+tools/*.png
+tools/reports/
+
+.externalNativeBuild
+.cxx/
+adblock-client/.cxx
+
+.claude/
+
+# Searchhh local configuration and generated outputs
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+*.apk
+*.aab
+backend/.coverage

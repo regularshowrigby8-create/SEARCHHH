@@ -1,0 +1,11 @@
+fastapi==0.115.12
+uvicorn==0.34.2
+SQLAlchemy==2.0.40
+psycopg[binary]==3.2.9
+redis==5.2.1
+rq==2.3.2
+httpx==0.28.1
+Scrapy==2.13.3
+w3lib==2.3.1
+PyYAML==6.0.2
+pytest==8.3.5

@@ -1,0 +1,200 @@
+[
+  {
+    "id": "bing",
+    "name": "Bing",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "duckduckgo",
+    "name": "Duckduckgo",
+    "category": "general",
+    "default": true
+  },
+  {
+    "id": "brave",
+    "name": "Brave",
+    "category": "general",
+    "default": true
+  },
+  {
+    "id": "google",
+    "name": "Google",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "yahoo",
+    "name": "Yahoo",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "qwant",
+    "name": "Qwant",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "wiby",
+    "name": "Wiby",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "github",
+    "name": "Github",
+    "category": "general",
+    "default": true
+  },
+  {
+    "id": "gitlab",
+    "name": "Gitlab",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "hackernews",
+    "name": "Hackernews",
+    "category": "general",
+    "default": true
+  },
+  {
+    "id": "stackoverflow",
+    "name": "Stackoverflow",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "npm",
+    "name": "Npm",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "pypi",
+    "name": "Pypi",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "sourcehut",
+    "name": "Sourcehut",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "huggingface",
+    "name": "Huggingface",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "wikipedia",
+    "name": "Wikipedia",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "wikibooks",
+    "name": "Wikibooks",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "wikiversity",
+    "name": "Wikiversity",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "wikidata",
+    "name": "Wikidata",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "arxiv",
+    "name": "Arxiv",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "crossref",
+    "name": "Crossref",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "pubmed",
+    "name": "Pubmed",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "semantic scholar",
+    "name": "Semantic Scholar",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "openlibrary",
+    "name": "Openlibrary",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "crowdview",
+    "name": "Crowdview",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "lemmy posts",
+    "name": "Lemmy Posts",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "lemmy communities",
+    "name": "Lemmy Communities",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "docker hub",
+    "name": "Docker Hub",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "fdroid",
+    "name": "Fdroid",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "mwmbl",
+    "name": "Mwmbl",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "yep",
+    "name": "Yep",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "searchmysite",
+    "name": "Searchmysite",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "seznam",
+    "name": "Seznam",
+    "category": "general",
+    "default": false
+  }
+]
