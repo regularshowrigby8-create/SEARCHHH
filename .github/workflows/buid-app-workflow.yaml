@@ -13,22 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Retrieve previous build diagnostics
-        if: github.run_number == 4
-        uses: actions/download-artifact@v8
-        with:
-          name: android-test-reports
-          run-id: 36498067174
-          github-token: ${{ github.token }}
-          path: previous
-      - name: Expose previous Gradle failure
-        if: github.run_number == 4
-        run: |
-          python3 - <<'PYTHON'
-          from pathlib import Path
-          for p in Path('previous').rglob('android-build.log'):
-              print('::notice title=Previous build log::' + p.read_text()[-3000:].replace('%','%25').replace('\n','%0A'))
-          PYTHON
       - uses: actions/setup-python@v6
         with: {python-version: '3.11'}
       - uses: actions/setup-node@v6

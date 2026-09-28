@@ -19,7 +19,7 @@ fall back to the default locale; this is not a claim of complete translations.
 
 ## 3. Framework unit/contract tests — passed locally
 
-**24 tests passed** covering authentication, start/stop, duplicate merging,
+**25 tests passed** covering authentication, start/stop, duplicate merging,
 33-source catalog consistency, private URL rejection, form ID preservation,
 unknown/future dates, Scrapy fixture extraction and Stop during a source request.
 API/worker unit tests use mocked SearXNG/Redis plus SQLite; they do **not** prove
@@ -66,4 +66,13 @@ An additional `pip-audit` check flagged the initially pinned older Scrapy,
 Starlette and pytest versions. Updated FastAPI to 0.141.1, Starlette to 1.7.0,
 Scrapy to 2.19.0 and pytest to 9.1.1. The resolver audit of the updated requirements
 reported no known vulnerabilities; this is not a guarantee of security. The updated
-stack must also pass CI. Framework tests were rerun (24 passed).
+stack must also pass CI. Framework tests were rerun (25 passed).
+
+## Android integration failure diagnosed
+
+The first builds failed at Room KSP. Both Retrofit and Room define `Query`;
+wildcard imports made the DAO annotation unresolved. The Retrofit imports were
+made explicit. CI's diagnostic annotation was also shortened below GitHub's 4 KB
+limit, and an explicit Bash `pipefail` prevents `tee` from hiding Gradle failures.
+This is a framework integration bug, not an upstream browser failure. No failed
+build was published as an APK.
