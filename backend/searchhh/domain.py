@@ -1,5 +1,7 @@
 """Opportunity policy on top of w3lib canonicalization; no search engine scraping."""
 import hashlib
+import html
+from w3lib.html import remove_tags
 import ipaddress
 import re
 from datetime import datetime, timezone
@@ -34,8 +36,8 @@ def canonical(url):
 
 def opportunity(raw, mode='opportunities'):
     url = canonical(str(raw.get('url','')))
-    title = str(raw.get('title') or url or '')[:500]
-    content = str(raw.get('content') or '')[:2000]
+    title = html.unescape(remove_tags(str(raw.get('title') or url or '')))[:500]
+    content = html.unescape(remove_tags(str(raw.get('content') or '')))[:2000]
     if not url or BOT.search(title):
         return None
     p = urlsplit(url)
@@ -50,7 +52,7 @@ def opportunity(raw, mode='opportunities'):
         date = datetime.fromisoformat(str(raw.get('publishedDate','')).replace('Z','+00:00'))
         date = date.replace(tzinfo=timezone.utc) if date.tzinfo is None else date
         if date <= datetime.now(timezone.utc):
-            published = date.isoformat()
+            published = date.astimezone(timezone.utc).isoformat()
     except ValueError:
         pass
     return {'id':hashlib.sha256(url.encode()).hexdigest(),'url':url,'title':title,'description':content,'kind':kind,'signals':signals,'sources':list(raw.get('engines') or [raw.get('engine','Page crawler')]),'published':published,'discovered':datetime.now(timezone.utc).isoformat(),'score':min(100,(50 if form else 20)+10*len(signals)),'verified':False}

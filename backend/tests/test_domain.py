@@ -46,3 +46,20 @@ def test_spider_discovers_without_submitting_forms():
     assert len(rows)==2 and all(isinstance(row,dict) for row in rows)
     assert rows[1]['url']=='https://forms.office.com/r/abc'
     assert spider.custom_settings['ROBOTSTXT_OBEY'] and not spider.custom_settings['REDIRECT_ENABLED']
+
+def test_source_dates_normalized_to_utc_and_html_stripped():
+    result=opportunity({'url':'https://example.org','title':'<b>Cohort</b> &amp; learning','publishedDate':'2025-01-01T04:00:00+04:00'})
+    assert result['title']=='Cohort & learning'
+    assert result['published']=='2025-01-01T00:00:00+00:00'
+
+@pytest.mark.parametrize('address,allowed',[('127.0.0.1',False),('10.0.0.1',False),('169.254.169.254',False),('8.8.8.8',True)])
+def test_dns_result_checked_at_connection_time(address,allowed):
+    from unittest.mock import patch
+    from twisted.internet.defer import succeed
+    from twisted.python.failure import Failure
+    from scrapy.resolver import CachingThreadedResolver
+    with patch.object(CachingThreadedResolver,'getHostByName',return_value=succeed(address)):
+        resolver=object.__new__(PublicResolver)
+        values=[]
+        resolver.getHostByName('example.org').addBoth(lambda result: values.append(result))
+        assert isinstance(values[0],Failure) != allowed

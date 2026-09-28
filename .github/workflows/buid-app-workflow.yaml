@@ -65,7 +65,17 @@ jobs:
           java-version: '17'
           cache: gradle
       - name: Test, lint, then assemble installable universal test APK
-        run: ./gradlew testDebugUnitTest lintDebug assembleDebug -PuniversalApk --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC"
+        run: ./gradlew testDebugUnitTest lintDebug assembleDebug -PuniversalApk --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee android-build.log
+      - name: Report build failure diagnostics
+        if: failure()
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          p = Path('android-build.log')
+          if p.exists():
+              text = p.read_text(errors='replace')[-6000:]
+              print('::error title=Android build diagnostics::' + text.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
+          PYTHON
       - name: Upload APK and reports
         uses: actions/upload-artifact@v4
         with:
@@ -79,6 +89,7 @@ jobs:
           path: |
             app/build/reports/tests/
             app/build/reports/lint-results-debug.html
+            android-build.log
   device-smoke:
     needs: android
     runs-on: ubuntu-latest
@@ -107,7 +118,7 @@ jobs:
             adb shell pidof app.searchhh.browser
             adb shell uiautomator dump /sdcard/searchhh-ui.xml
             adb pull /sdcard/searchhh-ui.xml searchhh-ui.xml
-            grep -q 'Start swarm' searchhh-ui.xml
+            grep -q 'Less noise.' searchhh-ui.xml
             adb exec-out screencap -p > searchhh-screen.png
             adb logcat -d -b crash > crash.log
             test ! -s crash.log
@@ -119,3 +130,27 @@ jobs:
             searchhh-screen.png
             searchhh-ui.xml
             crash.log
+
+  publish-test-apk:
+    needs: device-smoke
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: searchhh-debug-apk
+          path: apk
+      - name: Publish tested APK using GitHub CLI
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          mv apk/app-universal-debug.apk apk/searchhh-0.1.0-test.apk
+          sha256sum apk/searchhh-0.1.0-test.apk > apk/SHA256SUMS
+          gh release create "v0.1.0-test-${GITHUB_RUN_NUMBER}" \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "Searchhh 0.1.0 — tested development APK" \
+            --notes "Reuse-first development build based on EinkBro. 33 configured keyless SearXNG adapters. Opportunity swarms require a separately deployed HTTPS backend; see the README at this release commit. Debug signed, not a production release. Framework tests, real service integration, Android unit tests/lint, and emulator launch smoke must pass before this release is published. AI mode is not implemented." \
+            apk/searchhh-0.1.0-test.apk apk/SHA256SUMS

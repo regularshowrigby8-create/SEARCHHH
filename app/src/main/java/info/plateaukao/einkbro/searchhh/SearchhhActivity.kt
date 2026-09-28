@@ -62,6 +62,7 @@ class SearchhhActivity : ComponentActivity() {
             var status by remember { mutableStateOf(runCatching { gson.fromJson(prefs.getString("last_status", null), JobStatus::class.java) }.getOrNull()) }
             var busy by remember { mutableStateOf(false) }
             var message by remember { mutableStateOf("") }
+            var forgetConnection by remember { mutableStateOf(false) }
             var server by rememberSaveable { mutableStateOf(prefs.getString("url", "").orEmpty()) }
             var token by remember { mutableStateOf(prefs.getString("token", "").orEmpty()) }
             val running = status?.status in listOf("queued", "running") || (jobId != null && status == null)
@@ -78,6 +79,18 @@ class SearchhhActivity : ComponentActivity() {
                     while (true) { refresh(); delay(5000) }
                 }
             }
+            if (forgetConnection) AlertDialog(
+                onDismissRequest = { forgetConnection = false },
+                title = { Text("Disconnect this device?") },
+                text = { Text("This does NOT stop a remote swarm. If your server is unreachable, stop the job from the server before starting another. Local saved opportunities are kept.") },
+                confirmButton = { TextButton(onClick = {
+                    prefs.edit().remove("job").remove("last_status").remove("url").remove("token").apply()
+                    WorkManager.getInstance(this@SearchhhActivity).cancelUniqueWork("searchhh-status")
+                    jobId = null; status = null; server = ""; token = ""; forgetConnection = false
+                    message = "Disconnected locally. Any remote job must be stopped on its server."
+                }) { Text("Disconnect locally") } },
+                dismissButton = { TextButton(onClick = { forgetConnection = false }) { Text("Cancel") } }
+            )
             Scaffold(
                 topBar = { TopAppBar(title = { Column { Text("searchhh", fontWeight = FontWeight.Bold); Text("THE OPPORTUNITY HIVE", style = MaterialTheme.typography.overline) } }, backgroundColor = MaterialTheme.colors.background, elevation = 0.dp,
                     actions = { IconButton(onClick = { browse("https://duckduckgo.com") }) { Icon(Icons.Outlined.Language, "Open WebView browser") } }) },
@@ -156,6 +169,7 @@ class SearchhhActivity : ComponentActivity() {
                                     scope.launch { busy = true; try { val live = ConnectionSettings.api(this@SearchhhActivity).sources(); message = "Connected: ${live.size} backend sources" } catch (e: CancellationException) { throw e } catch (e: Exception) { message = "Saved, but connection failed: ${e.message}" } finally { busy = false } }
                                 }
                             }) { Text("Save & test connection") } }
+                            item { TextButton(enabled = !busy, onClick = { forgetConnection = true }) { Text("Disconnect / change server") } }
                             item { Divider(); Text("AI-assisted mode · not enabled", fontWeight = FontWeight.Bold); Text("Optional bring-your-own-key providers are planned. No claim of unlimited free AI. The current swarm uses existing search adapters and transparent opportunity rules.") }
                             item { Text("Built on EinkBro, Android WebView, SearXNG, Scrapy, FastAPI, PostgreSQL and Redis. Background status sync uses WorkManager; crawling runs on the server.", style = MaterialTheme.typography.body2) }
                             item { TextButton(onClick = { browse("https://github.com/regularshowrigby8-create/SEARCHHH/tree/arena/01a0ea36-searchhh") }) { Text("Source, licenses & setup") } }

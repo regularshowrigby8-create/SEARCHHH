@@ -19,15 +19,15 @@ fall back to the default locale; this is not a claim of complete translations.
 
 ## 3. Framework unit/contract tests — passed locally
 
-**19 tests passed** covering authentication, start/stop, duplicate merging,
+**24 tests passed** covering authentication, start/stop, duplicate merging,
 33-source catalog consistency, private URL rejection, form ID preservation,
 unknown/future dates, Scrapy fixture extraction and Stop during a source request.
 API/worker unit tests use mocked SearXNG/Redis plus SQLite; they do **not** prove
 real PostgreSQL/Redis/provider availability. That is a separate CI stage.
 
-## 4. Real service integration — pending CI
+## 4. Real service integration — passed on initial CI run
 
-The CI smoke test starts actual PostgreSQL, Redis, RQ and SearXNG. It checks loaded
+Run `36497202034` passed this stage. The CI smoke test starts actual PostgreSQL, Redis, RQ and SearXNG. It checks loaded
 engine configuration, executes a source pass and confirms Stop. A provider rate
 limit is reported separately from infrastructure failure; zero hits is not proof
 that a source is broken or that live opportunity quality is good.
@@ -59,3 +59,11 @@ end-to-end opportunity verification on an Android phone.
 - No live accuracy benchmark, deadline extraction, or confirmation of open cohorts.
 - Debug signing is for testing; establish a private release signing key before updates.
 - Preserve all GPL/AGPL notices and exact corresponding sources when distributing.
+
+## Dependency review
+
+An additional `pip-audit` check flagged the initially pinned older Scrapy,
+Starlette and pytest versions. Updated FastAPI to 0.141.1, Starlette to 1.7.0,
+Scrapy to 2.19.0 and pytest to 9.1.1. The resolver audit of the updated requirements
+reported no known vulnerabilities; this is not a guarantee of security. The updated
+stack must also pass CI. Framework tests were rerun (24 passed).

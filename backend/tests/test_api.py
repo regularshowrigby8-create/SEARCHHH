@@ -13,7 +13,7 @@ def test_authenticated_start_status_stop_and_dedup():
     Base.metadata.drop_all(engine)
     with TestClient(app) as client, patch('searchhh.api.redis') as redis, patch('searchhh.api.queue') as queue:
         redis.lock.return_value=nullcontext()
-        assert client.get('/v1/engines').status_code==403
+        assert client.get('/v1/engines').status_code==401
         assert client.get('/v1/engines',headers={'Authorization':'Bearer invalid'}).status_code==401
         assert len(client.get('/v1/engines',headers=HEADERS).json())==33
         assert client.post('/v1/jobs',headers=HEADERS,json={'query':'hi','engines':['fake']}).status_code==422
