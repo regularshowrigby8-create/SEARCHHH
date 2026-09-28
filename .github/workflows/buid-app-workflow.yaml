@@ -14,20 +14,20 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Retrieve previous build diagnostics
-        if: github.run_number == 3
+        if: github.run_number == 4
         uses: actions/download-artifact@v8
         with:
           name: android-test-reports
-          run-id: 36497529956
+          run-id: 36498067174
           github-token: ${{ github.token }}
           path: previous
       - name: Expose previous Gradle failure
-        if: github.run_number == 3
+        if: github.run_number == 4
         run: |
           python3 - <<'PYTHON'
           from pathlib import Path
           for p in Path('previous').rglob('android-build.log'):
-              print('::notice title=Previous build log::' + p.read_text()[-16000:].replace('%','%25').replace('\n','%0A'))
+              print('::notice title=Previous build log::' + p.read_text()[-3000:].replace('%','%25').replace('\n','%0A'))
           PYTHON
       - uses: actions/setup-python@v6
         with: {python-version: '3.11'}
@@ -91,7 +91,7 @@ jobs:
           from pathlib import Path
           p = Path('android-build.log')
           if p.exists():
-              text = p.read_text(errors='replace')[-6000:]
+              text = p.read_text(errors='replace')[-3000:]
               print('::error title=Android build diagnostics::' + text.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
           PYTHON
       - name: Upload APK and reports
