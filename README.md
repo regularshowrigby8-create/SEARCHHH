@@ -1,12 +1,18 @@
 # Searchhh
 
 An Android opportunity-discovery framework built **on existing open-source tools**.
-Initial development build, not a production-certified crawler.
+Development build, not a production-certified crawler.
+
+**0.2 implementation under validation:** included phone backend, name-only onboarding,
+random per-installation identity/credentials, official MCP SSE tools, outbound relay,
+and 128 catalog adapters. [Architecture and honest availability limits](docs/searchhh/INCLUDED-BACKEND.md).
+The older APK linked below does **not** contain this upgrade.
 
 ## Architecture
 
 - Android: imported **EinkBro v16.7.0** browser, Kotlin, Jetpack Compose and Android System WebView; Searchhh screens use Retrofit, Room and WorkManager.
-- Server: Python **FastAPI**, **SearXNG** (33 configured keyless adapters), **Scrapy**, **PostgreSQL**, **Redis + RQ**.
+- Included backend (0.2): Kotlin/Room/coroutines, Ktor + official MCP SDK, JSch remote bridge, public search connectors. No user deployment.
+- Optional external stack: Python **FastAPI**, **SearXNG** (128 configured adapters), **Scrapy**, **PostgreSQL**, **Redis + RQ**.
 - Future, not implemented: AI swarm/BYOK mode, Go crawler, OpenSearch.
 
 Searchhh is not an AI agent in this release. Opportunity classification uses explicit
@@ -37,13 +43,19 @@ Keep Android System WebView updated. The APK does not bundle a full Chromium eng
 
 ### What works without hosting?
 
+**0.2 source:** enter your name and the included backend initializes itself. Search
+providers and the experimental remote relay remain third-party network dependencies;
+no backend address or manually generated token is requested.
+
+**Released 0.1 APK only:**
+
 The reused WebView browser and local saved-results database are on-device.
 **Opportunity swarms require your own running backend.** There is no hidden shared
 host or claim of free permanent hosting. In Settings, enter your HTTPS backend URL
 and its access token. This token protects your private server; it is not a search
 provider API key. Source-provider keys are not required for default mode.
 
-## Backend setup
+## Optional external backend setup (not required by 0.2 Android)
 
 Install Docker Engine + Compose v2 on a server, then:
 
@@ -66,10 +78,20 @@ This is a **single-owner deployment**, not a public multi-user SaaS. Use strong
 secrets, a firewall, request-size/rate limits at the reverse proxy and resource
 limits. Pin images and audit dependencies before production.
 
-## Workflow
+## Included Android workflow (0.2)
+
+1. Enter your name; ID and secure credential are generated independently.
+2. Select Opportunity Finder or Link Mode and choose from 128 catalog adapters.
+3. Start a public search; optionally enable bounded, robots-aware page discovery.
+4. Eight-source batches repeat with 75-second cooldowns (150 on errors).
+5. Stop prevents further commits; save/open/export results locally.
+6. Settings shows backend and remote-bridge state. Share agent access only with a
+   trusted MCP SSE client; no AI model is bundled.
+
+## Optional external stack workflow
 
 1. Configure the backend and test the connection in Android Settings.
-2. Choose Opportunity Finder or Link Mode; select from 33 sources.
+2. Choose Opportunity Finder or Link Mode; select from 128 sources.
 3. Enter a topic. Optionally enable Scrapy one-hop discovery.
 4. Start the swarm. SearXNG handles parallel source requests; RQ schedules another
    pass after a 60-second cooldown (120 seconds when errors are reported).

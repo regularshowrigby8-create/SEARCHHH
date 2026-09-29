@@ -128,6 +128,9 @@ jobs:
             adb logcat -c
             adb shell am instrument -w app.searchhh.browser.test/androidx.test.runner.AndroidJUnitRunner > instrumentation.log
             cat instrumentation.log
+            adb shell run-as app.searchhh.browser cat files/relay-probe.txt > relay-probe.txt
+            adb shell run-as app.searchhh.browser cat files/search-probe.txt > search-probe.txt
+            cat relay-probe.txt search-probe.txt
             grep -q 'OK (' instrumentation.log
             adb shell am start -W -n app.searchhh.browser/info.plateaukao.einkbro.searchhh.SearchhhActivity
             sleep 5
@@ -158,6 +161,8 @@ jobs:
             searchhh-ui.xml
             crash.log
             instrumentation.log
+            relay-probe.txt
+            search-probe.txt
 
   publish-test-apk:
     needs: device-smoke

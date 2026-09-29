@@ -83,8 +83,6 @@ class SearchhhActivity : ComponentActivity() {
                     publicUrl = InternalBackendService.remoteUrl; delay(1500)
                 }
             }
-            var server by rememberSaveable { mutableStateOf(prefs.getString("url", "").orEmpty()) }
-            var token by remember { mutableStateOf(prefs.getString("token", "").orEmpty()) }
             val running = status?.status in listOf("queued", "running") || (jobId != null && status == null)
             suspend fun refresh() {
                 val id = jobId ?: return

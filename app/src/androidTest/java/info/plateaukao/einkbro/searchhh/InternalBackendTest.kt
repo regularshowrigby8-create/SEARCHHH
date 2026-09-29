@@ -56,7 +56,7 @@ class InternalBackendTest {
                 }
                 val endpoint = event()
                 val postUrl = base + (if (endpoint.startsWith("?")) "/mcp$endpoint" else endpoint)
-                fun post(body: String, token: String = identity.token): Int = client.newCall(Request.Builder().url(postUrl).header("Authorization", "Bearer $token").post(body.toRequestBody("application/json".toMediaType())).build()).execute().use { it.code }
+                fun post(body: String, token: String = identity.token): Int = client.newCall(Request.Builder().url(postUrl).header("Authorization", "Bearer $token").post(body.toByteArray().toRequestBody("application/json".toMediaType())).build()).execute().use { it.code }
                 assertEquals(202, post("""{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"device-test","version":"1"}}}"""))
                 assertTrue(event().contains("serverInfo"))
                 assertEquals(202, post("""{"jsonrpc":"2.0","method":"notifications/initialized"}"""))

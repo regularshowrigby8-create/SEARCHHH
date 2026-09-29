@@ -15,9 +15,11 @@ import crawlercommons.robots.SimpleRobotRulesParser
 class PublicSearch {
     val http = OkHttpClient.Builder().callTimeout(20, TimeUnit.SECONDS)
         .followRedirects(false).followSslRedirects(false)
-        .dns(Dns { host -> Dns.SYSTEM.lookup(host).also { addresses ->
-            if (addresses.isEmpty() || addresses.any { !LocalPolicy.publicAddress(it) }) throw UnknownHostException("Private/reserved address blocked")
-        } }).build()
+        .dns(object : Dns {
+            override fun lookup(hostname: String) = Dns.SYSTEM.lookup(hostname).also { addresses ->
+                if (addresses.isEmpty() || addresses.any { !LocalPolicy.publicAddress(it) }) throw UnknownHostException("Private/reserved address blocked")
+            }
+        }).build()
     @Volatile var instance: String? = null
         private set
     @Volatile var supported: Set<String> = emptySet()
@@ -98,7 +100,7 @@ class PublicSearch {
                     check(doc.select("#search, #search_form, form#search").isNotEmpty() || doc.select("article.result, #results").isNotEmpty()) { "Service returned an unsupported page or challenge" }
                     doc.select("article.result").take(100).forEach { article ->
                         val a = article.selectFirst("h3 a[href]") ?: return@forEach
-                        val names = article.select(".engines span, .engines a").eachText().ifEmpty { listOf("SearXNG (${base.toHttpUrl().host}); engine not reported") }
+                        val names = article.select(".engines span").eachText().ifEmpty { listOf("SearXNG (${base.toHttpUrl().host}); engine not reported") }
                         val r = LocalPolicy.result(a.absUrl("href"), a.text(), article.select(".content").text(), names, mode, article.selectFirst("time[datetime]")?.attr("datetime"))
                         if (r == null) filtered++ else rows += r
                     }

@@ -4,7 +4,10 @@ import android.content.Context
 import com.jcraft.jsch.*
 import info.plateaukao.einkbro.searchhh.ConnectionSettings
 import java.io.ByteArrayOutputStream
-import java.util.Vector
+import com.google.gson.JsonParser
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.util.concurrent.TimeUnit
 
 /** Existing JSch reverse forwarding + localhost.run's documented free nokey service. */
 class RelayBridge(private val context: Context) {
@@ -43,19 +46,30 @@ class RelayBridge(private val context: Context) {
         val exec = connection.openChannel("exec") as ChannelExec
         exec.setCommand("--output json")
         val output = object : ByteArrayOutputStream() {
-            override fun write(b: ByteArray, off: Int, len: Int) {
+            @Synchronized override fun write(b: ByteArray, off: Int, len: Int) {
                 super.write(b, off, len)
                 val text = toString("UTF-8")
-                // Only accept HTTPS domains from this relay's documented free domain families.
-                val found = Regex("https://[a-zA-Z0-9-]+\\.(?:lhr\\.life|localhost\\.run)(?=[/\\s\\\"}]|$)").find(text)?.value
-                if (found != null) { url = found; status = "Connected · temporary public HTTPS URL" }
+                val found = text.lineSequence().mapNotNull(RelayEvent::httpsUrl).firstOrNull()
+                if (found != null) { url = found; status = "Verifying public forwarding" }
                 if (size() > 16384) reset()
             }
         }
         exec.outputStream = output; exec.setErrStream(output); channel = exec; exec.connect(10000)
         val deadline = System.currentTimeMillis() + 20000
         while (url == null && connection.isConnected && System.currentTimeMillis() < deadline) Thread.sleep(250)
-        check(url != null) { "Relay did not return a usable URL" }
+        check(url != null) { "Relay did not return a usable forwarding event" }
+        val identity = LocalIdentity.load(context) ?: error("Installation not initialized")
+        val client = OkHttpClient.Builder().callTimeout(20, TimeUnit.SECONDS).followRedirects(false).followSslRedirects(false).build()
+        try {
+            client.newCall(Request.Builder().url("$url/health").build()).execute().use { check(it.code == 401) { "Public relay did not enforce authentication" } }
+            client.newCall(Request.Builder().url("$url/health").header("Authorization", "Bearer ${identity.token}").build()).execute().use { response ->
+                check(response.code == 200) { "Public forwarding check failed (HTTP ${response.code})" }
+                val body = response.body!!.source(); body.request(8193)
+                check(body.buffer.size <= 8192) { "Unexpected relay response" }
+                check(JsonParser.parseString(body.readUtf8()).asJsonObject["installationId"]?.asString == identity.id) { "Relay reached a different installation" }
+            }
+            status = "Connected · verified public HTTPS forwarding"
+        } finally { client.connectionPool.evictAll(); client.dispatcher.executorService.shutdown() }
     }
     fun connected(): Boolean = session?.isConnected == true && channel?.isConnected == true && url != null
     fun close() { channel?.disconnect(); session?.disconnect(); channel = null; session = null; url = null; status = "Disconnected" }

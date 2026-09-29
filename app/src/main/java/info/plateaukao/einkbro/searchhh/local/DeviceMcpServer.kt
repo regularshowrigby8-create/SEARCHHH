@@ -27,7 +27,7 @@ class DeviceMcpServer(private val context: Context) {
     private val http = embeddedServer(CIO, host = "127.0.0.1", port = 0) {
         install(SSE)
         intercept(ApplicationCallPipeline.Plugins) {
-            val expected = LocalIdentity.load(context)?.token.orEmpty()
+            val expected = LocalIdentity.load(this@DeviceMcpServer.context)?.token.orEmpty()
             val supplied = call.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ").orEmpty()
             if (call.request.headers[HttpHeaders.Origin] != null) {
                 call.respond(HttpStatusCode.Forbidden, "Browser origins are not allowed"); finish(); return@intercept

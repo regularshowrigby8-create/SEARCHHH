@@ -16,6 +16,7 @@ class InternalBackendService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var mcp: DeviceMcpServer? = null
     private var bridge: RelayBridge? = null
+    private var starting = false
     override fun onBind(intent: Intent?): IBinder? = null
     override fun onCreate() {
         super.onCreate()
@@ -27,13 +28,13 @@ class InternalBackendService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == "STOP") { stopSelf(); return START_NOT_STICKY }
         if (LocalIdentity.load(this) == null) { stopSelf(); return START_NOT_STICKY }
-        if (active) return START_NOT_STICKY
-        active = true; state = "Starting internal server"
+        if (active || starting) return START_NOT_STICKY
+        starting = true; state = "Starting internal server"
         scope.launch {
             try {
                 mcp = DeviceMcpServer(this@InternalBackendService)
                 mcp!!.start(); ensureActive()
-                localPort = mcp!!.port; state = "Internal server ready"
+                localPort = mcp!!.port; active = true; starting = false; state = "Internal server ready"
                 if (ConnectionSettings.prefs(this@InternalBackendService).getBoolean("relay_enabled", true)) {
                     var delayMs = 5000L
                     while (isActive) {
@@ -55,7 +56,7 @@ class InternalBackendService : Service() {
         return START_NOT_STICKY
     }
     override fun onDestroy() {
-        active = false; state = "Stopped"; remoteUrl = null; localPort = 0
+        starting = false; active = false; state = "Stopped"; remoteUrl = null; localPort = 0
         bridge?.close(); mcp?.stop(); scope.cancel()
         CoroutineScope(Dispatchers.IO).launch { LocalBackend.get(applicationContext).shutdown() }
         super.onDestroy()

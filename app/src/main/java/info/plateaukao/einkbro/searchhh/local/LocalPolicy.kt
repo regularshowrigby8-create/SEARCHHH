@@ -11,17 +11,26 @@ object LocalPolicy {
     private val signals = Regex("\\b(cohort|fellowship|bootcamp|scholarship|certification|certificate|applications?|enroll|enrol|register|opportunit\\w*)\\b", RegexOption.IGNORE_CASE)
     private val bots = Regex("captcha|access denied|verify you are human|robot check|just a moment", RegexOption.IGNORE_CASE)
     fun publicAddress(address: InetAddress): Boolean {
-        val b = address.address
-        return !address.isAnyLocalAddress && !address.isLoopbackAddress && !address.isLinkLocalAddress &&
-            !address.isSiteLocalAddress && !address.isMulticastAddress &&
-            !(b.size == 16 && (b[0].toInt() and 0xfe) == 0xfc) &&
-            !(b.size == 4 && ((b[0].toInt() and 255) == 0 || (b[0].toInt() and 255) >= 224 ||
-                ((b[0].toInt() and 255) == 100 && (b[1].toInt() and 255) in 64..127)))
+        val b = address.address.map { it.toInt() and 255 }
+        if (address.isAnyLocalAddress || address.isLoopbackAddress || address.isLinkLocalAddress || address.isSiteLocalAddress || address.isMulticastAddress) return false
+        if (b.size == 4) {
+            return !(b[0] == 0 || b[0] >= 224 ||
+                (b[0] == 100 && b[1] in 64..127) ||
+                (b[0] == 192 && b[1] == 0 && b[2] in listOf(0, 2)) ||
+                (b[0] == 192 && b[1] == 88 && b[2] == 99) ||
+                (b[0] == 198 && b[1] in 18..19) ||
+                (b[0] == 198 && b[1] == 51 && b[2] == 100) ||
+                (b[0] == 203 && b[1] == 0 && b[2] == 113))
+        }
+        // Global unicast only; exclude documentation and transition/tunnel ranges.
+        return b.size == 16 && (b[0] and 0xe0) == 0x20 &&
+            !(b[0] == 0x20 && b[1] == 0x02) &&
+            !(b[0] == 0x20 && b[1] == 0x01 && ((b[2] == 0 && b[3] == 0) || (b[2] == 0x0d && b[3] == 0xb8)))
     }
     fun canonical(raw: String): String? {
         val u = raw.toHttpUrlOrNull() ?: return null
         if (u.username.isNotEmpty() || u.password.isNotEmpty() || u.port !in listOf(80, 443)) return null
-        val h = u.host
+        val h = u.host.trimEnd('.')
         if (h == "localhost" || h.endsWith(".local") || h.endsWith(".internal") || h.endsWith(".onion") || h.endsWith(".bot")) return null
         if (h.contains(':') || h.matches(Regex("[0-9.]+"))) {
             if (!runCatching { publicAddress(InetAddress.getByName(h)) }.getOrDefault(false)) return null

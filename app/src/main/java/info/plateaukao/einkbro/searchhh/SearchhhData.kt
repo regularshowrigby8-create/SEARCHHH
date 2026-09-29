@@ -87,11 +87,12 @@ abstract class SearchhhDatabase : RoomDatabase() {
     abstract fun saved(): SavedDao
     abstract fun sessions(): LocalSessionDao
     companion object {
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) { db.execSQL("CREATE TABLE IF NOT EXISTS `local_sessions` (`id` TEXT NOT NULL, `payload` TEXT NOT NULL, PRIMARY KEY(`id`))") }
+        }
         @Volatile private var instance: SearchhhDatabase? = null
         fun get(context: Context): SearchhhDatabase = instance ?: synchronized(this) {
-            instance ?: Room.databaseBuilder(context.applicationContext, SearchhhDatabase::class.java, "searchhh.db").addMigrations(object : Migration(1, 2) {
-                override fun migrate(db: SupportSQLiteDatabase) { db.execSQL("CREATE TABLE IF NOT EXISTS `local_sessions` (`id` TEXT NOT NULL, `payload` TEXT NOT NULL, PRIMARY KEY(`id`))") }
-            }).build().also { instance = it }
+            instance ?: Room.databaseBuilder(context.applicationContext, SearchhhDatabase::class.java, "searchhh.db").addMigrations(MIGRATION_1_2).build().also { instance = it }
         }
     }
 }
