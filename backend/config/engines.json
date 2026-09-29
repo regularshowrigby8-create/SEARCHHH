@@ -15,7 +15,7 @@
     "id": "brave",
     "name": "Brave",
     "category": "general",
-    "default": true
+    "default": false
   },
   {
     "id": "google",
@@ -195,6 +195,576 @@
     "id": "seznam",
     "name": "Seznam",
     "category": "general",
+    "default": false
+  },
+  {
+    "id": "alpine linux packages",
+    "name": "Alpine Linux Packages",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "anaconda",
+    "name": "Anaconda",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "arch linux wiki",
+    "name": "Arch Linux Wiki",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "nixos wiki",
+    "name": "Nixos Wiki",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "artic",
+    "name": "Artic",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "artstation",
+    "name": "Artstation",
+    "category": "images",
+    "default": false
+  },
+  {
+    "id": "bandcamp",
+    "name": "Bandcamp",
+    "category": "music",
+    "default": false
+  },
+  {
+    "id": "baidu",
+    "name": "Baidu",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "bitbucket",
+    "name": "Bitbucket",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "boardreader",
+    "name": "Boardreader",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "bpb",
+    "name": "Bpb",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "openverse",
+    "name": "Openverse",
+    "category": "images",
+    "default": false
+  },
+  {
+    "id": "media.ccc.de",
+    "name": "Media.Ccc.De",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "cachy os packages",
+    "name": "Cachy Os Packages",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "destatis",
+    "name": "Destatis",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "devicons",
+    "name": "Devicons",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "encyclosearch",
+    "name": "Encyclosearch",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "europepmc",
+    "name": "Europepmc",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "emojipedia",
+    "name": "Emojipedia",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "etymonline",
+    "name": "Etymonline",
+    "category": "dictionaries",
+    "default": false
+  },
+  {
+    "id": "fireball",
+    "name": "Fireball",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "free software directory",
+    "name": "Free Software Directory",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "fyyd",
+    "name": "Fyyd",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "gentoo",
+    "name": "Gentoo",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "codeberg",
+    "name": "Codeberg",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "gitea.com",
+    "name": "Gitea.Com",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "gmx",
+    "name": "Gmx",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "goodreads",
+    "name": "Goodreads",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "google scholar",
+    "name": "Google Scholar",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "google play apps",
+    "name": "Google Play Apps",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "habrahabr",
+    "name": "Habrahabr",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "hex",
+    "name": "Hex",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "crates.io",
+    "name": "Crates.Io",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "hoogle",
+    "name": "Hoogle",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "iconify",
+    "name": "Iconify",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "il post",
+    "name": "Il Post",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "imdb",
+    "name": "Imdb",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "ina",
+    "name": "Ina",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "jisho",
+    "name": "Jisho",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "lobste.rs",
+    "name": "Lobste.Rs",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "lucide",
+    "name": "Lucide",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "mastodon users",
+    "name": "Mastodon Users",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "mdn",
+    "name": "Mdn",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "metacpan",
+    "name": "Metacpan",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "microsoft learn",
+    "name": "Microsoft Learn",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "mixcloud",
+    "name": "Mixcloud",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "mankier",
+    "name": "Mankier",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "odysee",
+    "name": "Odysee",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "ollama",
+    "name": "Ollama",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "openairedatasets",
+    "name": "Openairedatasets",
+    "category": "science",
+    "default": false
+  },
+  {
+    "id": "openairepublications",
+    "name": "Openairepublications",
+    "category": "science",
+    "default": false
+  },
+  {
+    "id": "openstreetmap",
+    "name": "Openstreetmap",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "openrepos",
+    "name": "Openrepos",
+    "category": "files",
+    "default": false
+  },
+  {
+    "id": "packagist",
+    "name": "Packagist",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "pdbe",
+    "name": "Pdbe",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "photon",
+    "name": "Photon",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "pub.dev",
+    "name": "Pub.Dev",
+    "category": "packages",
+    "default": false
+  },
+  {
+    "id": "radio browser",
+    "name": "Radio Browser",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "reuters",
+    "name": "Reuters",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "rottentomatoes",
+    "name": "Rottentomatoes",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "sepiasearch",
+    "name": "Sepiasearch",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "sogou",
+    "name": "Sogou",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "soundcloud",
+    "name": "Soundcloud",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "askubuntu",
+    "name": "Askubuntu",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "superuser",
+    "name": "Superuser",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "discuss.python",
+    "name": "Discuss.Python",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "caddy.community",
+    "name": "Caddy.Community",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "pi-hole.community",
+    "name": "Pi-Hole.Community",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "privacywall",
+    "name": "Privacywall",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "tagesschau",
+    "name": "Tagesschau",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "tusksearch",
+    "name": "Tusksearch",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "yandex",
+    "name": "Yandex",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "youtube",
+    "name": "Youtube",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "dailymotion",
+    "name": "Dailymotion",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "vimeo",
+    "name": "Vimeo",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "wikinews",
+    "name": "Wikinews",
+    "category": "news",
+    "default": false
+  },
+  {
+    "id": "wikiquote",
+    "name": "Wikiquote",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "wikisource",
+    "name": "Wikisource",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "wikispecies",
+    "name": "Wikispecies",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "wiktionary",
+    "name": "Wiktionary",
+    "category": "dictionaries",
+    "default": false
+  },
+  {
+    "id": "wikivoyage",
+    "name": "Wikivoyage",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "national vulnerability database",
+    "name": "National Vulnerability Database",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "naver",
+    "name": "Naver",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "rubygems",
+    "name": "Rubygems",
+    "category": "it",
+    "default": false
+  },
+  {
+    "id": "peertube",
+    "name": "Peertube",
+    "category": "videos",
+    "default": false
+  },
+  {
+    "id": "mediathekviewweb",
+    "name": "Mediathekviewweb",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "yacy",
+    "name": "Yacy",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "searchch",
+    "name": "Searchch",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "tootfinder",
+    "name": "Tootfinder",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "voidlinux",
+    "name": "Voidlinux",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "vuhuv",
+    "name": "Vuhuv",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "wikimini",
+    "name": "Wikimini",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "lib.rs",
+    "name": "Lib.Rs",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "pkg.go.dev",
+    "name": "Pkg.Go.Dev",
+    "category": "general",
+    "default": false
+  },
+  {
+    "id": "minecraft wiki",
+    "name": "Minecraft Wiki",
+    "category": "software wikis",
     "default": false
   }
 ]

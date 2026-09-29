@@ -67,7 +67,7 @@ jobs:
           cache: gradle
       - name: Test, lint, then assemble installable universal test APK
         shell: bash
-        run: ./gradlew testDebugUnitTest lintDebug assembleDebug -PuniversalApk --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee android-build.log
+        run: ./gradlew testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest -PuniversalApk --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee android-build.log
       - name: Report build failure diagnostics
         if: failure()
         run: |
@@ -78,6 +78,12 @@ jobs:
               text = p.read_text(errors='replace')[-3000:]
               print('::error title=Android build diagnostics::' + text.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
           PYTHON
+      - name: Upload instrumented tests
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-instrumentation
+          path: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+          if-no-files-found: error
       - name: Upload APK and reports
         uses: actions/upload-artifact@v7
         with:
@@ -101,6 +107,10 @@ jobs:
         with:
           name: searchhh-debug-apk
           path: apk
+      - uses: actions/download-artifact@v8
+        with:
+          name: android-instrumentation
+          path: instrumentation
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -114,7 +124,11 @@ jobs:
           disable-animations: true
           script: |
             adb install apk/app-universal-debug.apk
+            adb install instrumentation/app-debug-androidTest.apk
             adb logcat -c
+            adb shell am instrument -w app.searchhh.browser.test/androidx.test.runner.AndroidJUnitRunner > instrumentation.log
+            cat instrumentation.log
+            grep -q 'OK (' instrumentation.log
             adb shell am start -W -n app.searchhh.browser/info.plateaukao.einkbro.searchhh.SearchhhActivity
             sleep 5
             adb shell pidof app.searchhh.browser
@@ -124,6 +138,17 @@ jobs:
             adb exec-out screencap -p > searchhh-screen.png
             adb logcat -d -b crash > crash.log
             test ! -s crash.log
+      - name: Surface device failure diagnostics
+        if: failure()
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          for filename in ['instrumentation.log', 'crash.log']:
+              p = Path(filename)
+              if p.exists():
+                  text = p.read_text(errors='replace')[-3000:]
+                  print('::error title=Device diagnostics::' + text.replace('%','%25').replace('\n','%0A'))
+          PYTHON
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -132,6 +157,7 @@ jobs:
             searchhh-screen.png
             searchhh-ui.xml
             crash.log
+            instrumentation.log
 
   publish-test-apk:
     needs: device-smoke
@@ -153,10 +179,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          mv apk/app-universal-debug.apk apk/searchhh-0.1.0-test.apk
-          sha256sum apk/searchhh-0.1.0-test.apk > apk/SHA256SUMS
-          gh release create "v0.1.0-test-${GITHUB_RUN_NUMBER}" \
+          mv apk/app-universal-debug.apk apk/searchhh-0.2.0-test.apk
+          (cd apk && sha256sum searchhh-0.2.0-test.apk > SHA256SUMS)
+          gh release create "v0.2.0-test-${GITHUB_RUN_NUMBER}" \
             --target "$GITHUB_SHA" --prerelease \
-            --title "Searchhh 0.1.0 — tested development APK" \
-            --notes "Reuse-first development build based on EinkBro. 33 configured keyless SearXNG adapters. Opportunity swarms require a separately deployed HTTPS backend; see the README at this release commit. Debug signed, not a production release. Framework tests, real service integration, Android unit tests/lint, and emulator launch smoke must pass before this release is published. AI mode is not implemented." \
-            apk/searchhh-0.1.0-test.apk apk/SHA256SUMS device/searchhh-screen.png
+            --title "Searchhh 0.2.0 — included backend and MCP" \
+            --notes "Included Kotlin backend initialized by name, installation-specific generated credentials, 128-source catalog, and official MCP SDK SSE tools. No operator deployment required for the Android backend. Broader search depends on public SearXNG services; not all sources are always available. JSch remote relay is experimental and provider-dependent. No AI model is included. Debug development build. See validation notes for tested versus unverified behavior." \
+            apk/searchhh-0.2.0-test.apk apk/SHA256SUMS device/searchhh-screen.png

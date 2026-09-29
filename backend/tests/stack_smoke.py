@@ -13,7 +13,7 @@ for attempt in range(90):
     except httpx.HTTPError: pass
     time.sleep(2)
 else: raise AssertionError('Backend dependencies did not become healthy')
-assert len(client.get('/v1/engines').json())==33
+assert len(client.get('/v1/engines').json())==128
 # Verify SearXNG loaded the configured engines, not just a static app catalog.
 cmd=['docker','compose','--env-file','.env','exec','-T','api','python','-c',"import httpx,json; r=httpx.get('http://searxng:8080/config',timeout=20); r.raise_for_status(); print(json.dumps([e['name'] for e in r.json()['engines']]))"]
 for attempt in range(30):
@@ -35,4 +35,4 @@ assert not any('SearXNG unavailable' in e for e in state['errors']),state['error
 print('Live pass:',len(state['results']),'results; source status:',state['errors'])
 assert client.post('/v1/jobs/'+job+'/stop').json()['status']=='stopped'
 assert client.get('/v1/jobs/'+job).json()['status']=='stopped'
-print('PostgreSQL + Redis + RQ + 33-adapter SearXNG integration: passed')
+print('PostgreSQL + Redis + RQ + 128-adapter SearXNG integration: passed')

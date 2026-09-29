@@ -36,7 +36,7 @@ app = FastAPI(title='Searchhh',version='0.1.0',lifespan=lifespan,description='Pr
 class StartSearch(BaseModel):
     query: str = Field(min_length=2,max_length=240)
     mode: Literal['opportunities','links'] = 'opportunities'
-    engines: list[str] = Field(min_length=1,max_length=33)
+    engines: list[str] = Field(min_length=1,max_length=len(CATALOG))
     crawl: bool = False
     @field_validator('query')
     @classmethod

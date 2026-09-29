@@ -16,6 +16,8 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import java.util.concurrent.TimeUnit
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 // Integration contracts, not a replacement browser/search engine implementation.
 data class Source(val id: String, val name: String, val category: String, val default: Boolean = false)
@@ -44,6 +46,7 @@ object ConnectionSettings {
     )
     @Synchronized fun api(context: Context): SearchhhApi {
         val p = prefs(context)
+        if (p.getString("backend_mode", "internal") == "internal") return info.plateaukao.einkbro.searchhh.local.LocalBackend.get(context)
         val url = p.getString("url", "").orEmpty().trim().trimEnd('/') + "/"
         require(validServerUrl(url)) { "Set your HTTPS backend address in Settings first" }
         val token = p.getString("token", "").orEmpty()
@@ -72,13 +75,23 @@ interface SavedDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun save(row: SavedOpportunity)
     @Query("DELETE FROM saved_opportunities WHERE id = :id") suspend fun remove(id: String)
 }
-@Database(entities = [SavedOpportunity::class], version = 1, exportSchema = true)
+@Entity(tableName = "local_sessions")
+data class LocalSession(@PrimaryKey val id: String, val payload: String)
+@Dao
+interface LocalSessionDao {
+    @Query("SELECT * FROM local_sessions WHERE id = :id") suspend fun get(id: String): LocalSession?
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun put(value: LocalSession)
+}
+@Database(entities = [SavedOpportunity::class, LocalSession::class], version = 2, exportSchema = true)
 abstract class SearchhhDatabase : RoomDatabase() {
     abstract fun saved(): SavedDao
+    abstract fun sessions(): LocalSessionDao
     companion object {
         @Volatile private var instance: SearchhhDatabase? = null
         fun get(context: Context): SearchhhDatabase = instance ?: synchronized(this) {
-            instance ?: Room.databaseBuilder(context.applicationContext, SearchhhDatabase::class.java, "searchhh.db").build().also { instance = it }
+            instance ?: Room.databaseBuilder(context.applicationContext, SearchhhDatabase::class.java, "searchhh.db").addMigrations(object : Migration(1, 2) {
+                override fun migrate(db: SupportSQLiteDatabase) { db.execSQL("CREATE TABLE IF NOT EXISTS `local_sessions` (`id` TEXT NOT NULL, `payload` TEXT NOT NULL, PRIMARY KEY(`id`))") }
+            }).build().also { instance = it }
         }
     }
 }

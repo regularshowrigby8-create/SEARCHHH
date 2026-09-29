@@ -25,6 +25,8 @@
         </intent>
     </queries> <!-- Permission -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <!-- Status bar Wi-Fi indicator and ad-filter download scheduling. Used to arrive
          via WorkManager's manifest, which is no longer a dependency. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -85,6 +87,9 @@
             android:name="android.window.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY"
             android:value="true" />
 
+        <service android:name=".searchhh.local.InternalBackendService" android:exported="false" android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="User-started personal search and MCP server accepting paired agent connections; stoppable via notification" />
+        </service>
         <activity android:name=".searchhh.SearchhhActivity" android:exported="true" android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -27,10 +27,10 @@ def test_opportunity_filter_and_unknown_date():
 def test_future_date_not_newest():
     assert opportunity({'url':'https://example.org','title':'Free cohort','publishedDate':'2099-01-01T00:00:00Z'})['published'] is None
 
-def test_33_unique_sources_match_android_and_searxng():
+def test_128_unique_sources_match_android_and_searxng():
     import yaml
     root=Path(__file__).parents[2]
-    assert len(CATALOG)==33 and len({x['id'] for x in CATALOG})==33
+    assert len(CATALOG)==128 and len({x['id'] for x in CATALOG})==128
     assert json.loads((root/'app/src/main/assets/searchhh-engines.json').read_text())==CATALOG
     settings=yaml.safe_load((root/'backend/config/searxng.yml').read_text())
     assert set(settings['use_default_settings']['engines']['keep_only'])=={x['id'] for x in CATALOG}

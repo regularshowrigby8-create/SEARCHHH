@@ -62,14 +62,15 @@ android {
     }
 
     defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         applicationId = "app.searchhh.browser"
         minSdk = 24
         // targetSdk 36 defaults predictive back to on, which would stop KEYCODE_BACK
         // reaching BrowserActivity.onKeyDown -> KeyHandler; the manifest opts out
         // via enableOnBackInvokedCallback=false.
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
 
         // Google Drive backup sync: an "installed app" OAuth client (not a secret;
         // PKCE, no client secret) with the reversed-client-id custom-scheme redirect.
@@ -134,6 +135,7 @@ android {
     }
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -233,6 +235,15 @@ androidComponents {
 }
 
 dependencies {
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test:core-ktx:1.6.1")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    implementation("io.modelcontextprotocol:kotlin-sdk:0.4.0")
+    implementation("io.ktor:ktor-server-cio:3.0.2")
+    implementation("io.ktor:ktor-server-sse:3.0.2")
+    implementation("com.github.mwiede:jsch:0.2.26")
+    implementation("com.github.crawler-commons:crawler-commons:1.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     // Searchhh framework adapters; browser internals remain upstream.
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")

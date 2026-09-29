@@ -15,7 +15,7 @@ def test_authenticated_start_status_stop_and_dedup():
         redis.lock.return_value=nullcontext()
         assert client.get('/v1/engines').status_code==401
         assert client.get('/v1/engines',headers={'Authorization':'Bearer invalid'}).status_code==401
-        assert len(client.get('/v1/engines',headers=HEADERS).json())==33
+        assert len(client.get('/v1/engines',headers=HEADERS).json())==128
         assert client.post('/v1/jobs',headers=HEADERS,json={'query':'hi','engines':['fake']}).status_code==422
         response=client.post('/v1/jobs',headers=HEADERS,json={'query':'free cohort','engines':['github'],'crawl':False})
         assert response.status_code==201

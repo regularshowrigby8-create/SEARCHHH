@@ -39,3 +39,16 @@ by its license. Do not relabel it as an original Searchhh search engine.
 
 No unlicensed repository code was imported. Two superficially matching
 FastAPI/Scrapy/PostgreSQL/Redis projects were rejected because no license was found.
+
+## Searchhh 0.2 included-backend additions
+
+Ktor (Apache-2.0), official MCP Kotlin SDK 0.4.0 (MIT at that tag), JSch mwiede fork
+(BSD-style), Jsoup (MIT), and crawler-commons (Apache-2.0) are consumed as dependencies,
+not copied and relabeled. Review their packaged notices before production distribution.
+See [included backend design](INCLUDED-BACKEND.md) for architecture, API boundaries,
+public service dependencies and explicit validation limits. SearxDroid's "self-contained"
+description was checked: it is a public-instance client, not a bundled SearXNG daemon.
+No code was imported from repositories with unclear licensing. Chaquopy was researched
+but not adopted: the current SearXNG native-wheel requirements were not demonstrated
+portable across all supported Android ABIs. The Kotlin path avoids pretending that
+PostgreSQL/Redis/Linux containers run inside an ordinary Android APK.
