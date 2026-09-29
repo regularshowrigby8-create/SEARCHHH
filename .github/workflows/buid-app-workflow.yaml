@@ -195,10 +195,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          mv apk/app-universal-debug.apk apk/searchhh-0.2.0-test.apk
-          (cd apk && sha256sum searchhh-0.2.0-test.apk > SHA256SUMS)
-          gh release create "v0.2.0-test-${GITHUB_RUN_NUMBER}" \
+          mv apk/app-universal-debug.apk apk/searchhh-0.3.0-test.apk
+          (cd apk && sha256sum searchhh-0.3.0-test.apk > SHA256SUMS)
+          gh release create "v0.3.0-test-${GITHUB_RUN_NUMBER}" \
             --target "$GITHUB_SHA" --prerelease \
-            --title "Searchhh 0.2.0 — included backend and MCP" \
-            --notes "Included Kotlin backend initialized by name, installation-specific generated credentials, 128-source catalog, and official MCP SDK SSE tools. No operator deployment required for the Android backend. Broader search depends on public SearXNG services; not all sources are always available. JSch remote relay is experimental and provider-dependent. No AI model is included. Debug development build. See validation notes for tested versus unverified behavior." \
-            apk/searchhh-0.2.0-test.apk apk/SHA256SUMS device/searchhh-screen.png
+            --title "Searchhh 0.3.0 — global portals and external AI review" \
+            --notes "Global opportunity portal seed catalog with RSS/HTML extraction, Google/Microsoft application-link provenance, and optional externally hosted OpenRouter free/Z.AI Flash evidence review. Provider-specific consent and encrypted key import required. No models hosted on device, no paid-model fallback, no automatic signup. Configured portals are not all tested live; JS/login/PDF-only portals may require the browser. Free plans have quotas and may change. Search keeps a rolling 1,000-result view. Debug development build; see docs/searchhh/RELEASE-0.3.md for scope and limitations." \
+            apk/searchhh-0.3.0-test.apk apk/SHA256SUMS device/searchhh-screen.png

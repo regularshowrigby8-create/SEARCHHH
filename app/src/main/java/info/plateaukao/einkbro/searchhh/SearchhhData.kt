@@ -20,10 +20,11 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 // Integration contracts, not a replacement browser/search engine implementation.
-data class Source(val id: String, val name: String, val category: String, val default: Boolean = false)
+data class Source(val id: String, val name: String, val category: String, val default: Boolean = false, val url: String? = null, val format: String? = null, val scope: String? = null)
 data class StartRequest(val query: String, val mode: String, val engines: List<String>, val crawl: Boolean)
 data class JobStarted(val id: String, val status: String)
-data class Opportunity(val id: String, val url: String, val title: String, val description: String, val kind: String, val sources: List<String>, val published: String?, val discovered: String, val score: Int, val verified: Boolean)
+data class Opportunity(val id: String, val url: String, val title: String, val description: String, val kind: String, val sources: List<String>, val published: String?, val discovered: String, val score: Int, val verified: Boolean, val evidenceUrl: String? = null, val checkedAt: String? = null, val review: EvidenceReview? = null)
+data class EvidenceReview(val model: String, val relevance: Int, val summary: String, val quote: String, val eligibilityQuote: String?, val deadlineQuote: String?, val reviewedAt: String)
 data class JobStatus(val id: String, val status: String, val round: Int, val duplicates: Int, val filtered: Int, val errors: List<String>, val results: List<Opportunity>)
 interface SearchhhApi {
     @GET("v1/engines") suspend fun sources(): List<Source>

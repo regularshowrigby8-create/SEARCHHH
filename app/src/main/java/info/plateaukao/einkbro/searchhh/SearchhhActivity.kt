@@ -57,13 +57,13 @@ class SearchhhActivity : ComponentActivity() {
             val scope = rememberCoroutineScope()
             val prefs = remember { ConnectionSettings.prefs(this) }
             val gson = remember { Gson() }
-            val sources = remember { gson.fromJson(assets.open("searchhh-engines.json").bufferedReader().use { it.readText() }, Array<Source>::class.java).toList() }
+            val sources = remember { gson.fromJson(assets.open("searchhh-portals.json").bufferedReader().use { it.readText() }, Array<Source>::class.java).toList() }
             val dao = remember { SearchhhDatabase.get(this).saved() }
             val saved by dao.all().collectAsState(initial = emptyList())
             var tab by rememberSaveable { mutableStateOf(0) }
             var query by rememberSaveable { mutableStateOf("") }
             var mode by rememberSaveable { mutableStateOf("opportunities") }
-            var crawl by rememberSaveable { mutableStateOf(false) }
+            var crawl by rememberSaveable { mutableStateOf(true) }
             var selected by remember { mutableStateOf(sources.filter { it.default }.map { it.id }.toSet()) }
             var jobId by remember { mutableStateOf(prefs.getString("job", null)) }
             var status by remember { mutableStateOf(runCatching { gson.fromJson(prefs.getString("last_status", null), JobStatus::class.java) }.getOrNull()) }
@@ -76,9 +76,12 @@ class SearchhhActivity : ComponentActivity() {
             var publicUrl by remember { mutableStateOf(InternalBackendService.remoteUrl) }
             var relayEnabled by remember { mutableStateOf(prefs.getBoolean("relay_enabled", true)) }
             var sharePairing by remember { mutableStateOf(false) }
+            val ai = remember { LocalBackend.get(this@SearchhhActivity).ai }
+            var aiStatus by remember { mutableStateOf(ai.status) }
             LaunchedEffect(Unit) {
                 if (profile != null && prefs.getBoolean("server_enabled", true)) InternalBackendService.start(this@SearchhhActivity)
                 while (true) {
+                    aiStatus = ai.status
                     serviceState = InternalBackendService.state; bridgeState = InternalBackendService.relayState
                     publicUrl = InternalBackendService.remoteUrl; delay(1500)
                 }
@@ -129,7 +132,7 @@ class SearchhhActivity : ComponentActivity() {
             Scaffold(
                 modifier = Modifier.background(MaterialTheme.colors.background).systemBarsPadding(),
                 topBar = { TopAppBar(title = { Column { Text("searchhh", fontWeight = FontWeight.Bold); Text("THE OPPORTUNITY HIVE", style = MaterialTheme.typography.overline) } }, backgroundColor = MaterialTheme.colors.background, elevation = 0.dp,
-                    actions = { IconButton(onClick = { browse("https://duckduckgo.com") }) { Icon(Icons.Outlined.Language, "Open WebView browser") } }) },
+                    actions = { IconButton(onClick = { browse("https://opportunitydesk.org") }) { Icon(Icons.Outlined.Language, "Open WebView browser") } }) },
                 bottomBar = { BottomNavigation(backgroundColor = MaterialTheme.colors.surface) {
                     listOf("Discover", "Sources", "Saved", "Settings").forEachIndexed { index, label ->
                         BottomNavigationItem(selected = tab == index, onClick = { tab = index }, label = { Text(label) }, icon = { Icon(listOf(Icons.Outlined.Search, Icons.Outlined.Hub, Icons.Outlined.BookmarkBorder, Icons.Outlined.Settings)[index], label) })
@@ -147,7 +150,7 @@ class SearchhhActivity : ComponentActivity() {
                                     OutlinedButton(onClick = { mode = value }, enabled = !running, colors = ButtonDefaults.outlinedButtonColors(contentColor = if (mode == value) accent else Color.Gray)) { Text(label) }
                                 }
                             } }
-                            item { OutlinedTextField(query, { query = it }, modifier = Modifier.fillMaxWidth(), label = { Text("What are you looking for?") }, placeholder = { Text("e.g. free AI cohort South Africa") }, enabled = !running, maxLines = 3) }
+                            item { OutlinedTextField(query, { query = it }, modifier = Modifier.fillMaxWidth(), label = { Text("What are you looking for?") }, placeholder = { Text("e.g. artificial intelligence fellowship") }, enabled = !running, maxLines = 3) }
                             item { Row { Checkbox(crawl, { crawl = it }, enabled = !running); Column { Text("Follow public opportunity links"); Text("Local crawler · robots.txt respected · forms never submitted", style = MaterialTheme.typography.caption) } } }
                             item { Text("${selected.size} of ${sources.size} sources selected · No search API keys", style = MaterialTheme.typography.caption, color = accent) }
                             item { Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -173,20 +176,21 @@ class SearchhhActivity : ComponentActivity() {
                                 Text(status?.status?.uppercase() ?: if (jobId != null) "CONNECTING" else "READY WHEN YOU ARE", color = accent, style = MaterialTheme.typography.overline)
                                 Text("${status?.results?.size ?: 0} results   ·   ${status?.duplicates ?: 0} duplicates removed")
                                 Text("Pass ${status?.round ?: 0} · ${status?.filtered ?: 0} irrelevant / bot results filtered", style = MaterialTheme.typography.caption)
-                                Text("Source-dated results first. Unknown dates stay unknown. Open applications and eligibility are not verified.", style = MaterialTheme.typography.caption)
+                                Text("Ranked by relevance when AI review is available. Dates and eligibility are evidence, not verified application status. Rolling retention: 1,000 recently checked results; saved links are kept separately.", style = MaterialTheme.typography.caption)
                             } } }
+                            item { Text(aiStatus, style = MaterialTheme.typography.caption) }
                             status?.errors?.let { errors -> items(errors.distinct()) { Text(it, style = MaterialTheme.typography.caption, color = Color(0xFFFFC28A)) } }
                             if (status?.results?.isNotEmpty() == true) item { TextButton(onClick = { exportContent = gson.toJson(status); export.launch("searchhh-results.json") }) { Text("Export results as JSON") } }
                             items(status?.results ?: emptyList(), key = { it.id }) { result -> ResultCard(result, saved.any { it.id == result.id }, { browse(result.url) }) {
                                 scope.launch { if (saved.any { it.id == result.id }) dao.remove(result.id) else dao.save(SavedOpportunity(result.id, gson.toJson(result))) }
                             } }
-                            if (status?.results.isNullOrEmpty()) item { Text("No results yet. Your backend is included. Enter a topic and start. Direct sources work independently; public metasearch availability varies. No model or AI reasoning is bundled.", style = MaterialTheme.typography.body2, color = Color(0xFFACB9AD)) }
+                            if (status?.results.isNullOrEmpty()) item { Text("No matches yet. Searches fetch global portal listings repeatedly and match all query words; put exact phrases in quotes. Try a broader topic if needed. Some portals require JavaScript or login and cannot be read by the crawler.", style = MaterialTheme.typography.body2, color = Color(0xFFACB9AD)) }
                         }
                         1 -> {
                             item { Text("${sources.size} sources. One hive.", style = MaterialTheme.typography.h5, fontWeight = FontWeight.Bold) }
-                            item { Text("128 real source adapters in the catalog, not 128 guaranteed live providers. The included backend searches direct APIs and automatically discovers a public SearXNG service. Sources run in batches of eight. Missing or blocked adapters are reported, never bypassed.") }
+                            item { Text("Global opportunity publishers and official programme/application portals—not generic search engines. These are configured crawl seeds, not guaranteed live adapters. Eligibility varies by programme, not your device location. HTML/RSS retrieval runs in batches of eight; blocked, moved and unsupported pages are reported.") }
                             item { TextButton(enabled = !running, onClick = { selected = if (selected.size == sources.size) emptySet() else sources.map { it.id }.toSet() }) { Text(if (selected.size == sources.size) "Deselect all" else "Select all") } }
-                            items(sources, key = { it.id }) { source -> Card { Row(Modifier.fillMaxWidth().padding(8.dp)) { Checkbox(source.id in selected, { selected = if (it) selected + source.id else selected - source.id }, enabled = !running); Column(Modifier.padding(top = 10.dp)) { Text(source.name, fontWeight = FontWeight.Bold); Text("${source.category} · keyless adapter", style = MaterialTheme.typography.caption) } } } }
+                            items(sources, key = { it.id }) { source -> Card { Row(Modifier.fillMaxWidth().padding(8.dp)) { Checkbox(source.id in selected, { selected = if (it) selected + source.id else selected - source.id }, enabled = !running); Column(Modifier.padding(top = 10.dp)) { Text(source.name, fontWeight = FontWeight.Bold); Text("${source.category} · ${source.format ?: "public"} portal", style = MaterialTheme.typography.caption) } } } }
                         }
                         2 -> {
                             item { Text("Your next chapter.", style = MaterialTheme.typography.h5, fontWeight = FontWeight.Bold); Text("Saved on this device with Room. Available offline.") }
@@ -205,8 +209,9 @@ class SearchhhActivity : ComponentActivity() {
                             item { Text(publicUrl ?: "Public URL unavailable. In-app calls do not use the tunnel or localhost HTTP.", style = MaterialTheme.typography.body2) }
                             item { Button(enabled = publicUrl != null, onClick = { sharePairing = true }) { Text("Pair an AI client") } }
                             item { OutlinedButton(enabled = profile != null, onClick = { LocalIdentity.rotate(this@SearchhhActivity); profile = LocalIdentity.load(this@SearchhhActivity); message = "Agent credential rotated; old clients can no longer send tool requests" }) { Text("Rotate agent credential") } }
-                            item { Text(LocalBackend.get(this@SearchhhActivity).web.connection, style = MaterialTheme.typography.caption) }
-                            item { Divider(); Text("AI-ready tools, not a bundled AI model", fontWeight = FontWeight.Bold); Text("MCP exposes start/stop search, results, source catalog, server status and saved opportunities to a separately supplied AI client. No claim of free unlimited AI.") }
+                            item { info.plateaukao.einkbro.searchhh.ai.AiSettingsCard(ai) }
+                            item { Text(aiStatus, style = MaterialTheme.typography.caption) }
+                            item { Divider(); Text("AI-ready tools, not a bundled AI model", fontWeight = FontWeight.Bold); Text("MCP exposes start/stop search, results, source catalog, server status and saved opportunities to a separately supplied AI client. The internal reviewer is separately consented and has no MCP/search tools.") }
                             item { Text("The backend runs in this app: Kotlin, Room, coroutines, Ktor and the official MCP SDK. JSch bridges remote connections. No Docker, PostgreSQL, hosting account or repo deployment is needed on your phone.") }
                             item { Text("Android may stop background processes. Foreground notification provides a Stop control. Free relays can disconnect/change URL. Relay SSH keys use first-use pinning; changed keys fail closed. Public services can see your queries and may limit access.", style = MaterialTheme.typography.caption) }
                             item { TextButton(onClick = { browse("https://github.com/regularshowrigby8-create/SEARCHHH/tree/arena/01a0ea36-searchhh") }) { Text("Sources, licenses & limitations") } }
@@ -225,6 +230,18 @@ class SearchhhActivity : ComponentActivity() {
                 Text(result.title, style = MaterialTheme.typography.h6)
                 Text(result.description, maxLines = 5, style = MaterialTheme.typography.body2)
                 Text(result.url, maxLines = 2, style = MaterialTheme.typography.caption)
+                result.evidenceUrl?.let { evidence ->
+                    TextButton(onClick = { browse(evidence) }) { Text("View source evidence ↗") }
+                }
+                result.checkedAt?.let { Text("Last checked: $it", style = MaterialTheme.typography.caption) }
+                result.review?.let { review ->
+                    Text("AI relevance ${review.relevance}/100 · ${review.model}", style = MaterialTheme.typography.caption)
+                    Text(review.summary, style = MaterialTheme.typography.body2)
+                    Text("Evidence: “${review.quote}”", style = MaterialTheme.typography.caption)
+                    review.deadlineQuote?.let { Text("Deadline excerpt: $it", style = MaterialTheme.typography.caption) }
+                    review.eligibilityQuote?.let { Text("Eligibility excerpt: $it", style = MaterialTheme.typography.caption) }
+                    Text("AI-assisted judgment; confirm conditions with the official programme.", style = MaterialTheme.typography.caption)
+                }
                 Text("${result.sources.joinToString(" · ")}\n${result.published?.take(10) ?: "Date unknown"} · Application unverified", style = MaterialTheme.typography.caption)
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     TextButton(onClick = open) { Text("Open in browser ↗") }

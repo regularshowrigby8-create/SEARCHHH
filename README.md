@@ -1,3 +1,8 @@
+> **0.3 development slice:** Android now uses global opportunity portal seeds and
+> optional, consent-gated external AI review. See [scope and limitations](docs/searchhh/RELEASE-0.3.md).
+> The 0.2 release evidence below remains historical; a new APK is available only
+> once its separate 0.3 GitHub Actions release gates succeed.
+
 # Searchhh
 
 An Android opportunity-discovery framework built **on existing open-source tools**.

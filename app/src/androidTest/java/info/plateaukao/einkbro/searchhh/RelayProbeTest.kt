@@ -22,8 +22,11 @@ class RelayProbeTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val web = PublicSearch()
         val result = try {
-            val batch = kotlinx.coroutines.runBlocking { web.search("fellowship", listOf("github", "hackernews", "duckduckgo"), "links", 0) }
-            "PUBLIC SEARCH DIAGNOSTIC: ${batch.rows.size} results; provenance counts=${batch.rows.flatMap { it.sources }.groupingBy { it }.eachCount()}; errors=${batch.errors}; ${web.connection}"
+            val batch = kotlinx.coroutines.runBlocking {
+                val catalog = com.google.gson.Gson().fromJson(context.assets.open("searchhh-portals.json").bufferedReader().use { it.readText() }, Array<Source>::class.java)
+                PortalCrawler(web).search("fellowship", catalog.filter { it.id in listOf("opportunitydesk", "opportunitiescorners") }, "opportunities", true)
+            }
+            "PUBLIC SEARCH DIAGNOSTIC: ${batch.rows.size} results; provenance counts=${batch.rows.flatMap { it.sources }.groupingBy { it }.eachCount()}; errors=${batch.errors}; direct global portal RSS/HTML diagnostic"
         } catch (e: Exception) { "PUBLIC SEARCH UNAVAILABLE: ${e.javaClass.simpleName}: ${e.message}" }
         finally { web.http.dispatcher.cancelAll(); web.http.connectionPool.evictAll(); web.http.dispatcher.executorService.shutdown() }
         File(context.filesDir, "search-probe.txt").writeText(result)

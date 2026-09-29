@@ -14,7 +14,7 @@ import java.time.format.ResolverStyle
 import org.jsoup.Jsoup
 
 object LocalPolicy {
-    private val signals = Regex("\\b(cohorts?|fellowships?|bootcamps?|scholarships?|certifications?|certificates?|applications?|enroll|enrol|register|opportunit\\w*)\\b", RegexOption.IGNORE_CASE)
+    private val signals = Regex("\\b(cohorts?|fellowships?|bootcamps?|scholarships?|certifications?|certificates?|internships?|grants?|competitions?|accelerators?|mentorships?|funding|bursaries|applications?|enroll|enrol|register|opportunit\\w*)\\b", RegexOption.IGNORE_CASE)
     private val bots = Regex("captcha|access denied|verify you are human|robot check|just a moment", RegexOption.IGNORE_CASE)
     fun publicAddress(address: InetAddress): Boolean {
         val b = address.address.map { it.toInt() and 255 }
@@ -50,7 +50,7 @@ object LocalPolicy {
     }
     fun isForm(raw: String): Boolean {
         val u = raw.toHttpUrlOrNull() ?: return false
-        return u.host in listOf("forms.gle", "forms.office.com", "forms.microsoft.com") || (u.host == "docs.google.com" && u.encodedPath.startsWith("/forms"))
+        return u.host in listOf("forms.gle", "forms.office.com", "forms.microsoft.com", "forms.cloud.microsoft", "forms.office365.com") || (u.host == "docs.google.com" && u.encodedPath.startsWith("/forms/"))
     }
     fun publicationDate(raw: String?): String? {
         val value = raw?.trim()?.takeIf { it.isNotEmpty() } ?: return null

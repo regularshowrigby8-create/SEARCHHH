@@ -30,17 +30,13 @@ class PublicSearch {
         private set
     @Volatile var connection = "Automatic discovery has not run"
         private set
-    data class Page(val code: Int, val text: String, val type: String)
+    data class Page(val code: Int, val text: String, val type: String, val retryAfter: String? = null, val location: String? = null)
     suspend fun get(url: String, limit: Long = 2L * 1024 * 1024): Page {
         currentCoroutineContext().ensureActive()
         require(LocalPolicy.canonical(url) != null) { "Non-public URL rejected" }
-        return http.newCall(Request.Builder().url(url).header("User-Agent", "Searchhh/0.2 (+https://github.com/regularshowrigby8-create/SEARCHHH)").build()).execute().use { response ->
-            val body = response.body ?: error("Empty response")
-            val input = body.source(); input.request(limit + 1)
-            require(input.buffer.size <= limit) { "Response too large" }
-            Page(response.code, input.readUtf8(), response.header("Content-Type").orEmpty())
-        }
+        return http.newCall(Request.Builder().url(url).header("User-Agent", "Searchhh/0.3 (+https://github.com/regularshowrigby8-create/SEARCHHH)").build()).awaitPage(limit)
     }
+
     suspend fun discover(required: Set<String> = emptySet()) {
         if (instance != null) return
         connection = "Discovering a public SearXNG service"
