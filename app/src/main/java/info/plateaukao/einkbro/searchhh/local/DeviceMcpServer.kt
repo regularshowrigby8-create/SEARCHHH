@@ -25,7 +25,6 @@ class DeviceMcpServer(private val context: Context) {
     private val backend = LocalBackend.get(context)
     private val gson = Gson()
     private val http = embeddedServer(CIO, host = "127.0.0.1", port = 0) {
-        install(SSE)
         intercept(ApplicationCallPipeline.Plugins) {
             val expected = LocalIdentity.load(this@DeviceMcpServer.context)?.token.orEmpty()
             val supplied = call.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ").orEmpty()
@@ -44,9 +43,10 @@ class DeviceMcpServer(private val context: Context) {
         }
         routing {
             get("/health") { call.respondText(gson.toJson(backend.details()), ContentType.Application.Json) }
-            // GET opens SSE; POST with sessionId sends MCP messages. Same token guards both.
-            mcp("/mcp") { createTools() }
         }
+        // Use the Application overload exercised by the SDK's own integration test:
+        // GET /sse advertises POST /message?sessionId=... . Both are authenticated.
+        mcp { createTools() }
     }
     var port: Int = 0
         private set

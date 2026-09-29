@@ -121,7 +121,7 @@ class SearchhhActivity : ComponentActivity() {
                     sharePairing = false
                     val identity = LocalIdentity.load(this@SearchhhActivity)
                     if (identity != null && publicUrl != null) {
-                        val config = gson.toJson(mapOf("mcpServers" to mapOf("searchhh" to mapOf("type" to "sse", "url" to "$publicUrl/mcp", "headers" to mapOf("Authorization" to "Bearer ${identity.token}")))))
+                        val config = gson.toJson(mapOf("mcpServers" to mapOf("searchhh" to mapOf("type" to "sse", "url" to "$publicUrl/sse", "headers" to mapOf("Authorization" to "Bearer ${identity.token}")))))
                         startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("application/json").putExtra(Intent.EXTRA_TEXT, config), "Share with your trusted MCP client"))
                     }
                 }) { Text("Share credential") } }, dismissButton = { TextButton(onClick = { sharePairing = false }) { Text("Cancel") } }

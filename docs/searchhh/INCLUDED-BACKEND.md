@@ -30,7 +30,8 @@ retained as an optional separate architecture, not smuggled in as a prerequisite
 | SearXNG / searx.space | Existing metasearch adapters and public-instance discovery | https://github.com/searxng/searxng / https://searx.space |
 
 The SDK version uses **MCP SSE**, not the newer Streamable HTTP transport. Compatible
-clients need support for SSE and Authorization headers. Cloudflare Quick Tunnels
+clients need support for SSE and Authorization headers. GET `/sse` advertises
+POST `/message?sessionId=...`; both endpoints require the bearer credential. Cloudflare Quick Tunnels
 were rejected for this transport because their documentation excludes SSE.
 
 ## Connectivity without fake hosting

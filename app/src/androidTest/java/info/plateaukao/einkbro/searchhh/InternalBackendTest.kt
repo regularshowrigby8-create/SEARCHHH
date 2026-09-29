@@ -30,7 +30,7 @@ class InternalBackendTest {
             val client = OkHttpClient.Builder().readTimeout(15, TimeUnit.SECONDS).build()
             fun get(path: String, token: String? = null, origin: Boolean = false): Response {
                 val req = Request.Builder().url(base + path)
-                if (path == "/mcp") req.header("Accept", "text/event-stream")
+                if (path == "/sse") req.header("Accept", "text/event-stream")
                 if (token != null) req.header("Authorization", "Bearer $token")
                 if (origin) req.header("Origin", "https://attacker.example")
                 return client.newCall(req.build()).execute()
@@ -44,7 +44,7 @@ class InternalBackendTest {
                 assertEquals(identity.id, body["installationId"].asString)
                 assertFalse(body.has("token"))
             }
-            get("/mcp", identity.token).use { sse ->
+            get("/sse", identity.token).use { sse ->
                 assertEquals(200, sse.code)
                 val stream = sse.body!!.source()
                 fun event(): String {
@@ -56,7 +56,7 @@ class InternalBackendTest {
                     }
                 }
                 val endpoint = event()
-                val postUrl = base + (if (endpoint.startsWith("?")) "/mcp$endpoint" else endpoint)
+                val postUrl = base + (if (endpoint.startsWith("?")) "/message$endpoint" else endpoint)
                 fun post(body: String, token: String = identity.token): Int = client.newCall(Request.Builder().url(postUrl).header("Authorization", "Bearer $token").post(body.toByteArray().toRequestBody("application/json".toMediaType())).build()).execute().use { it.code }
                 assertEquals(202, post("""{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"device-test","version":"1"}}}"""))
                 assertTrue(event().contains("serverInfo"))

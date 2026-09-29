@@ -7,6 +7,11 @@ import info.plateaukao.einkbro.searchhh.local.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.util.concurrent.TimeUnit
 
 /** External-service diagnostic, deliberately not a deterministic release gate.
  * Local protocol/security tests are gated separately. Always records actual availability.
@@ -32,11 +37,40 @@ class RelayProbeTest {
         val result = try {
             server.start()
             bridge.connect(server.port)
-            "AVAILABLE: Android JSch outbound SSH and public HTTPS forwarding verified. Unauthorized rejected; authenticated health matched this installation."
+            verifyPublicMcp(bridge.url!!, LocalIdentity.load(context)!!)
+            "AVAILABLE: Android JSch outbound SSH, public HTTPS authentication and public MCP SSE initialize/tool call verified against this installation."
         } catch (e: Exception) {
             "UNAVAILABLE: ${e.javaClass.simpleName}: ${e.message}. Public remote connectivity is NOT verified."
         } finally { bridge.close(); server.stop() }
         File(context.filesDir, "relay-probe.txt").writeText(result)
         println("Searchhh relay diagnostic: $result")
     }
+    private fun verifyPublicMcp(base: String, identity: LocalIdentity) {
+        val client = OkHttpClient.Builder().readTimeout(20, TimeUnit.SECONDS).followRedirects(false).build()
+        try {
+            client.newCall(Request.Builder().url("$base/sse").header("Accept", "text/event-stream").header("Authorization", "Bearer ${identity.token}").build()).execute().use { response ->
+                check(response.code == 200) { "Public MCP SSE HTTP ${response.code}" }
+                val stream = response.body!!.source()
+                fun event(): String {
+                    var data = ""
+                    while (true) {
+                        val line = stream.readUtf8Line() ?: error("Public SSE closed")
+                        if (line.startsWith("data:")) data += line.removePrefix("data:").trim()
+                        if (line.isEmpty() && data.isNotEmpty()) return data
+                    }
+                }
+                val endpoint = event()
+                check(endpoint.startsWith("/message?")) { "Unexpected public MCP endpoint" }
+                fun send(text: String) {
+                    client.newCall(Request.Builder().url(base + endpoint).header("Authorization", "Bearer ${identity.token}").post(text.toByteArray().toRequestBody("application/json".toMediaType())).build()).execute().use { check(it.code == 202) { "Public MCP POST HTTP ${it.code}" } }
+                }
+                send("""{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"relay-test","version":"1"}}}""")
+                check(event().contains("serverInfo")) { "Public MCP negotiation failed" }
+                send("""{"jsonrpc":"2.0","method":"notifications/initialized"}""")
+                send("""{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"server_status","arguments":{}}}""")
+                check(event().contains(identity.id)) { "Public tool response did not match this installation" }
+            }
+        } finally { client.dispatcher.cancelAll(); client.connectionPool.evictAll(); client.dispatcher.executorService.shutdown() }
+    }
+
 }

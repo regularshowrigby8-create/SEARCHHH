@@ -141,3 +141,17 @@ release or an assertion that every provider is always available.
   unverified until a live diagnostic succeeds.
 - Network methods now check coroutine cancellation before each new request; crawler
   waits are cancellable. This prevents another discovery/crawl request after Stop.
+
+### Run 36504809605 follow-up
+
+Android JSch **public HTTPS forwarding succeeded**, including unauthenticated 401
+and an authenticated health response matching the device installation. The earlier
+exec-acknowledgement timeout is resolved. Public metasearch discovered a node with
+231 registered adapters but received **HTTP 429** for search. The app did not rotate
+or bypass the rate limit; both direct sources returned 20 results each.
+
+Adding the SSE Accept header did **not** resolve the local MCP 404. Therefore that
+hypothesis was insufficient; inspected the official SDK's integration test and
+switched to its Application-level `mcp` setup with `/sse` and `/message`, rather than
+the nested routing helper. The next device run gates actual MCP initialize/list/call
+and adds an external MCP initialize/tool-call probe through the real public relay.
