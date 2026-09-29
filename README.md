@@ -3,14 +3,14 @@
 An Android opportunity-discovery framework built **on existing open-source tools**.
 Development build, not a production-certified crawler.
 
-**0.2 implementation under validation:** included phone backend, name-only onboarding,
-random per-installation identity/credentials, official MCP SSE tools, outbound relay,
-and 128 catalog adapters. [Architecture and honest availability limits](docs/searchhh/INCLUDED-BACKEND.md).
-The older APK linked below does **not** contain this upgrade.
+**0.2 test release:** included phone backend, name-only onboarding, random
+per-installation identity/credentials, official MCP SSE tools, a tested outbound
+relay, and 128 catalog adapters. No server deployment by the Android user.
+[Architecture and availability limits](docs/searchhh/INCLUDED-BACKEND.md).
 
 ## Architecture
 
-- Android: imported **EinkBro v16.7.0** browser, Kotlin, Jetpack Compose and Android System WebView; Searchhh screens use Retrofit, Room and WorkManager.
+- Android: imported **EinkBro v16.7.0** browser, Kotlin, Jetpack Compose and Android System WebView; Room persistence and in-process Searchhh API calls; legacy Retrofit/WorkManager integration is retained.
 - Included backend (0.2): Kotlin/Room/coroutines, Ktor + official MCP SDK, JSch remote bridge, public search connectors. No user deployment.
 - Optional external stack: Python **FastAPI**, **SearXNG** (128 configured adapters), **Scrapy**, **PostgreSQL**, **Redis + RQ**.
 - Future, not implemented: AI swarm/BYOK mode, Go crawler, OpenSearch.
@@ -21,16 +21,25 @@ logins, CAPTCHAs, rate limits or private networks, and never submits forms.
 
 ## Android test APK
 
-**[Download Searchhh 0.1.0 test APK](https://github.com/regularshowrigby8-create/SEARCHHH/releases/download/v0.1.0-test-6/searchhh-0.1.0-test.apk)** — 23.8 MB.
+**[Download Searchhh 0.2.0 test APK](https://github.com/regularshowrigby8-create/SEARCHHH/releases/download/v0.2.0-test-11/searchhh-0.2.0-test.apk)** — 28.3 MB.
 
-[Release and checksum](https://github.com/regularshowrigby8-create/SEARCHHH/releases/tag/v0.1.0-test-6)
-· [Successful validation run](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36499566556)
-· [Exact source](https://github.com/regularshowrigby8-create/SEARCHHH/tree/f9fc2e45022cbf1d57c80810738caf4b4166b84b)
+[Release and checksum](https://github.com/regularshowrigby8-create/SEARCHHH/releases/tag/v0.2.0-test-11)
+· [Successful validation run](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36505625533)
+· [Exact source](https://github.com/regularshowrigby8-create/SEARCHHH/tree/22d6835343e933c6d0d82ecc6be5a661b441a88d)
 
-The pipeline passed framework tests, real backend integration, Android unit tests,
-lint, universal APK assembly, and an Android 35 install/launch/crash smoke check,
-then published the APK. This is an installable **debug-signed development build**,
-not a signed production release. AI mode is not implemented.
+The pipeline passed framework tests, real 128-adapter configuration integration,
+Android unit tests, lint, APK assembly and Android 35 device checks. Device tests
+covered identity isolation, Room migration, MCP initialize/list/call/authentication,
+credential rotation and Stop. **Public MCP SSE negotiation and a tool call through
+the real SSH/HTTPS relay also succeeded.**
+
+The live search probe returned 40 results from GitHub/Hacker News. The selected
+public SearXNG node returned HTTP 429; this is reported, not bypassed. The catalog
+is **not** a promise of 128 simultaneously working upstreams.
+
+This is a **debug-signed development build**, not a production release. Export saved
+results before uninstalling an older test build if Android rejects an update due
+to a different debug signing certificate. No AI model is bundled.
 
 Future builds use the `Searchhh checks and APK` workflow on branch
 `arena/01a0ea36-searchhh`. APK artifacts are gated on earlier checks; release
@@ -43,17 +52,11 @@ Keep Android System WebView updated. The APK does not bundle a full Chromium eng
 
 ### What works without hosting?
 
-**0.2 source:** enter your name and the included backend initializes itself. Search
-providers and the experimental remote relay remain third-party network dependencies;
-no backend address or manually generated token is requested.
-
-**Released 0.1 APK only:**
-
-The reused WebView browser and local saved-results database are on-device.
-**Opportunity swarms require your own running backend.** There is no hidden shared
-host or claim of free permanent hosting. In Settings, enter your HTTPS backend URL
-and its access token. This token protects your private server; it is not a search
-provider API key. Source-provider keys are not required for default mode.
+Enter your name and the included backend initializes itself. Search providers and
+the remote relay remain third-party network dependencies; no backend address,
+hosting account or manually generated token is requested. The relay terminates
+HTTPS and can see forwarded traffic; disable it in Settings if unwanted. URLs can
+change after reconnection. Ordinary in-app backend calls do not use the tunnel.
 
 ## Optional external backend setup (not required by 0.2 Android)
 
@@ -70,7 +73,7 @@ docker compose --env-file .env up -d --build
 
 API listens only on `127.0.0.1:8000` on the server. Put an HTTPS reverse proxy
 (e.g. Caddy) in front of it. Do not expose PostgreSQL, Redis or SearXNG directly.
-The Android app requires HTTPS for its backend. `/health` checks database/queue;
+Clients should use HTTPS for this optional external API. `/health` checks database/queue;
 `/docs` provides FastAPI's interactive API documentation. `/v1/*` requires
 `Authorization: Bearer <your-server-token>`.
 
@@ -90,28 +93,25 @@ limits. Pin images and audit dependencies before production.
 
 ## Optional external stack workflow
 
-1. Configure the backend and test the connection in Android Settings.
-2. Choose Opportunity Finder or Link Mode; select from 128 sources.
-3. Enter a topic. Optionally enable Scrapy one-hop discovery.
-4. Start the swarm. SearXNG handles parallel source requests; RQ schedules another
-   pass after a 60-second cooldown (120 seconds when errors are reported).
-5. Stop prevents further result commits. An in-flight source request may finish;
-   an active crawl subprocess checks for Stop every half-second.
-6. Save locally with Room, open in the reused browser, or export JSON.
+Use its documented `/v1/*` API from your own client. Current Android Settings
+exposes the included backend, not external-server setup. The external worker uses
+SearXNG/Scrapy and repeats after 60 seconds (120 when errors are reported).
 
 Results retain provenance. Known source dates sort first; unknown dates are never
 replaced with discovery time. A detected application form is **not** confirmation
 that an application is open, funded, eligible or safe. Check the original page.
 
-Dedup uses w3lib canonicalization plus tracking-parameter removal, retaining form
-IDs and meaningful query values. `.bot`, `.onion`, private-network URLs and common
-bot/challenge pages are excluded. Scrapy obeys robots and throttles per domain.
-No form contents are fetched by the opportunity spider.
+Dedup canonicalizes URLs and removes tracking parameters while retaining form
+IDs and meaningful query values (OkHttp on Android; w3lib in the external stack). `.bot`, `.onion`, private-network URLs and common
+bot/challenge pages are excluded. The Android crawler uses Jsoup and crawler-commons
+robots rules; the external crawler uses Scrapy. Forms are not fetched or submitted.
 
-Safety bounds are explicit: one active swarm per server, 5,000 stored results per
-session, eight candidate pages per pass, 2 MB crawl responses and bounded timeouts.
-Reaching result capacity stops with `capacity` status. There is no unlimited-access
-promise. Source indexes overlap and some providers can be unavailable.
+Safety bounds are explicit: one active swarm per installation, 1,000 results per
+phone session (5,000 in the optional external stack), bounded page discovery,
+response sizes and timeouts. Reaching capacity stops with `capacity` status.
+There is no unlimited-access promise. Source indexes overlap and providers can
+be unavailable. Broad physical-device, long-duration and live accuracy testing
+remain outstanding.
 
 ## Tests
 
@@ -123,7 +123,7 @@ npm install --prefix js-tests --ignore-scripts
 npm test --prefix js-tests -- --runInBand
 python3 scripts/check_locale_strings.py
 # JDK 17 + Android SDK/NDK:
-./gradlew testDebugUnitTest lintDebug assembleDebug -PuniversalApk
+./gradlew testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest -PuniversalApk
 ```
 
 See [source/license ledger](docs/searchhh/SOURCES.md) and

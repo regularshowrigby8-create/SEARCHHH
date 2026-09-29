@@ -88,7 +88,21 @@ from crawler-commons. Forms are discovered but not fetched/submitted by the craw
 
 ## Validation status
 
-Implementation is under test. Do not treat the prior 0.1 APK as including these changes.
-CI must compile, lint, test Room/identity/MCP authentication and tools on Android,
-then publish a new APK. Public tunnel connectivity and search accuracy are separate
-from passing local device/protocol tests and must be reported honestly.
+Published as [0.2.0-test-11](https://github.com/regularshowrigby8-create/SEARCHHH/releases/tag/v0.2.0-test-11),
+source `22d6835343e933c6d0d82ecc6be5a661b441a88d`.
+[All sequential CI stages passed](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36505625533).
+
+- Python/framework and JavaScript tests; real-container loading of all 128 IDs.
+- Android compile, unit tests, lint, universal APK assembly.
+- Android 35: name initialization, isolated-store identity/credential independence,
+  Room 1→2 migration, unauthorized/Origin rejection, MCP initialize/list/call,
+  credential rotation, and Stop with no subsequent result commits.
+- Real public relay: Android JSch SSH, public HTTPS authentication, **MCP SSE
+  initialize and tool call** matching the phone's installation ID.
+- Live search: 40 results (20 GitHub, 20 Hacker News). The selected public SearXNG
+  node reported 261 registered adapters but returned **HTTP 429** for search.
+  The rate limit was surfaced without bypass or instance rotation.
+
+These are observed test results, not permanent availability guarantees. This is a
+debug build, not a production security certification. Physical phones, all Android
+versions/ABIs, long sessions, and opportunity/deadline accuracy need further testing.

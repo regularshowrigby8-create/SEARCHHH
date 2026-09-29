@@ -1,5 +1,28 @@
 # Sequential criticism and validation
 
+## Current 0.2 release — all sequential gates passed
+
+- Release: https://github.com/regularshowrigby8-create/SEARCHHH/releases/tag/v0.2.0-test-11
+- Green run: https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36505625533
+- Exact APK source: `22d6835343e933c6d0d82ecc6be5a661b441a88d`.
+- APK: `searchhh-0.2.0-test.apk`, **28,254,276 bytes**; asset `596844931`.
+- GitHub-reported SHA-256: `2b584955200619a2a227c0e3021395fe89bc21590174414be03fa7862a6436de`.
+- Release-asset API confirms uploaded APK, screenshot and checksum; public prerelease.
+- All framework, real-service, Android build/lint/unit, device and publication jobs passed.
+- Device assertions verified identity isolation, Room migration, MCP protocol/tools,
+  authorization/Origin rejection, token rotation and Stop behavior.
+- External diagnostic: **public HTTPS authentication and MCP SSE initialize/tool call
+  through the Android JSch relay succeeded**, matching the installation ID.
+- Search diagnostic: **40 live results**, 20 each from GitHub and Hacker News.
+  Public SearXNG discovery reported 261 adapters; its search returned HTTP 429.
+  No bypass/rotation occurred. 128 configured adapters are not 128 guaranteed live engines.
+- Sandbox binary download still returned EOF; verification here uses GitHub's asset
+  metadata/digest and the successful CI install/test/publication, not a fabricated local APK.
+
+The following numbered sections record the older **0.1 architecture**. Its external
+hosting requirement does **not** apply to the included 0.2 Android backend. Subsequent
+sections retain the actual 0.2 failures and fixes rather than erasing the test history.
+
 ## 1. Reset and provenance — passed
 
 Removed the earlier assistant-authored React/TypeScript prototype. Imported the
