@@ -16,15 +16,27 @@ per-installation identity/credentials, official MCP SSE tools, a tested outbound
 relay, and 128 catalog adapters. No server deployment by the Android user.
 [Architecture and availability limits](docs/searchhh/INCLUDED-BACKEND.md).
 
+## AI hive / API-key audit — 2026-09-29
+
+[Audit of the supplied 100 entries + 22 candidate routes/replacements](docs/searchhh/AI-MODEL-AUDIT.md)
+· [Machine-readable findings](docs/searchhh/ai/model-audit-2026-09-29.json)
+· [Staged hive/key-handler plan](docs/searchhh/AI-HIVE-KEY-PLAN.md)
+
+The audit distinguishes free tiers, monthly credits, trials, retired routes and
+unofficial consumer endpoints. It is **not** a claim of 100 working models or a
+new APK: current AI runtime remains OpenRouter + international Z.AI, one reviewer
+per batch. Additions are research candidates, not automatically activated models.
+
 ## Architecture
 
 - Android: imported **EinkBro v16.7.0** browser, Kotlin, Jetpack Compose and Android System WebView; Room persistence and in-process Searchhh API calls; legacy Retrofit/WorkManager integration is retained.
 - Included backend (0.2): Kotlin/Room/coroutines, Ktor + official MCP SDK, JSch remote bridge, public search connectors. No user deployment.
 - Optional external stack: Python **FastAPI**, **SearXNG** (128 configured adapters), **Scrapy**, **PostgreSQL**, **Redis + RQ**.
-- Future, not implemented: AI swarm/BYOK mode, Go crawler, OpenSearch.
+- External AI review (0.3): encrypted bring-your-own-key import, explicit consent, OpenRouter/Z.AI; no model hosting.
+- Future, not implemented: multi-model consensus, automatic provider signup, Go crawler, OpenSearch.
 
-Searchhh is not an AI agent in this release. Opportunity classification uses explicit
-form/cohort/certification signals. It discovers public pages; it does not bypass
+Searchhh is not an autonomous crawling AI agent. Opportunity classification uses explicit
+form/cohort/certification signals and optional evidence-only AI review. It discovers public pages; it does not bypass
 logins, CAPTCHAs, rate limits or private networks, and never submits forms.
 
 ## Android test APK
