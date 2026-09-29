@@ -123,3 +123,21 @@ release or an assertion that every provider is always available.
   its AVAILABLE/UNAVAILABLE result. Tests never substitute fixtures for a live probe.
 - Follow-up fixes retain SearXNG date formats accurately, tolerate null directory
   fields, and serialize service readiness with Android lifecycle transitions.
+
+### Device findings from run 36503841899
+
+- All compile/lint/unit/assembly gates passed. Room migration/identity tests passed.
+- Local `/health` rejected missing credentials and browser Origin, and returned the
+  correct installation ID with valid credentials. The SSE test's GET lacked the
+  required `Accept: text/event-stream` header and received 404; fixed the test client.
+- Native live query returned **40 results (20 GitHub + 20 Hacker News)**. Discovery
+  reached a public node, but excluded its default-disabled DuckDuckGo adapter.
+  Inspected upstream `/config`: `enabled` is `not engine.disabled`, not the inactive
+  status. Registered default-disabled engines are selectable explicitly. Corrected
+  the interpretation and prefer initial nodes covering the requested adapters.
+- Android JSch reached the relay but timed out awaiting an exec acknowledgement.
+  Switched to its non-ack-waiting command API; the bounded forwarding-event and
+  authenticated public health checks still determine success. Remote access remains
+  unverified until a live diagnostic succeeds.
+- Network methods now check coroutine cancellation before each new request; crawler
+  waits are cancellable. This prevents another discovery/crawl request after Stop.

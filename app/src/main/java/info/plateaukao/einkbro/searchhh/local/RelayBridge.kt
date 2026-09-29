@@ -54,7 +54,13 @@ class RelayBridge(private val context: Context) {
                 if (size() > 16384) reset()
             }
         }
-        exec.outputStream = output; exec.setErrStream(output); channel = exec; exec.connect(10000)
+        exec.outputStream = output; exec.setErrStream(output); channel = exec
+        // JSch's positive channel timeout also requests an exec acknowledgement.
+        // This relay can stream its forwarding event without acknowledging exec.
+        // connect() bounds channel-open internally (~20s); the event and HTTPS
+        // verification below, not an exec acknowledgement, establish readiness.
+        status = "Opening relay event stream"
+        exec.connect()
         val deadline = System.currentTimeMillis() + 20000
         while (url == null && connection.isConnected && System.currentTimeMillis() < deadline) Thread.sleep(250)
         check(url != null) { "Relay did not return a usable forwarding event" }

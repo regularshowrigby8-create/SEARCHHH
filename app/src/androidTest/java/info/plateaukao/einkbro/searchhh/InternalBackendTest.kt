@@ -30,6 +30,7 @@ class InternalBackendTest {
             val client = OkHttpClient.Builder().readTimeout(15, TimeUnit.SECONDS).build()
             fun get(path: String, token: String? = null, origin: Boolean = false): Response {
                 val req = Request.Builder().url(base + path)
+                if (path == "/mcp") req.header("Accept", "text/event-stream")
                 if (token != null) req.header("Authorization", "Bearer $token")
                 if (origin) req.header("Origin", "https://attacker.example")
                 return client.newCall(req.build()).execute()

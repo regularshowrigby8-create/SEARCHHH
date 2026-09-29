@@ -17,7 +17,7 @@ class RelayProbeTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val web = PublicSearch()
         val result = try {
-            val batch = web.search("fellowship", listOf("github", "hackernews", "duckduckgo"), "links", 0)
+            val batch = kotlinx.coroutines.runBlocking { web.search("fellowship", listOf("github", "hackernews", "duckduckgo"), "links", 0) }
             "PUBLIC SEARCH DIAGNOSTIC: ${batch.rows.size} results; provenance counts=${batch.rows.flatMap { it.sources }.groupingBy { it }.eachCount()}; errors=${batch.errors}; ${web.connection}"
         } catch (e: Exception) { "PUBLIC SEARCH UNAVAILABLE: ${e.javaClass.simpleName}: ${e.message}" }
         finally { web.http.dispatcher.cancelAll(); web.http.connectionPool.evictAll(); web.http.dispatcher.executorService.shutdown() }

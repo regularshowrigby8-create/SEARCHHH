@@ -10,6 +10,10 @@ import org.jsoup.Jsoup
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import crawlercommons.robots.SimpleRobotRulesParser
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.delay
 
 /** Reuses OkHttp, Jsoup and SearXNG's published instance/config interfaces. */
 class PublicSearch {
@@ -27,7 +31,8 @@ class PublicSearch {
     @Volatile var connection = "Automatic discovery has not run"
         private set
     data class Page(val code: Int, val text: String, val type: String)
-    fun get(url: String, limit: Long = 2L * 1024 * 1024): Page {
+    suspend fun get(url: String, limit: Long = 2L * 1024 * 1024): Page {
+        currentCoroutineContext().ensureActive()
         require(LocalPolicy.canonical(url) != null) { "Non-public URL rejected" }
         return http.newCall(Request.Builder().url(url).header("User-Agent", "Searchhh/0.2 (+https://github.com/regularshowrigby8-create/SEARCHHH)").build()).execute().use { response ->
             val body = response.body ?: error("Empty response")
@@ -36,7 +41,7 @@ class PublicSearch {
             Page(response.code, input.readUtf8(), response.header("Content-Type").orEmpty())
         }
     }
-    fun discover() {
+    suspend fun discover(required: Set<String> = emptySet()) {
         if (instance != null) return
         connection = "Discovering a public SearXNG service"
         val response = get("https://searx.space/data/instances.json", 8L * 1024 * 1024)
@@ -48,6 +53,8 @@ class PublicSearch {
                 data.get("http")?.takeIf { it.isJsonObject }?.asJsonObject?.get("status_code")?.takeUnless { it.isJsonNull }?.asInt == 200 &&
                 data.get("analytics")?.takeUnless { it.isJsonNull }?.asBoolean != true
         }.shuffled().take(6)
+        var best: Pair<String, Set<String>>? = null
+        var bestMatches = -1
         for ((url, _) in candidates) {
             try {
                 val config = get(url.trimEnd('/') + "/config")
@@ -55,17 +62,25 @@ class PublicSearch {
                 val json = JsonParser.parseString(config.text).asJsonObject
                 val formats = json.getAsJsonArray("formats")?.map { it.asString }.orEmpty()
                 if (formats.isNotEmpty() && "html" !in formats) continue
-                val engines = json.getAsJsonArray("engines").map { it.asJsonObject }.filter { it.get("enabled")?.asBoolean != false }.map { it.get("name").asString }.toSet()
+                val engines = json.getAsJsonArray("engines").map { it.asJsonObject }.map { it.get("name").asString }.toSet()
                 if (engines.isEmpty()) continue
-                instance = url.trimEnd('/'); supported = engines
-                connection = "Connected to ${url.toHttpUrl().host}; ${engines.size} registry adapters reported. Live success varies."
-                return
-            } catch (_: Exception) { /* discovery only; never rotate after search rate limits */ }
+                // /config enabled=false means disabled by default, not inactive.
+                // SearXNG permits explicit engine selection for these registered adapters.
+                val matches = required.count { it in engines }
+                if (matches > bestMatches) { best = url.trimEnd('/') to engines; bestMatches = matches }
+                if (matches == required.size) break
+            } catch (e: CancellationException) { throw e }
+            catch (_: Exception) { /* discovery only; never rotate after search rate limits */ }
+        }
+        best?.let { (url, engines) ->
+            instance = url; supported = engines
+            connection = "Connected to ${url.toHttpUrl().host}; ${engines.size} registered adapters reported. Live success varies."
+            return
         }
         connection = "No compatible public service discovered. Direct GitHub/Hacker News sources remain available."
     }
     data class Batch(val rows: List<Opportunity>, val errors: List<String>, val filtered: Int = 0)
-    fun search(query: String, selected: List<String>, mode: String, pass: Int): Batch {
+    suspend fun search(query: String, selected: List<String>, mode: String, pass: Int): Batch {
         val rows = mutableListOf<Opportunity>(); val errors = mutableListOf<String>(); var filtered = 0
         // Two direct, keyless APIs ensure the included backend is not only a proxy shell.
         selected.filter { it in listOf("github", "hackernews") }.forEach { name ->
@@ -81,12 +96,13 @@ class PublicSearch {
                     val result = LocalPolicy.result(if (name == "github") field("html_url") else field("url").ifBlank { "https://news.ycombinator.com/item?id=${field("objectID")}" }, if (name == "github") field("full_name") else field("title"), field("description").ifBlank { field("story_text") }, listOf(name), mode, field("created_at"))
                     if (result == null) filtered++ else rows += result
                 }
-            } catch (e: Exception) { errors += "$name: ${e.message}" }
+            } catch (e: CancellationException) { throw e }
+            catch (e: Exception) { errors += "$name: ${e.message}" }
         }
         val requested = selected.filterNot { it in listOf("github", "hackernews") }
         if (requested.isNotEmpty()) {
             try {
-                discover()
+                discover(requested.toSet())
                 val base = instance ?: error(connection)
                 val usable = requested.filter { it in supported }
                 val missing = requested - usable.toSet()
@@ -106,11 +122,12 @@ class PublicSearch {
                     }
                     doc.select(".dialog-error, .engine-error").eachText().take(8).forEach { errors += it }
                 }
-            } catch (e: Exception) { errors += "Public metasearch: ${e.message}" }
+            } catch (e: CancellationException) { throw e }
+            catch (e: Exception) { errors += "Public metasearch: ${e.message}" }
         }
         return Batch(rows, errors, filtered)
     }
-    fun crawl(seed: Opportunity, mode: String): List<Opportunity> {
+    suspend fun crawl(seed: Opportunity, mode: String): List<Opportunity> {
         if (LocalPolicy.isForm(seed.url)) return emptyList()
         val u = seed.url.toHttpUrl(); val robots = get(u.newBuilder().encodedPath("/robots.txt").query(null).build().toString())
         if (robots.code != 200 && robots.code != 404) return emptyList()
@@ -118,7 +135,7 @@ class PublicSearch {
         if (robots.code == 200 && !rules.isAllowed(seed.url)) return emptyList()
         // Honor longer crawl delays by skipping, rather than shortening them.
         if (robots.code == 200 && rules.crawlDelay > 30000) return emptyList()
-        Thread.sleep(maxOf(3000L, if (robots.code == 200) rules.crawlDelay else 0))
+        delay(maxOf(3000L, if (robots.code == 200) rules.crawlDelay else 0))
         val page = get(seed.url); if (page.code != 200) return emptyList()
         val doc = Jsoup.parse(page.text, seed.url)
         return doc.select("a[href]").take(150).mapNotNull { a -> LocalPolicy.result(a.absUrl("href"), a.text(), "Discovered on ${u.host}. Application status unverified.", listOf("Page crawler"), "opportunities") }.take(12)
