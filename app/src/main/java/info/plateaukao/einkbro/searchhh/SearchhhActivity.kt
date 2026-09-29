@@ -58,6 +58,9 @@ class SearchhhActivity : ComponentActivity() {
             val prefs = remember { ConnectionSettings.prefs(this) }
             val gson = remember { Gson() }
             val sources = remember { gson.fromJson(assets.open("searchhh-portals.json").bufferedReader().use { it.readText() }, Array<Source>::class.java).toList() }
+            val codebases = remember { CodebaseRegistry.load(this@SearchhhActivity) }
+            var showCodebases by rememberSaveable { mutableStateOf(false) }
+            var codebaseQuery by rememberSaveable { mutableStateOf("") }
             val dao = remember { SearchhhDatabase.get(this).saved() }
             val saved by dao.all().collectAsState(initial = emptyList())
             var tab by rememberSaveable { mutableStateOf(0) }
@@ -187,10 +190,28 @@ class SearchhhActivity : ComponentActivity() {
                             if (status?.results.isNullOrEmpty()) item { Text("No matches yet. Searches fetch global portal listings repeatedly and match all query words; put exact phrases in quotes. Try a broader topic if needed. Some portals require JavaScript or login and cannot be read by the crawler.", style = MaterialTheme.typography.body2, color = Color(0xFFACB9AD)) }
                         }
                         1 -> {
-                            item { Text("${sources.size} sources. One hive.", style = MaterialTheme.typography.h5, fontWeight = FontWeight.Bold) }
-                            item { Text("Global opportunity publishers and official programme/application portals—not generic search engines. These are configured crawl seeds, not guaranteed live adapters. Eligibility varies by programme, not your device location. HTML/RSS retrieval runs in batches of eight; blocked, moved and unsupported pages are reported.") }
-                            item { TextButton(enabled = !running, onClick = { selected = if (selected.size == sources.size) emptySet() else sources.map { it.id }.toSet() }) { Text(if (selected.size == sources.size) "Deselect all" else "Select all") } }
-                            items(sources, key = { it.id }) { source -> Card { Row(Modifier.fillMaxWidth().padding(8.dp)) { Checkbox(source.id in selected, { selected = if (it) selected + source.id else selected - source.id }, enabled = !running); Column(Modifier.padding(top = 10.dp)) { Text(source.name, fontWeight = FontWeight.Bold); Text("${source.category} · ${source.format ?: "public"} portal", style = MaterialTheme.typography.caption) } } } }
+                            item { Text("Sources & codebases", style = MaterialTheme.typography.h5, fontWeight = FontWeight.Bold) }
+                            item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                OutlinedButton(onClick = { showCodebases = false }) { Text("Portals (${sources.size})") }
+                                OutlinedButton(onClick = { showCodebases = true }) { Text("Codebases (${codebases.entries.size})") }
+                            } }
+                            if (!showCodebases) {
+                                item { Text("Global opportunity publishers and official programme/application portals—not generic search engines. These are configured crawl seeds, not guaranteed live adapters. HTML/RSS, JSON-LD and bounded same-host sitemap discovery run in batches of eight. Unsupported or blocked pages are reported.") }
+                                item { TextButton(enabled = !running, onClick = { selected = if (selected.size == sources.size) emptySet() else sources.map { it.id }.toSet() }) { Text(if (selected.size == sources.size) "Deselect all" else "Select all") } }
+                                items(sources, key = { it.id }) { source -> Card { Row(Modifier.fillMaxWidth().padding(8.dp)) { Checkbox(source.id in selected, { selected = if (it) selected + source.id else selected - source.id }, enabled = !running); Column(Modifier.padding(top = 10.dp)) { Text(source.name, fontWeight = FontWeight.Bold); Text("${source.category} · ${source.format ?: "public"} portal", style = MaterialTheme.typography.caption) } } } }
+                            } else {
+                                item { Text("All 100 submitted entries + ${codebases.entries.size - 100} additions. Repository catalogue, not ${codebases.entries.size} installed crawlers. No submitted entry was removed. Parsers, indexes and security tools are labelled separately.") }
+                                item { Text("Phone: OkHttp + Jsoup + crawler-commons. Scrapy, Extruct and Trafilatura run in the optional Python backend (with Parsel selectors). Other projects require adapters/runtimes and are not auto-executed by AI.", style = MaterialTheme.typography.caption) }
+                                item { OutlinedTextField(codebaseQuery, { codebaseQuery = it.take(160) }, label = { Text("Filter by name, number, language or role") }, modifier = Modifier.fillMaxWidth(), singleLine = true) }
+                                item { Text("Requested ignore profile retained: robots.txt, rate limits, politeness delays, max depth and domain scope. This is a recorded request, not active settings or a promise every tool supports it. Server limits cannot be disabled by a client.", style = MaterialTheme.typography.caption) }
+                                item { TextButton(onClick = {
+                                    exportContent = assets.open("searchhh-codebases.json").bufferedReader().use { it.readText() }
+                                    export.launch("searchhh-codebase-audit.json")
+                                }) { Text("Export complete codebase audit") } }
+                                val visible = codebases.entries.filter { it.matches(codebaseQuery) }
+                                item { Text("${visible.size} shown · audited ${codebases.auditedAt.take(10)}", style = MaterialTheme.typography.caption) }
+                                items(visible, key = { "codebase:${it.number}" }) { codebase -> CodebaseCard(codebase) }
+                            }
                         }
                         2 -> {
                             item { Text("Your next chapter.", style = MaterialTheme.typography.h5, fontWeight = FontWeight.Bold); Text("Saved on this device with Room. Available offline.") }
@@ -220,6 +241,29 @@ class SearchhhActivity : ComponentActivity() {
                     }
                     item { Spacer(Modifier.height(16.dp)) }
                 }
+            }
+        }
+    }
+    @Composable private fun CodebaseCard(entry: CodebaseEntry) {
+        var expanded by rememberSaveable(entry.number) { mutableStateOf(false) }
+        Card(shape = RoundedCornerShape(14.dp), elevation = 0.dp) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("#${entry.number} ${entry.name}", style = MaterialTheme.typography.h6)
+                Text("${entry.reportedLanguage ?: entry.submittedLanguage} · ${entry.category.replace('_', ' ')}", style = MaterialTheme.typography.caption)
+                Text(entry.repositoryStatus.replace('_', ' ') + if (entry.archived == true) " · archived" else "", style = MaterialTheme.typography.caption)
+                Text("Integration: ${entry.integration.replace('_', ' ')}", color = MaterialTheme.colors.primary)
+                Text("License metadata: ${entry.license}", style = MaterialTheme.typography.caption)
+                entry.note?.let { Text(it, style = MaterialTheme.typography.body2) }
+                TextButton(onClick = { expanded = !expanded }) { Text(if (expanded) "Hide audit details" else "Show audit details") }
+                if (expanded) {
+                    Text("Submitted: ${entry.submittedUrl}", style = MaterialTheme.typography.caption)
+                    Text("Execution target: ${entry.executionTarget.replace('_', ' ')}", style = MaterialTheme.typography.caption)
+                    entry.revision?.let { Text("Source revision: $it", style = MaterialTheme.typography.caption) }
+                    entry.configurationSupport.forEach { (key, value) -> Text("$key: $value", style = MaterialTheme.typography.caption) }
+                    if (entry.description.isNotBlank()) Text(entry.description, style = MaterialTheme.typography.caption)
+                }
+                entry.codeLink()?.let { url -> TextButton(onClick = { browse(url) }) { Text("Open source code ↗") } }
+                if (entry.codeLink() == null) Text("Exact codebase unresolved; original entry retained.", style = MaterialTheme.typography.caption)
             }
         }
     }

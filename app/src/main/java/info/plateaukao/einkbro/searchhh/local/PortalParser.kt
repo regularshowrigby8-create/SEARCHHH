@@ -2,6 +2,7 @@ package info.plateaukao.einkbro.searchhh.local
 
 import info.plateaukao.einkbro.searchhh.Opportunity
 import info.plateaukao.einkbro.searchhh.Source
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jsoup.Jsoup
 import org.jsoup.parser.Parser
 import java.time.Instant
@@ -30,7 +31,7 @@ object PortalParser {
                 val rawDate = entry.selectFirst("pubDate, published, updated")?.text()
                 val date = rawDate?.let { runCatching { ZonedDateTime.parse(it, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant().toString() }.getOrDefault(it) }
                 if (!matches(query, "$title $description")) null
-                else LocalPolicy.result(link, title, description, listOf(source.name), mode, date)
+                else base.toHttpUrlOrNull()?.resolve(link)?.toString()?.let { LocalPolicy.result(it, title, description, listOf(source.name), mode, date) }
             }
         } else {
             val doc = Jsoup.parse(text, base)
@@ -44,8 +45,24 @@ object PortalParser {
                 else LocalPolicy.result(url, title, context, listOf(source.name), mode)
             }
         }
-        return rows.distinctBy { it.id }.filter { it.url != LocalPolicy.canonical(base) }.take(30)
+        val links = rows.distinctBy { it.id }.filter { it.url != LocalPolicy.canonical(base) }
             .map { it.copy(evidenceUrl = base, checkedAt = Instant.now().toString()) }
+        val structured = if (source.format == "feed") emptyList() else StructuredDiscovery.opportunities(source, text, query, mode)
+        return (structured + links).distinctBy { it.id }.take(30)
+    }
+    /** A fetched detail is evidence itself, even without an HTML listing-card link. */
+    fun page(source: Source, html: String, query: String, mode: String): List<Opportunity> {
+        val base = source.url ?: return emptyList()
+        val doc = Jsoup.parse(html, base)
+        doc.select("script, style, nav, header, footer, form").remove()
+        val title = doc.selectFirst("h1")?.text() ?: doc.title()
+        val description = (doc.selectFirst("article, main") ?: doc.body()).text().take(2000)
+        val self = if (matches(query, "$title $description"))
+            LocalPolicy.result(base, title, description, listOf(source.name, "Detail page extraction"), mode)
+                ?.copy(evidenceUrl = base, checkedAt = Instant.now().toString()) else null
+        val links = if (self != null) applications(self, html, query) else emptyList()
+        return (StructuredDiscovery.opportunities(source, html, query, mode) + listOfNotNull(self) + links)
+            .distinctBy { it.id }.take(30)
     }
     fun applications(seed: Opportunity, html: String, query: String): List<Opportunity> {
         val doc = Jsoup.parse(html, seed.url)

@@ -20,6 +20,7 @@ class LocalBackend private constructor(context: Context) : SearchhhApi {
     @Volatile private var current: JobStatus? = null
     val web = PublicSearch()
     private val portals = PortalCrawler(web)
+    val codebases = CodebaseRegistry.load(app)
     val ai = info.plateaukao.einkbro.searchhh.ai.AiReviewer(app)
     private val catalog = gson.fromJson(app.assets.open("searchhh-portals.json").bufferedReader().use { it.readText() }, Array<Source>::class.java).toList()
     override suspend fun sources() = catalog
@@ -113,7 +114,8 @@ class LocalBackend private constructor(context: Context) : SearchhhApi {
     }
     fun details(): Map<String, Any> = mapOf(
         "installationId" to (LocalIdentity.load(app)?.id ?: "not initialized"),
-        "catalogSources" to catalog.size, "searchConnection" to "Direct global portal crawl; no general search engine required",
+        "catalogSources" to catalog.size, "catalogCodebases" to codebases.entries.size,
+        "codebaseExecution" to "Reference catalogue; not installed crawler runtimes", "searchConnection" to "Direct global portal crawl; no general search engine required",
         "runtime" to "Android/Kotlin/Room", "aiModelIncluded" to false,
         "externalAiEnabled" to ai.vault.enabled(), "aiStatus" to ai.status,
         "retention" to "1,000 recently checked results per session; saved results retained separately")

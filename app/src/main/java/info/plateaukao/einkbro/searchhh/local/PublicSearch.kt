@@ -34,7 +34,7 @@ class PublicSearch {
     suspend fun get(url: String, limit: Long = 2L * 1024 * 1024): Page {
         currentCoroutineContext().ensureActive()
         require(LocalPolicy.canonical(url) != null) { "Non-public URL rejected" }
-        return http.newCall(Request.Builder().url(url).header("User-Agent", "Searchhh/0.3 (+https://github.com/regularshowrigby8-create/SEARCHHH)").build()).awaitPage(limit)
+        return http.newCall(Request.Builder().url(url).header("User-Agent", "Searchhh/0.4 (+https://github.com/regularshowrigby8-create/SEARCHHH)").build()).awaitPage(limit)
     }
 
     suspend fun discover(required: Set<String> = emptySet()) {

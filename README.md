@@ -16,6 +16,18 @@ per-installation identity/credentials, official MCP SSE tools, a tested outbound
 relay, and 128 catalog adapters. No server deployment by the Android user.
 [Architecture and availability limits](docs/searchhh/INCLUDED-BACKEND.md).
 
+## Crawler expansion — 0.4 construction
+
+[All 100 submitted codebases + 20 additions](docs/searchhh/CRAWLER-AUDIT.md)
+· [Plan](docs/searchhh/PLAN-0.4-CRAWLERS.md)
+· [Release validation](docs/searchhh/RELEASE-0.4.md)
+
+The 110 portal sources remain unchanged. Source code now includes the searchable
+codebase registry, JSON-LD/sitemap collection upgrades and optional backend
+Extruct/Trafilatura integration. Catalogue presence is not an installed runtime.
+The requested five ignore options are recorded, not globally activated. Android
+release gates are pending; the tested 0.3 APK above remains the current download.
+
 ## AI hive / API-key audit — 2026-09-29
 
 [Audit of the supplied 100 entries + 22 candidate routes/replacements](docs/searchhh/AI-MODEL-AUDIT.md)

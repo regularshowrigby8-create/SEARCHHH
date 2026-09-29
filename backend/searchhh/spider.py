@@ -8,6 +8,7 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.exceptions import IgnoreRequest
 from scrapy.resolver import CachingThreadedResolver
 from .domain import public_url, SIGNALS, BOT
+from .extraction import article_text, structured_rows
 
 class PublicResolver(CachingThreadedResolver):
     def getHostByName(self, name, timeout=()):
@@ -44,7 +45,8 @@ class OpportunitySpider(scrapy.Spider):
         if not isinstance(response,scrapy.http.TextResponse): return
         title=response.css('title::text').get('')
         if BOT.search(title): return
-        description=response.css('meta[name="description"]::attr(content)').get('')
+        description=article_text(response.text) or response.css('meta[name="description"]::attr(content)').get('')
+        yield from structured_rows(response.text, response.url)
         yield {'url':response.url,'title':title,'content':description,'engine':'Scrapy','publishedDate':response.css('meta[property="article:published_time"]::attr(content)').get()}
         for a in response.css('a[href]')[:200]:
             url=response.urljoin(a.attrib['href'])
@@ -55,7 +57,7 @@ class OpportunitySpider(scrapy.Spider):
 
 def is_form(url):
     p=urlsplit(url)
-    return p.hostname in ('forms.gle','forms.office.com','forms.microsoft.com') or (p.hostname=='docs.google.com' and p.path.startswith('/forms'))
+    return p.hostname in ('forms.gle','forms.office.com','forms.microsoft.com','forms.cloud.microsoft','forms.office365.com') or (p.hostname=='docs.google.com' and p.path.startswith('/forms/'))
 
 if __name__=='__main__':
     seeds=json.loads(sys.argv[1]); output=sys.argv[2]

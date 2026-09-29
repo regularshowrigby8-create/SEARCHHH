@@ -41,7 +41,7 @@ def opportunity(raw, mode='opportunities'):
     if not url or BOT.search(title):
         return None
     p = urlsplit(url)
-    form = p.hostname in ('forms.gle','forms.office.com','forms.microsoft.com') or (p.hostname=='docs.google.com' and p.path.startswith('/forms/'))
+    form = p.hostname in ('forms.gle','forms.office.com','forms.microsoft.com','forms.cloud.microsoft','forms.office365.com') or (p.hostname=='docs.google.com' and p.path.startswith('/forms/'))
     signals = sorted(set(m.group().lower() for m in SIGNALS.finditer(title+' '+content)))
     if mode=='opportunities' and not form and not signals:
         return None
@@ -55,4 +55,4 @@ def opportunity(raw, mode='opportunities'):
             published = date.astimezone(timezone.utc).isoformat()
     except ValueError:
         pass
-    return {'id':hashlib.sha256(url.encode()).hexdigest(),'url':url,'title':title,'description':content,'kind':kind,'signals':signals,'sources':list(raw.get('engines') or [raw.get('engine','Page crawler')]),'published':published,'discovered':datetime.now(timezone.utc).isoformat(),'score':min(100,(50 if form else 20)+10*len(signals)),'verified':False}
+    return {'id':hashlib.sha256(url.encode()).hexdigest(),'url':url,'title':title,'description':content,'kind':kind,'signals':signals,'sources':list(raw.get('engines') or [raw.get('engine','Page crawler')]),'published':published,'discovered':datetime.now(timezone.utc).isoformat(),'score':min(100,(50 if form else 20)+10*len(signals)),'verified':False,'evidenceUrl':canonical(str(raw.get('evidenceUrl') or ''))}
