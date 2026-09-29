@@ -3,6 +3,37 @@
 Implementation date: 2026-09-29. Build and test results must be taken from the
 associated GitHub Actions run, not inferred from this document.
 
+## Published build and observed results
+
+- APK: https://github.com/regularshowrigby8-create/SEARCHHH/releases/download/v0.3.0-test-13/searchhh-0.3.0-test.apk
+- Release: https://github.com/regularshowrigby8-create/SEARCHHH/releases/tag/v0.3.0-test-13
+- Source commit: `ef9ea3613dcca46f0441f95a85b6ba55a4582348`.
+- Sequential CI: https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36513573863
+  — all five jobs succeeded: framework, backend integration, Android, device smoke,
+  publication. Android unit tests, lint, universal APK assembly and Android 35
+  instrumentation passed. Local Python checks: 26 passed; browser JS: 13 passed.
+- Final device live portal diagnostic: **5 results**, including **2 application-link
+  extractions**, from the Opportunity Desk / Opportunities Corners sample; no errors.
+  This is a two-portal observation, not a validation of every configured portal.
+- Final **public MCP relay unavailable**: no usable forwarding event. Local authenticated
+  MCP/device tests passed. The earlier run 12 did establish public relay/MCP connectivity,
+  illustrating that this optional external relay can vary between runs. In-app search
+  does not depend on it.
+- No user key was supplied, no inference was invoked, and no signup was performed.
+  Model policy/schema tests use fixtures. A sandbox public-model-catalog probe failed
+  at TLS transport; this does not establish provider availability on the user's phone.
+- APK metadata: **28,324,898 bytes**, GitHub-reported SHA-256:
+  `3755c4847406524f72abbb26a7174f63118aba8d4fe41e342cb6617128399f9f`.
+  The sandbox release-asset download failed with EOF, so this is not a locally
+  recomputed binary checksum.
+
+This is a **debug-signed prerelease**, not a production security certification.
+If Android reports a signature mismatch with a previous CI build, export saved
+results before uninstalling. Uninstallation removes device data and stored keys.
+Connect a provider through Settings → External AI reviewers, load/select a free
+model, import your own key with consent, and enable review. Provider authorization
+opens an external browser, not Searchhh's result WebView.
+
 ## Implemented scope
 
 - Android now selects from **110 global opportunity portal/publisher seed URLs**,

@@ -1,7 +1,10 @@
-> **0.3 development slice:** Android now uses global opportunity portal seeds and
-> optional, consent-gated external AI review. See [scope and limitations](docs/searchhh/RELEASE-0.3.md).
-> The 0.2 release evidence below remains historical; a new APK is available only
-> once its separate 0.3 GitHub Actions release gates succeed.
+> **Searchhh 0.3 test APK:** [Download](https://github.com/regularshowrigby8-create/SEARCHHH/releases/download/v0.3.0-test-13/searchhh-0.3.0-test.apk)
+> · [Release scope and validation](docs/searchhh/RELEASE-0.3.md)
+> · [Passed CI](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36513573863)
+>
+> Global portal crawling and optional external AI review are now included. Provider
+> keys/consent are required for AI; the optional public relay was unavailable in the
+> final run. The 0.2 release evidence below is retained as historical documentation.
 
 # Searchhh
 
