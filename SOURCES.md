@@ -1,3 +1,6 @@
+# Source provenance
+
+The full upstream import and license ledger is in [docs/searchhh/SOURCES.md](docs/searchhh/SOURCES.md).
 
 ## Searchhh 0.3 integration slice
 

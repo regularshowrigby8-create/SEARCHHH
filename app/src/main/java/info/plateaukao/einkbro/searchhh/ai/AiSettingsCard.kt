@@ -1,6 +1,8 @@
 package info.plateaukao.einkbro.searchhh.ai
 
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -24,8 +26,19 @@ fun AiSettingsCard(ai: AiReviewer) {
     var revision by remember { mutableStateOf(0) }
     var message by remember { mutableStateOf("") }
     fun external(url: String) {
-        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
-            .onFailure { message = "No external browser available for provider authorization" }
+        runCatching {
+            val base = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addCategory(Intent.CATEGORY_BROWSABLE)
+            // Never route provider login through Searchhh's inspected result WebView,
+            // even when this app is the user's default browser.
+            val choices = context.packageManager.queryIntentActivities(base, PackageManager.MATCH_DEFAULT_ONLY)
+                .filter { it.activityInfo.packageName != context.packageName }
+                .distinctBy { it.activityInfo.packageName }
+                .map { Intent(base).setComponent(ComponentName(it.activityInfo.packageName, it.activityInfo.name)) }
+            check(choices.isNotEmpty())
+            val chooser = Intent.createChooser(choices.first(), "Open provider in an external browser")
+                .putExtra(Intent.EXTRA_INITIAL_INTENTS, choices.drop(1).toTypedArray())
+            context.startActivity(chooser)
+        }.onFailure { message = "Install an external browser to open the provider dashboard; Searchhh will not inspect provider login pages." }
     }
     Card {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
