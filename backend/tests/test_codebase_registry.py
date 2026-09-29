@@ -40,7 +40,7 @@ def test_five_requested_options_preserved_without_fabricating_support():
 
 
 def test_broken_entries_are_retained_and_not_given_guessed_launch_links():
-    for n in (50, 78, 92):
+    for n in (50, 78):
         row = ROWS[n-1]
         assert row['canonicalUrl'] is None
         assert row['repositoryStatus'] in ('not_found', 'malformed_url')
@@ -49,6 +49,9 @@ def test_broken_entries_are_retained_and_not_given_guessed_launch_links():
 
 
 def test_verified_metadata_includes_source_revision_and_legal_caveat():
+    assert ROWS[91]['submittedUrl'].endswith('/us scraper')
+    assert ROWS[91]['canonicalUrl'] == 'https://github.com/z0m31en7/Uscrapper'
+    assert ROWS[91]['resolutionConfidence'] == 'probable_intended_project'
     for row in ROWS:
         if row['repositoryStatus'] == 'github_metadata_verified':
             assert re.fullmatch('[0-9a-f]{40}', row['revision'])

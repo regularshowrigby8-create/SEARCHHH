@@ -36,7 +36,7 @@ def inspect(item):
     override = OVERRIDES.get(str(number), {})
     lookup = override.get('lookupUrl', submitted)
     u = urlsplit(lookup)
-    if any(c.isspace() for c in submitted):
+    if any(c.isspace() for c in lookup):
         row['repositoryStatus']='malformed_url'
     elif u.hostname != 'github.com':
         row['repositoryStatus']='external_review_required'

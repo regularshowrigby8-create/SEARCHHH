@@ -29,8 +29,8 @@ must pass before a new APK is described as delivered. Last delivered APK remains
 
 ## Explicitly not completed
 
-- Runtime adapters/installation for every catalogue project. Three exact submitted
-  identities (#50, #78, #92) remain unresolved; #83 is a packaging repository.
+- Runtime adapters/installation for every catalogue project. Two exact submitted
+  identities (#50, #78) remain unresolved; #92 has a probable spelling correction; #83 is a packaging repository.
 - The five requested ignore options are retained as audit requirements and
   field-level capability findings, **not enabled as a universal runtime profile**.
   The public crawler still observes robots, cooldowns and resource/network bounds.

@@ -123,7 +123,10 @@
     "note": "Kali packaging repository verified; upstream branch and bundled JAR present. This is not proof a complete original Java source tree is present. License/source provenance needs package inspection."
   },
   "92": {
-    "note": "Submitted URL contains a literal space. No exact z0m31en7 Uscraper codebase verified; do not replace it with unrelated projects named uscraper."
+    "lookupUrl": "https://github.com/z0m31en7/Uscrapper",
+    "category": "security_crawler",
+    "resolutionConfidence": "probable_intended_project",
+    "note": "Submitted URL contains a literal space. Same-owner Python project z0m31en7/Uscrapper (different spelling) verified via GitHub metadata and README; recorded as the probable intended codebase, not an exact URL match. OSINT/personal-data extraction features are not automatically executed."
   },
   "65": {
     "integration": "new_optional_backend",

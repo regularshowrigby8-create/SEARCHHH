@@ -6,7 +6,7 @@
 
 GitHub repository API metadata, canonical redirects, source revisions and detected license metadata were fetched with `gh`. Non-GitHub source references were checked against project/SourceForge/GNU/Apache pages. Repository metadata is not a build test; archived=false is not a maintenance/security guarantee; an SPDX detector result is not a complete licensing review.
 
-Lookup outcomes: **105 github metadata verified**, **11 upstream source link verified**, **2 not found**, **1 packaging repository verified**, **1 malformed url**.
+Lookup outcomes: **106 github metadata verified**, **11 upstream source link verified**, **2 not found**, **1 packaging repository verified**.
 
 No arbitrary project code was executed during the audit. The Android app ships the reference registry and its own existing library-based collection path, not 120 third-party executables.
 
@@ -20,7 +20,7 @@ Code-level checks confirm configurable client settings in Scrapy, Colly, Katana 
 
 - **#50 nicmart/PHPCrawler:** GitHub 404; original identity not resolved. A PHPCrawl alternative is recorded without claiming it is the same project.
 - **#78 s0md3v/urlscan:** GitHub 404; no matching repository found under that owner. Not silently replaced by urlscan.io.
-- **#92 z0m31en7/us scraper:** malformed URL with a space; no exact codebase identified. Other uscraper projects are not proof of identity.
+- **#92 spelling correction:** same-owner `z0m31en7/Uscrapper` was subsequently verified by GitHub metadata and README. It is recorded as the probable intended project, with the malformed original URL preserved.
 
 ## Important corrections
 
@@ -130,7 +130,7 @@ Code-level checks confirm configurable client settings in Scrapy, Colly, Katana 
 | 89 | Mantra | secret_scanner | [Source](https://github.com/brosck/mantra/tree/6026816210df756f8cc8e9d637b9f49fb277a5f0) | GPL-3.0 | catalog_only |
 | 90 | Crawlergo | security_crawler | [Source](https://github.com/Qianlitp/crawlergo/tree/38b6364285b05eac18b4f9a23062f64ad35826f4) | GPL-3.0 | catalog_only |
 | 91 | Rad | security_crawler | [Source](https://github.com/chaitin/rad/tree/7238020cdd1fca2c6996c85431ecf9f47d236a69) | unverified | catalog_only |
-| 92 | Uscraper | identity_unresolved | Unresolved — submitted URL retained in JSON | unverified | catalog_only |
+| 92 | Uscraper | security_crawler | [Source](https://github.com/z0m31en7/Uscrapper/tree/da58cba891e07c3003d874924dd4b39d393ddd2c) | MIT | catalog_only |
 | 93 | Photon | security_crawler | [Source](https://github.com/s0md3v/Photon/tree/635c25a36b10bc9973eab65cc90f5361483b6603) | GPL-3.0 | catalog_only |
 | 94 | Sn1per | security_suite | [Source](https://github.com/1N3/Sn1per/tree/a5450bc496a1af04f8368888f86d086a9fc046b8) | NOASSERTION | catalog_only |
 | 95 | Osmedeus | security_suite | [Source](https://github.com/j3ssie/osmedeus/tree/9a02ed0f9dbd3d9fd7f006610264016058fd8a0e) | MIT | catalog_only |
