@@ -26,7 +26,7 @@ class InternalBackendService : Service() {
         startForeground(2042, NotificationCompat.Builder(this, "searchhh-server").setSmallIcon(android.R.drawable.ic_menu_search).setContentTitle("Searchhh personal server").setContentText("Search + MCP running on your device. Tap to manage.").setContentIntent(open).addAction(android.R.drawable.ic_media_pause, "Stop server", stop).setOngoing(true).build())
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == "STOP") { stopSelf(); return START_NOT_STICKY }
+        if (intent?.action == "STOP") { ConnectionSettings.prefs(this).edit().putBoolean("server_enabled", false).apply(); stopSelf(); return START_NOT_STICKY }
         if (LocalIdentity.load(this) == null) { stopSelf(); return START_NOT_STICKY }
         if (active || starting) return START_NOT_STICKY
         starting = true; state = "Starting internal server"
@@ -34,7 +34,7 @@ class InternalBackendService : Service() {
             try {
                 mcp = DeviceMcpServer(this@InternalBackendService)
                 mcp!!.start(); ensureActive()
-                localPort = mcp!!.port; active = true; starting = false; state = "Internal server ready"
+                withContext(Dispatchers.Main.immediate) { ensureActive(); localPort = mcp!!.port; active = true; starting = false; state = "Internal server ready" }
                 if (ConnectionSettings.prefs(this@InternalBackendService).getBoolean("relay_enabled", true)) {
                     var delayMs = 5000L
                     while (isActive) {
@@ -56,8 +56,9 @@ class InternalBackendService : Service() {
         return START_NOT_STICKY
     }
     override fun onDestroy() {
+        scope.cancel()
         starting = false; active = false; state = "Stopped"; remoteUrl = null; localPort = 0
-        bridge?.close(); mcp?.stop(); scope.cancel()
+        bridge?.close(); mcp?.stop()
         CoroutineScope(Dispatchers.IO).launch { LocalBackend.get(applicationContext).shutdown() }
         super.onDestroy()
     }

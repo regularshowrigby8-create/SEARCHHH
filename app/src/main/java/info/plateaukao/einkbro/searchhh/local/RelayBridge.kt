@@ -26,7 +26,7 @@ class RelayBridge(private val context: Context) {
             override fun check(host: String, key: ByteArray): Int {
                 val encoded = android.util.Base64.encodeToString(key, android.util.Base64.NO_WRAP)
                 val saved = prefs.getString("relay_host_key", null)
-                if (saved == null) { prefs.edit().putString("relay_host_key", encoded).commit(); return HostKeyRepository.OK }
+                if (saved == null) { kotlin.check(prefs.edit().putString("relay_host_key", encoded).commit()) { "Cannot persist relay host pin" }; return HostKeyRepository.OK }
                 return if (saved == encoded) HostKeyRepository.OK else HostKeyRepository.CHANGED
             }
             override fun add(hostkey: HostKey, ui: UserInfo?) = Unit

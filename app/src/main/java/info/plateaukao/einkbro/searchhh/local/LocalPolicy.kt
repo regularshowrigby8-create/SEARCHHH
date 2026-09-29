@@ -5,10 +5,16 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.net.InetAddress
 import java.security.MessageDigest
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.format.ResolverStyle
 import org.jsoup.Jsoup
 
 object LocalPolicy {
-    private val signals = Regex("\\b(cohort|fellowship|bootcamp|scholarship|certification|certificate|applications?|enroll|enrol|register|opportunit\\w*)\\b", RegexOption.IGNORE_CASE)
+    private val signals = Regex("\\b(cohorts?|fellowships?|bootcamps?|scholarships?|certifications?|certificates?|applications?|enroll|enrol|register|opportunit\\w*)\\b", RegexOption.IGNORE_CASE)
     private val bots = Regex("captcha|access denied|verify you are human|robot check|just a moment", RegexOption.IGNORE_CASE)
     fun publicAddress(address: InetAddress): Boolean {
         val b = address.address.map { it.toInt() and 255 }
@@ -46,12 +52,23 @@ object LocalPolicy {
         val u = raw.toHttpUrlOrNull() ?: return false
         return u.host in listOf("forms.gle", "forms.office.com", "forms.microsoft.com") || (u.host == "docs.google.com" && u.encodedPath.startsWith("/forms"))
     }
+    fun publicationDate(raw: String?): String? {
+        val value = raw?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+        val instant = runCatching { Instant.parse(value) }.getOrNull()
+            ?: runCatching { OffsetDateTime.parse(value, DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ssxx").withResolverStyle(ResolverStyle.STRICT)).toInstant() }.getOrNull()
+        if (instant != null) return instant.takeIf { !it.isAfter(Instant.now()) }?.toString()
+        // If the source omitted a zone, retain only the known calendar date.
+        // Never invent a timezone, publication time, or substitute discovery time.
+        val day = runCatching { LocalDate.parse(value) }.getOrNull()
+            ?: runCatching { LocalDateTime.parse(value, DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss").withResolverStyle(ResolverStyle.STRICT)).toLocalDate() }.getOrNull()
+        return day?.takeIf { !it.isAfter(LocalDate.now(ZoneOffset.UTC)) }?.toString()
+    }
     fun result(url: String, title: String, description: String, sources: List<String>, mode: String, date: String? = null): Opportunity? {
         val clean = canonical(url) ?: return null
         val t = Jsoup.parse(title).text().take(500)
         val text = Jsoup.parse(description).text().take(2000)
         if (bots.containsMatchIn(t)) return null
-        val hits = signals.findAll("$t $text").map { it.value.lowercase() }.toSet()
+        val hits = signals.findAll("$t $text").map { it.value.lowercase().removeSuffix("s") }.toSet()
         if (mode == "opportunities" && !isForm(clean) && hits.isEmpty()) return null
         val kind = when {
             isForm(clean) -> "Application form"
@@ -61,7 +78,7 @@ object LocalPolicy {
             else -> "Link"
         }
         val now = Instant.now()
-        val published = runCatching { Instant.parse(date).takeIf { !it.isAfter(now) }?.toString() }.getOrNull()
+        val published = publicationDate(date)
         val id = MessageDigest.getInstance("SHA-256").digest(clean.toByteArray()).joinToString("") { "%02x".format(it) }
         return Opportunity(id, clean, t.ifBlank { clean }, text, kind, sources.distinct(), published, now.toString(), ((if (isForm(clean)) 50 else 20) + hits.size * 10).coerceAtMost(100), false)
     }

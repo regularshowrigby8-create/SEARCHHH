@@ -44,9 +44,9 @@ class PublicSearch {
         val directory = JsonParser.parseString(response.text).asJsonObject.getAsJsonObject("instances")
         val candidates = directory.entrySet().filter { (url, item) ->
             val data = item.asJsonObject
-            url.startsWith("https://") && data.get("network_type")?.asString == "normal" &&
-                data.getAsJsonObject("http")?.get("status_code")?.asInt == 200 &&
-                data.get("analytics")?.asBoolean != true
+            url.startsWith("https://") && data.get("network_type")?.takeUnless { it.isJsonNull }?.asString == "normal" &&
+                data.get("http")?.takeIf { it.isJsonObject }?.asJsonObject?.get("status_code")?.takeUnless { it.isJsonNull }?.asInt == 200 &&
+                data.get("analytics")?.takeUnless { it.isJsonNull }?.asBoolean != true
         }.shuffled().take(6)
         for ((url, _) in candidates) {
             try {

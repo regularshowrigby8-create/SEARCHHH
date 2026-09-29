@@ -52,3 +52,21 @@ No code was imported from repositories with unclear licensing. Chaquopy was rese
 but not adopted: the current SearXNG native-wheel requirements were not demonstrated
 portable across all supported Android ABIs. The Kotlin path avoids pretending that
 PostgreSQL/Redis/Linux containers run inside an ordinary Android APK.
+
+The expanded **128-entry** catalog uses SearXNG settings commit
+`12f8b6515ca77c3c3bc1498584950ef5daca1433`. The real-container CI check asserts every
+catalog ID is in the running SearXNG `/config` response, not only in local JSON.
+Public-instance selection is independent of that CI server and checks the selected
+node at runtime. A catalog entry is not a live-provider guarantee.
+
+Relay event framing (`event: tcpip-forward`, `address`) was checked against the
+existing Elixir client https://github.com/erlef/localhost-run. No Elixir code is
+bundled. SSH banners/help URLs are never treated as tunnel endpoints. Before sharing
+a tunnel, the Android bridge checks public unauthenticated rejection and an
+authenticated health response matching this installation. This is a connectivity
+check, not a claim of end-to-end TLS: the relay still terminates HTTPS.
+
+Full MIT (MCP), BSD-style (JSch), and Apache-2.0 (crawler-commons) license texts are
+bundled in `app/src/main/assets/searchhh-licenses/`, alongside the repository's
+existing upstream licensing. Pins remain explicit in Gradle; this debug build is
+not presented as a completed third-party vulnerability audit.

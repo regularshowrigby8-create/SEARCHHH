@@ -104,3 +104,22 @@ testing, a live opportunity-quality benchmark, AI/BYOK mode, Go and OpenSearch.
 Debug keys can differ between CI runs; in-place upgrades may require uninstalling
 the earlier debug app (export saved data first). This build is not a production
 release or an assertion that every provider is always available.
+
+## 0.2 upgrade validation (in progress; historical results above describe 0.1)
+
+- 128-entry Python/app/SearXNG catalogs synchronized; 25 Python and 13 JavaScript
+  tests pass. Real PostgreSQL/Redis/RQ/SearXNG integration confirms all 128 IDs load.
+- Android compile, unit tests, lint and both application/instrumentation APK assembly
+  passed at `f3b4955` in run `36502783543`.
+- The first Android compile caught two integration bugs (Ktor receiver shadowing the
+  Android Context, and OkHttp's Kotlin Dns interface not being a SAM constructor).
+  Both were fixed, not worked around by skipping compilation.
+- The first instrumented run passed Room 1→2 migration and isolated-store identity
+  checks, but rejected one test method because its inferred return type was not void.
+  Corrected the harness to explicit Unit. MCP protocol/Stop assertions must now run;
+  the earlier build is not called device-verified or released.
+- Public search and relay probes are separate non-gating diagnostics. A successful
+  diagnostic test execution alone does not establish provider availability; inspect
+  its AVAILABLE/UNAVAILABLE result. Tests never substitute fixtures for a live probe.
+- Follow-up fixes retain SearXNG date formats accurately, tolerate null directory
+  fields, and serialize service readiness with Android lifecycle transitions.

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 class InternalBackendTest {
-    @Test fun initializesFromNameAndServesAuthenticatedMcp() = runBlocking {
+    @Test fun initializesFromNameAndServesAuthenticatedMcp(): Unit = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
         ConnectionSettings.prefs(context).edit().putBoolean("relay_enabled", false).putBoolean("server_enabled", true).apply()
         val identity = LocalIdentity.create(context, "Test user")

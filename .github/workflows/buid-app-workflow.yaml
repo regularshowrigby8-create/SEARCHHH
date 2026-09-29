@@ -141,6 +141,17 @@ jobs:
             adb exec-out screencap -p > searchhh-screen.png
             adb logcat -d -b crash > crash.log
             test ! -s crash.log
+      - name: Report external service diagnostics
+        if: always()
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          for filename in ['relay-probe.txt', 'search-probe.txt']:
+              p = Path(filename)
+              if p.exists():
+                  text = p.read_text(errors='replace')[:2800]
+                  print('::notice title=External availability::' + text.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
+          PYTHON
       - name: Surface device failure diagnostics
         if: failure()
         run: |
