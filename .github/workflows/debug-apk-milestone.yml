@@ -14,7 +14,7 @@ on:
       - '.github/workflows/debug-apk-milestone.yml'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   actions: read
 concurrency:
   group: debug-apk-${{ github.ref }}
@@ -88,6 +88,20 @@ jobs:
           name: searchhh-debug-apk-${{ github.sha }}
           path: debug-delivery/
           if-no-files-found: error
+      - name: Publish debug APK through GitHub release assets
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: debug-apk-${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "$TAG" \
+            debug-delivery/*.apk debug-delivery/SHA256SUMS \
+            --repo "$GITHUB_REPOSITORY" \
+            --prerelease \
+            --title "Debug APK milestone $GITHUB_SHA" \
+            --notes "Hosted debug transport artifact only. Not release-approved or production-signed."
       - name: Publish debug failure tail
         if: failure()
         shell: bash
