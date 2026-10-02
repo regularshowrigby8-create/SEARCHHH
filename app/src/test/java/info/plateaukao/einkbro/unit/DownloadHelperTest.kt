@@ -31,6 +31,18 @@ class DownloadHelperTest {
     }
 
     @Test
+    fun `guessFilename preserves malformed percent path segment`() {
+        val fileName =
+            DownloadHelper.guessFilename(
+                url = "https://example.com/files/bad%name.apk",
+                contentDisposition = "",
+                mimeType = "application/vnd.android.package-archive",
+            )
+
+        assertEquals("bad%name.apk", fileName)
+    }
+
+    @Test
     fun `guessFilename preserves plus sign in path filenames`() {
         val fileName =
             DownloadHelper.guessFilename(
