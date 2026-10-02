@@ -90,7 +90,7 @@ Both debug/release reports explicitly have ExifInterface=0; app lint decreases f
 One new test-only ComplexCondition finding keeps the issue open. Split the two-pipeline artifact-selection expression into explicit when branches with an invalid-pipeline error. All assertions and comparisons remain unchanged. Re-run before closure; do not advance to the next issue.
 
 
-### Issue 3 CLOSED — final source 6abf29b
+### Issue 3 CLOSED — historical evidence source 6abf29b
 
 Final standalone run **36628443911**, device check **109611293978**, reports **384 combined passing results**, including all four EXIF regressions and the 16 orientation comparisons. Release check **109611294088** reports **336 passing** results. Standalone host check **109611294295** fails with zero tests/no lint; the available annotation truncates a `java.util.zip.ZipException` and does not identify the archive. Independent same-SHA delivery run **36628444279**, host check **109611299996**, reports **360 passing** results. Its device check **109611299564** fails with shell exit 1 and zero reported tests. Neither unsuccessful attempt is counted as passing. Counts overlap.
 

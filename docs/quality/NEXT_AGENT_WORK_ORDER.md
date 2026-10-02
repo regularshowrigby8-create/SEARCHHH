@@ -52,7 +52,7 @@ Read [the recovered baseline](recovered-6abf29b/README.md) and [its manifest](re
 
 ### Established checkpoint — do not regress or redo closed fixes
 
-Runtime source **`6abf29b57982b93fe929674c70230bb17f6940cf`**; documentation checkpoint **`77fbeef55d5ea9c28fa0c0d2c097d2b2081eaba4`**. New documentation commits are not new runtime test evidence.
+Historical evidence source **`6abf29b57982b93fe929674c70230bb17f6940cf`**; reconciled repository checkpoint is the current branch tip and must be verified from Git history before reuse. New documentation commits are not new runtime test evidence.
 
 | Evidence | Observed result | Interpretation |
 | --- | --- | --- |
