@@ -49,10 +49,27 @@ jobs:
         run: |
           if [ -f debug-app-tests.log ]; then
             {
-              echo "## app JVM test failure — last 80 lines"
+              echo "## app JVM test failure — extracted root diagnostics"
               echo
               echo '```text'
-              tail -n 80 debug-app-tests.log
+              python3 - <<'PYCODE'
+from pathlib import Path
+import re
+lines = Path("debug-app-tests.log").read_text(errors="replace").splitlines()
+patterns = re.compile(r"(Execution failed for task|What went wrong|Caused by:|There were failing tests|FAILED|failure|AssertionError|NoClassDefFoundError|Exception|Error:)", re.I)
+matched = []
+for index, line in enumerate(lines):
+    if patterns.search(line):
+        matched.extend(lines[max(0, index - 2):min(len(lines), index + 4)])
+seen = set()
+for line in matched:
+    if line not in seen:
+        print(line)
+        seen.add(line)
+if not seen:
+    print("No root marker found; final 120 lines follow:")
+    print("\n".join(lines[-120:]))
+PYCODE
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
           fi
