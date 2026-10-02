@@ -90,6 +90,7 @@ jobs:
             echo "ad-filter: $ad_filter"
             echo "adblock-client: $adblock"
           } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=JVM test status::app=$app; ad-filter=$ad_filter; adblock-client=$adblock"
           test "$app" = 0
           test "$ad_filter" = 0
           test "$adblock" = 0
