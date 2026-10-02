@@ -38,16 +38,43 @@ jobs:
           ./gradlew :app:compileDebugKotlin \
             --no-configuration-cache --stacktrace --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-compile.log
-      - name: Run JVM unit tests
+      - name: Run app JVM unit tests
         if: success()
+        continue-on-error: true
+        id: app-tests
         shell: bash
         run: |
           set -o pipefail
-          ./gradlew --continue :app:testDebugUnitTest \
-            :ad-filter:testDebugUnitTest :adblock-client:testDebugUnitTest \
-            --no-configuration-cache --stacktrace --max-workers=2 \
-            -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-tests.log
+          ./gradlew :app:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
+            -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-app-tests.log
+      - name: Run ad-filter JVM unit tests
+        if: always()
+        continue-on-error: true
+        id: ad-filter-tests
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew :ad-filter:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
+            -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-ad-filter-tests.log
+      - name: Run adblock-client JVM unit tests
+        if: always()
+        continue-on-error: true
+        id: adblock-tests
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew :adblock-client:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
+            -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-adblock-tests.log
+      - name: Enforce JVM test result
+        if: always()
+        id: test-gate
+        shell: bash
+        run: |
+          test "${{ steps.app-tests.outcome }}" = success
+          test "${{ steps.ad-filter-tests.outcome }}" = success
+          test "${{ steps.adblock-tests.outcome }}" = success
       - name: Assemble debug APK
+        if: steps.test-gate.outcome == 'success'
         run: |
           ./gradlew :app:assembleDebug --no-configuration-cache --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC"
@@ -71,7 +98,7 @@ jobs:
         if: failure()
         shell: bash
         run: |
-          for log in debug-compile.log debug-tests.log debug-build.log; do
+          for log in debug-compile.log debug-tests.log debug-app-tests.log debug-ad-filter-tests.log debug-adblock-tests.log debug-build.log; do
             if [ -f "$log" ]; then
               { echo "## $log failure tail"; echo; tail -120 "$log"; } >> "$GITHUB_STEP_SUMMARY"
             fi
@@ -84,6 +111,9 @@ jobs:
           path: |
             debug-compile.log
             debug-tests.log
+            debug-app-tests.log
+            debug-ad-filter-tests.log
+            debug-adblock-tests.log
             debug-build.log
             app/build/test-results/
             app/build/reports/tests/
