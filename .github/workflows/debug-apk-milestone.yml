@@ -47,6 +47,9 @@ jobs:
           set -o pipefail
           ./gradlew :app:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-app-tests.log
+          status=${PIPESTATUS[0]}
+          printf '%s\n' "$status" > debug-app-status.txt
+          exit 0
       - name: Run ad-filter JVM unit tests
         if: always()
         continue-on-error: true
@@ -56,6 +59,9 @@ jobs:
           set -o pipefail
           ./gradlew :ad-filter:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-ad-filter-tests.log
+          status=${PIPESTATUS[0]}
+          printf '%s\n' "$status" > debug-ad-filter-status.txt
+          exit 0
       - name: Run adblock-client JVM unit tests
         if: always()
         continue-on-error: true
@@ -65,14 +71,28 @@ jobs:
           set -o pipefail
           ./gradlew :adblock-client:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-adblock-tests.log
+          status=${PIPESTATUS[0]}
+          printf '%s\n' "$status" > debug-adblock-status.txt
+          exit 0
       - name: Enforce JVM test result
         if: always()
         id: test-gate
         shell: bash
         run: |
-          test "${{ steps.app-tests.outcome }}" = success
-          test "${{ steps.ad-filter-tests.outcome }}" = success
-          test "${{ steps.adblock-tests.outcome }}" = success
+          set -u
+          app=$(cat debug-app-status.txt 2>/dev/null || echo missing)
+          ad_filter=$(cat debug-ad-filter-status.txt 2>/dev/null || echo missing)
+          adblock=$(cat debug-adblock-status.txt 2>/dev/null || echo missing)
+          {
+            echo "## JVM test status"
+            echo
+            echo "app: $app"
+            echo "ad-filter: $ad_filter"
+            echo "adblock-client: $adblock"
+          } >> "$GITHUB_STEP_SUMMARY"
+          test "$app" = 0
+          test "$ad_filter" = 0
+          test "$adblock" = 0
       - name: Assemble debug APK
         if: steps.test-gate.outcome == 'success'
         run: |
@@ -114,6 +134,9 @@ jobs:
             debug-app-tests.log
             debug-ad-filter-tests.log
             debug-adblock-tests.log
+            debug-app-status.txt
+            debug-ad-filter-status.txt
+            debug-adblock-status.txt
             debug-build.log
             app/build/test-results/
             app/build/reports/tests/
