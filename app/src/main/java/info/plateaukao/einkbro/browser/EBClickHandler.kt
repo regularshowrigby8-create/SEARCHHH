@@ -8,7 +8,6 @@ import android.view.MotionEvent
 class EBClickHandler(
     private val onLongPress: (Message, MotionEvent?) -> Unit,
 ) : Handler(Looper.getMainLooper()) {
-
     var currentMotionEvent: MotionEvent? = null
 
     override fun handleMessage(message: Message) {

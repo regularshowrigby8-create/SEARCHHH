@@ -4,23 +4,23 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "highlights",
+@Entity(
+    tableName = "highlights",
     indices = [Index(value = ["articleId"], unique = false)],
     foreignKeys = [
         androidx.room.ForeignKey(
             entity = Article::class,
             parentColumns = ["id"],
             childColumns = ["articleId"],
-            onDelete = androidx.room.ForeignKey.CASCADE
-        )
-    ]
+            onDelete = androidx.room.ForeignKey.CASCADE,
+        ),
+    ],
 )
-
 data class Highlight(
     var articleId: Int,
     var content: String,
 ) {
-    @PrimaryKey (autoGenerate = true)
+    @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 }
 
@@ -31,6 +31,6 @@ data class Article(
     var date: Long,
     var tags: String,
 ) {
-    @PrimaryKey (autoGenerate = true)
+    @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 }

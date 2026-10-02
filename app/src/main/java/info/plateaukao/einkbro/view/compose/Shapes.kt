@@ -11,27 +11,31 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-fun Modifier.dashedBorder(width: Dp, radius: Dp, color: Color) =
-    drawBehind {
-        drawIntoCanvas {
-            val paint = Paint()
+fun Modifier.dashedBorder(
+    width: Dp,
+    radius: Dp,
+    color: Color,
+) = drawBehind {
+    drawIntoCanvas {
+        val paint =
+            Paint()
                 .apply {
                     strokeWidth = width.toPx()
                     this.color = color
                     style = PaintingStyle.Stroke
                     pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
                 }
-            it.drawRoundRect(
-                width.toPx(),
-                width.toPx(),
-                size.width - width.toPx(),
-                size.height - width.toPx(),
-                radius.toPx(),
-                radius.toPx(),
-                paint
-            )
-        }
+        it.drawRoundRect(
+            width.toPx(),
+            width.toPx(),
+            size.width - width.toPx(),
+            size.height - width.toPx(),
+            radius.toPx(),
+            radius.toPx(),
+            paint,
+        )
     }
+}
 
 fun Modifier.horizontalBorder(
     drawTop: Boolean = false,
@@ -46,7 +50,7 @@ fun Modifier.horizontalBorder(
                 color = color,
                 start = Offset(0f, 0f),
                 end = Offset(size.width, 0f),
-                strokeWidth = strokeWidth
+                strokeWidth = strokeWidth,
             )
         }
         if (drawBottom) {
@@ -54,8 +58,8 @@ fun Modifier.horizontalBorder(
                 color = color,
                 start = Offset(0f, size.height),
                 end = Offset(size.width, size.height),
-                strokeWidth = strokeWidth
+                strokeWidth = strokeWidth,
             )
         }
-    }
+    },
 )

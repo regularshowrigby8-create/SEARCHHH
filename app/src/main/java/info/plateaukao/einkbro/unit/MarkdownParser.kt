@@ -34,7 +34,7 @@ object MarkdownParser {
                         content,
                         resultBuilder,
                         fontSize = (DEFAULT_FONT_SIZE + 4).sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
                 // Similar processing for Heading 2 to Heading 6
@@ -45,7 +45,7 @@ object MarkdownParser {
                         content,
                         resultBuilder,
                         fontSize = (DEFAULT_FONT_SIZE + 3).sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
                 // Heading 3
@@ -55,7 +55,7 @@ object MarkdownParser {
                         content,
                         resultBuilder,
                         fontSize = (DEFAULT_FONT_SIZE + 2).sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
                 // Heading 4
@@ -65,7 +65,7 @@ object MarkdownParser {
                         content,
                         resultBuilder,
                         fontSize = (DEFAULT_FONT_SIZE + 2).sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
                 // Heading 5
@@ -75,7 +75,7 @@ object MarkdownParser {
                         content,
                         resultBuilder,
                         fontSize = (DEFAULT_FONT_SIZE + 1).sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
                 // Heading 6
@@ -85,18 +85,19 @@ object MarkdownParser {
                         content,
                         resultBuilder,
                         fontSize = (DEFAULT_FONT_SIZE + 1).sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
                 // Unordered list item: Extracting content, applying bold style, appending bullet point symbol, and appending to resultBuilder
                 line.startsWith("* ") || line.startsWith("- ") -> {
                     val content = line.removePrefix("* ").removePrefix("- ").trim()
-                    currentStyle = SpanStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = DEFAULT_FONT_SIZE.sp
-                    )
+                    currentStyle =
+                        SpanStyle(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = DEFAULT_FONT_SIZE.sp,
+                        )
                     resultBuilder.append(
-                        AnnotatedString("\u2022 ", currentStyle)
+                        AnnotatedString("\u2022 ", currentStyle),
                     )
                     textMarkDown(content, resultBuilder, fontSize = 14.sp)
                 }
@@ -104,23 +105,25 @@ object MarkdownParser {
                 line.matches(Regex("^\\d+\\.\\s.*$")) -> {
                     val regex = Regex("^\\d+\\.\\s.*$")
                     val startIndex = regex.find(line)?.range?.first ?: 0
-                    currentStyle = SpanStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = DEFAULT_FONT_SIZE.sp
-                    )
-                    val annotatedString = buildAnnotatedString {
-                        if (startIndex > 0) {
-                            append(line.substring(0, startIndex))
+                    currentStyle =
+                        SpanStyle(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = DEFAULT_FONT_SIZE.sp,
+                        )
+                    val annotatedString =
+                        buildAnnotatedString {
+                            if (startIndex > 0) {
+                                append(line.substring(0, startIndex))
+                            }
+                            withStyle(currentStyle) {
+                                append(line.substring(startIndex, startIndex + 2))
+                            }
                         }
-                        withStyle(currentStyle) {
-                            append(line.substring(startIndex, startIndex + 2))
-                        }
-                    }
                     resultBuilder.append(annotatedString)
                     textMarkDown(
                         inputText = line.substring(startIndex + 2, line.length),
                         resultBuilder = resultBuilder,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
                     )
                 }
                 // Remaining Text
@@ -160,12 +163,13 @@ object MarkdownParser {
             val nextItalic = italicPattern.find(inputText, startIndex = currentIndex)
             val nextStrikethrough = strikethroughPattern.find(inputText, startIndex = currentIndex)
 
-            val nextMarkDown = listOfNotNull(
-                nextBoldItalic,
-                nextBold,
-                nextItalic,
-                nextStrikethrough
-            ).minByOrNull { it.range.first }
+            val nextMarkDown =
+                listOfNotNull(
+                    nextBoldItalic,
+                    nextBold,
+                    nextItalic,
+                    nextStrikethrough,
+                ).minByOrNull { it.range.first }
 
             if (nextMarkDown != null) {
                 if (nextMarkDown.range.first > currentIndex) {
@@ -177,30 +181,35 @@ object MarkdownParser {
 
                 val matchText = nextMarkDown.groupValues.getOrNull(1).orEmpty()
 
-                val style = when (nextMarkDown) {
-                    nextBoldItalic -> SpanStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontStyle = FontStyle.Italic,
-                        fontSize = fontSize
-                    )
+                val style =
+                    when (nextMarkDown) {
+                        nextBoldItalic ->
+                            SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                fontStyle = FontStyle.Italic,
+                                fontSize = fontSize,
+                            )
 
-                    nextBold -> SpanStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = DEFAULT_FONT_SIZE.sp
-                    )
+                        nextBold ->
+                            SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = DEFAULT_FONT_SIZE.sp,
+                            )
 
-                    nextItalic -> SpanStyle(
-                        fontStyle = FontStyle.Italic,
-                        fontSize = fontSize
-                    )
+                        nextItalic ->
+                            SpanStyle(
+                                fontStyle = FontStyle.Italic,
+                                fontSize = fontSize,
+                            )
 
-                    nextStrikethrough -> SpanStyle(
-                        textDecoration = TextDecoration.LineThrough,
-                        fontSize = fontSize
-                    )
+                        nextStrikethrough ->
+                            SpanStyle(
+                                textDecoration = TextDecoration.LineThrough,
+                                fontSize = fontSize,
+                            )
 
-                    else -> throw IllegalStateException("Unhandled markdown type")
-                }
+                        else -> throw IllegalStateException("Unhandled markdown type")
+                    }
 
                 resultBuilder.append(AnnotatedString(matchText, style))
 

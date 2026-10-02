@@ -46,13 +46,13 @@ import java.util.concurrent.atomic.AtomicReference
  * hardcoded to remote hosts, so only their non-network early-return paths are tested.
  */
 class OpenAiRepositoryTest {
-
     private val server = MockWebServer()
 
-    private val selfHostedAction = ChatGPTActionInfo(
-        actionType = GptActionType.SelfHosted,
-        model = "test-model",
-    )
+    private val selfHostedAction =
+        ChatGPTActionInfo(
+            actionType = GptActionType.SelfHosted,
+            model = "test-model",
+        )
 
     private val userMessage = ChatMessage(content = "Hello", role = ChatRole.User)
 
@@ -83,15 +83,17 @@ class OpenAiRepositoryTest {
         geminiApiKey: String = "",
     ): OpenAiRepository {
         val baseUrl = server.url("/").toString().removeSuffix("/")
-        val sp: SharedPreferences = mockk(relaxed = true) {
-            every { getString(any(), any()) } answers { secondArg() }
-            every { getString(AiConfig.K_GPT_API_KEY, any()) } returns apiKey
-            every { getString(AiConfig.K_GEMINI_API_KEY, any()) } returns geminiApiKey
-            every { getString("sp_gpt_server_url", any()) } returns baseUrl
-        }
-        val configManager: ConfigManager = mockk {
-            every { ai } returns AiConfig(sp)
-        }
+        val sp: SharedPreferences =
+            mockk(relaxed = true) {
+                every { getString(any(), any()) } answers { secondArg() }
+                every { getString(AiConfig.K_GPT_API_KEY, any()) } returns apiKey
+                every { getString(AiConfig.K_GEMINI_API_KEY, any()) } returns geminiApiKey
+                every { getString("sp_gpt_server_url", any()) } returns baseUrl
+            }
+        val configManager: ConfigManager =
+            mockk {
+                every { ai } returns AiConfig(sp)
+            }
         startKoin {
             modules(module { single { configManager } })
         }
@@ -101,220 +103,251 @@ class OpenAiRepositoryTest {
     // ── chatCompletion ────────────────────────────────────────────────────
 
     @Test
-    fun `chatCompletion parses successful response`() = runBlocking {
-        val repository = createRepository()
-        server.enqueue(
-            MockResponse().setResponseCode(200).setBody(
-                """
-                {
-                  "id": "chatcmpl-123",
-                  "created": 1700000000,
-                  "model": "test-model",
-                  "choices": [
-                    {"index": 0, "message": {"role": "assistant", "content": "Hi there"}}
-                  ],
-                  "usage": {"prompt_tokens": 5, "completion_tokens": 2, "total_tokens": 7}
-                }
-                """.trimIndent()
+    fun `chatCompletion parses successful response`() =
+        runBlocking {
+            val repository = createRepository()
+            server.enqueue(
+                MockResponse().setResponseCode(200).setBody(
+                    """
+                    {
+                      "id": "chatcmpl-123",
+                      "created": 1700000000,
+                      "model": "test-model",
+                      "choices": [
+                        {"index": 0, "message": {"role": "assistant", "content": "Hi there"}}
+                      ],
+                      "usage": {"prompt_tokens": 5, "completion_tokens": 2, "total_tokens": 7}
+                    }
+                    """.trimIndent(),
+                ),
             )
-        )
 
-        val completion = repository.chatCompletion(listOf(userMessage), selfHostedAction)
+            val completion = repository.chatCompletion(listOf(userMessage), selfHostedAction)
 
-        assertNotNull(completion)
-        assertEquals("chatcmpl-123", completion!!.id)
-        assertEquals("Hi there", completion.choices.first().message.content)
-        assertEquals(ChatRole.Assistant, completion.choices.first().message.role)
-        assertEquals(7, completion.usage.totalTokens)
-    }
-
-    @Test
-    fun `chatCompletion sends correct request path headers and body`() = runBlocking {
-        val repository = createRepository(apiKey = "secret-key")
-        server.enqueue(
-            MockResponse().setResponseCode(200).setBody(
-                """{"id":"1","created":0,"model":"m","choices":[{"index":0,"message":{"role":"assistant","content":"ok"}}]}"""
+            assertNotNull(completion)
+            assertEquals("chatcmpl-123", completion!!.id)
+            assertEquals(
+                "Hi there",
+                completion.choices
+                    .first()
+                    .message.content,
             )
-        )
-
-        repository.chatCompletion(listOf(userMessage), selfHostedAction)
-
-        val recorded = server.takeRequest(5, TimeUnit.SECONDS)!!
-        assertEquals("POST", recorded.method)
-        assertEquals("/v1/chat/completions", recorded.path)
-        assertEquals("Bearer secret-key", recorded.getHeader("Authorization"))
-        val body = recorded.body.readUtf8()
-        assertTrue(body.contains("\"model\":\"test-model\""))
-        assertTrue(body.contains("\"content\":\"Hello\""))
-        assertTrue(body.contains("\"role\":\"user\""))
-        // stream=false is the default and the Json instance does not encode defaults,
-        // so a non-streaming request must not contain stream:true
-        assertTrue(!body.contains("\"stream\":true"))
-    }
-
-    @Test
-    fun `chatCompletion returns null on http 500`() = runBlocking {
-        val repository = createRepository()
-        server.enqueue(MockResponse().setResponseCode(500).setBody("internal error"))
-
-        val completion = repository.chatCompletion(listOf(userMessage), selfHostedAction)
-
-        assertNull(completion)
-    }
-
-    @Test
-    fun `chatCompletion returns null on http 404`() = runBlocking {
-        val repository = createRepository()
-        server.enqueue(MockResponse().setResponseCode(404).setBody("not found"))
-
-        val completion = repository.chatCompletion(listOf(userMessage), selfHostedAction)
-
-        assertNull(completion)
-    }
-
-    @Test
-    fun `chatCompletion returns null on malformed json`() = runBlocking {
-        val repository = createRepository()
-        server.enqueue(MockResponse().setResponseCode(200).setBody("{not valid json"))
-
-        val completion = repository.chatCompletion(listOf(userMessage), selfHostedAction)
-
-        assertNull(completion)
-    }
-
-    @Test
-    fun `chatCompletion ignores unknown json fields`() = runBlocking {
-        val repository = createRepository()
-        server.enqueue(
-            MockResponse().setResponseCode(200).setBody(
-                """
-                {
-                  "id": "chatcmpl-1",
-                  "object": "chat.completion",
-                  "created": 1,
-                  "model": "m",
-                  "system_fingerprint": "fp_abc",
-                  "choices": [
-                    {"index": 0, "message": {"role": "assistant", "content": "ok"}, "logprobs": null}
-                  ]
-                }
-                """.trimIndent()
+            assertEquals(
+                ChatRole.Assistant,
+                completion.choices
+                    .first()
+                    .message.role,
             )
-        )
+            assertEquals(7, completion.usage.totalTokens)
+        }
 
-        val completion = repository.chatCompletion(listOf(userMessage), selfHostedAction)
+    @Test
+    fun `chatCompletion sends correct request path headers and body`() =
+        runBlocking {
+            val repository = createRepository(apiKey = "secret-key")
+            server.enqueue(
+                MockResponse().setResponseCode(200).setBody(
+                    """{"id":"1","created":0,"model":"m","choices":[{"index":0,"message":{"role":"assistant","content":"ok"}}]}""",
+                ),
+            )
 
-        assertNotNull(completion)
-        assertEquals("ok", completion!!.choices.first().message.content)
-    }
+            repository.chatCompletion(listOf(userMessage), selfHostedAction)
+
+            val recorded = server.takeRequest(5, TimeUnit.SECONDS)!!
+            assertEquals("POST", recorded.method)
+            assertEquals("/v1/chat/completions", recorded.path)
+            assertEquals("Bearer secret-key", recorded.getHeader("Authorization"))
+            val body = recorded.body.readUtf8()
+            assertTrue(body.contains("\"model\":\"test-model\""))
+            assertTrue(body.contains("\"content\":\"Hello\""))
+            assertTrue(body.contains("\"role\":\"user\""))
+            // stream=false is the default and the Json instance does not encode defaults,
+            // so a non-streaming request must not contain stream:true
+            assertTrue(!body.contains("\"stream\":true"))
+        }
+
+    @Test
+    fun `chatCompletion returns null on http 500`() =
+        runBlocking {
+            val repository = createRepository()
+            server.enqueue(MockResponse().setResponseCode(500).setBody("internal error"))
+
+            val completion = repository.chatCompletion(listOf(userMessage), selfHostedAction)
+
+            assertNull(completion)
+        }
+
+    @Test
+    fun `chatCompletion returns null on http 404`() =
+        runBlocking {
+            val repository = createRepository()
+            server.enqueue(MockResponse().setResponseCode(404).setBody("not found"))
+
+            val completion = repository.chatCompletion(listOf(userMessage), selfHostedAction)
+
+            assertNull(completion)
+        }
+
+    @Test
+    fun `chatCompletion returns null on malformed json`() =
+        runBlocking {
+            val repository = createRepository()
+            server.enqueue(MockResponse().setResponseCode(200).setBody("{not valid json"))
+
+            val completion = repository.chatCompletion(listOf(userMessage), selfHostedAction)
+
+            assertNull(completion)
+        }
+
+    @Test
+    fun `chatCompletion ignores unknown json fields`() =
+        runBlocking {
+            val repository = createRepository()
+            server.enqueue(
+                MockResponse().setResponseCode(200).setBody(
+                    """
+                    {
+                      "id": "chatcmpl-1",
+                      "object": "chat.completion",
+                      "created": 1,
+                      "model": "m",
+                      "system_fingerprint": "fp_abc",
+                      "choices": [
+                        {"index": 0, "message": {"role": "assistant", "content": "ok"}, "logprobs": null}
+                      ]
+                    }
+                    """.trimIndent(),
+                ),
+            )
+
+            val completion = repository.chatCompletion(listOf(userMessage), selfHostedAction)
+
+            assertNotNull(completion)
+            assertEquals(
+                "ok",
+                completion!!
+                    .choices
+                    .first()
+                    .message.content,
+            )
+        }
 
     // ── chatWithTools ─────────────────────────────────────────────────────
 
-    private val weatherTool = ToolDefinition(
-        function = FunctionDef(
-            name = "get_weather",
-            description = "Get weather for a city",
-            parameters = Json.parseToJsonElement("""{"type":"object","properties":{}}"""),
+    private val weatherTool =
+        ToolDefinition(
+            function =
+                FunctionDef(
+                    name = "get_weather",
+                    description = "Get weather for a city",
+                    parameters = Json.parseToJsonElement("""{"type":"object","properties":{}}"""),
+                ),
         )
-    )
 
     @Test
-    fun `chatWithTools parses tool call response`() = runBlocking {
-        val repository = createRepository()
-        server.enqueue(
-            MockResponse().setResponseCode(200).setBody(
-                """
-                {
-                  "choices": [
+    fun `chatWithTools parses tool call response`() =
+        runBlocking {
+            val repository = createRepository()
+            server.enqueue(
+                MockResponse().setResponseCode(200).setBody(
+                    """
                     {
-                      "index": 0,
-                      "message": {
-                        "role": "assistant",
-                        "content": null,
-                        "tool_calls": [
-                          {"id": "call_1", "type": "function",
-                           "function": {"name": "get_weather", "arguments": "{\"city\":\"Taipei\"}"}}
-                        ]
-                      },
-                      "finish_reason": "tool_calls"
+                      "choices": [
+                        {
+                          "index": 0,
+                          "message": {
+                            "role": "assistant",
+                            "content": null,
+                            "tool_calls": [
+                              {"id": "call_1", "type": "function",
+                               "function": {"name": "get_weather", "arguments": "{\"city\":\"Taipei\"}"}}
+                            ]
+                          },
+                          "finish_reason": "tool_calls"
+                        }
+                      ]
                     }
-                  ]
-                }
-                """.trimIndent()
+                    """.trimIndent(),
+                ),
             )
-        )
 
-        val result = repository.chatWithTools(
-            messages = listOf(ToolChatMessage(role = "user", content = "weather?")),
-            tools = listOf(weatherTool),
-            gptActionInfo = selfHostedAction,
-        )
+            val result =
+                repository.chatWithTools(
+                    messages = listOf(ToolChatMessage(role = "user", content = "weather?")),
+                    tools = listOf(weatherTool),
+                    gptActionInfo = selfHostedAction,
+                )
 
-        val completion = (result as ToolChatOutcome.Success).completion
-        val message = completion.choices.first().message
-        assertNull(message.content)
-        assertEquals("tool_calls", completion.choices.first().finishReason)
-        val toolCall = message.toolCalls!!.first()
-        assertEquals("call_1", toolCall.id)
-        assertEquals("get_weather", toolCall.function.name)
-        assertTrue(toolCall.function.arguments.contains("Taipei"))
-    }
+            val completion = (result as ToolChatOutcome.Success).completion
+            val message = completion.choices.first().message
+            assertNull(message.content)
+            assertEquals("tool_calls", completion.choices.first().finishReason)
+            val toolCall = message.toolCalls!!.first()
+            assertEquals("call_1", toolCall.id)
+            assertEquals("get_weather", toolCall.function.name)
+            assertTrue(toolCall.function.arguments.contains("Taipei"))
+        }
 
     @Test
-    fun `chatWithTools omits null fields in request body`() = runBlocking {
-        val repository = createRepository()
-        server.enqueue(
-            MockResponse().setResponseCode(200).setBody(
-                """{"choices":[{"index":0,"message":{"role":"assistant","content":"hi"}}]}"""
+    fun `chatWithTools omits null fields in request body`() =
+        runBlocking {
+            val repository = createRepository()
+            server.enqueue(
+                MockResponse().setResponseCode(200).setBody(
+                    """{"choices":[{"index":0,"message":{"role":"assistant","content":"hi"}}]}""",
+                ),
             )
-        )
 
-        repository.chatWithTools(
-            messages = listOf(ToolChatMessage(role = "user", content = "hello")),
-            tools = listOf(weatherTool),
-            gptActionInfo = selfHostedAction,
-        )
+            repository.chatWithTools(
+                messages = listOf(ToolChatMessage(role = "user", content = "hello")),
+                tools = listOf(weatherTool),
+                gptActionInfo = selfHostedAction,
+            )
 
-        val body = server.takeRequest(5, TimeUnit.SECONDS)!!.body.readUtf8()
-        // explicitNulls = false: user messages must not carry tool fields
-        assertTrue(!body.contains("tool_call_id"))
-        assertTrue(!body.contains("\"tool_calls\""))
-        assertTrue(body.contains("\"tool_choice\":\"auto\""))
-        assertTrue(body.contains("\"get_weather\""))
-    }
-
-    @Test
-    fun `chatWithTools reports the api error on http error`() = runBlocking {
-        val repository = createRepository()
-        server.enqueue(MockResponse().setResponseCode(400).setBody("""{"error":"bad request"}"""))
-
-        val result = repository.chatWithTools(
-            messages = listOf(ToolChatMessage(role = "user", content = "hello")),
-            tools = listOf(weatherTool),
-            gptActionInfo = selfHostedAction,
-        )
-
-        // The failure text is what surfaces to the user, so it has to carry enough
-        // to diagnose the call rather than collapsing to a bare null.
-        val message = (result as ToolChatOutcome.Failure).message
-        assertTrue(message, message.contains("400"))
-        assertTrue(message, message.contains("bad request"))
-    }
+            val body = server.takeRequest(5, TimeUnit.SECONDS)!!.body.readUtf8()
+            // explicitNulls = false: user messages must not carry tool fields
+            assertTrue(!body.contains("tool_call_id"))
+            assertTrue(!body.contains("\"tool_calls\""))
+            assertTrue(body.contains("\"tool_choice\":\"auto\""))
+            assertTrue(body.contains("\"get_weather\""))
+        }
 
     @Test
-    fun `chatWithTools reports a failure on malformed json`() = runBlocking {
-        val repository = createRepository()
-        server.enqueue(MockResponse().setResponseCode(200).setBody("oops"))
+    fun `chatWithTools reports the api error on http error`() =
+        runBlocking {
+            val repository = createRepository()
+            server.enqueue(MockResponse().setResponseCode(400).setBody("""{"error":"bad request"}"""))
 
-        val result = repository.chatWithTools(
-            messages = listOf(ToolChatMessage(role = "user", content = "hello")),
-            tools = listOf(weatherTool),
-            gptActionInfo = selfHostedAction,
-        )
+            val result =
+                repository.chatWithTools(
+                    messages = listOf(ToolChatMessage(role = "user", content = "hello")),
+                    tools = listOf(weatherTool),
+                    gptActionInfo = selfHostedAction,
+                )
 
-        val message = (result as ToolChatOutcome.Failure).message
-        assertTrue("expected a non-blank failure message", message.isNotBlank())
-    }
+            // The failure text is what surfaces to the user, so it has to carry enough
+            // to diagnose the call rather than collapsing to a bare null.
+            val message = (result as ToolChatOutcome.Failure).message
+            assertTrue(message, message.contains("400"))
+            assertTrue(message, message.contains("bad request"))
+        }
+
+    @Test
+    fun `chatWithTools reports a failure on malformed json`() =
+        runBlocking {
+            val repository = createRepository()
+            server.enqueue(MockResponse().setResponseCode(200).setBody("oops"))
+
+            val result =
+                repository.chatWithTools(
+                    messages = listOf(ToolChatMessage(role = "user", content = "hello")),
+                    tools = listOf(weatherTool),
+                    gptActionInfo = selfHostedAction,
+                )
+
+            val message = (result as ToolChatOutcome.Failure).message
+            assertTrue("expected a non-blank failure message", message.isNotBlank())
+        }
 
     // ── chatStream (SSE) ──────────────────────────────────────────────────
 
@@ -329,7 +362,7 @@ class OpenAiRepositoryTest {
             MockResponse()
                 .setResponseCode(200)
                 .setHeader("Content-Type", "text/event-stream")
-                .setBody(sseEvent("Hello") + sseEvent(" world") + "data: [DONE]\n\n")
+                .setBody(sseEvent("Hello") + sseEvent(" world") + "data: [DONE]\n\n"),
         )
 
         val chunks = Collections.synchronizedList(mutableListOf<String>())
@@ -356,7 +389,7 @@ class OpenAiRepositoryTest {
             MockResponse()
                 .setResponseCode(200)
                 .setHeader("Content-Type", "text/event-stream")
-                .setBody("data: this is not json\n\n")
+                .setBody("data: this is not json\n\n"),
         )
 
         val failureLatch = CountDownLatch(1)
@@ -383,7 +416,7 @@ class OpenAiRepositoryTest {
             MockResponse()
                 .setResponseCode(429)
                 .setHeader("Retry-After", "30")
-                .setBody("rate limited")
+                .setBody("rate limited"),
         )
 
         val failureLatch = CountDownLatch(1)
@@ -470,18 +503,20 @@ class OpenAiRepositoryTest {
     //    non-network key checks are reachable from a unit test) ───────────
 
     @Test
-    fun `queryGemini fails fast when gemini key is missing`() = runBlocking {
-        val repository = createRepository(geminiApiKey = "")
+    fun `queryGemini fails fast when gemini key is missing`() =
+        runBlocking {
+            val repository = createRepository(geminiApiKey = "")
 
-        val result = repository.queryGemini(
-            listOf(userMessage),
-            ChatGPTActionInfo(actionType = GptActionType.Gemini, model = "gemini-pro"),
-        )
+            val result =
+                repository.queryGemini(
+                    listOf(userMessage),
+                    ChatGPTActionInfo(actionType = GptActionType.Gemini, model = "gemini-pro"),
+                )
 
-        assertTrue(result is ApiResult.Failure)
-        assertEquals(ApiResult.Kind.MissingKey, (result as ApiResult.Failure).kind)
-        assertEquals(0, server.requestCount)
-    }
+            assertTrue(result is ApiResult.Failure)
+            assertEquals(ApiResult.Kind.MissingKey, (result as ApiResult.Failure).kind)
+            assertEquals(0, server.requestCount)
+        }
 
     @Test
     fun `chatStream with gemini action fails fast when gemini key is missing`() {

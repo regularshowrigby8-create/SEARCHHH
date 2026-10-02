@@ -7,13 +7,13 @@ import android.webkit.WebView
 import androidx.lifecycle.LifecycleCoroutineScope
 import info.plateaukao.einkbro.activity.BrowserState
 import info.plateaukao.einkbro.data.remote.ApiResult
-import info.plateaukao.einkbro.database.BookmarkManager
-import info.plateaukao.einkbro.database.ChatSession
 import info.plateaukao.einkbro.data.remote.ChatMessage
 import info.plateaukao.einkbro.data.remote.OpenAiRepository
 import info.plateaukao.einkbro.data.remote.ToolCall
 import info.plateaukao.einkbro.data.remote.ToolChatMessage
 import info.plateaukao.einkbro.data.remote.ToolChatOutcome
+import info.plateaukao.einkbro.database.BookmarkManager
+import info.plateaukao.einkbro.database.ChatSession
 import info.plateaukao.einkbro.preference.ChatGPTActionInfo
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.GptActionType
@@ -21,7 +21,6 @@ import info.plateaukao.einkbro.task.AgentToolSchema
 import info.plateaukao.einkbro.task.BrowserTools
 import info.plateaukao.einkbro.task.BrowserToolsImpl
 import info.plateaukao.einkbro.task.InitialPageSnapshot
-import info.plateaukao.einkbro.task.TaskProgress
 import info.plateaukao.einkbro.task.ToolTextWindow
 import info.plateaukao.einkbro.viewmodel.TtsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -81,8 +80,12 @@ class ChatWebInterface(
      * page even after the chat tab has replaced it as the active tab.
      */
     private val agentTools: BrowserToolsImpl by lazy {
-        require(agentContext != null && agentWebViewCallback != null &&
-            agentBrowserState != null && agentTtsViewModel != null) {
+        require(
+            agentContext != null &&
+                agentWebViewCallback != null &&
+                agentBrowserState != null &&
+                agentTtsViewModel != null,
+        ) {
             "agent-mode deps not wired; check setupAiPage call site"
         }
         BrowserToolsImpl(
@@ -101,6 +104,7 @@ class ChatWebInterface(
 
     companion object {
         private const val WEB_CONTENT_MESSAGE_SUFFIX = "\n this is the web content;"
+
         // Bulk workflows legitimately need many turns: filing 650 links page-by-page
         // is ~13 fetch+add rounds plus overhead. Each turn is one LLM call, so the
         // cap bounds cost, not correctness — finish/no-tool-call exits end earlier.
@@ -119,9 +123,7 @@ class ChatWebInterface(
     }
 
     @JavascriptInterface
-    fun getWebMetadata(): String {
-        return """{"title": "${escapeJsonString(webTitle)}", "url": "${escapeJsonString(webUrl)}"}"""
-    }
+    fun getWebMetadata(): String = """{"title": "${escapeJsonString(webTitle)}", "url": "${escapeJsonString(webUrl)}"}"""
 
     @JavascriptInterface
     fun openUrlInNewTab(url: String) {
@@ -137,25 +139,29 @@ class ChatWebInterface(
 
     /** Synchronous by design: runs on the WebView's JS-bridge binder thread. */
     @JavascriptInterface
-    fun loadChatSessions(): String = runBlocking {
-        val result = JSONObject()
-        try {
-            bookmarkManager.getAllChatSessions().forEach { session ->
-                result.put(session.id, JSONObject().apply {
-                    put("id", session.id)
-                    put("title", session.title)
-                    put("created", session.created)
-                    put("lastUpdated", session.lastUpdated)
-                    put("webTitle", session.webTitle)
-                    put("webUrl", session.webUrl)
-                    put("messages", JSONArray(session.messages))
-                })
+    fun loadChatSessions(): String =
+        runBlocking {
+            val result = JSONObject()
+            try {
+                bookmarkManager.getAllChatSessions().forEach { session ->
+                    result.put(
+                        session.id,
+                        JSONObject().apply {
+                            put("id", session.id)
+                            put("title", session.title)
+                            put("created", session.created)
+                            put("lastUpdated", session.lastUpdated)
+                            put("webTitle", session.webTitle)
+                            put("webUrl", session.webUrl)
+                            put("messages", JSONArray(session.messages))
+                        },
+                    )
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "loadChatSessions failed")
             }
-        } catch (e: Exception) {
-            Timber.e(e, "loadChatSessions failed")
+            result.toString()
         }
-        result.toString()
-    }
 
     @JavascriptInterface
     fun saveChatSession(sessionJson: String) {
@@ -181,7 +187,7 @@ class ChatWebInterface(
                         webUrl = obj.optString("webUrl"),
                         messages = obj.optJSONArray("messages")?.toString() ?: "[]",
                         webContent = storedWebContent ?: webContent,
-                    )
+                    ),
                 )
             } catch (e: Exception) {
                 Timber.e(e, "saveChatSession failed")
@@ -211,8 +217,11 @@ class ChatWebInterface(
                     val content = message.optString("content")
                     if (content.isEmpty()) continue
                     chatHistory.add(
-                        if (message.optBoolean("isUser")) content.toUserMessage()
-                        else content.toAssistantMessage()
+                        if (message.optBoolean("isUser")) {
+                            content.toUserMessage()
+                        } else {
+                            content.toAssistantMessage()
+                        },
                     )
                 }
             } catch (e: Exception) {
@@ -243,13 +252,13 @@ class ChatWebInterface(
         }
     }
 
-    private fun escapeJsonString(str: String): String {
-        return str.replace("\\", "\\\\")
+    private fun escapeJsonString(str: String): String =
+        str
+            .replace("\\", "\\\\")
             .replace("\"", "\\\"")
             .replace("\n", "\\n")
             .replace("\r", "\\r")
             .replace("\t", "\\t")
-    }
 
     fun updateWebContent(
         newWebContent: String,
@@ -269,16 +278,17 @@ class ChatWebInterface(
 
         val currentUserMessage = gptActionInfo.userMessage.toUserMessage()
 
-        val messagesForApi = mutableListOf<ChatMessage>().apply {
-            if (gptActionInfo.systemMessage.isNotEmpty()) {
-                add(gptActionInfo.systemMessage.toSystemMessage())
+        val messagesForApi =
+            mutableListOf<ChatMessage>().apply {
+                if (gptActionInfo.systemMessage.isNotEmpty()) {
+                    add(gptActionInfo.systemMessage.toSystemMessage())
+                }
+                // Blank after restoring a session saved before webContent was
+                // persisted — send no page context rather than an empty code block.
+                if (webContent.isNotBlank()) add(createWebContentMessage(webContent))
+                addAll(chatHistory)
+                add(currentUserMessage)
             }
-            // Blank after restoring a session saved before webContent was
-            // persisted — send no page context rather than an empty code block.
-            if (webContent.isNotBlank()) add(createWebContentMessage(webContent))
-            addAll(chatHistory)
-            add(currentUserMessage)
-        }
 
         val assistantResponseAggregator = StringBuilder()
         // Fire the JS-side "Thinking…" label at most once per request; the first
@@ -307,16 +317,18 @@ class ChatWebInterface(
                     },
                     failureAction = { failure ->
                         Timber.e("AI stream failure: ${failure.kind} ${failure.message}")
-                        val userMessage = when (failure.kind) {
-                            ApiResult.Kind.MissingKey -> failure.message
-                            ApiResult.Kind.RateLimited -> failure.retryAfterSeconds
-                                ?.let { "Rate limited — retry after ${it}s" }
-                                ?: "Rate limited — try again shortly"
-                            ApiResult.Kind.Network -> "Network error — check connection"
-                            else -> "AI request failed: ${failure.message}"
-                        }
+                        val userMessage =
+                            when (failure.kind) {
+                                ApiResult.Kind.MissingKey -> failure.message
+                                ApiResult.Kind.RateLimited ->
+                                    failure.retryAfterSeconds
+                                        ?.let { "Rate limited — retry after ${it}s" }
+                                        ?: "Rate limited — try again shortly"
+                                ApiResult.Kind.Network -> "Network error — check connection"
+                                else -> "AI request failed: ${failure.message}"
+                            }
                         jsHelper.sendErrorUpdate(userMessage)
-                    }
+                    },
                 )
             }
         }
@@ -340,19 +352,21 @@ class ChatWebInterface(
         // First turn seeds the history with a system prompt that includes the
         // originating-page hint so the model can orient itself without a tool call.
         if (toolHistory.isEmpty()) {
-            toolHistory += ToolChatMessage(
-                role = "system",
-                content = AgentToolSchema.SYSTEM_PROMPT + buildSnapshotHint(),
-            )
+            toolHistory +=
+                ToolChatMessage(
+                    role = "system",
+                    content = AgentToolSchema.SYSTEM_PROMPT + buildSnapshotHint(),
+                )
         }
         toolHistory += ToolChatMessage(role = "user", content = userMessage)
 
         var iter = 0
         while (iter < MAX_AGENT_ITERATIONS) {
             iter++
-            val outcome = withContext(Dispatchers.IO) {
-                openAiRepository.chatWithTools(toolHistory, AgentToolSchema.tools, actionInfo)
-            }
+            val outcome =
+                withContext(Dispatchers.IO) {
+                    openAiRepository.chatWithTools(toolHistory, AgentToolSchema.tools, actionInfo)
+                }
             if (outcome is ToolChatOutcome.Failure) {
                 appendBubble("\n\n_(LLM call failed on turn $iter: ${escapeMd(outcome.message)})_")
                 jsHelper.sendFinalEmptyUpdate()
@@ -386,11 +400,12 @@ class ChatWebInterface(
                 val preview = call.function.arguments.take(120)
                 appendBubble("\n\n🔧 `${call.function.name}` — $preview")
                 val result = dispatchAgentTool(call)
-                toolHistory += ToolChatMessage(
-                    role = "tool",
-                    toolCallId = call.id,
-                    content = result,
-                )
+                toolHistory +=
+                    ToolChatMessage(
+                        role = "tool",
+                        toolCallId = call.id,
+                        content = result,
+                    )
                 if (call.function.name == "finish") {
                     // finish already streamed its summary via dispatchAgentTool.
                     jsHelper.sendFinalEmptyUpdate()
@@ -405,11 +420,12 @@ class ChatWebInterface(
 
     private suspend fun dispatchAgentTool(call: ToolCall): String {
         return try {
-            val args: JsonObject = try {
-                json.parseToJsonElement(call.function.arguments.ifBlank { "{}" }).jsonObject
-            } catch (e: Exception) {
-                return "error: invalid JSON arguments: ${e.message}"
-            }
+            val args: JsonObject =
+                try {
+                    json.parseToJsonElement(call.function.arguments.ifBlank { "{}" }).jsonObject
+                } catch (e: Exception) {
+                    return "error: invalid JSON arguments: ${e.message}"
+                }
             when (call.function.name) {
                 "get_initial_page_links" -> {
                     val links = agentTools.initialPageLinks()
@@ -419,59 +435,83 @@ class ChatWebInterface(
                 "read_initial_page" -> {
                     agentToolsInitialized = true
                     val text = agentTools.initialPageText().trim()
-                    if (text.isBlank()) "error: no initial page text captured"
-                    else windowToolResult(text, args)
+                    if (text.isBlank()) {
+                        "error: no initial page text captured"
+                    } else {
+                        windowToolResult(text, args)
+                    }
                 }
                 "open_url" -> {
-                    val url = args["url"]?.jsonPrimitive?.contentOrNull
-                        ?: return "error: missing url"
+                    val url =
+                        args["url"]?.jsonPrimitive?.contentOrNull
+                            ?: return "error: missing url"
                     agentToolsInitialized = true
                     val ok = agentTools.openUrlInBg(url)
                     if (ok) "ok: loaded $url" else "error: failed to load $url"
                 }
                 "web_search" -> {
-                    val query = args["query"]?.jsonPrimitive?.contentOrNull
-                        ?.takeIf { it.isNotBlank() }
-                        ?: return "error: missing query"
+                    val query =
+                        args["query"]
+                            ?.jsonPrimitive
+                            ?.contentOrNull
+                            ?.takeIf { it.isNotBlank() }
+                            ?: return "error: missing query"
                     agentToolsInitialized = true
                     val ok = agentTools.searchInBg(query)
-                    if (!ok) "error: search results page failed to load"
-                    else encodeLinks(agentTools.currentBgPageLinks())
+                    if (!ok) {
+                        "error: search results page failed to load"
+                    } else {
+                        encodeLinks(agentTools.currentBgPageLinks())
+                    }
                 }
                 "run_javascript" -> {
-                    val code = args["code"]?.jsonPrimitive?.contentOrNull
-                        ?.takeIf { it.isNotBlank() }
-                        ?: return "error: missing code"
+                    val code =
+                        args["code"]
+                            ?.jsonPrimitive
+                            ?.contentOrNull
+                            ?.takeIf { it.isNotBlank() }
+                            ?: return "error: missing code"
                     val target = args["target"]?.jsonPrimitive?.contentOrNull ?: "tab"
                     agentToolsInitialized = true
-                    val result = when (target) {
-                        "background" -> agentTools.runJavascriptInBg(code)
-                            ?: "error: no page loaded — call open_url first"
-                        else -> agentTools.runJavascriptInInitialTab(code)
-                            ?: "error: the originating tab is no longer available"
+                    val result =
+                        when (target) {
+                            "background" ->
+                                agentTools.runJavascriptInBg(code)
+                                    ?: "error: no page loaded — call open_url first"
+                            else ->
+                                agentTools.runJavascriptInInitialTab(code)
+                                    ?: "error: the originating tab is no longer available"
+                        }
+                    if (result.length > MAX_TOOL_RESULT_CHARS) {
+                        windowToolResult(result, args)
+                    } else {
+                        result
                     }
-                    if (result.length > MAX_TOOL_RESULT_CHARS) windowToolResult(result, args)
-                    else result
                 }
                 "save_epub" -> {
-                    val bookTitle = args["book_title"]?.jsonPrimitive?.contentOrNull
-                        ?.takeIf { it.isNotBlank() }
-                        ?: return "error: missing book_title"
-                    val chapterSpecs = (args["chapters"] as? JsonArray).orEmpty().mapNotNull { el ->
-                        val obj = el as? JsonObject ?: return@mapNotNull null
-                        val url = obj["url"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
-                        BrowserTools.EpubChapterSpec(
-                            url = url,
-                            title = obj["title"]?.jsonPrimitive?.contentOrNull.orEmpty(),
-                        )
-                    }
+                    val bookTitle =
+                        args["book_title"]
+                            ?.jsonPrimitive
+                            ?.contentOrNull
+                            ?.takeIf { it.isNotBlank() }
+                            ?: return "error: missing book_title"
+                    val chapterSpecs =
+                        (args["chapters"] as? JsonArray).orEmpty().mapNotNull { el ->
+                            val obj = el as? JsonObject ?: return@mapNotNull null
+                            val url = obj["url"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
+                            BrowserTools.EpubChapterSpec(
+                                url = url,
+                                title = obj["title"]?.jsonPrimitive?.contentOrNull.orEmpty(),
+                            )
+                        }
                     if (chapterSpecs.isEmpty()) return "error: chapters array has no valid entries"
                     agentToolsInitialized = true
                     var loadedCount = 0
-                    val location = agentTools.saveEpub(bookTitle, chapterSpecs) { index, total, title ->
-                        loadedCount++
-                        appendBubble("\n\n_📖 chapter $index/$total: ${escapeMd(title)}_")
-                    }
+                    val location =
+                        agentTools.saveEpub(bookTitle, chapterSpecs) { index, total, title ->
+                            loadedCount++
+                            appendBubble("\n\n_📖 chapter $index/$total: ${escapeMd(title)}_")
+                        }
                     when {
                         location == null -> "error: failed to save epub (no chapters loaded or write failed)"
                         loadedCount < chapterSpecs.size ->
@@ -483,8 +523,11 @@ class ChatWebInterface(
                 "read_current_page" -> {
                     agentToolsInitialized = true
                     val text = agentTools.currentBgPageText().trim()
-                    if (text.isBlank()) "error: no page loaded or page body is empty"
-                    else windowToolResult(text, args)
+                    if (text.isBlank()) {
+                        "error: no page loaded or page body is empty"
+                    } else {
+                        windowToolResult(text, args)
+                    }
                 }
                 "get_page_links" -> {
                     agentToolsInitialized = true
@@ -493,25 +536,41 @@ class ChatWebInterface(
                 }
                 "list_bookmark_folders" -> {
                     val names = agentTools.bookmarkFolderNames()
-                    if (names.isEmpty()) "(no bookmark folders yet)"
-                    else names.joinToString("\n")
+                    if (names.isEmpty()) {
+                        "(no bookmark folders yet)"
+                    } else {
+                        names.joinToString("\n")
+                    }
                 }
                 "add_bookmark_folder" -> {
-                    val name = args["name"]?.jsonPrimitive?.contentOrNull
-                        ?.takeIf { it.isNotBlank() }
-                        ?: return "error: missing name"
-                    if (agentTools.ensureBookmarkFolder(name)) "ok: created folder '$name'"
-                    else "ok: folder '$name' already exists"
+                    val name =
+                        args["name"]
+                            ?.jsonPrimitive
+                            ?.contentOrNull
+                            ?.takeIf { it.isNotBlank() }
+                            ?: return "error: missing name"
+                    if (agentTools.ensureBookmarkFolder(name)) {
+                        "ok: created folder '$name'"
+                    } else {
+                        "ok: folder '$name' already exists"
+                    }
                 }
                 "add_bookmarks" -> {
-                    val specs = (args["bookmarks"] as? JsonArray).orEmpty().mapNotNull { el ->
-                        val obj = el as? JsonObject ?: return@mapNotNull null
-                        val url = obj["url"]?.jsonPrimitive?.contentOrNull
-                            ?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
-                        val title = obj["title"]?.jsonPrimitive?.contentOrNull
-                            ?.takeIf { it.isNotBlank() } ?: url
-                        Triple(title, url, obj["folder"]?.jsonPrimitive?.contentOrNull.orEmpty())
-                    }
+                    val specs =
+                        (args["bookmarks"] as? JsonArray).orEmpty().mapNotNull { el ->
+                            val obj = el as? JsonObject ?: return@mapNotNull null
+                            val url =
+                                obj["url"]
+                                    ?.jsonPrimitive
+                                    ?.contentOrNull
+                                    ?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                            val title =
+                                obj["title"]
+                                    ?.jsonPrimitive
+                                    ?.contentOrNull
+                                    ?.takeIf { it.isNotBlank() } ?: url
+                            Triple(title, url, obj["folder"]?.jsonPrimitive?.contentOrNull.orEmpty())
+                        }
                     if (specs.isEmpty()) return "error: bookmarks array has no valid entries"
                     var added = 0
                     var skipped = 0
@@ -541,14 +600,20 @@ class ChatWebInterface(
                 "read_initial_html" -> {
                     agentToolsInitialized = true
                     val html = agentTools.initialPageRawHtml()
-                    if (html.isBlank()) "error: no initial page HTML captured"
-                    else windowToolResult(html, args)
+                    if (html.isBlank()) {
+                        "error: no initial page HTML captured"
+                    } else {
+                        windowToolResult(html, args)
+                    }
                 }
                 "read_page_source" -> {
                     agentToolsInitialized = true
-                    val url = args["url"]?.jsonPrimitive?.contentOrNull
-                        ?.takeIf { it.isNotBlank() }
-                        ?: agentTools.initialPageUrl()
+                    val url =
+                        args["url"]
+                            ?.jsonPrimitive
+                            ?.contentOrNull
+                            ?.takeIf { it.isNotBlank() }
+                            ?: agentTools.initialPageUrl()
                     if (url.isBlank()) {
                         "error: no url available — pass a url argument"
                     } else {
@@ -571,22 +636,38 @@ class ChatWebInterface(
                     if (css.isBlank()) "(no customCss saved for this host)" else css
                 }
                 "set_domain_javascript" -> {
-                    val code = args["code"]?.jsonPrimitive?.contentOrNull
-                        ?: return "error: missing code"
+                    val code =
+                        args["code"]?.jsonPrimitive?.contentOrNull
+                            ?: return "error: missing code"
                     agentToolsInitialized = true
                     agentTools.setInitialDomainJavascript(code)
-                    val host = android.net.Uri.parse(agentTools.initialPageUrl()).host.orEmpty()
-                    if (code.isBlank()) "ok: cleared postLoadJavascript for $host"
-                    else "ok: saved ${code.length} chars of postLoadJavascript for $host"
+                    val host =
+                        android.net.Uri
+                            .parse(agentTools.initialPageUrl())
+                            .host
+                            .orEmpty()
+                    if (code.isBlank()) {
+                        "ok: cleared postLoadJavascript for $host"
+                    } else {
+                        "ok: saved ${code.length} chars of postLoadJavascript for $host"
+                    }
                 }
                 "set_domain_css" -> {
-                    val code = args["code"]?.jsonPrimitive?.contentOrNull
-                        ?: return "error: missing code"
+                    val code =
+                        args["code"]?.jsonPrimitive?.contentOrNull
+                            ?: return "error: missing code"
                     agentToolsInitialized = true
                     agentTools.setInitialDomainCss(code)
-                    val host = android.net.Uri.parse(agentTools.initialPageUrl()).host.orEmpty()
-                    if (code.isBlank()) "ok: cleared customCss for $host"
-                    else "ok: saved ${code.length} chars of customCss for $host"
+                    val host =
+                        android.net.Uri
+                            .parse(agentTools.initialPageUrl())
+                            .host
+                            .orEmpty()
+                    if (code.isBlank()) {
+                        "ok: cleared customCss for $host"
+                    } else {
+                        "ok: saved ${code.length} chars of customCss for $host"
+                    }
                 }
                 "finish" -> {
                     val summary = args["summary"]?.jsonPrimitive?.contentOrNull.orEmpty()
@@ -602,7 +683,10 @@ class ChatWebInterface(
     }
 
     /** Windows a large tool result, honoring the optional `offset`/`search` tool args. */
-    private fun windowToolResult(content: String, args: JsonObject): String =
+    private fun windowToolResult(
+        content: String,
+        args: JsonObject,
+    ): String =
         ToolTextWindow.window(
             content = content,
             maxChars = MAX_TOOL_RESULT_CHARS,
@@ -611,25 +695,33 @@ class ChatWebInterface(
         )
 
     /** Honors the optional `offset` tool arg for paging through long link lists. */
-    private fun linkOffset(args: JsonObject): Int =
-        (args["offset"]?.jsonPrimitive?.intOrNull ?: 0).coerceAtLeast(0)
+    private fun linkOffset(args: JsonObject): Int = (args["offset"]?.jsonPrimitive?.intOrNull ?: 0).coerceAtLeast(0)
 
-    private fun encodeLinks(links: List<BrowserTools.Link>, offset: Int = 0): String {
+    private fun encodeLinks(
+        links: List<BrowserTools.Link>,
+        offset: Int = 0,
+    ): String {
         if (links.isEmpty()) return "[]"
         val window = links.drop(offset).take(MAX_LINKS_RETURNED)
-        val array: JsonArray = buildJsonArray {
-            window.forEach { link ->
-                add(buildJsonObject {
-                    put("text", JsonPrimitive(link.text))
-                    put("href", JsonPrimitive(link.href))
-                })
+        val array: JsonArray =
+            buildJsonArray {
+                window.forEach { link ->
+                    add(
+                        buildJsonObject {
+                            put("text", JsonPrimitive(link.text))
+                            put("href", JsonPrimitive(link.href))
+                        },
+                    )
+                }
             }
-        }
         // Prose prefix keeps truncation visible to the model so it pages instead
         // of treating a 50-link window as the whole page.
-        return if (offset == 0 && links.size <= MAX_LINKS_RETURNED) array.toString()
-        else "links ${offset + 1}-${offset + window.size} of ${links.size} " +
-            "(pass offset to continue):\n" + array.toString()
+        return if (offset == 0 && links.size <= MAX_LINKS_RETURNED) {
+            array.toString()
+        } else {
+            "links ${offset + 1}-${offset + window.size} of ${links.size} " +
+                "(pass offset to continue):\n" + array.toString()
+        }
     }
 
     private fun buildSnapshotHint(): String {
@@ -637,21 +729,24 @@ class ChatWebInterface(
         return "\n\nThe user is currently viewing: \"${s.title}\" at ${s.url}."
     }
 
-    private fun buildAgentActionInfo(): ChatGPTActionInfo = ChatGPTActionInfo(
-        name = "agent",
-        systemMessage = AgentToolSchema.SYSTEM_PROMPT,
-        userMessage = "",
-        actionType = when {
-            configManager.ai.useGeminiApi -> GptActionType.Gemini
-            configManager.ai.useCustomGptUrl -> GptActionType.SelfHosted
-            else -> GptActionType.OpenAi
-        },
-        model = when {
-            configManager.ai.useGeminiApi -> configManager.ai.geminiModel
-            configManager.ai.useCustomGptUrl -> configManager.ai.alternativeModel
-            else -> configManager.ai.gptModel
-        },
-    )
+    private fun buildAgentActionInfo(): ChatGPTActionInfo =
+        ChatGPTActionInfo(
+            name = "agent",
+            systemMessage = AgentToolSchema.SYSTEM_PROMPT,
+            userMessage = "",
+            actionType =
+                when {
+                    configManager.ai.useGeminiApi -> GptActionType.Gemini
+                    configManager.ai.useCustomGptUrl -> GptActionType.SelfHosted
+                    else -> GptActionType.OpenAi
+                },
+            model =
+                when {
+                    configManager.ai.useGeminiApi -> configManager.ai.geminiModel
+                    configManager.ai.useCustomGptUrl -> configManager.ai.alternativeModel
+                    else -> configManager.ai.gptModel
+                },
+        )
 
     private fun appendBubble(chunk: String) {
         jsHelper.sendStreamUpdate(chunk)
@@ -673,15 +768,15 @@ class ChatWebInterface(
         }
     }
 
-    private fun createWebContentMessage(content: String): ChatMessage =
-        "```$content```$WEB_CONTENT_MESSAGE_SUFFIX".toUserMessage()
+    private fun createWebContentMessage(content: String): ChatMessage = "```$content```$WEB_CONTENT_MESSAGE_SUFFIX".toUserMessage()
 
     private fun createChatGptActionInfo(message: String): ChatGPTActionInfo =
         ChatGPTActionInfo(
             actionType = configManager.ai.gptForChatWeb,
             userMessage = message,
-            model = configManager.ai.getGptTypeModelMap()[configManager.ai.gptForChatWeb]
-                ?: configManager.ai.gptModel,
+            model =
+                configManager.ai.getGptTypeModelMap()[configManager.ai.gptForChatWeb]
+                    ?: configManager.ai.gptModel,
         )
 }
 
@@ -704,7 +799,7 @@ class JsHelper(
         lifecycleScope.launch(Dispatchers.Main) {
             webView.evaluateJavascript(
                 "javascript:receiveMessageFromAndroid('${escapeJsString(messageChunk)}', true, false)",
-                null
+                null,
             )
         }
     }
@@ -725,7 +820,7 @@ class JsHelper(
         lifecycleScope.launch(Dispatchers.Main) {
             webView.evaluateJavascript(
                 "javascript:receiveMessageFromAndroid('${escapeJsString(errorMessage)}', true, true)",
-                null
+                null,
             )
         }
     }
@@ -736,11 +831,11 @@ class JsHelper(
         }
     }
 
-    private fun escapeJsString(str: String): String {
-        return str.replace("\\", "\\\\")
+    private fun escapeJsString(str: String): String =
+        str
+            .replace("\\", "\\\\")
             .replace("'", "\\'")
             .replace("\n", "\\n")
             .replace("\r", "\\r")
             .replace("\"", "\\\"")
-    }
 }

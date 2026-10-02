@@ -12,10 +12,11 @@ data class HistoryRecord(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 
-    fun toRecord(): Record = Record(
-        title = TITLE,
-        url = URL,
-        time = TIME,
-        type = RecordType.History,
-    )
+    fun toRecord(): Record =
+        Record(
+            title = TITLE,
+            url = URL,
+            time = TIME,
+            type = RecordType.History,
+        )
 }

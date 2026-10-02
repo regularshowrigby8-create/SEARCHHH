@@ -1,17 +1,16 @@
 package info.plateaukao.einkbro.view.viewControllers
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.net.Uri
 import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.RelativeLayout
-import android.app.AlertDialog
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.LifecycleCoroutineScope
 import info.plateaukao.einkbro.R
-import info.plateaukao.einkbro.view.TranslationPanelView
 import info.plateaukao.einkbro.preference.ChatGPTActionInfo
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.TranslationMode
@@ -24,14 +23,15 @@ import info.plateaukao.einkbro.view.EBToast
 import info.plateaukao.einkbro.view.EBWebView
 import info.plateaukao.einkbro.view.EBWebView.OnScrollChangeListener
 import info.plateaukao.einkbro.view.Orientation
+import info.plateaukao.einkbro.view.ThemedBorders
+import info.plateaukao.einkbro.view.TranslationPanelView
 import info.plateaukao.einkbro.view.TwoPaneLayout
 import info.plateaukao.einkbro.view.dialog.TranslationLanguageDialog
+import info.plateaukao.einkbro.view.withThemedFrame
 import info.plateaukao.einkbro.viewmodel.TRANSLATE_API
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import info.plateaukao.einkbro.view.ThemedBorders
-import info.plateaukao.einkbro.view.withThemedFrame
 
 class TwoPaneController(
     private val activity: Activity,
@@ -50,13 +50,18 @@ class TwoPaneController(
         isWebViewCreated = true
         EBWebView(activity, null).apply {
             shouldHideTranslateContext = true
-            setScrollChangeListener(object : OnScrollChangeListener {
-                override fun onScrollChange(scrollY: Int, oldScrollY: Int) {
-                    if (kotlin.math.abs(scrollY - oldScrollY) > 10) {
-                        hideControlButtons()
+            setScrollChangeListener(
+                object : OnScrollChangeListener {
+                    override fun onScrollChange(
+                        scrollY: Int,
+                        oldScrollY: Int,
+                    ) {
+                        if (kotlin.math.abs(scrollY - oldScrollY) > 10) {
+                            hideControlButtons()
+                        }
                     }
-                }
-            })
+                },
+            )
         }
     }
 
@@ -64,17 +69,19 @@ class TwoPaneController(
 
     init {
         twoPaneLayout.setOrientation(config.translation.translationOrientation)
-        if (config.translation.translationPanelSwitched) twoPaneLayout.post {
-            twoPaneLayout.switchPanels()
+        if (config.translation.translationPanelSwitched) {
+            twoPaneLayout.post {
+                twoPaneLayout.switchPanels()
+            }
         }
-
 
         translationPanel.translationFontPlus.setOnClickListener { increaseFontSize() }
         translationPanel.translationFontMinus.setOnClickListener { decreaseFontSize() }
 
         translationPanel.translationClose.setOnClickListener {
             toggleTranslationWindow(
-                false, onTranslationClosed
+                false,
+                onTranslationClosed,
             )
         }
         translationPanel.translationClose.setOnLongClickListener {
@@ -83,8 +90,11 @@ class TwoPaneController(
         }
 
         translationPanel.translationOrientation.setImageResource(
-            if (twoPaneLayout.getOrientation() == Orientation.Vertical) R.drawable.ic_split_screen
-            else R.drawable.ic_split_screen_vertical
+            if (twoPaneLayout.getOrientation() == Orientation.Vertical) {
+                R.drawable.ic_split_screen
+            } else {
+                R.drawable.ic_split_screen_vertical
+            },
         )
 
         translationPanel.translationOrientation.setOnClickListener {
@@ -139,16 +149,20 @@ class TwoPaneController(
 
     private fun translateWithNewLanguage(translationLanguage: TranslationLanguage) {
         val uri = Uri.parse(webView.url)
-        val newUri = uri.removeQueryParam("_x_tr_tl").buildUpon()
-            .appendQueryParameter("_x_tr_tl", translationLanguage.value) // source language
-            .build()
+        val newUri =
+            uri
+                .removeQueryParam("_x_tr_tl")
+                .buildUpon()
+                .appendQueryParameter("_x_tr_tl", translationLanguage.value) // source language
+                .build()
         webView.loadUrl(newUri.toString())
     }
 
     private fun Uri.removeQueryParam(key: String): Uri {
         val builder = buildUpon().clearQuery()
 
-        queryParameterNames.filter { it != key }
+        queryParameterNames
+            .filter { it != key }
             .onEach { builder.appendQueryParameter(it, getQueryParameter(it)) }
 
         return builder.build()
@@ -175,7 +189,11 @@ class TwoPaneController(
         webView.loadUrl(url)
     }
 
-    fun showSecondPaneAsAi(webContent: String, webTitle: String, webUrl: String) {
+    fun showSecondPaneAsAi(
+        webContent: String,
+        webTitle: String,
+        webUrl: String,
+    ) {
         showSecondPane()
         webView.setupAiPage(lifecycleScope, webContent, webTitle, webUrl)
         translationPanel.controlsContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -213,7 +231,10 @@ class TwoPaneController(
         }
     }
 
-    private fun translateInPlaceReplace(translateApi: TRANSLATE_API, webView: EBWebView) {
+    private fun translateInPlaceReplace(
+        translateApi: TRANSLATE_API,
+        webView: EBWebView,
+    ) {
         webView.translateApi = translateApi
         webView.translateByParagraphInPlaceReplace()
     }
@@ -229,23 +250,32 @@ class TwoPaneController(
         config.translation.translationOrientation = orientation
         twoPaneLayout.setOrientation(orientation)
         translationPanel.translationOrientation.setImageResource(
-            if (twoPaneLayout.getOrientation() == Orientation.Vertical) R.drawable.ic_split_screen
-            else R.drawable.ic_split_screen_vertical
+            if (twoPaneLayout.getOrientation() == Orientation.Vertical) {
+                R.drawable.ic_split_screen
+            } else {
+                R.drawable.ic_split_screen_vertical
+            },
         )
     }
 
     private fun updateSyncScrollView(shouldSyncScroll: Boolean = false) {
         val view = translationPanel.syncScroll
         view.background =
-            if (shouldSyncScroll) ThemedBorders.selectedPanel(view.context)
-            else ThemedBorders.panel(view.context)
+            if (shouldSyncScroll) {
+                ThemedBorders.selectedPanel(view.context)
+            } else {
+                ThemedBorders.panel(view.context)
+            }
     }
 
     private fun updateLinkHereView(shouldLinkHere: Boolean = false) {
         val view = translationPanel.linkHere
         view.background =
-            if (shouldLinkHere) ThemedBorders.selectedPanel(view.context)
-            else ThemedBorders.panel(view.context)
+            if (shouldLinkHere) {
+                ThemedBorders.selectedPanel(view.context)
+            } else {
+                ThemedBorders.panel(view.context)
+            }
     }
 
     private fun launchTranslateWindow(text: String) {
@@ -271,45 +301,54 @@ class TwoPaneController(
             translateUrl(buildGUrlTranslateUrl(text))
             return
         }
-
     }
 
     fun showTranslationConfigDialog(translateDirectly: Boolean) {
-        val enumValues: List<TranslationMode> = TranslationMode.entries.toMutableList().apply {
-            if (config.ai.imageApiKey.isBlank()) {
-                remove(TranslationMode.PAPAGO_TRANSLATE_BY_SCREEN)
+        val enumValues: List<TranslationMode> =
+            TranslationMode.entries.toMutableList().apply {
+                if (config.ai.imageApiKey.isBlank()) {
+                    remove(TranslationMode.PAPAGO_TRANSLATE_BY_SCREEN)
+                }
             }
-        }
 
         val translationModeArray =
             enumValues.map { activity.getString(it.labelResId) }.toTypedArray()
         val valueArray = enumValues.map { it.ordinal }
         val selected = valueArray.indexOf(config.translation.translationMode.ordinal)
-        AlertDialog.Builder(activity, R.style.TouchAreaDialog).apply {
-            setTitle(context.getString(R.string.translation_mode))
-            setSingleChoiceItems(translationModeArray, selected) { dialog, which ->
-                dialog.dismiss()
-                config.translation.translationMode = enumValues[which]
-                if (translateDirectly) showTranslationAction.invoke()
+        AlertDialog
+            .Builder(activity, R.style.TouchAreaDialog)
+            .apply {
+                setTitle(context.getString(R.string.translation_mode))
+                setSingleChoiceItems(translationModeArray, selected) { dialog, which ->
+                    dialog.dismiss()
+                    config.translation.translationMode = enumValues[which]
+                    if (translateDirectly) showTranslationAction.invoke()
+                }
+            }.create()
+            .also {
+                it.withThemedFrame()
+                it.show()
+                it.window?.setLayout(300.dp(activity), ViewGroup.LayoutParams.WRAP_CONTENT)
             }
-        }.create().also {
-            it.withThemedFrame()
-            it.show()
-            it.window?.setLayout(300.dp(activity), ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
     }
 
     private fun String.purify(): String =
-        this.replace("\\u003C", "<").replace("\\n", "\n").replace("\\t", "  ").replace("\\\"", "\"")
+        this
+            .replace("\\u003C", "<")
+            .replace("\\n", "\n")
+            .replace("\\t", "  ")
+            .replace("\\\"", "\"")
 
     private fun translateUrl(url: String) {
         webView.loadUrl(url)
     }
 
     private fun addWebView(): EBWebView {
-        val params: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
-            RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT
-        )
+        val params: RelativeLayout.LayoutParams =
+            RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+            )
         translationPanel.addView(webView, 0, params)
 
         return webView
@@ -325,30 +364,43 @@ class TwoPaneController(
 
     private fun buildGUrlTranslateUrl(url: String): String {
         val uri = Uri.parse(url)
-        val newUri = uri.buildUpon().scheme("https")
-            .authority(uri.authority?.replace(".", "-") + ".translate.goog")
-            .appendQueryParameter("_x_tr_sl", "auto")
-            .appendQueryParameter("_x_tr_tl", config.translation.translationLanguage.value) // source language
-            .appendQueryParameter("_x_tr_pto", "ajax,elem") // target language
-            .build()
+        val newUri =
+            uri
+                .buildUpon()
+                .scheme("https")
+                .authority(uri.authority?.replace(".", "-") + ".translate.goog")
+                .appendQueryParameter("_x_tr_sl", "auto")
+                .appendQueryParameter("_x_tr_tl", config.translation.translationLanguage.value) // source language
+                .appendQueryParameter("_x_tr_pto", "ajax,elem") // target language
+                .build()
         return newUri.toString()
     }
 
     private fun buildGTranslateUrl(text: String): String {
-        val shortenedText: String = if (text.length > TRANSLATION_TEXT_THRESHOLD) text.substring(
-            0, TRANSLATION_TEXT_THRESHOLD
-        ) else text
-        val uri = Uri.Builder().scheme("https").authority("translate.google.com")
-            .appendQueryParameter("text", shortenedText)
-            .appendQueryParameter("sl", "auto") // source language
-            .appendQueryParameter("tl", "jp") // target language
-            .build()
+        val shortenedText: String =
+            if (text.length > TRANSLATION_TEXT_THRESHOLD) {
+                text.substring(
+                    0,
+                    TRANSLATION_TEXT_THRESHOLD,
+                )
+            } else {
+                text
+            }
+        val uri =
+            Uri
+                .Builder()
+                .scheme("https")
+                .authority("translate.google.com")
+                .appendQueryParameter("text", shortenedText)
+                .appendQueryParameter("sl", "auto") // source language
+                .appendQueryParameter("tl", "jp") // target language
+                .build()
         return uri.toString()
     }
 
-
     private fun toggleTranslationWindow(
-        isEnabled: Boolean, onTranslationClosed: () -> Unit = { Unit },
+        isEnabled: Boolean,
+        onTranslationClosed: () -> Unit = { Unit },
     ) {
         if (!isEnabled) {
             webView.loadUrl(BrowserUnit.URL_ABOUT_BLANK)

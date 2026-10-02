@@ -30,10 +30,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.view.compose.ListScaffold
+import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import info.plateaukao.einkbro.view.dialog.compose.LocalMenuActions
 import info.plateaukao.einkbro.view.dialog.compose.LocalMenuHideConfig
 import info.plateaukao.einkbro.view.dialog.compose.MENU_GRID_COLUMNS
@@ -59,9 +59,10 @@ class MenuItemHideActivity : LocaleAwareComponentActivity() {
         setContent {
             var hidden by remember {
                 mutableStateOf(
-                    config.ui.hiddenMenuItems.mapNotNull { name ->
-                        runCatching { MenuItemType.valueOf(name) }.getOrNull()
-                    }.toSet()
+                    config.ui.hiddenMenuItems
+                        .mapNotNull { name ->
+                            runCatching { MenuItemType.valueOf(name) }.getOrNull()
+                        }.toSet(),
                 )
             }
             // We keep the *display* list as the source of truth during a session so the
@@ -69,7 +70,7 @@ class MenuItemHideActivity : LocaleAwareComponentActivity() {
             // change we extract the underlying order to persist.
             var display by remember {
                 mutableStateOf(
-                    menuDisplayEntries(effectiveMenuEntries(config.ui.menuItemOrder))
+                    menuDisplayEntries(effectiveMenuEntries(config.ui.menuItemOrder)),
                 )
             }
             var reorderMode by remember { mutableStateOf(false) }
@@ -87,33 +88,40 @@ class MenuItemHideActivity : LocaleAwareComponentActivity() {
                 },
             ) { padding ->
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(padding)
+                            .padding(horizontal = 8.dp, vertical = 8.dp),
                 ) {
                     Text(
-                        text = stringResource(
-                            if (reorderMode) R.string.menu_hide_hint_reorder
-                            else R.string.menu_hide_hint_tap
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                        text =
+                            stringResource(
+                                if (reorderMode) {
+                                    R.string.menu_hide_hint_reorder
+                                } else {
+                                    R.string.menu_hide_hint_tap
+                                },
+                            ),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                         color = MaterialTheme.colors.onBackground,
                         fontSize = 12.sp,
                         textAlign = TextAlign.Center,
                     )
                     CompositionLocalProvider(
-                        LocalMenuHideConfig provides MenuHideConfig(
-                            hideMode = !reorderMode,
-                            reorderMode = reorderMode,
-                            hiddenItems = hidden,
-                            onToggleHide = { type ->
-                                hidden = if (type in hidden) hidden - type else hidden + type
-                                config.ui.hiddenMenuItems = hidden.map { it.name }.toSet()
-                            },
-                        ),
+                        LocalMenuHideConfig provides
+                            MenuHideConfig(
+                                hideMode = !reorderMode,
+                                reorderMode = reorderMode,
+                                hiddenItems = hidden,
+                                onToggleHide = { type ->
+                                    hidden = if (type in hidden) hidden - type else hidden + type
+                                    config.ui.hiddenMenuItems = hidden.map { it.name }.toSet()
+                                },
+                            ),
                         LocalMenuActions provides MenuActions(),
                     ) {
                         ReorderableMenuGrid(
@@ -121,9 +129,10 @@ class MenuItemHideActivity : LocaleAwareComponentActivity() {
                             reorderMode = reorderMode,
                             onReorder = { newDisplay ->
                                 display = newDisplay
-                                config.ui.menuItemOrder = encodeMenuEntries(
-                                    menuDisplayToUnderlying(newDisplay)
-                                )
+                                config.ui.menuItemOrder =
+                                    encodeMenuEntries(
+                                        menuDisplayToUnderlying(newDisplay),
+                                    )
                             },
                         )
                     }
@@ -141,12 +150,13 @@ private fun ReorderableMenuGrid(
     onReorder: (List<MenuEntry>) -> Unit,
 ) {
     val lazyGridState = rememberLazyGridState()
-    val reorderableState = rememberReorderableLazyGridState(lazyGridState) { from, to ->
-        val fromEntry = display.getOrNull(from.index) ?: return@rememberReorderableLazyGridState
-        if (fromEntry !is MenuEntry.Item) return@rememberReorderableLazyGridState
-        val newList = display.toMutableList().apply { add(to.index, removeAt(from.index)) }
-        onReorder(newList)
-    }
+    val reorderableState =
+        rememberReorderableLazyGridState(lazyGridState) { from, to ->
+            val fromEntry = display.getOrNull(from.index) ?: return@rememberReorderableLazyGridState
+            if (fromEntry !is MenuEntry.Item) return@rememberReorderableLazyGridState
+            val newList = display.toMutableList().apply { add(to.index, removeAt(from.index)) }
+            onReorder(newList)
+        }
     LazyVerticalGrid(
         state = lazyGridState,
         columns = GridCells.Fixed(MENU_GRID_COLUMNS),
@@ -154,53 +164,60 @@ private fun ReorderableMenuGrid(
     ) {
         display.forEachIndexed { index, entry ->
             when (entry) {
-                is MenuEntry.Item -> item(key = "item_${entry.type.name}") {
-                    ReorderableItem(reorderableState, key = "item_${entry.type.name}") { _ ->
-                        Box(
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .then(if (reorderMode) Modifier.longPressDraggableHandle() else Modifier),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            MenuItemForType(type = entry.type)
-                        }
-                    }
-                }
-                is MenuEntry.Boundary -> item(
-                    key = "boundary_${entry.sectionStart.name}",
-                    span = { GridItemSpan(maxLineSpan) },
-                ) {
-                    ReorderableItem(reorderableState, key = "boundary_${entry.sectionStart.name}") { _ ->
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
-                        ) {
-                            HorizontalSeparator()
-                            entry.sectionStart.headerRes?.let { res ->
-                                Text(
-                                    text = stringResource(res),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 4.dp),
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 13.sp,
-                                    color = MaterialTheme.colors.onBackground,
-                                )
+                is MenuEntry.Item ->
+                    item(key = "item_${entry.type.name}") {
+                        ReorderableItem(reorderableState, key = "item_${entry.type.name}") { _ ->
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .padding(2.dp)
+                                        .then(if (reorderMode) Modifier.longPressDraggableHandle() else Modifier),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                MenuItemForType(type = entry.type)
                             }
                         }
                     }
-                }
-                // Display-only empty cell. Must be a ReorderableItem so drags can cross it.
-                is MenuEntry.Spacer -> item(key = "spacer_$index") {
-                    ReorderableItem(reorderableState, key = "spacer_$index") { _ ->
-                        Box(
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .fillMaxWidth(),
-                        ) {}
+                is MenuEntry.Boundary ->
+                    item(
+                        key = "boundary_${entry.sectionStart.name}",
+                        span = { GridItemSpan(maxLineSpan) },
+                    ) {
+                        ReorderableItem(reorderableState, key = "boundary_${entry.sectionStart.name}") { _ ->
+                            Column(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 6.dp),
+                            ) {
+                                HorizontalSeparator()
+                                entry.sectionStart.headerRes?.let { res ->
+                                    Text(
+                                        text = stringResource(res),
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 4.dp),
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 13.sp,
+                                        color = MaterialTheme.colors.onBackground,
+                                    )
+                                }
+                            }
+                        }
                     }
-                }
+                // Display-only empty cell. Must be a ReorderableItem so drags can cross it.
+                is MenuEntry.Spacer ->
+                    item(key = "spacer_$index") {
+                        ReorderableItem(reorderableState, key = "spacer_$index") { _ ->
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .padding(2.dp)
+                                        .fillMaxWidth(),
+                            ) {}
+                        }
+                    }
             }
         }
     }

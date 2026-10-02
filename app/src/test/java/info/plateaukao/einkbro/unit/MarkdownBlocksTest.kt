@@ -6,7 +6,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MarkdownBlocksTest {
-
     @Test
     fun `plain markdown is a single text block`() {
         val md = "# Title\n\nSome **bold** text."

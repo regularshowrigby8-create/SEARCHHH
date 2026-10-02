@@ -6,17 +6,17 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class FaviconCandidatesTest {
-
     @Test
     fun `parses icon links and resolves relative hrefs against the page`() {
-        val html = """
+        val html =
+            """
             <html><head>
               <LINK REL="shortcut icon" HREF="/static/fav.ico">
               <link rel=icon type="image/png" sizes="32x32" href='img/32.png'>
               <link rel="apple-touch-icon" href="https://cdn.example.org/touch.png?v=2&amp;x=1">
               <link rel="stylesheet" href="/style.css">
             </head></html>
-        """.trimIndent()
+            """.trimIndent()
         val links = FaviconCandidates.parseIconLinks(html, "https://example.com/a/b/page.html")
         assertEquals(
             listOf(
@@ -32,12 +32,13 @@ class FaviconCandidatesTest {
 
     @Test
     fun `orders favicons nearest 48px first, touch icons after, favicon ico last`() {
-        val candidates = listOf(
-            Candidate("https://e.com/touch.png", rel = "apple-touch-icon", sizes = "180x180"),
-            Candidate("https://e.com/16.png", sizes = "16x16"),
-            Candidate("https://e.com/48.png", sizes = "48x48"),
-            Candidate("https://e.com/any.ico"),
-        )
+        val candidates =
+            listOf(
+                Candidate("https://e.com/touch.png", rel = "apple-touch-icon", sizes = "180x180"),
+                Candidate("https://e.com/16.png", sizes = "16x16"),
+                Candidate("https://e.com/48.png", sizes = "48x48"),
+                Candidate("https://e.com/any.ico"),
+            )
         assertEquals(
             listOf(
                 "https://e.com/48.png",
@@ -52,13 +53,14 @@ class FaviconCandidatesTest {
 
     @Test
     fun `skips svg sources and non-http schemes but keeps data uris`() {
-        val candidates = listOf(
-            Candidate("https://e.com/icon.svg"),
-            Candidate("https://e.com/vector", type = "image/svg+xml"),
-            Candidate("data:image/svg+xml;base64,AAAA"),
-            Candidate("data:image/png;base64,iVBORw0KGgo="),
-            Candidate("file:///etc/passwd"),
-        )
+        val candidates =
+            listOf(
+                Candidate("https://e.com/icon.svg"),
+                Candidate("https://e.com/vector", type = "image/svg+xml"),
+                Candidate("data:image/svg+xml;base64,AAAA"),
+                Candidate("data:image/png;base64,iVBORw0KGgo="),
+                Candidate("file:///etc/passwd"),
+            )
         assertEquals(
             listOf("data:image/png;base64,iVBORw0KGgo=", "https://e.com/favicon.ico"),
             FaviconCandidates.orderedUrls(candidates, "https://e.com/"),

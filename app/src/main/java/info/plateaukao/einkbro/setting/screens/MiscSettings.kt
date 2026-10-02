@@ -22,8 +22,9 @@ fun buildMiscSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> {
             0,
             R.string.setting_summary_highlight_style,
             config = config.display::highlightStyle,
-            options = HighlightStyle.entries
-                .map { it.stringResId },
+            options =
+                HighlightStyle.entries
+                    .map { it.stringResId },
         ),
         ListSettingWithEnumItem(
             R.string.setting_title_translation_style,
@@ -35,17 +36,17 @@ fun buildMiscSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> {
         NavigateSettingItem(
             R.string.setting_title_userAgent,
             0,
-            destination = UserAgent
+            destination = UserAgent,
         ),
         ValueSettingItem(
             R.string.setting_title_edit_homepage,
             0,
             config = config::favoriteUrl,
-            showValue = false
+            showValue = false,
         ),
         ActionSettingItem(R.string.setting_title_pdf_paper_size, 0) {
             PrinterDocumentPaperSizeDialog(
-                deps.activity
+                deps.activity,
             ).show()
         },
         DividerSettingItem(),
@@ -59,14 +60,14 @@ fun buildMiscSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> {
             R.string.setting_title_translated_langs,
             0,
             R.string.setting_summary_translated_langs,
-            config.translation::preferredTranslateLanguageString
+            config.translation::preferredTranslateLanguageString,
         ),
         ValueSettingItem(
             R.string.translate_image_key,
             0,
             R.string.translate_image_key_summary,
             config = config.ai::imageApiKey,
-            showValue = false
+            showValue = false,
         ),
         ActionSettingItem(
             R.string.setting_dual_caption,

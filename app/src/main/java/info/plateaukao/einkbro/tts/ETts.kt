@@ -22,28 +22,34 @@ import kotlin.coroutines.suspendCoroutine
 
 // ported from https://github.com/9ikj/Edge-TTS-Lib/
 class ETts {
-    private fun buildHeaders(): HashMap<String, String> = HashMap<String, String>().apply {
-        put("Origin", "chrome-extension://jdiccldimpdaibmpdkjnbmckianbfold")
-        put("Pragma", "no-cache")
-        put("Cache-Control", "no-cache")
-        put(
-            "User-Agent",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$CHROMIUM_MAJOR_VERSION.0.0.0 Safari/537.36 Edg/$CHROMIUM_MAJOR_VERSION.0.0.0"
-        )
-        put("Accept-Encoding", "gzip, deflate, br, zstd")
-        put("Accept-Language", "en-US,en;q=0.9")
-        put("Cookie", "muid=${generateMuid()};")
-    }
+    private fun buildHeaders(): HashMap<String, String> =
+        HashMap<String, String>().apply {
+            put("Origin", "chrome-extension://jdiccldimpdaibmpdkjnbmckianbfold")
+            put("Pragma", "no-cache")
+            put("Cache-Control", "no-cache")
+            put(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$CHROMIUM_MAJOR_VERSION.0.0.0 Safari/537.36 Edg/$CHROMIUM_MAJOR_VERSION.0.0.0",
+            )
+            put("Accept-Encoding", "gzip, deflate, br, zstd")
+            put("Accept-Language", "en-US,en;q=0.9")
+            put("Cookie", "muid=${generateMuid()};")
+        }
 
     private val okHttpClient by lazy {
-        OkHttpClient.Builder()
+        OkHttpClient
+            .Builder()
             .readTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
             .connectTimeout(15, TimeUnit.SECONDS)
             .build()
     }
 
-    suspend fun tts(voice: VoiceItem, speed: Int, content: String): ByteArray? =
+    suspend fun tts(
+        voice: VoiceItem,
+        speed: Int,
+        content: String,
+    ): ByteArray? =
         suspendCoroutine { continuation ->
             var isResumed = false
 
@@ -56,43 +62,57 @@ class ETts {
             val reqId = uuid()
             val audioFormat = mkAudioFormat(dateStr, FORMAT)
             // if speec - 100 is minus, it should be with - instead of +
-            val ssml = mkssml(
-                voice.locale,
-                voice.name,
-                escapeXml(processedContent),
-                "+0Hz",
-                if (speed < 100) "${speed - 100}%" else "+${speed - 100}%",
-                "+0%"
-            )
+            val ssml =
+                mkssml(
+                    voice.locale,
+                    voice.name,
+                    escapeXml(processedContent),
+                    "+0Hz",
+                    if (speed < 100) "${speed - 100}%" else "+${speed - 100}%",
+                    "+0%",
+                )
 
             val ssmlHeadersPlusData = ssmlHeadersPlusData(reqId, dateStr, ssml)
 
             val secMsGEC = generateSecMsGec()
 
-            val request = Request.Builder()
-                .url("$TTS_URL&Sec-MS-GEC=$secMsGEC&Sec-MS-GEC-Version=$SEC_MS_GEC_VERSION&ConnectionId=$reqId")
-                .headers(buildHeaders().toHeaders())
-                .build()
+            val request =
+                Request
+                    .Builder()
+                    .url("$TTS_URL&Sec-MS-GEC=$secMsGEC&Sec-MS-GEC-Version=$SEC_MS_GEC_VERSION&ConnectionId=$reqId")
+                    .headers(buildHeaders().toHeaders())
+                    .build()
 
             try {
-                val client = okHttpClient.newWebSocket(
-                    request,
-                    object : TTSWebSocketListener() {
-                        override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                            Log.d("TTSWebSocketListener", "onClosed: $code, $reason")
-                            isResumed = true
-                            continuation.resume(byteArray)
-                        }
-                        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                            super.onFailure(webSocket, t, response)
-                            response?.close()
-                            Log.d("TTSWebSocketListener", "onFailure: ${t.message}")
-                            if (isResumed.not()) {
+                val client =
+                    okHttpClient.newWebSocket(
+                        request,
+                        object : TTSWebSocketListener() {
+                            override fun onClosed(
+                                webSocket: WebSocket,
+                                code: Int,
+                                reason: String,
+                            ) {
+                                Log.d("TTSWebSocketListener", "onClosed: $code, $reason")
                                 isResumed = true
-                                continuation.resume(null)
+                                continuation.resume(byteArray)
                             }
-                        }
-                    })
+
+                            override fun onFailure(
+                                webSocket: WebSocket,
+                                t: Throwable,
+                                response: Response?,
+                            ) {
+                                super.onFailure(webSocket, t, response)
+                                response?.close()
+                                Log.d("TTSWebSocketListener", "onFailure: ${t.message}")
+                                if (isResumed.not()) {
+                                    isResumed = true
+                                    continuation.resume(null)
+                                }
+                            }
+                        },
+                    )
                 client.send(audioFormat)
                 client.send(ssmlHeadersPlusData)
             } catch (e: Throwable) {
@@ -117,25 +137,26 @@ class ETts {
     }
 
     private fun dateToString(date: Date): String {
-        val sdf = SimpleDateFormat(
-            "EEE MMM dd yyyy HH:mm:ss 'GMT'Z (zzzz)", Locale.getDefault()
-        )
+        val sdf =
+            SimpleDateFormat(
+                "EEE MMM dd yyyy HH:mm:ss 'GMT'Z (zzzz)",
+                Locale.getDefault(),
+            )
         return sdf.format(date)
     }
 
-    private fun uuid(): String {
-        return UUID.randomUUID().toString().replace("-", "")
-    }
+    private fun uuid(): String = UUID.randomUUID().toString().replace("-", "")
 
     // The content is spliced into hand-built SSML; unescaped markup characters
     // would corrupt the document — or, for web-page-supplied text
     // (WebSpeechHandler), let a page inject its own SSML elements.
-    private fun escapeXml(input: String): String = input
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace("\"", "&quot;")
-        .replace("'", "&apos;")
+    private fun escapeXml(input: String): String =
+        input
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+            .replace("'", "&apos;")
 
     private fun removeIncompatibleCharacters(input: String): String {
         if (input.isBlank()) {
@@ -153,12 +174,16 @@ class ETts {
         return output.toString()
     }
 
-    private fun mkAudioFormat(dateStr: String, format: String): String =
+    private fun mkAudioFormat(
+        dateStr: String,
+        format: String,
+    ): String =
         "X-Timestamp:" + dateStr + "\r\n" +
-                "Content-Type:application/json; charset=utf-8\r\n" +
-                "Path:speech.config\r\n\r\n" +
-                "{\"context\":{\"synthesis\":{\"audio\":{\"metadataoptions\":{\"sentenceBoundaryEnabled\":\"false\",\"wordBoundaryEnabled\":\"true\"},\"outputFormat\":\"" + format + "\"}}}}\n"
-
+            "Content-Type:application/json; charset=utf-8\r\n" +
+            "Path:speech.config\r\n\r\n" +
+            "{\"context\":{\"synthesis\":{\"audio\":{\"metadataoptions\":{\"sentenceBoundaryEnabled\":\"false\",\"wordBoundaryEnabled\":\"true\"},\"outputFormat\":\"" +
+            format +
+            "\"}}}}\n"
 
     private fun mkssml(
         locate: String,
@@ -169,17 +194,20 @@ class ETts {
         voiceVolume: String,
     ): String =
         "<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='" +
-                locate + "'>" +
-                "<voice name='" + voiceName + "'><prosody pitch='" + voicePitch +
-                "' rate='" + voiceRate + "' volume='" + voiceVolume + "'>" +
-                content + "</prosody></voice></speak>"
+            locate + "'>" +
+            "<voice name='" + voiceName + "'><prosody pitch='" + voicePitch +
+            "' rate='" + voiceRate + "' volume='" + voiceVolume + "'>" +
+            content + "</prosody></voice></speak>"
 
-
-    private fun ssmlHeadersPlusData(requestId: String, timestamp: String, ssml: String): String =
+    private fun ssmlHeadersPlusData(
+        requestId: String,
+        timestamp: String,
+        ssml: String,
+    ): String =
         "X-RequestId:" + requestId + "\r\n" +
-                "Content-Type:application/ssml+xml\r\n" +
-                "X-Timestamp:" + timestamp + "Z\r\n" +
-                "Path:ssml\r\n\r\n" + ssml
+            "Content-Type:application/ssml+xml\r\n" +
+            "X-Timestamp:" + timestamp + "Z\r\n" +
+            "Path:ssml\r\n\r\n" + ssml
 
     private fun generateMuid(): String {
         val bytes = ByteArray(16)
@@ -203,36 +231,52 @@ class ETts {
 private open class TTSWebSocketListener : WebSocketListener() {
     var byteArray: ByteArray = ByteArray(0)
 
-    override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+    override fun onClosing(
+        webSocket: WebSocket,
+        code: Int,
+        reason: String,
+    ) {
         super.onClosing(webSocket, code, reason)
         webSocket.close(1000, null)
     }
-    override fun onMessage(webSocket: WebSocket, text: String) {
+
+    override fun onMessage(
+        webSocket: WebSocket,
+        text: String,
+    ) {
         if (text.contains("Path:turn.end")) {
             webSocket.close(1000, null)
         }
     }
 
-    override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+    override fun onFailure(
+        webSocket: WebSocket,
+        t: Throwable,
+        response: Response?,
+    ) {
         super.onFailure(webSocket, t, response)
         response?.close()
         Log.d("TTSWebSocketListener", "onFailure: ${t.message}")
     }
 
-    override fun onMessage(webSocket: WebSocket, bytes: ByteString) =
-        fixHeadHook(bytes.toByteArray())
+    override fun onMessage(
+        webSocket: WebSocket,
+        bytes: ByteString,
+    ) = fixHeadHook(bytes.toByteArray())
 
     private fun fixHeadHook(origin: ByteArray) {
         val str = String(origin)
-        val skip = when {
-            str.contains("Content-Type") -> when {
-                str.contains("audio/mpeg") -> 130
-                str.contains("codec=opus") -> 142
-                else -> 0
-            }
+        val skip =
+            when {
+                str.contains("Content-Type") ->
+                    when {
+                        str.contains("audio/mpeg") -> 130
+                        str.contains("codec=opus") -> 142
+                        else -> 0
+                    }
 
-            else -> 105
-        }
+                else -> 105
+            }
 
         byteArray += Arrays.copyOfRange(origin, skip, origin.size)
     }

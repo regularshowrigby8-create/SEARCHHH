@@ -19,19 +19,20 @@ fun buildSearchSettingItems(deps: SettingScreenDeps): List<SettingItemInterface>
             R.string.setting_title_search_engine,
             0,
             config = config.browser::searchEngine,
-            options = listOf(
-                R.string.setting_summary_search_engine_startpage,
-                R.string.setting_summary_search_engine_startpage_de,
-                R.string.setting_summary_search_engine_baidu,
-                R.string.setting_summary_search_engine_bing,
-                R.string.setting_summary_search_engine_duckduckgo,
-                R.string.setting_summary_search_engine_google,
-                R.string.setting_summary_search_engine_searx,
-                R.string.setting_summary_search_engine_qwant,
-                R.string.setting_summary_search_engine_ecosia,
-                R.string.setting_title_searchEngine,
-                R.string.setting_summary_search_engine_yandex,
-            )
+            options =
+                listOf(
+                    R.string.setting_summary_search_engine_startpage,
+                    R.string.setting_summary_search_engine_startpage_de,
+                    R.string.setting_summary_search_engine_baidu,
+                    R.string.setting_summary_search_engine_bing,
+                    R.string.setting_summary_search_engine_duckduckgo,
+                    R.string.setting_summary_search_engine_google,
+                    R.string.setting_summary_search_engine_searx,
+                    R.string.setting_summary_search_engine_qwant,
+                    R.string.setting_summary_search_engine_ecosia,
+                    R.string.setting_title_searchEngine,
+                    R.string.setting_summary_search_engine_yandex,
+                ),
         ),
         ValueSettingItem(
             R.string.setting_title_searchEngine,
@@ -62,10 +63,10 @@ fun buildSearchSettingItems(deps: SettingScreenDeps): List<SettingItemInterface>
         ActionSettingItem(
             R.string.setting_title_split_search_setting,
             0,
-            R.string.setting_summary_split_search_setting
+            R.string.setting_summary_split_search_setting,
         ) {
             deps.activity.startActivity(
-                DataListActivity.createIntent(deps.activity, WhiteListType.SplitSearch)
+                DataListActivity.createIntent(deps.activity, WhiteListType.SplitSearch),
             )
         },
         BooleanSettingItem(
@@ -79,7 +80,7 @@ fun buildSearchSettingItems(deps: SettingScreenDeps): List<SettingItemInterface>
             R.string.setting_title_remote_query,
             0,
             config = config.ai::remoteQueryActionName,
-            options = listOf("Search") + config.ai.gptActionList.map { it.name }
+            options = listOf("Search") + config.ai.gptActionList.map { it.name },
         ),
     )
 }

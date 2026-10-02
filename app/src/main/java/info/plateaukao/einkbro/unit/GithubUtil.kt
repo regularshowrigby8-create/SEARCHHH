@@ -12,7 +12,12 @@ object GithubUtil {
      */
     fun rawUrlForBlobPage(pageUrl: String?): String? {
         pageUrl ?: return null
-        val uri = try { URI(pageUrl) } catch (e: Exception) { return null }
+        val uri =
+            try {
+                URI(pageUrl)
+            } catch (e: Exception) {
+                return null
+            }
         if (uri.host != "github.com") return null
         val path = uri.path ?: return null
         val segments = path.split('/').filter { it.isNotEmpty() }

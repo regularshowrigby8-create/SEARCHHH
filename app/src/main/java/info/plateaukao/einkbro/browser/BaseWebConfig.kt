@@ -18,14 +18,17 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.util.*
 
-class AdBlock(context: Context) :
-    BaseWebConfig(context, RecordRepository.TABLE_WHITELIST, "hosts.txt")
+class AdBlock(
+    context: Context,
+) : BaseWebConfig(context, RecordRepository.TABLE_WHITELIST, "hosts.txt")
 
-class Javascript(context: Context) :
-    BaseWebConfig(context, RecordRepository.TABLE_JAVASCRIPT, "javaHosts.txt")
+class Javascript(
+    context: Context,
+) : BaseWebConfig(context, RecordRepository.TABLE_JAVASCRIPT, "javaHosts.txt")
 
-class Cookie(context: Context) :
-    BaseWebConfig(context, RecordRepository.TABLE_COOKIE, "cookieHosts.txt")
+class Cookie(
+    context: Context,
+) : BaseWebConfig(context, RecordRepository.TABLE_COOKIE, "cookieHosts.txt")
 
 // dbTable/hostsFile are constructor params, not abstract vals: the init block
 // launches a coroutine that reads them, and subclass field initializers only
@@ -34,7 +37,8 @@ abstract class BaseWebConfig(
     private val context: Context,
     private val dbTable: String,
     private val hostsFile: String,
-) : KoinComponent, DomainInterface {
+) : KoinComponent,
+    DomainInterface {
     private val config: ConfigManager by inject()
     private val recordDb: RecordRepository by inject()
     private val coroutineScope: CoroutineScope by inject()
@@ -61,17 +65,16 @@ abstract class BaseWebConfig(
     }
 
     fun isAd(url: String): Boolean {
-        val domain: String = try {
-            getDomain(url).lowercase(locale)
-        } catch (u: URISyntaxException) {
-            return false
-        }
+        val domain: String =
+            try {
+                getDomain(url).lowercase(locale)
+            } catch (u: URISyntaxException) {
+                return false
+            }
         return hosts.contains(domain) || isAdExtraSites(domain)
     }
 
-    private fun isAdExtraSites(domain: String): Boolean {
-        return config.browser.adSites.any { it.contains(domain, true) }
-    }
+    private fun isAdExtraSites(domain: String): Boolean = config.browser.adSites.any { it.contains(domain, true) }
 
     override suspend fun getDomains() = recordDb.listDomains(dbTable)
 

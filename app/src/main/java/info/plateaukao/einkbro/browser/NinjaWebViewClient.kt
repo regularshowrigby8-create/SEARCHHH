@@ -32,21 +32,21 @@ import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import info.plateaukao.einkbro.BuildConfig
 import info.plateaukao.einkbro.R
-import info.plateaukao.einkbro.view.compose.MyTheme
 import info.plateaukao.einkbro.activity.SettingActivity
 import info.plateaukao.einkbro.activity.SettingRoute
 import info.plateaukao.einkbro.caption.DualCaptionProcessor
 import info.plateaukao.einkbro.data.remote.GoogleDriveRepository
-import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.BrowserConfig
+import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.unit.BookmarkRenderer
 import info.plateaukao.einkbro.unit.BrowserUnit
+import info.plateaukao.einkbro.unit.EinkImageCache
 import info.plateaukao.einkbro.unit.HelperUnit
 import info.plateaukao.einkbro.util.Constants
-import info.plateaukao.einkbro.unit.EinkImageCache
 import info.plateaukao.einkbro.view.EBToast
 import info.plateaukao.einkbro.view.EBWebView
 import info.plateaukao.einkbro.view.WebViewConfigApplier
+import info.plateaukao.einkbro.view.compose.MyTheme
 import info.plateaukao.einkbro.view.dialog.StartPageConfigDialog
 import info.plateaukao.einkbro.view.dialog.StartPageItemDialog
 import io.github.edsuns.adfilter.AdFilter
@@ -59,11 +59,11 @@ import org.koin.core.component.inject
 import java.io.ByteArrayInputStream
 import java.io.IOException
 
-
 class EBWebViewClient(
     private val ebWebView: EBWebView,
     private val addHistoryAction: (String, String) -> Unit,
-) : WebViewClient(), KoinComponent {
+) : WebViewClient(),
+    KoinComponent {
     private val context: Context = ebWebView.context
     private val config: ConfigManager by inject()
     private val cookie: Cookie by inject()
@@ -93,11 +93,11 @@ class EBWebViewClient(
     private fun isAdBlockEnabled(pageUrl: String?): Boolean {
         if (pageUrl == null) return config.browser.adBlock
         return (config.getEffectiveConfig(pageUrl).enableAdBlock ?: config.browser.adBlock) &&
-                !adBlock.isWhite(pageUrl)
+            !adBlock.isWhite(pageUrl)
     }
 
-
     private var onPageFinishedAction: () -> Unit = { Unit }
+
     fun setOnPageFinishedAction(action: () -> Unit) {
         onPageFinishedAction = action
     }
@@ -112,10 +112,13 @@ class EBWebViewClient(
      * this WebView is dead and gets discarded, and the tab is rebuilt on its URL.
      */
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
+    override fun onRenderProcessGone(
+        view: WebView,
+        detail: RenderProcessGoneDetail,
+    ): Boolean {
         Log.e(
             "EBWebViewClient",
-            "renderer gone for ${view.url} (crashed=${detail.didCrash()}, priority=${detail.rendererPriorityAtExit()})"
+            "renderer gone for ${view.url} (crashed=${detail.didCrash()}, priority=${detail.rendererPriorityAtExit()})",
         )
         ebWebView.handleRenderProcessGone()
         return true
@@ -124,7 +127,11 @@ class EBWebViewClient(
     /** URL the userscript menu registry was last cleared for; see [onPageStarted]. */
     private var lastUserScriptUrl: String? = null
 
-    override fun doUpdateVisitedHistory(view: WebView, url: String, isReload: Boolean) {
+    override fun doUpdateVisitedHistory(
+        view: WebView,
+        url: String,
+        isReload: Boolean,
+    ) {
         super.doUpdateVisitedHistory(view, url, isReload)
         // Commit-time, post-redirect URL: the one reliable moment to say which host
         // the tab is now showing.
@@ -174,14 +181,15 @@ class EBWebViewClient(
 
     private val desktopReloadedUrls = mutableSetOf<String>()
 
-    private fun navigationKey(url: String): String {
-        return try {
+    private fun navigationKey(url: String): String =
+        try {
             val uri = url.toUri()
             val host = uri.host.orEmpty()
             if (host.contains("youtube.com") || host.contains("youtu.be")) {
-                val videoId = uri.getQueryParameter("v")
-                    ?: uri.lastPathSegment // youtu.be/<id>, /shorts/<id>
-                    ?: ""
+                val videoId =
+                    uri.getQueryParameter("v")
+                        ?: uri.lastPathSegment // youtu.be/<id>, /shorts/<id>
+                        ?: ""
                 "${uri.scheme}://${host}${uri.path.orEmpty()}?v=$videoId"
             } else {
                 "${uri.scheme}://${host}${uri.path.orEmpty()}?${uri.query.orEmpty()}"
@@ -189,9 +197,12 @@ class EBWebViewClient(
         } catch (e: Exception) {
             url
         }
-    }
 
-    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+    override fun onPageStarted(
+        view: WebView?,
+        url: String?,
+        favicon: Bitmap?,
+    ) {
         super.onPageStarted(view, url, favicon)
         ebWebView.currentPageUrl = url
         // Applied at every document start (not only loadUrl) so reloads, link
@@ -259,7 +270,10 @@ class EBWebViewClient(
         }
     }
 
-    private fun injectUserScripts(url: String, runAt: info.plateaukao.einkbro.userscript.RunAt) {
+    private fun injectUserScripts(
+        url: String,
+        runAt: info.plateaukao.einkbro.userscript.RunAt,
+    ) {
         val matching = userScriptManager.getMatchingScripts(url, runAt)
         if (matching.isEmpty()) return
         matching.forEach { parsed ->
@@ -271,12 +285,17 @@ class EBWebViewClient(
             // A fresh unguessable token per injection: it authorizes bridge calls and
             // pins them to this script. It lives only inside the injected shim's closure,
             // so neither the page's own scripts nor other pages can present it.
-            val token = java.util.UUID.randomUUID().toString()
+            val token =
+                java.util.UUID
+                    .randomUUID()
+                    .toString()
             ebWebView.userScriptBridge.registerToken(token, parsed.script.id)
             val js = userScriptManager.buildInjectionJs(parsed, token)
-            val b64 = android.util.Base64.encodeToString(
-                js.toByteArray(Charsets.UTF_8), android.util.Base64.NO_WRAP,
-            )
+            val b64 =
+                android.util.Base64.encodeToString(
+                    js.toByteArray(Charsets.UTF_8),
+                    android.util.Base64.NO_WRAP,
+                )
             // Guard against running the same script twice in one document. WebView's page
             // callbacks are not once-per-page (redirects, multiple onPageFinished, SPA
             // re-commits all re-fire them), so without this a script that appends UI — e.g.
@@ -284,7 +303,8 @@ class EBWebViewClient(
             // on `window`, which is fresh on each real navigation, so genuine page loads still
             // run the script exactly once. Keyed by script id so distinct scripts are independent.
             val scriptId = parsed.script.id
-            val injector = """
+            val injector =
+                """
                 (function(){
                     try {
                         var reg = window.__einkbroInjected || (window.__einkbroInjected = { Unit });
@@ -296,7 +316,7 @@ class EBWebViewClient(
                         s.parentNode && s.parentNode.removeChild(s);
                     } catch(e) { console.error('einkbro userscript inject', e); }
                 })();
-            """.trimIndent()
+                """.trimIndent()
             ebWebView.evaluateJavascript(injector, null)
         }
     }
@@ -304,12 +324,17 @@ class EBWebViewClient(
     private fun injectForcedViewportWidth(url: String) {
         val width = config.getDesktopViewportWidth(url) ?: return
         if (width <= 0) return
-        val script = HelperUnit.loadAssetFile("force_viewport_width.js")
-            .replace("__WIDTH__", width.toString())
+        val script =
+            HelperUnit
+                .loadAssetFile("force_viewport_width.js")
+                .replace("__WIDTH__", width.toString())
         ebWebView.evaluateJavascript(script, null)
     }
 
-    override fun onPageFinished(view: WebView, url: String) {
+    override fun onPageFinished(
+        view: WebView,
+        url: String,
+    ) {
         ebWebView.currentPageUrl = url
         desktopReloadedUrls.clear()
         ebWebView.updateCssStyle()
@@ -367,26 +392,27 @@ class EBWebViewClient(
         ebWebView.oncePerDocument("touch_target_tracking") {
             ebWebView.evaluateJavascript(
                 """
-                    (function(){
-                        if(window.__einkbroTouchInit) return;
-                        window.__einkbroTouchInit = true;
-                        function findTargetWithA(e){
-                            var tt = e;
-                            while(tt){
-                                if(tt.tagName.toLowerCase() == "a"){
-                                    break;
-                                }
-                                tt = tt.parentElement;
+                (function(){
+                    if(window.__einkbroTouchInit) return;
+                    window.__einkbroTouchInit = true;
+                    function findTargetWithA(e){
+                        var tt = e;
+                        while(tt){
+                            if(tt.tagName.toLowerCase() == "a"){
+                                break;
                             }
-                            return tt;
+                            tt = tt.parentElement;
                         }
-                        window.addEventListener('touchstart', function(e){
-                            if(e.touches.length==1){
-                                window._touchTarget = findTargetWithA(e.touches[0].target);
-                            }
-                        });
-                    })();
-            """.trimIndent(), null
+                        return tt;
+                    }
+                    window.addEventListener('touchstart', function(e){
+                        if(e.touches.length==1){
+                            window._touchTarget = findTargetWithA(e.touches[0].target);
+                        }
+                    });
+                })();
+                """.trimIndent(),
+                null,
             )
         }
 
@@ -403,11 +429,16 @@ class EBWebViewClient(
     }
 
     private fun isUserScriptUrl(url: String): Boolean {
-        val path = try {
-            Uri.parse(url).path?.lowercase().orEmpty()
-        } catch (e: Exception) {
-            ""
-        }
+        val path =
+            try {
+                Uri
+                    .parse(url)
+                    .path
+                    ?.lowercase()
+                    .orEmpty()
+            } catch (e: Exception) {
+                ""
+            }
         return path.endsWith(".user.js")
     }
 
@@ -415,18 +446,22 @@ class EBWebViewClient(
         // The activity downloads the script itself (showing a progress indicator); only
         // the URL is passed, since multi-MB bodies overflow the 1MB Binder limit.
         context.startActivity(
-            info.plateaukao.einkbro.activity.UserScriptListActivity.createInstallIntent(context, url)
+            info.plateaukao.einkbro.activity.UserScriptListActivity
+                .createInstallIntent(context, url),
         )
     }
 
-    private fun isTranslationDomain(url: String): Boolean {
-        return url.contains("translate.goog") || url.contains("translate.google.com")
-    }
+    private fun isTranslationDomain(url: String): Boolean = url.contains("translate.goog") || url.contains("translate.google.com")
 
-    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =
-        handleUri(view, request.url)
+    override fun shouldOverrideUrlLoading(
+        view: WebView,
+        request: WebResourceRequest,
+    ): Boolean = handleUri(view, request.url)
 
-    private fun handleUri(webView: WebView, uri: Uri): Boolean {
+    private fun handleUri(
+        webView: WebView,
+        uri: Uri,
+    ): Boolean {
         val url = uri.toString()
         Log.d("ebWebViewClient", "handleUri: $url")
 
@@ -472,12 +507,13 @@ class EBWebViewClient(
         // land the user back in Backup settings where the sync action lives.
         if (url.startsWith(BuildConfig.DRIVE_OAUTH_REDIRECT)) {
             coroutineScope.launch {
-                val success = runCatching { googleDriveRepository.completeAuth(uri) }
-                    .getOrDefault(false)
+                val success =
+                    runCatching { googleDriveRepository.completeAuth(uri) }
+                        .getOrDefault(false)
                 withContext(Dispatchers.Main) {
                     if (success) {
                         context.startActivity(
-                            SettingActivity.createIntent(context, SettingRoute.Backup)
+                            SettingActivity.createIntent(context, SettingRoute.Backup),
                         )
                     } else {
                         EBToast.show(context, R.string.drive_sign_in_failed)
@@ -534,7 +570,7 @@ class EBWebViewClient(
                 context.startActivity(intent)
                 return true
             } catch (e: Exception) {
-                //not an intent uri
+                // not an intent uri
                 return false
             }
         }
@@ -546,7 +582,7 @@ class EBWebViewClient(
             // ignore
         }
 
-        return true //do nothing in other cases
+        return true // do nothing in other cases
     }
 
     /**
@@ -556,13 +592,17 @@ class EBWebViewClient(
      * intent hardening expects (unsanitized launches get "Access blocked").
      * An intent's package= hint survives, so app-targeted links still work.
      */
-    private fun Intent.sanitizedForWebIntent(): Intent = apply {
-        addCategory(Intent.CATEGORY_BROWSABLE)
-        component = null
-        selector = null
-    }
+    private fun Intent.sanitizedForWebIntent(): Intent =
+        apply {
+            addCategory(Intent.CATEGORY_BROWSABLE)
+            component = null
+            selector = null
+        }
 
-    private fun maybeHandleFallbackUrl(webView: WebView, intent: Intent): Boolean {
+    private fun maybeHandleFallbackUrl(
+        webView: WebView,
+        intent: Intent,
+    ): Boolean {
         val fallbackUrl = intent.getStringExtra("browser_fallback_url") ?: return false
         if (fallbackUrl.startsWith("market://")) {
             val intent = Intent.parseUri(fallbackUrl, Intent.URI_INTENT_SCHEME).sanitizedForWebIntent()
@@ -595,8 +635,10 @@ class EBWebViewClient(
 
     @Deprecated("Deprecated in Java")
     @Suppress("DEPRECATION")
-    override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? =
-        handleWebRequest(view, Uri.parse(url), null) ?: super.shouldInterceptRequest(view, url)
+    override fun shouldInterceptRequest(
+        view: WebView,
+        url: String,
+    ): WebResourceResponse? = handleWebRequest(view, Uri.parse(url), null) ?: super.shouldInterceptRequest(view, url)
 
     override fun shouldInterceptRequest(
         view: WebView,
@@ -623,7 +665,7 @@ class EBWebViewClient(
         if (isAdBlockEnabled(pageUrl)) {
             val result = adFilter.shouldIntercept(view, request)
             if (result.shouldBlock) {
-                //Log.d("EBWebViewClient", "blocked\n rule: ${result.rule}\n url:${result.resourceUrl}")
+                // Log.d("EBWebViewClient", "blocked\n rule: ${result.rule}\n url:${result.resourceUrl}")
                 return result.resourceResponse
             }
         }
@@ -634,20 +676,20 @@ class EBWebViewClient(
             ?: super.shouldInterceptRequest(view, request)
     }
 
-    private fun isAnalyticsUrl(url: String): Boolean =
-        ANALYTICS_DOMAINS.any { url.contains(it) }
+    private fun isAnalyticsUrl(url: String): Boolean = ANALYTICS_DOMAINS.any { url.contains(it) }
 
     private fun transparentImageResponse(requestHeaders: Map<String, String>): WebResourceResponse {
         val origin = requestHeaders.headerValue("Origin")
-        val responseHeaders = if (origin == null) {
-            emptyMap()
-        } else {
-            mapOf(
-                "Access-Control-Allow-Origin" to origin,
-                "Access-Control-Allow-Credentials" to "true",
-                "Vary" to "Origin",
-            )
-        }
+        val responseHeaders =
+            if (origin == null) {
+                emptyMap()
+            } else {
+                mapOf(
+                    "Access-Control-Allow-Origin" to origin,
+                    "Access-Control-Allow-Credentials" to "true",
+                    "Vary" to "Origin",
+                )
+            }
         return WebResourceResponse(
             "image/gif",
             null,
@@ -676,8 +718,9 @@ class EBWebViewClient(
         // it when the policy actually flips.
         // currentPageUrl lags for the main frame's own request — use its URL.
         val pageUrl = if (isMainFrame) url else ebWebView.currentPageUrl ?: url
-        val acceptCookies = config.getEffectiveConfig(pageUrl).enableCookies
-            ?: (config.browser.cookies || cookie.isWhite(url))
+        val acceptCookies =
+            config.getEffectiveConfig(pageUrl).enableCookies
+                ?: (config.browser.cookies || cookie.isWhite(url))
         if (lastAcceptCookies != acceptCookies) {
             lastAcceptCookies = acceptCookies
             CookieManager.getInstance().setAcceptCookie(acceptCookies)
@@ -689,7 +732,7 @@ class EBWebViewClient(
             return WebResourceResponse(
                 "application/json",
                 "UTF-8",
-                ByteArrayInputStream(it.toByteArray())
+                ByteArrayInputStream(it.toByteArray()),
             )
         }
 
@@ -698,11 +741,16 @@ class EBWebViewClient(
 
     private fun processCustomFontRequest(uri: Uri): WebResourceResponse? {
         if (uri.path?.contains("mycustomfont") == true) {
-            val fontUri = if (!ebWebView.shouldUseReaderFont()) {
-                config.display.customFontInfo?.url?.toUri() ?: return null
-            } else {
-                config.display.readerCustomFontInfo?.url?.toUri() ?: return null
-            }
+            val fontUri =
+                if (!ebWebView.shouldUseReaderFont()) {
+                    config.display.customFontInfo
+                        ?.url
+                        ?.toUri() ?: return null
+                } else {
+                    config.display.readerCustomFontInfo
+                        ?.url
+                        ?.toUri() ?: return null
+                }
 
             try {
                 val inputStream = context.contentResolver.openInputStream(fontUri)
@@ -716,14 +764,19 @@ class EBWebViewClient(
         return null
     }
 
-    override fun onFormResubmission(view: WebView, doNotResend: Message, resend: Message) {
+    override fun onFormResubmission(
+        view: WebView,
+        doNotResend: Message,
+        resend: Message,
+    ) {
         val holder = view.context as? Activity ?: return
         val showDialog = mutableStateOf(true)
         val rootView = holder.findViewById<ViewGroup>(android.R.id.content)
-        val composeView = ComposeView(holder).apply {
-            setViewTreeLifecycleOwner(holder as androidx.lifecycle.LifecycleOwner)
-            setViewTreeSavedStateRegistryOwner(holder as androidx.savedstate.SavedStateRegistryOwner)
-        }
+        val composeView =
+            ComposeView(holder).apply {
+                setViewTreeLifecycleOwner(holder as androidx.lifecycle.LifecycleOwner)
+                setViewTreeSavedStateRegistryOwner(holder as androidx.savedstate.SavedStateRegistryOwner)
+            }
         rootView.addView(composeView)
         composeView.setContent {
             MyTheme {
@@ -735,7 +788,8 @@ class EBWebViewClient(
                             rootView.removeView(composeView)
                         },
                         text = {
-                            info.plateaukao.einkbro.view.compose.ThemedDialogWindowFrame()
+                            info.plateaukao.einkbro.view.compose
+                                .ThemedDialogWindowFrame()
                             Text(
                                 text = stringResource(R.string.dialog_content_resubmission),
                                 color = MaterialTheme.colors.onBackground,
@@ -773,24 +827,69 @@ class EBWebViewClient(
         }
     }
 
-    override fun onReceivedClientCertRequest(view: WebView, request: ClientCertRequest) {
+    override fun onReceivedClientCertRequest(
+        view: WebView,
+        request: ClientCertRequest,
+    ) {
         sslHandler.onReceivedClientCertRequest(view, request) {
             super.onReceivedClientCertRequest(view, request)
         }
     }
 
-    override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) =
-        sslHandler.onReceivedSslError(view, handler, error)
+    override fun onReceivedSslError(
+        view: WebView,
+        handler: SslErrorHandler,
+        error: SslError,
+    ) = sslHandler.onReceivedSslError(view, handler, error)
 
     companion object {
         // A valid transparent 1x1 GIF prevents Chromium from drawing its broken-image icon.
-        private val TRANSPARENT_GIF = byteArrayOf(
-            0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00,
-            0x80.toByte(), 0x00, 0x00, 0x00, 0x00, 0x00, 0xff.toByte(), 0xff.toByte(),
-            0xff.toByte(), 0x21, 0xf9.toByte(), 0x04, 0x01, 0x00, 0x00, 0x00,
-            0x00, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
-            0x00, 0x02, 0x02, 0x44, 0x01, 0x00, 0x3b,
-        )
+        private val TRANSPARENT_GIF =
+            byteArrayOf(
+                0x47,
+                0x49,
+                0x46,
+                0x38,
+                0x39,
+                0x61,
+                0x01,
+                0x00,
+                0x01,
+                0x00,
+                0x80.toByte(),
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0xff.toByte(),
+                0xff.toByte(),
+                0xff.toByte(),
+                0x21,
+                0xf9.toByte(),
+                0x04,
+                0x01,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x2c,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x01,
+                0x00,
+                0x01,
+                0x00,
+                0x00,
+                0x02,
+                0x02,
+                0x44,
+                0x01,
+                0x00,
+                0x3b,
+            )
 
         // Last cookie policy asserted on the process-global CookieManager, so
         // the per-request path can skip the native call when nothing changed.
@@ -799,19 +898,20 @@ class EBWebViewClient(
         @Volatile
         internal var lastAcceptCookies: Boolean? = null
 
-        private val ANALYTICS_DOMAINS = listOf(
-            "google-analytics.com",
-            "googletagmanager.com",
-            "connect.facebook.net",
-            "platform.twitter.com/widgets.js",
-            "cdn.segment.com",
-            "static.hotjar.com",
-            "bat.bing.com",
-            "mc.yandex.ru",
-            "analytics.tiktok.com",
-            "snap.licdn.com",
-            "cdn.mouseflow.com",
-            "cdn.heapanalytics.com",
-        )
+        private val ANALYTICS_DOMAINS =
+            listOf(
+                "google-analytics.com",
+                "googletagmanager.com",
+                "connect.facebook.net",
+                "platform.twitter.com/widgets.js",
+                "cdn.segment.com",
+                "static.hotjar.com",
+                "bat.bing.com",
+                "mc.yandex.ru",
+                "analytics.tiktok.com",
+                "snap.licdn.com",
+                "cdn.mouseflow.com",
+                "cdn.heapanalytics.com",
+            )
     }
 }

@@ -26,6 +26,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.LinearGradientShader
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.ShaderBrush
@@ -33,23 +35,21 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import info.plateaukao.einkbro.preference.DarkMode
-import info.plateaukao.einkbro.preference.ThemePalette
 import info.plateaukao.einkbro.preference.GRADIENT_END_FRACTION
 import info.plateaukao.einkbro.preference.GRADIENT_START_FRACTION
+import info.plateaukao.einkbro.preference.ThemePalette
 import info.plateaukao.einkbro.preference.UiBorder
 import info.plateaukao.einkbro.preference.UiFill
 import info.plateaukao.einkbro.preference.UiTheme
-import info.plateaukao.einkbro.preference.palette
 import info.plateaukao.einkbro.preference.isPattern
+import info.plateaukao.einkbro.preference.palette
 
 /**
  * Holds the currently selected [UiTheme] as Compose state so every MyTheme
@@ -107,7 +107,9 @@ fun stampShape(scallopRadius: Dp): androidx.compose.ui.graphics.Shape =
             density: androidx.compose.ui.unit.Density,
         ): androidx.compose.ui.graphics.Outline {
             val r = with(density) { scallopRadius.toPx() }
-            val path = androidx.compose.ui.graphics.Path()
+            val path =
+                androidx.compose.ui.graphics
+                    .Path()
             val w = size.width
             val h = size.height
 
@@ -121,23 +123,43 @@ fun stampShape(scallopRadius: Dp): androidx.compose.ui.graphics.Shape =
                 return List(n) { margin + (it + 0.5f) * step }
             }
 
-            fun arc(cx: Float, cy: Float, startDeg: Float) {
+            fun arc(
+                cx: Float,
+                cy: Float,
+                startDeg: Float,
+            ) {
                 path.arcTo(
-                    androidx.compose.ui.geometry.Rect(cx - r, cy - r, cx + r, cy + r),
-                    startDeg, -180f, forceMoveTo = false,
+                    androidx.compose.ui.geometry
+                        .Rect(cx - r, cy - r, cx + r, cy + r),
+                    startDeg,
+                    -180f,
+                    forceMoveTo = false,
                 )
             }
 
             path.moveTo(0f, 0f)
-            biteCenters(w).forEach { cx -> path.lineTo(cx - r, 0f); arc(cx, 0f, 180f) }
+            biteCenters(w).forEach { cx ->
+                path.lineTo(cx - r, 0f)
+                arc(cx, 0f, 180f)
+            }
             path.lineTo(w, 0f)
-            biteCenters(h).forEach { cy -> path.lineTo(w, cy - r); arc(w, cy, 270f) }
+            biteCenters(h).forEach { cy ->
+                path.lineTo(w, cy - r)
+                arc(w, cy, 270f)
+            }
             path.lineTo(w, h)
-            biteCenters(w).map { w - it }.forEach { cx -> path.lineTo(cx + r, h); arc(cx, h, 0f) }
+            biteCenters(w).map { w - it }.forEach { cx ->
+                path.lineTo(cx + r, h)
+                arc(cx, h, 0f)
+            }
             path.lineTo(0f, h)
-            biteCenters(h).map { h - it }.forEach { cy -> path.lineTo(0f, cy + r); arc(0f, cy, 90f) }
+            biteCenters(h).map { h - it }.forEach { cy ->
+                path.lineTo(0f, cy + r)
+                arc(0f, cy, 90f)
+            }
             path.close()
-            return androidx.compose.ui.graphics.Outline.Generic(path)
+            return androidx.compose.ui.graphics.Outline
+                .Generic(path)
         }
     }
 
@@ -163,13 +185,23 @@ fun sketchShape(amplitude: Dp): androidx.compose.ui.graphics.Shape =
             val top = inset
             val right = size.width - inset
             val bottom = size.height - inset
-            val path = androidx.compose.ui.graphics.Path()
+            val path =
+                androidx.compose.ui.graphics
+                    .Path()
+
             fun jitter(i: Int): Float {
                 val h = kotlin.math.sin(i * 12.9898 + size.width + size.height) * 43758.5453
                 return ((h - kotlin.math.floor(h)).toFloat() * 2f - 1f) * a
             }
             var idx = 0
-            fun edge(x1: Float, y1: Float, x2: Float, y2: Float, first: Boolean) {
+
+            fun edge(
+                x1: Float,
+                y1: Float,
+                x2: Float,
+                y2: Float,
+                first: Boolean,
+            ) {
                 val len = kotlin.math.hypot((x2 - x1).toDouble(), (y2 - y1).toDouble()).toFloat()
                 val n = kotlin.math.max(2, (len / step).toInt())
                 // perpendicular unit vector for the nudge
@@ -189,13 +221,13 @@ fun sketchShape(amplitude: Dp): androidx.compose.ui.graphics.Shape =
             edge(right, bottom, left, bottom, first = false)
             edge(left, bottom, left, top, first = false)
             path.close()
-            return androidx.compose.ui.graphics.Outline.Generic(path)
+            return androidx.compose.ui.graphics.Outline
+                .Generic(path)
         }
     }
 
 /** Applies the user's gradient level (percent) to a spec blend fraction. */
-fun Float.withGradientLevel(levelPercent: Int): Float =
-    (this * levelPercent / 100f).coerceIn(0f, 0.9f)
+fun Float.withGradientLevel(levelPercent: Int): Float = (this * levelPercent / 100f).coerceIn(0f, 0.9f)
 
 /**
  * Whether the app UI should use the dark palette: the Dark mode setting wins
@@ -203,11 +235,13 @@ fun Float.withGradientLevel(levelPercent: Int): Float =
  * This gives every UiTheme a dark variant independent of system dark mode.
  */
 @Composable
-fun isAppInDarkTheme(): Boolean = UiThemeState.inverted.value || when (UiThemeState.darkMode.value) {
-    DarkMode.FORCE_ON -> true
-    DarkMode.DISABLED -> false
-    DarkMode.SYSTEM -> isSystemInDarkTheme()
-}
+fun isAppInDarkTheme(): Boolean =
+    UiThemeState.inverted.value ||
+        when (UiThemeState.darkMode.value) {
+            DarkMode.FORCE_ON -> true
+            DarkMode.DISABLED -> false
+            DarkMode.SYSTEM -> isSystemInDarkTheme()
+        }
 
 /**
  * Content color for the app's TopAppBars. M2's TopAppBar background is
@@ -220,11 +254,12 @@ val Colors.onTopBar: Color get() = if (isLight) onPrimary else onSurface
 
 /** Accent-tinted fill color for the TONAL fill. */
 @Composable
-fun tonalFillColor(): Color = lerp(
-    MaterialTheme.colors.background,
-    MaterialTheme.colors.primary,
-    if (MaterialTheme.colors.isLight) 0.10f else 0.16f,
-)
+fun tonalFillColor(): Color =
+    lerp(
+        MaterialTheme.colors.background,
+        MaterialTheme.colors.primary,
+        if (MaterialTheme.colors.isLight) 0.10f else 0.16f,
+    )
 
 /** Gradient brush for the GRADIENT fill at the user's angle and level. */
 @Composable
@@ -283,11 +318,13 @@ fun androidx.compose.ui.graphics.drawscope.DrawScope.drawFillPattern(
             val w = 0.8.dp.toPx()
             var x = p
             while (x < size.width) {
-                drawLine(lineColor, Offset(x, 0f), Offset(x, size.height), w); x += p
+                drawLine(lineColor, Offset(x, 0f), Offset(x, size.height), w)
+                x += p
             }
             var y = p
             while (y < size.height) {
-                drawLine(lineColor, Offset(0f, y), Offset(size.width, y), w); y += p
+                drawLine(lineColor, Offset(0f, y), Offset(size.width, y), w)
+                y += p
             }
         }
         UiFill.RULED -> {
@@ -295,7 +332,8 @@ fun androidx.compose.ui.graphics.drawscope.DrawScope.drawFillPattern(
             val w = 1.dp.toPx()
             var y = p
             while (y < size.height) {
-                drawLine(lineColor, Offset(0f, y), Offset(size.width, y), w); y += p
+                drawLine(lineColor, Offset(0f, y), Offset(size.width, y), w)
+                y += p
             }
         }
         UiFill.CROSSHATCH -> {
@@ -314,22 +352,27 @@ fun androidx.compose.ui.graphics.drawscope.DrawScope.drawFillPattern(
 
 /** Line color used by the pattern fills — kept faint so text stays readable. */
 @Composable
-fun patternLineColor(): Color = lerp(
-    MaterialTheme.colors.background,
-    MaterialTheme.colors.primary,
-    if (MaterialTheme.colors.isLight) 0.12f else 0.16f,
-)
+fun patternLineColor(): Color =
+    lerp(
+        MaterialTheme.colors.background,
+        MaterialTheme.colors.primary,
+        if (MaterialTheme.colors.isLight) 0.12f else 0.16f,
+    )
 
 /** Pattern fill clipped to a shape, as a modifier. */
 fun Modifier.patternFill(
     fill: UiFill,
     shape: androidx.compose.ui.graphics.Shape,
     lineColor: Color,
-): Modifier = drawBehind {
-    val outline = shape.createOutline(size, layoutDirection, this)
-    val path = androidx.compose.ui.graphics.Path().apply { addOutline(outline) }
-    clipPath(path) { drawFillPattern(fill, lineColor) }
-}
+): Modifier =
+    drawBehind {
+        val outline = shape.createOutline(size, layoutDirection, this)
+        val path =
+            androidx.compose.ui.graphics
+                .Path()
+                .apply { addOutline(outline) }
+        clipPath(path) { drawFillPattern(fill, lineColor) }
+    }
 
 /**
  * Themed frame for in-content bordered items, combining the independent
@@ -343,89 +386,101 @@ fun Modifier.ebItemFrame(
     // for floating panels that must cover the content behind them without
     // spilling a rectangular fill past an irregular (stamp/sketch) outline
     paintBackground: Boolean = false,
-): Modifier = composed {
-    val border = UiThemeState.uiBorder.value
-    val fill = UiThemeState.uiFill.value
-    if (widthOverride != null && widthOverride <= 0.dp) return@composed this
-    // the fill must clip to the border's actual outline (stamp bites,
-    // sketch wobble), not to a plain rounded rect
-    val shape = when (border) {
-        UiBorder.STAMP -> stampShape(4.dp)
-        UiBorder.SKETCH -> sketchShape(2.5.dp)
-        else -> RoundedCornerShape(border.itemRadiusDp.dp)
-    }
-    val width = maxOf(widthOverride ?: 0.dp, border.widthDp.dp)
-    val accent = MaterialTheme.colors.primary
-    val bg = MaterialTheme.colors.background
-    val withBase = if (paintBackground) background(bg, shape) else this
+): Modifier =
+    composed {
+        val border = UiThemeState.uiBorder.value
+        val fill = UiThemeState.uiFill.value
+        if (widthOverride != null && widthOverride <= 0.dp) return@composed this
+        // the fill must clip to the border's actual outline (stamp bites,
+        // sketch wobble), not to a plain rounded rect
+        val shape =
+            when (border) {
+                UiBorder.STAMP -> stampShape(4.dp)
+                UiBorder.SKETCH -> sketchShape(2.5.dp)
+                else -> RoundedCornerShape(border.itemRadiusDp.dp)
+            }
+        val width = maxOf(widthOverride ?: 0.dp, border.widthDp.dp)
+        val accent = MaterialTheme.colors.primary
+        val bg = MaterialTheme.colors.background
+        val withBase = if (paintBackground) background(bg, shape) else this
 
-    if (border == UiBorder.STICKER) {
-        // draw shadow, fill, and outline entirely inside the bounds (the
-        // front box is inset by the shadow offset), so nothing is cropped
-        // by or overlaps neighboring items
-        val radius = border.itemRadiusDp
-        val fillBrush: Brush? = when (fill) {
-            UiFill.TONAL -> SolidColor(tonalFillColor())
-            UiFill.GRADIENT -> gradientFillBrush()
-            else -> null
+        if (border == UiBorder.STICKER) {
+            // draw shadow, fill, and outline entirely inside the bounds (the
+            // front box is inset by the shadow offset), so nothing is cropped
+            // by or overlaps neighboring items
+            val radius = border.itemRadiusDp
+            val fillBrush: Brush? =
+                when (fill) {
+                    UiFill.TONAL -> SolidColor(tonalFillColor())
+                    UiFill.GRADIENT -> gradientFillBrush()
+                    else -> null
+                }
+            val patternColor = patternLineColor()
+            return@composed drawBehind {
+                val off = 3.dp.toPx()
+                val corner = CornerRadius(radius.dp.toPx())
+                val boxSize = Size(size.width - off, size.height - off)
+                drawRoundRect(accent, topLeft = Offset(off, off), size = boxSize, cornerRadius = corner)
+                drawRoundRect(bg, size = boxSize, cornerRadius = corner)
+                if (fillBrush != null) {
+                    drawRoundRect(fillBrush, size = boxSize, cornerRadius = corner)
+                } else if (fill.isPattern()) {
+                    val clip =
+                        androidx.compose.ui.graphics.Path().apply {
+                            addRoundRect(
+                                androidx.compose.ui.geometry.RoundRect(
+                                    0f,
+                                    0f,
+                                    boxSize.width,
+                                    boxSize.height,
+                                    corner,
+                                ),
+                            )
+                        }
+                    clipPath(clip) { drawFillPattern(fill, patternColor) }
+                }
+                drawRoundRect(
+                    accent,
+                    size = boxSize,
+                    cornerRadius = corner,
+                    style = Stroke(width.toPx()),
+                )
+            }
         }
-        val patternColor = patternLineColor()
-        return@composed drawBehind {
-            val off = 3.dp.toPx()
-            val corner = CornerRadius(radius.dp.toPx())
-            val boxSize = Size(size.width - off, size.height - off)
-            drawRoundRect(accent, topLeft = Offset(off, off), size = boxSize, cornerRadius = corner)
-            drawRoundRect(bg, size = boxSize, cornerRadius = corner)
-            if (fillBrush != null) {
-                drawRoundRect(fillBrush, size = boxSize, cornerRadius = corner)
-            } else if (fill.isPattern()) {
-                val clip = androidx.compose.ui.graphics.Path().apply {
-                    addRoundRect(
-                        androidx.compose.ui.geometry.RoundRect(
-                            0f, 0f, boxSize.width, boxSize.height, corner,
-                        ),
+
+        var m: Modifier =
+            when {
+                fill == UiFill.NONE -> withBase
+                fill == UiFill.TONAL -> withBase.background(tonalFillColor(), shape)
+                fill == UiFill.GRADIENT -> withBase.background(gradientFillBrush(), shape)
+                else -> withBase.patternFill(fill, shape, patternLineColor())
+            }
+
+        when (border) {
+            UiBorder.NONE, UiBorder.STICKER -> m
+            UiBorder.CLASSIC, UiBorder.ROUND, UiBorder.SHARP, UiBorder.PAPER ->
+                m.border(width, accent, shape)
+            UiBorder.DASHED -> m.dashedBorder(width, border.itemRadiusDp.dp, accent)
+            UiBorder.STAMP, UiBorder.SKETCH -> m.border(width, accent, shape)
+            UiBorder.CERTIFICATE ->
+                m.drawBehind {
+                    val outer = 3.dp.toPx()
+                    drawRect(
+                        color = accent,
+                        topLeft = Offset(outer / 2f, outer / 2f),
+                        size = Size(size.width - outer, size.height - outer),
+                        style = Stroke(outer),
+                    )
+                    val inset = outer + 4.dp.toPx()
+                    drawRect(
+                        color = accent,
+                        topLeft = Offset(inset, inset),
+                        size = Size(size.width - 2 * inset, size.height - 2 * inset),
+                        style = Stroke(1.dp.toPx()),
                     )
                 }
-                clipPath(clip) { drawFillPattern(fill, patternColor) }
-            }
-            drawRoundRect(
-                accent, size = boxSize, cornerRadius = corner,
-                style = Stroke(width.toPx()),
-            )
         }
     }
-
-    var m: Modifier = when {
-        fill == UiFill.NONE -> withBase
-        fill == UiFill.TONAL -> withBase.background(tonalFillColor(), shape)
-        fill == UiFill.GRADIENT -> withBase.background(gradientFillBrush(), shape)
-        else -> withBase.patternFill(fill, shape, patternLineColor())
-    }
-
-    when (border) {
-        UiBorder.NONE, UiBorder.STICKER -> m
-        UiBorder.CLASSIC, UiBorder.ROUND, UiBorder.SHARP, UiBorder.PAPER ->
-            m.border(width, accent, shape)
-        UiBorder.DASHED -> m.dashedBorder(width, border.itemRadiusDp.dp, accent)
-        UiBorder.STAMP, UiBorder.SKETCH -> m.border(width, accent, shape)
-        UiBorder.CERTIFICATE -> m.drawBehind {
-            val outer = 3.dp.toPx()
-            drawRect(
-                color = accent,
-                topLeft = Offset(outer / 2f, outer / 2f),
-                size = Size(size.width - outer, size.height - outer),
-                style = Stroke(outer),
-            )
-            val inset = outer + 4.dp.toPx()
-            drawRect(
-                color = accent,
-                topLeft = Offset(inset, inset),
-                size = Size(size.width - 2 * inset, size.height - 2 * inset),
-                style = Stroke(1.dp.toPx()),
-            )
-        }
-    }
-}
 
 /**
  * Shape for themed buttons and other Material components that take a Shape,
@@ -454,22 +509,23 @@ fun themedButtonBorder(): androidx.compose.foundation.BorderStroke =
 @Composable
 fun MyTheme(
     darkTheme: Boolean = isAppInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val uiTheme by UiThemeState.current
     val customColor by UiThemeState.customColor
     val inverted by UiThemeState.inverted
     MaterialTheme(
-        colors = remember(uiTheme, customColor, darkTheme, inverted) {
-            val palette = uiTheme.palette(customColor)
-            when {
-                // inverted: the theme's dark text shade becomes the background
-                // and the light background tint becomes the text color
-                inverted -> palette.toInvertedColors()
-                darkTheme -> palette.toDarkColors()
-                else -> palette.toLightColors()
-            }
-        },
+        colors =
+            remember(uiTheme, customColor, darkTheme, inverted) {
+                val palette = uiTheme.palette(customColor)
+                when {
+                    // inverted: the theme's dark text shade becomes the background
+                    // and the light background tint becomes the text color
+                    inverted -> palette.toInvertedColors()
+                    darkTheme -> palette.toDarkColors()
+                    else -> palette.toLightColors()
+                }
+            },
         content = content,
     )
 }
@@ -500,11 +556,12 @@ fun SystemBarIconsForBlackTopBar(darkTheme: Boolean = isAppInDarkTheme()) {
     }
 }
 
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}
+private tailrec fun Context.findActivity(): Activity? =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }
 
 val NormalTextModifier = Modifier.padding(6.dp)
 
@@ -514,39 +571,42 @@ val NormalTextModifier = Modifier.padding(6.dp)
 // MaterialTheme.colors.primary. Text and screen surfaces come from the
 // theme's onBackground/background so a theme can tint them too. CLASSIC's
 // values reproduce the original hardcoded black-and-white palette exactly.
-private fun ThemePalette.toLightColors() = lightColors(
-    primary = accent,
-    primaryVariant = accent,
-    onPrimary = Color.White,
-    secondary = accent,
-    secondaryVariant = accent,
-    onSecondary = Color.White,
-    surface = background,
-    onSurface = onBackground,
-    background = background,
-    onBackground = onBackground,
-)
+private fun ThemePalette.toLightColors() =
+    lightColors(
+        primary = accent,
+        primaryVariant = accent,
+        onPrimary = Color.White,
+        secondary = accent,
+        secondaryVariant = accent,
+        onSecondary = Color.White,
+        surface = background,
+        onSurface = onBackground,
+        background = background,
+        onBackground = onBackground,
+    )
 
-private fun ThemePalette.toInvertedColors() = darkColors(
-    primary = accentDark,
-    primaryVariant = accentDark,
-    onPrimary = Color.Black,
-    secondary = accentDark,
-    onSecondary = Color.Black,
-    surface = onBackground,
-    onSurface = background,
-    background = onBackground,
-    onBackground = background,
-)
+private fun ThemePalette.toInvertedColors() =
+    darkColors(
+        primary = accentDark,
+        primaryVariant = accentDark,
+        onPrimary = Color.Black,
+        secondary = accentDark,
+        onSecondary = Color.Black,
+        surface = onBackground,
+        onSurface = background,
+        background = onBackground,
+        onBackground = background,
+    )
 
-private fun ThemePalette.toDarkColors() = darkColors(
-    primary = accentDark,
-    primaryVariant = accentDark,
-    onPrimary = Color.Black,
-    secondary = accentDark,
-    onSecondary = Color.Black,
-    surface = Color.Black,
-    onSurface = onBackgroundDark,
-    background = Color.Black,
-    onBackground = onBackgroundDark,
-)
+private fun ThemePalette.toDarkColors() =
+    darkColors(
+        primary = accentDark,
+        primaryVariant = accentDark,
+        onPrimary = Color.Black,
+        secondary = accentDark,
+        onSecondary = Color.Black,
+        surface = Color.Black,
+        onSurface = onBackgroundDark,
+        background = Color.Black,
+        onBackground = onBackgroundDark,
+    )

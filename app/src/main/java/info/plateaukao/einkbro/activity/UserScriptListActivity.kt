@@ -33,22 +33,21 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.lifecycleScope
-import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.database.UserScript
 import info.plateaukao.einkbro.unit.IntentUnit
@@ -60,6 +59,7 @@ import info.plateaukao.einkbro.view.compose.MyTheme
 import info.plateaukao.einkbro.view.compose.ThemedDialogWindowFrame
 import info.plateaukao.einkbro.view.compose.themedButtonBorder
 import info.plateaukao.einkbro.view.compose.themedItemShape
+import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -90,10 +90,11 @@ class UserScriptListActivity : LocaleAwareComponentActivity() {
 
             fun refresh() {
                 lifecycleScope.launch {
-                    val list = withContext(Dispatchers.IO) {
-                        userScriptManager.reload()
-                        userScriptManager.scripts.map { it.script }
-                    }
+                    val list =
+                        withContext(Dispatchers.IO) {
+                            userScriptManager.reload()
+                            userScriptManager.scripts.map { it.script }
+                        }
                     scripts.clear()
                     scripts.addAll(list)
                 }
@@ -187,9 +188,10 @@ class UserScriptListActivity : LocaleAwareComponentActivity() {
                                         if (updatingIds.contains(script.id)) return@ScriptRow
                                         updatingIds.add(script.id)
                                         lifecycleScope.launch {
-                                            val result = withContext(Dispatchers.IO) {
-                                                userScriptManager.checkAndUpdate(script.id)
-                                            }
+                                            val result =
+                                                withContext(Dispatchers.IO) {
+                                                    userScriptManager.checkAndUpdate(script.id)
+                                                }
                                             updatingIds.remove(script.id)
                                             showUpdateResult(result)
                                             refresh()
@@ -248,21 +250,23 @@ class UserScriptListActivity : LocaleAwareComponentActivity() {
         }
     }
 
-    private fun fetchScript(url: String): String? = try {
-        OkHttpClient().newCall(Request.Builder().url(url).build()).execute().use { resp ->
-            resp.body?.string()
+    private fun fetchScript(url: String): String? =
+        try {
+            OkHttpClient().newCall(Request.Builder().url(url).build()).execute().use { resp ->
+                resp.body?.string()
+            }
+        } catch (e: Exception) {
+            null
         }
-    } catch (e: Exception) {
-        null
-    }
 
     private fun showUpdateResult(result: UpdateResult) {
-        val message = when (result) {
-            is UpdateResult.Updated -> getString(R.string.userscript_updated, result.to)
-            UpdateResult.UpToDate -> getString(R.string.userscript_up_to_date)
-            UpdateResult.NoSource -> getString(R.string.userscript_no_update_source)
-            is UpdateResult.Failed -> getString(R.string.userscript_update_failed)
-        }
+        val message =
+            when (result) {
+                is UpdateResult.Updated -> getString(R.string.userscript_updated, result.to)
+                UpdateResult.UpToDate -> getString(R.string.userscript_up_to_date)
+                UpdateResult.NoSource -> getString(R.string.userscript_no_update_source)
+                is UpdateResult.Failed -> getString(R.string.userscript_update_failed)
+            }
         EBToast.show(this, message)
     }
 
@@ -270,10 +274,12 @@ class UserScriptListActivity : LocaleAwareComponentActivity() {
         private const val EXTRA_INSTALL_URL = "installUrl"
         private const val GREASY_FORK_URL = "https://greasyfork.org/"
 
-        fun createIntent(context: Context): Intent =
-            Intent(context, UserScriptListActivity::class.java)
+        fun createIntent(context: Context): Intent = Intent(context, UserScriptListActivity::class.java)
 
-        fun createInstallIntent(context: Context, installUrl: String): Intent =
+        fun createInstallIntent(
+            context: Context,
+            installUrl: String,
+        ): Intent =
             Intent(context, UserScriptListActivity::class.java).apply {
                 putExtra(EXTRA_INSTALL_URL, installUrl)
             }
@@ -326,28 +332,36 @@ private const val EDITOR_DISPLAY_LIMIT = 10_000
 // re-fetchable via their sourceUrl anyway).
 private const val SAVEABLE_CODE_LIMIT = 100_000
 
-private val largeStringSaver = Saver<String, String>(
-    save = { if (it.length <= SAVEABLE_CODE_LIMIT) it else null },
-    restore = { it },
-)
+private val largeStringSaver =
+    Saver<String, String>(
+        save = { if (it.length <= SAVEABLE_CODE_LIMIT) it else null },
+        restore = { it },
+    )
 
-private val userScriptSaver = listSaver<UserScript?, Any?>(
-    save = { script ->
-        if (script == null || script.code.length > SAVEABLE_CODE_LIMIT) emptyList()
-        else listOf(script.id, script.name, script.enabled, script.code, script.sourceUrl, script.order)
-    },
-    restore = { saved ->
-        if (saved.size < 6) null
-        else UserScript(
-            id = saved[0] as Long,
-            name = saved[1] as String,
-            enabled = saved[2] as Boolean,
-            code = saved[3] as String,
-            sourceUrl = saved[4] as String?,
-            order = saved[5] as Int,
-        )
-    },
-)
+private val userScriptSaver =
+    listSaver<UserScript?, Any?>(
+        save = { script ->
+            if (script == null || script.code.length > SAVEABLE_CODE_LIMIT) {
+                emptyList()
+            } else {
+                listOf(script.id, script.name, script.enabled, script.code, script.sourceUrl, script.order)
+            }
+        },
+        restore = { saved ->
+            if (saved.size < 6) {
+                null
+            } else {
+                UserScript(
+                    id = saved[0] as Long,
+                    name = saved[1] as String,
+                    enabled = saved[2] as Boolean,
+                    code = saved[3] as String,
+                    sourceUrl = saved[4] as String?,
+                    order = saved[5] as Int,
+                )
+            }
+        },
+    )
 
 @Composable
 private fun ScriptEditorDialog(
@@ -369,9 +383,10 @@ private fun ScriptEditorDialog(
         // the ThemedBorders window frame draws the border and fill
         ThemedDialogWindowFrame()
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Text(
                 stringResource(R.string.setting_title_userscripts),
@@ -404,9 +419,10 @@ private fun ScriptEditorDialog(
                 value = if (tooLargeToEdit) code.take(EDITOR_DISPLAY_LIMIT) + "\n..." else code,
                 onValueChange = { if (!tooLargeToEdit) code = it },
                 readOnly = tooLargeToEdit,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 200.dp, max = 360.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 200.dp, max = 360.dp),
                 label = { Text(stringResource(R.string.userscript_code)) },
             )
             Row(

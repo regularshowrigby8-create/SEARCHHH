@@ -9,15 +9,14 @@ import android.print.PrintDocumentAdapter
 class PdfDocumentAdapter(
     private val pathName: String,
     private val superAdapter: PrintDocumentAdapter,
-    private val onFinish: () -> Unit
+    private val onFinish: () -> Unit,
 ) : PrintDocumentAdapter() {
-
     override fun onLayout(
-            oldAttributes: PrintAttributes?,
-            newAttributes: PrintAttributes?,
-            cancellationSignal: android.os.CancellationSignal?,
-            callback: LayoutResultCallback?,
-            extras: Bundle?
+        oldAttributes: PrintAttributes?,
+        newAttributes: PrintAttributes?,
+        cancellationSignal: android.os.CancellationSignal?,
+        callback: LayoutResultCallback?,
+        extras: Bundle?,
     ) {
         superAdapter.onLayout(oldAttributes, newAttributes, cancellationSignal, callback, extras)
     }
@@ -28,10 +27,10 @@ class PdfDocumentAdapter(
     }
 
     override fun onWrite(
-            pages: Array<out PageRange>?,
-            destination: ParcelFileDescriptor?,
-            cancellationSignal: android.os.CancellationSignal?,
-            callback: WriteResultCallback?
+        pages: Array<out PageRange>?,
+        destination: ParcelFileDescriptor?,
+        cancellationSignal: android.os.CancellationSignal?,
+        callback: WriteResultCallback?,
     ) {
         superAdapter.onWrite(pages, destination, cancellationSignal, callback)
 

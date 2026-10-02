@@ -40,19 +40,18 @@ object ThemedBorders : KoinComponent {
 
     // Mirrors isAppInDarkTheme(): the Dark mode setting wins; Follow system
     // falls back to the system night configuration.
-    private fun isNight(context: Context): Boolean = when (config.display.darkMode) {
-        DarkMode.FORCE_ON -> true
-        DarkMode.DISABLED -> false
-        DarkMode.SYSTEM ->
-            (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                Configuration.UI_MODE_NIGHT_YES
-    }
+    private fun isNight(context: Context): Boolean =
+        when (config.display.darkMode) {
+            DarkMode.FORCE_ON -> true
+            DarkMode.DISABLED -> false
+            DarkMode.SYSTEM ->
+                (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                    Configuration.UI_MODE_NIGHT_YES
+        }
 
-    private fun Context.dp(value: Float): Int =
-        (value * resources.displayMetrics.density + 0.5f).toInt()
+    private fun Context.dp(value: Float): Int = (value * resources.displayMetrics.density + 0.5f).toInt()
 
-    private fun currentPalette(): ThemePalette =
-        UiThemeState.current.value.palette(UiThemeState.customColor.value)
+    private fun currentPalette(): ThemePalette = UiThemeState.current.value.palette(UiThemeState.customColor.value)
 
     private fun baseAndAccent(context: Context): Pair<Color, Color> {
         val palette = currentPalette()
@@ -80,6 +79,7 @@ object ThemedBorders : KoinComponent {
     private fun gradientColors(context: Context): IntArray {
         val (base, accent) = baseAndAccent(context)
         val level = UiThemeState.gradientLevel.value
+
         fun f(fraction: Float) = (fraction * level / 100f).coerceIn(0f, 0.9f)
         return intArrayOf(
             lerp(base, accent, f(GRADIENT_START_FRACTION)).toArgb(),
@@ -104,26 +104,32 @@ object ThemedBorders : KoinComponent {
     }
 
     /** Repeating-tile shader for the pattern fills, in the current colors. */
-    internal fun patternShader(context: Context, fill: UiFill): android.graphics.BitmapShader {
+    internal fun patternShader(
+        context: Context,
+        fill: UiFill,
+    ): android.graphics.BitmapShader {
         val (base, accent) = baseAndAccent(context)
         val night = UiThemeState.inverted.value || isNight(context)
         // faint lines so content on top stays readable
         val lineArgb = lerp(base, accent, if (night) 0.16f else 0.12f).toArgb()
         val baseArgb = base.toArgb()
-        val p = context.dp(
-            when (fill) {
-                UiFill.RULED -> 18f
-                UiFill.STRIPES, UiFill.DOTS -> 14f
-                else -> 16f
-            }
-        ).coerceAtLeast(4)
+        val p =
+            context
+                .dp(
+                    when (fill) {
+                        UiFill.RULED -> 18f
+                        UiFill.STRIPES, UiFill.DOTS -> 14f
+                        else -> 16f
+                    },
+                ).coerceAtLeast(4)
         val bmp = android.graphics.Bitmap.createBitmap(p, p, android.graphics.Bitmap.Config.ARGB_8888)
         val c = android.graphics.Canvas(bmp)
         c.drawColor(baseArgb)
-        val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
-            color = lineArgb
-            strokeWidth = context.dp(if (fill == UiFill.STRIPES) 1.5f else 1f).toFloat()
-        }
+        val paint =
+            android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+                color = lineArgb
+                strokeWidth = context.dp(if (fill == UiFill.STRIPES) 1.5f else 1f).toFloat()
+            }
         val pf = p.toFloat()
         when (fill) {
             UiFill.STRIPES -> {
@@ -153,13 +159,20 @@ object ThemedBorders : KoinComponent {
     }
 
     /** Solid fill color when the fill is not a gradient. */
-    private fun flatFillArgb(context: Context, fill: UiFill): Int = when (fill) {
-        UiFill.TONAL -> tonalFillArgb(context)
-        else -> baseAndAccent(context).first.toArgb()
-    }
+    private fun flatFillArgb(
+        context: Context,
+        fill: UiFill,
+    ): Int =
+        when (fill) {
+            UiFill.TONAL -> tonalFillArgb(context)
+            else -> baseAndAccent(context).first.toArgb()
+        }
 
     // Applies the resolved fill (flat, tonal, or gradient) to a box drawable.
-    private fun GradientDrawable.applyFill(context: Context, fill: UiFill) {
+    private fun GradientDrawable.applyFill(
+        context: Context,
+        fill: UiFill,
+    ) {
         if (fill == UiFill.GRADIENT) {
             orientation = drawableOrientation()
             colors = gradientColors(context)
@@ -178,10 +191,15 @@ object ThemedBorders : KoinComponent {
         val radius = context.dp(border.frameRadiusDp).toFloat()
         val strokeWidth = context.dp(maxOf(border.widthDp, 1f))
 
-        fun filledBox(withStroke: Boolean, dashed: Boolean = false): Drawable =
+        fun filledBox(
+            withStroke: Boolean,
+            dashed: Boolean = false,
+        ): Drawable =
             if (fill.isPattern()) {
                 PatternBoxDrawable(
-                    context, fill, radius,
+                    context,
+                    fill,
+                    radius,
                     strokeColor = if (withStroke) accent else null,
                     strokeWidth = strokeWidth.toFloat(),
                     dashed = dashed,
@@ -196,8 +214,10 @@ object ThemedBorders : KoinComponent {
                     if (withStroke) {
                         if (dashed) {
                             setStroke(
-                                strokeWidth, accent,
-                                context.dp(5f).toFloat(), context.dp(4f).toFloat(),
+                                strokeWidth,
+                                accent,
+                                context.dp(5f).toFloat(),
+                                context.dp(4f).toFloat(),
                             )
                         } else {
                             setStroke(strokeWidth, accent)
@@ -239,11 +259,12 @@ object ThemedBorders : KoinComponent {
                 layers
             }
             UiBorder.CERTIFICATE -> {
-                val inner = GradientDrawable().apply {
-                    shape = GradientDrawable.RECTANGLE
-                    setColor(android.graphics.Color.TRANSPARENT)
-                    setStroke(context.dp(1f), accent)
-                }
+                val inner =
+                    GradientDrawable().apply {
+                        shape = GradientDrawable.RECTANGLE
+                        setColor(android.graphics.Color.TRANSPARENT)
+                        setStroke(context.dp(1f), accent)
+                    }
                 val inset = strokeWidth + context.dp(4f)
                 LayerDrawable(arrayOf(filledBox(true), inner)).apply {
                     setLayerInset(1, inset, inset, inset, inset)
@@ -251,23 +272,34 @@ object ThemedBorders : KoinComponent {
             }
             UiBorder.STICKER -> {
                 val off = context.dp(4f)
-                val shadow = GradientDrawable().apply {
-                    shape = GradientDrawable.RECTANGLE
-                    cornerRadius = radius
-                    setColor(accent)
-                }
+                val shadow =
+                    GradientDrawable().apply {
+                        shape = GradientDrawable.RECTANGLE
+                        cornerRadius = radius
+                        setColor(accent)
+                    }
                 LayerDrawable(arrayOf(shadow, filledBox(true))).apply {
                     setLayerInset(0, off, off, 0, 0)
                     setLayerInset(1, 0, 0, off, off)
                 }
             }
-            UiBorder.STAMP -> StampDrawable(
-                context, fill, accent, strokeWidth.toFloat(), context.dp(4f).toFloat(),
-            )
-            UiBorder.SKETCH -> SketchDrawable(
-                context, fill, accent, strokeWidth.toFloat(),
-                context.dp(2.5f).toFloat(), context.dp(14f).toFloat(),
-            )
+            UiBorder.STAMP ->
+                StampDrawable(
+                    context,
+                    fill,
+                    accent,
+                    strokeWidth.toFloat(),
+                    context.dp(4f).toFloat(),
+                )
+            UiBorder.SKETCH ->
+                SketchDrawable(
+                    context,
+                    fill,
+                    accent,
+                    strokeWidth.toFloat(),
+                    context.dp(2.5f).toFloat(),
+                    context.dp(14f).toFloat(),
+                )
         }
     }
 
@@ -293,11 +325,16 @@ object ThemedBorders : KoinComponent {
             val cy = bounds.exactCenterY()
             val halfLen =
                 (kotlin.math.abs(dx) * bounds.width() + kotlin.math.abs(dy) * bounds.height()) / 2f
-            paint.shader = android.graphics.LinearGradient(
-                cx - dx * halfLen, cy - dy * halfLen,
-                cx + dx * halfLen, cy + dy * halfLen,
-                colors[0], colors[1], android.graphics.Shader.TileMode.CLAMP,
-            )
+            paint.shader =
+                android.graphics.LinearGradient(
+                    cx - dx * halfLen,
+                    cy - dy * halfLen,
+                    cx + dx * halfLen,
+                    cy + dy * halfLen,
+                    colors[0],
+                    colors[1],
+                    android.graphics.Shader.TileMode.CLAMP,
+                )
         } else {
             paint.color = flatFillArgb(context, fill)
         }
@@ -314,35 +351,39 @@ object ThemedBorders : KoinComponent {
      */
     private fun contentPad(context: Context): Int {
         val border = UiThemeState.uiBorder.value
-        val extra = when (border) {
-            UiBorder.STAMP -> 5f
-            UiBorder.SKETCH -> 3f
-            UiBorder.CERTIFICATE -> 8f
-            UiBorder.STICKER -> 5f
-            UiBorder.PAPER -> 3f + border.widthDp
-            else -> 0f
-        }
+        val extra =
+            when (border) {
+                UiBorder.STAMP -> 5f
+                UiBorder.SKETCH -> 3f
+                UiBorder.CERTIFICATE -> 8f
+                UiBorder.STICKER -> 5f
+                UiBorder.PAPER -> 3f + border.widthDp
+                else -> 0f
+            }
         val cornerAllowance = border.frameRadiusDp * 0.3f
         // breathing room so text/labels never sit right against the frame
         val breathing = 4f
         return context.dp(border.widthDp + extra + cornerAllowance + breathing)
     }
 
-    private fun withContentPadding(context: Context, drawable: Drawable): Drawable {
+    private fun withContentPadding(
+        context: Context,
+        drawable: Drawable,
+    ): Drawable {
         val pad = contentPad(context)
         return LayerDrawable(arrayOf(drawable)).apply { setPadding(pad, pad, pad, pad) }
     }
 
     /** Like [panel] but for use as a dialog *window* background: reports the
      * border as padding so the window grows instead of cropping content. */
-    fun windowPanel(context: Context): Drawable =
-        withContentPadding(context, box(context))
+    fun windowPanel(context: Context): Drawable = withContentPadding(context, box(context))
 
     /** selected_border_bg: double border marking a selected/toggled state. */
     fun selectedPanel(context: Context): Drawable {
-        val layers = LayerDrawable(
-            arrayOf(box(context, forceSolid = true), box(context, forceSolid = true))
-        )
+        val layers =
+            LayerDrawable(
+                arrayOf(box(context, forceSolid = true), box(context, forceSolid = true)),
+            )
         val inset = context.dp(3f)
         layers.setLayerInset(1, inset, inset, inset, inset)
         return layers
@@ -394,24 +435,37 @@ private class StampDrawable(
             return List(n) { margin + (it + 0.5f) * step }
         }
 
-        fun arc(cx: Float, cy: Float, startDeg: Float) {
+        fun arc(
+            cx: Float,
+            cy: Float,
+            startDeg: Float,
+        ) {
             path.arcTo(
                 android.graphics.RectF(cx - r, cy - r, cx + r, cy + r),
-                startDeg, -180f,
+                startDeg,
+                -180f,
             )
         }
 
         path.moveTo(left, top)
-        biteCenters(w).forEach { c -> path.lineTo(left + c - r, top); arc(left + c, top, 180f) }
+        biteCenters(w).forEach { c ->
+            path.lineTo(left + c - r, top)
+            arc(left + c, top, 180f)
+        }
         path.lineTo(right, top)
-        biteCenters(h).forEach { c -> path.lineTo(right, top + c - r); arc(right, top + c, 270f) }
+        biteCenters(h).forEach { c ->
+            path.lineTo(right, top + c - r)
+            arc(right, top + c, 270f)
+        }
         path.lineTo(right, bottom)
         biteCenters(w).map { w - it }.forEach { c ->
-            path.lineTo(left + c + r, bottom); arc(left + c, bottom, 0f)
+            path.lineTo(left + c + r, bottom)
+            arc(left + c, bottom, 0f)
         }
         path.lineTo(left, bottom)
         biteCenters(h).map { h - it }.forEach { c ->
-            path.lineTo(left, top + c + r); arc(left, top + c, 90f)
+            path.lineTo(left, top + c + r)
+            arc(left, top + c, 90f)
         }
         path.close()
     }
@@ -427,10 +481,14 @@ private class StampDrawable(
         canvas.drawPath(path, paint)
     }
 
-    override fun setAlpha(alpha: Int) { paint.alpha = alpha }
+    override fun setAlpha(alpha: Int) {
+        paint.alpha = alpha
+    }
+
     override fun setColorFilter(colorFilter: android.graphics.ColorFilter?) {
         paint.colorFilter = colorFilter
     }
+
     @Deprecated("Deprecated in Java")
     override fun getOpacity(): Int = android.graphics.PixelFormat.TRANSLUCENT
 }
@@ -461,12 +519,20 @@ private class SketchDrawable(
         val b = bounds.bottom - inset
         if (rgt <= l || b <= t) return
         var idx = 0
+
         fun jitter(): Float {
             val h = kotlin.math.sin(idx * 12.9898 + (rgt - l) + (b - t)) * 43758.5453
             idx++
             return ((h - kotlin.math.floor(h)).toFloat() * 2f - 1f) * amplitude
         }
-        fun edge(x1: Float, y1: Float, x2: Float, y2: Float, first: Boolean) {
+
+        fun edge(
+            x1: Float,
+            y1: Float,
+            x2: Float,
+            y2: Float,
+            first: Boolean,
+        ) {
             val len = kotlin.math.hypot((x2 - x1).toDouble(), (y2 - y1).toDouble()).toFloat()
             val n = kotlin.math.max(2, (len / step).toInt())
             val px = -(y2 - y1) / len
@@ -497,10 +563,14 @@ private class SketchDrawable(
         canvas.drawPath(path, paint)
     }
 
-    override fun setAlpha(alpha: Int) { paint.alpha = alpha }
+    override fun setAlpha(alpha: Int) {
+        paint.alpha = alpha
+    }
+
     override fun setColorFilter(colorFilter: android.graphics.ColorFilter?) {
         paint.colorFilter = colorFilter
     }
+
     @Deprecated("Deprecated in Java")
     override fun getOpacity(): Int = android.graphics.PixelFormat.TRANSLUCENT
 }
@@ -527,24 +597,35 @@ private class PatternBoxDrawable(
         paint.shader = null
         if (strokeColor != null) {
             val inset = strokeWidth / 2f
-            val rs = android.graphics.RectF(
-                r.left + inset, r.top + inset, r.right - inset, r.bottom - inset,
-            )
+            val rs =
+                android.graphics.RectF(
+                    r.left + inset,
+                    r.top + inset,
+                    r.right - inset,
+                    r.bottom - inset,
+                )
             paint.style = android.graphics.Paint.Style.STROKE
             paint.strokeWidth = strokeWidth
             paint.color = strokeColor
             paint.pathEffect =
-                if (dashed) android.graphics.DashPathEffect(floatArrayOf(dashOn, dashOff), 0f)
-                else null
+                if (dashed) {
+                    android.graphics.DashPathEffect(floatArrayOf(dashOn, dashOff), 0f)
+                } else {
+                    null
+                }
             canvas.drawRoundRect(rs, radius, radius, paint)
             paint.pathEffect = null
         }
     }
 
-    override fun setAlpha(alpha: Int) { paint.alpha = alpha }
+    override fun setAlpha(alpha: Int) {
+        paint.alpha = alpha
+    }
+
     override fun setColorFilter(colorFilter: android.graphics.ColorFilter?) {
         paint.colorFilter = colorFilter
     }
+
     @Deprecated("Deprecated in Java")
     override fun getOpacity(): Int = android.graphics.PixelFormat.TRANSLUCENT
 }
@@ -556,11 +637,12 @@ private class PatternBoxDrawable(
  * after create(). [frame] defaults to the edge-to-edge window panel; pass
  * [ThemedBorders.dialogFrame] for the 16dp-margin variant.
  */
-fun <T : Dialog> T.withThemedFrame(frame: Drawable = ThemedBorders.windowPanel(context)): T = apply {
-    window?.setBackgroundDrawable(frame)
-    withoutVendorPanelBorder()
-    withThemedButtons()
-}
+fun <T : Dialog> T.withThemedFrame(frame: Drawable = ThemedBorders.windowPanel(context)): T =
+    apply {
+        window?.setBackgroundDrawable(frame)
+        withoutVendorPanelBorder()
+        withThemedButtons()
+    }
 
 /**
  * Removes the decoration some vendor ROMs give the framework AlertDialog
@@ -571,32 +653,35 @@ fun <T : Dialog> T.withThemedFrame(frame: Drawable = ThemedBorders.windowPanel(c
  * the frame's fill. Stock Android leaves the panel undecorated, so this is a
  * no-op there.
  */
-fun <T : Dialog> T.withoutVendorPanelBorder(): T = apply {
-    if (this !is AlertDialog) return@apply
-    onContentAttached {
-        val panelId = context.resources.getIdentifier("parentPanel", "id", "android")
-        val panel = panelId.takeIf { it != 0 }?.let { findViewById<View>(it) }
-            ?: findViewById<ViewGroup>(android.R.id.content)?.getChildAt(0)
-        panel?.background = null
-        panel?.foreground = null
+fun <T : Dialog> T.withoutVendorPanelBorder(): T =
+    apply {
+        if (this !is AlertDialog) return@apply
+        onContentAttached {
+            val panelId = context.resources.getIdentifier("parentPanel", "id", "android")
+            val panel =
+                panelId.takeIf { it != 0 }?.let { findViewById<View>(it) }
+                    ?: findViewById<ViewGroup>(android.R.id.content)?.getChildAt(0)
+            panel?.background = null
+            panel?.foreground = null
+        }
     }
-}
 
 /**
  * Tints an AlertDialog's button-bar buttons with the theme accent, replacing
  * MyButtonStyle's static black-on-white look.
  */
-fun <T : Dialog> T.withThemedButtons(): T = apply {
-    if (this !is AlertDialog) return@apply
-    onContentAttached {
-        val accent = ThemedBorders.accentArgb(context)
-        intArrayOf(
-            DialogInterface.BUTTON_POSITIVE,
-            DialogInterface.BUTTON_NEGATIVE,
-            DialogInterface.BUTTON_NEUTRAL,
-        ).forEach { which -> getButton(which)?.setTextColor(accent) }
+fun <T : Dialog> T.withThemedButtons(): T =
+    apply {
+        if (this !is AlertDialog) return@apply
+        onContentAttached {
+            val accent = ThemedBorders.accentArgb(context)
+            intArrayOf(
+                DialogInterface.BUTTON_POSITIVE,
+                DialogInterface.BUTTON_NEGATIVE,
+                DialogInterface.BUTTON_NEUTRAL,
+            ).forEach { which -> getButton(which)?.setTextColor(accent) }
+        }
     }
-}
 
 /**
  * Runs [block] once the dialog's content views exist. They are only
@@ -612,8 +697,9 @@ private fun Dialog.onContentAttached(block: () -> Unit) {
         decor.addOnAttachStateChangeListener(
             object : View.OnAttachStateChangeListener {
                 override fun onViewAttachedToWindow(v: View) = block()
+
                 override fun onViewDetachedFromWindow(v: View) = Unit
-            }
+            },
         )
     }
 }

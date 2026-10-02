@@ -16,13 +16,13 @@ import info.plateaukao.einkbro.view.EBWebView
 import info.plateaukao.einkbro.view.dialog.compose.CustomTaskInputDialogFragment
 import info.plateaukao.einkbro.view.dialog.compose.TaskMenuDialogFragment
 import info.plateaukao.einkbro.viewmodel.TranslationViewModel
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class TaskMenuDelegate(
     private val activity: FragmentActivity,
@@ -69,8 +69,12 @@ class TaskMenuDelegate(
         if (prompt.isBlank()) return
         // Gemini works through its OpenAI-compatible endpoint, so the agent only
         // needs whichever key matches the configured default engine.
-        val hasKey = if (config.ai.useGeminiApi) config.ai.geminiApiKey.isNotEmpty()
-        else translationViewModel.hasOpenAiApiKey()
+        val hasKey =
+            if (config.ai.useGeminiApi) {
+                config.ai.geminiApiKey.isNotEmpty()
+            } else {
+                translationViewModel.hasOpenAiApiKey()
+            }
         if (!hasKey) {
             EBToast.show(activity, R.string.gpt_api_key_not_set)
             return
@@ -81,21 +85,23 @@ class TaskMenuDelegate(
         activity.lifecycleScope.launch {
             val current = state.ebWebView
             val rawText = current.getRawText()
-            val rawLinks = try {
-                current.jsBridge.getPageLinks()
-            } catch (e: Exception) {
-                "[]"
-            }
+            val rawLinks =
+                try {
+                    current.jsBridge.getPageLinks()
+                } catch (e: Exception) {
+                    "[]"
+                }
             val links = parseSnapshotLinks(rawLinks)
             val rawHtml = captureRawBodyHtml(current)
-            val snapshot = InitialPageSnapshot(
-                url = current.url.orEmpty(),
-                title = current.title.orEmpty(),
-                text = rawText,
-                links = links,
-                rawHtml = rawHtml,
-                originWebView = java.lang.ref.WeakReference(current),
-            )
+            val snapshot =
+                InitialPageSnapshot(
+                    url = current.url.orEmpty(),
+                    title = current.title.orEmpty(),
+                    text = rawText,
+                    links = links,
+                    rawHtml = rawHtml,
+                    originWebView = java.lang.ref.WeakReference(current),
+                )
             chatWithWebAgent(prompt, snapshot)
         }
     }
@@ -107,11 +113,14 @@ class TaskMenuDelegate(
         suspendCoroutine { cont ->
             try {
                 webView.evaluateJavascript(
-                    "(function(){try{return document.body.innerHTML;}catch(e){return '';}})();"
+                    "(function(){try{return document.body.innerHTML;}catch(e){return '';}})();",
                 ) { raw ->
-                    val unquoted = if (raw.startsWith("\"") && raw.endsWith("\""))
-                        HelperUnit.unescapeJava(raw).let { it.substring(1, it.length - 1) }
-                    else raw
+                    val unquoted =
+                        if (raw.startsWith("\"") && raw.endsWith("\"")) {
+                            HelperUnit.unescapeJava(raw).let { it.substring(1, it.length - 1) }
+                        } else {
+                            raw
+                        }
                     cont.resume(unquoted)
                 }
             } catch (e: Exception) {

@@ -6,13 +6,15 @@ import java.util.*
 
 class BrowserContainer {
     private val list: MutableList<AlbumController> = LinkedList()
-    operator fun get(index: Int): AlbumController {
-        return list[index]
-    }
+
+    operator fun get(index: Int): AlbumController = list[index]
 
     fun add(controller: AlbumController) = list.add(controller)
 
-    fun add(controller: AlbumController, index: Int) = list.add(index, controller)
+    fun add(
+        controller: AlbumController,
+        index: Int,
+    ) = list.add(index, controller)
 
     fun remove(controller: AlbumController) {
         (controller as? EBWebView)?.let { destroyWebView(it) }
@@ -20,7 +22,10 @@ class BrowserContainer {
     }
 
     /** Swaps a lazily restored controller for its materialized WebView in place. */
-    fun replace(old: AlbumController, new: AlbumController) {
+    fun replace(
+        old: AlbumController,
+        new: AlbumController,
+    ) {
         val index = list.indexOf(old)
         if (index >= 0) list[index] = new else list.add(new)
     }

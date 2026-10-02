@@ -34,7 +34,12 @@ class OpenSearchSuggestionsRepository(
     }
 
     override suspend fun searchSuggestionResults(query: String): List<SearchSuggestion> {
-        val request = Request.Builder().url(buildUrl(query)).get().build()
+        val request =
+            Request
+                .Builder()
+                .url(buildUrl(query))
+                .get()
+                .build()
         okHttpClient.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw Exception("Unexpected code $response")
             val body = response.body ?: throw Exception("Response body is null")
@@ -45,7 +50,8 @@ class OpenSearchSuggestionsRepository(
     companion object {
         fun duckDuckGo(): OpenSearchSuggestionsRepository =
             OpenSearchSuggestionsRepository { query ->
-                HttpUrl.Builder()
+                HttpUrl
+                    .Builder()
                     .scheme("https")
                     .host("duckduckgo.com")
                     .encodedPath("/ac/")
@@ -56,7 +62,8 @@ class OpenSearchSuggestionsRepository(
 
         fun bing(): OpenSearchSuggestionsRepository =
             OpenSearchSuggestionsRepository { query ->
-                HttpUrl.Builder()
+                HttpUrl
+                    .Builder()
                     .scheme("https")
                     .host("www.bing.com")
                     .encodedPath("/osjson.hint")
@@ -66,7 +73,8 @@ class OpenSearchSuggestionsRepository(
 
         fun ecosia(): OpenSearchSuggestionsRepository =
             OpenSearchSuggestionsRepository { query ->
-                HttpUrl.Builder()
+                HttpUrl
+                    .Builder()
                     .scheme("https")
                     .host("ac.ecosia.org")
                     .encodedPath("/")
@@ -77,7 +85,8 @@ class OpenSearchSuggestionsRepository(
 
         fun startpage(): OpenSearchSuggestionsRepository =
             OpenSearchSuggestionsRepository { query ->
-                HttpUrl.Builder()
+                HttpUrl
+                    .Builder()
                     .scheme("https")
                     .host("www.startpage.com")
                     .encodedPath("/suggestions")
@@ -88,7 +97,8 @@ class OpenSearchSuggestionsRepository(
 
         fun yandex(): OpenSearchSuggestionsRepository =
             OpenSearchSuggestionsRepository { query ->
-                HttpUrl.Builder()
+                HttpUrl
+                    .Builder()
                     .scheme("https")
                     .host("suggest.yandex.com")
                     .encodedPath("/suggest-ya.cgi")

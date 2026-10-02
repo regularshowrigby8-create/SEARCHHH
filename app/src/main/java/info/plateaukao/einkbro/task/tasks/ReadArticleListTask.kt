@@ -55,7 +55,12 @@ class ReadArticleListTask : BrowserTask {
             tools.info("Fetching $idx/${articleLinks.size}: ${link.text.take(80)}")
             val opened = tools.openUrlInBg(link.href)
             val text = if (opened) tools.currentBgPageText().trim() else ""
-            indexMd.append("## ").append(idx).append(". ").append(link.text).append("\n")
+            indexMd
+                .append("## ")
+                .append(idx)
+                .append(". ")
+                .append(link.text)
+                .append("\n")
             indexMd.append(link.href).append("\n")
             if (text.isBlank()) {
                 tools.error("Failed to load or empty: ${link.href}")
@@ -78,9 +83,12 @@ class ReadArticleListTask : BrowserTask {
         tools: BrowserTools,
         links: List<BrowserTools.Link>,
     ): List<BrowserTools.Link> {
-        val numbered = links.mapIndexed { i, l -> "$i\t${l.text.take(120)}\t${l.href}" }
-            .joinToString("\n")
-        val prompt = """
+        val numbered =
+            links
+                .mapIndexed { i, l -> "$i\t${l.text.take(120)}\t${l.href}" }
+                .joinToString("\n")
+        val prompt =
+            """
             Below is a numbered list of links extracted from a news/article-index web page.
             Return a JSON array of the indices (numbers) of the links that point to individual
             news articles (not navigation, menus, login, category pages, author profiles,
@@ -88,21 +96,23 @@ class ReadArticleListTask : BrowserTask {
 
             Links:
             $numbered
-        """.trimIndent()
-        val response = tools.askLlm(
-            system = "You output ONLY valid JSON arrays of integers. No code fences, no prose.",
-            user = prompt,
-        ) ?: return emptyList()
+            """.trimIndent()
+        val response =
+            tools.askLlm(
+                system = "You output ONLY valid JSON arrays of integers. No code fences, no prose.",
+                user = prompt,
+            ) ?: return emptyList()
         val indices = parseIndexArray(response)
         return indices.mapNotNull { idx -> links.getOrNull(idx) }
     }
 
     private fun parseIndexArray(raw: String): List<Int> {
-        val cleaned = raw
-            .substringAfter("```json", raw)
-            .substringAfter("```", raw)
-            .substringBefore("```")
-            .trim()
+        val cleaned =
+            raw
+                .substringAfter("```json", raw)
+                .substringAfter("```", raw)
+                .substringBefore("```")
+                .trim()
         val bracketStart = cleaned.indexOf('[')
         val bracketEnd = cleaned.lastIndexOf(']')
         if (bracketStart == -1 || bracketEnd <= bracketStart) return emptyList()

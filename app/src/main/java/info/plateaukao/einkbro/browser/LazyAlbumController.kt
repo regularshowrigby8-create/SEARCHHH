@@ -34,7 +34,10 @@ class LazyAlbumController(
     }
 
     override fun activate() = album.activate()
+
     override fun deactivate() = album.deactivate()
+
     override fun pauseWebView() {}
+
     override fun resumeWebView() {}
 }

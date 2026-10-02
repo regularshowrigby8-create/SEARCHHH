@@ -27,13 +27,13 @@ fun buildClearDataSettingItems(deps: SettingScreenDeps): List<SettingItemInterfa
             R.string.clear_title_cookie,
             0,
             R.string.setting_summary_cookie_delete,
-            config::clearCookies
+            config::clearCookies,
         ),
         BooleanSettingItem(
             R.string.clear_title_quit,
             0,
             R.string.clear_summary_quit,
-            config::clearWhenQuit
+            config::clearWhenQuit,
         ),
         ActionSettingItem(
             R.string.clear_title_deleteDatabase,
@@ -44,6 +44,6 @@ fun buildClearDataSettingItems(deps: SettingScreenDeps): List<SettingItemInterfa
             deps.activity.deleteDatabase("pass_DB_v01.db")
             config.restartChanged = true
             deps.activity.finish()
-        }
+        },
     )
 }

@@ -6,8 +6,9 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 
-class TabConfig(private val sp: SharedPreferences) {
-
+class TabConfig(
+    private val sp: SharedPreferences,
+) {
     var enableWebBkgndLoad by BooleanPreference(sp, K_BKGND_LOAD, true)
     var shouldSaveTabs by BooleanPreference(sp, K_SHOULD_SAVE_TABS, true)
     var shouldShowNextAfterRemoveTab by BooleanPreference(sp, K_SHOW_NEXT_AFTER_REMOVE_TAB, false)
@@ -57,7 +58,7 @@ class TabConfig(private val sp: SharedPreferences) {
                 } else {
                     putString(
                         K_SAVED_ALBUM_INFO,
-                        Json.encodeToString(albumInfoListSerializer, value)
+                        Json.encodeToString(albumInfoListSerializer, value),
                     )
                 }
             }
@@ -91,7 +92,9 @@ class TabConfig(private val sp: SharedPreferences) {
         }
 
     fun isSaveHistoryWhenLoad() = saveHistoryMode == SaveHistoryMode.SAVE_WHEN_OPEN
+
     fun isSaveHistoryWhenClose() = saveHistoryMode == SaveHistoryMode.SAVE_WHEN_CLOSE
+
     fun isSaveHistoryOn() = saveHistoryMode != SaveHistoryMode.DISABLED
 
     // For tracking state in fast toggling only

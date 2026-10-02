@@ -34,15 +34,22 @@ private fun testConnectionItem(
     val activity = deps.activity
     EBToast.showShort(activity, R.string.test_connection_testing)
     activity.lifecycleScope.launch {
-        when (val result = OpenAiRepository().testConnection(
-            ChatGPTActionInfo(actionType = actionType, model = model())
-        )) {
-            is ApiResult.Success -> EBToast.show(
-                activity, activity.getString(R.string.test_connection_success, model())
-            )
-            is ApiResult.Failure -> EBToast.show(
-                activity, activity.getString(R.string.test_connection_failed, result.message)
-            )
+        when (
+            val result =
+                OpenAiRepository().testConnection(
+                    ChatGPTActionInfo(actionType = actionType, model = model()),
+                )
+        ) {
+            is ApiResult.Success ->
+                EBToast.show(
+                    activity,
+                    activity.getString(R.string.test_connection_success, model()),
+                )
+            is ApiResult.Failure ->
+                EBToast.show(
+                    activity,
+                    activity.getString(R.string.test_connection_failed, result.message),
+                )
         }
     }
 }
@@ -58,8 +65,8 @@ fun buildChatGptSettingItems(deps: SettingScreenDeps): List<SettingItemInterface
             listOf(
                 R.string.openai,
                 R.string.self_hosted,
-                R.string.google_gemini
-            )
+                R.string.google_gemini,
+            ),
         ),
         ListSettingWithEnumItem(
             R.string.setting_title_reasoning,
@@ -71,8 +78,8 @@ fun buildChatGptSettingItems(deps: SettingScreenDeps): List<SettingItemInterface
                 R.string.reasoning_off,
                 R.string.reasoning_low,
                 R.string.reasoning_medium,
-                R.string.reasoning_high
-            )
+                R.string.reasoning_high,
+            ),
         ),
         NavigateSettingItem(
             R.string.openai,
@@ -109,14 +116,14 @@ fun buildChatGptSettingItems(deps: SettingScreenDeps): List<SettingItemInterface
                 R.string.system_default,
                 R.string.openai,
                 R.string.self_hosted,
-                R.string.google_gemini
-            )
+                R.string.google_gemini,
+            ),
         ),
         ValueSettingItem(
             R.string.setting_title_gpt_prompt_for_web_page,
             0,
             R.string.setting_summary_gpt_prompt_for_web_page,
-            config.ai::gptUserPromptForWebPage
+            config.ai::gptUserPromptForWebPage,
         ),
         ListSettingWithEnumItem(
             R.string.web_processing_gpt_type,
@@ -127,20 +134,20 @@ fun buildChatGptSettingItems(deps: SettingScreenDeps): List<SettingItemInterface
                 R.string.system_default,
                 R.string.openai,
                 R.string.self_hosted,
-                R.string.google_gemini
-            )
+                R.string.google_gemini,
+            ),
         ),
         BooleanSettingItem(
             R.string.use_it_on_dict_search,
             0,
             R.string.setting_summary_search_in_dict,
-            config.ai::externalSearchWithGpt
+            config.ai::externalSearchWithGpt,
         ),
         BooleanSettingItem(
             R.string.setting_title_chat_stream,
             0,
             R.string.setting_summary_chat_stream,
-            config.ai::enableOpenAiStream
+            config.ai::enableOpenAiStream,
         ),
     )
 }
@@ -152,13 +159,13 @@ fun buildGptOpenAiSettingItems(deps: SettingScreenDeps): List<SettingItemInterfa
             R.string.setting_title_edit_gpt_api_key,
             0,
             R.string.setting_summary_edit_gpt_api_key,
-            config.ai::gptApiKey
+            config.ai::gptApiKey,
         ),
         ValueSettingItem(
             R.string.setting_title_gpt_model_name,
             0,
             R.string.setting_summary_gpt_model_name,
-            config.ai::gptModel
+            config.ai::gptModel,
         ),
         testConnectionItem(deps, GptActionType.OpenAi) { config.ai.gptModel },
         DividerSettingItem(),
@@ -166,19 +173,19 @@ fun buildGptOpenAiSettingItems(deps: SettingScreenDeps): List<SettingItemInterfa
             R.string.use_it_on_tts,
             0,
             R.string.setting_summary_use_gpt_for_tts,
-            config.tts::useOpenAiTts
+            config.tts::useOpenAiTts,
         ),
         ValueSettingItem(
             R.string.setting_title_gpt_audio_model_name,
             0,
             R.string.setting_summary_gpt_audio_model_name,
-            config.ai::gptVoiceModel
+            config.ai::gptVoiceModel,
         ),
         ValueSettingItem(
             R.string.setting_title_gpt_prompt_for_tts,
             0,
             R.string.setting_summary_gpt_prompt_for_tts,
-            config.ai::gptVoicePrompt
+            config.ai::gptVoicePrompt,
         ),
     )
 }
@@ -190,13 +197,13 @@ fun buildGptSelfHostedSettingItems(deps: SettingScreenDeps): List<SettingItemInt
             R.string.setting_title_custom_gpt_url,
             0,
             R.string.setting_summary_custom_gpt_url,
-            config.ai::gptUrl
+            config.ai::gptUrl,
         ),
         ValueSettingItem(
             R.string.setting_title_other_model_name,
             0,
             R.string.setting_summary_other_model_name,
-            config.ai::alternativeModel
+            config.ai::alternativeModel,
         ),
         testConnectionItem(deps, GptActionType.SelfHosted) { config.ai.alternativeModel },
     )
@@ -209,19 +216,19 @@ fun buildGptGeminiSettingItems(deps: SettingScreenDeps): List<SettingItemInterfa
             R.string.setting_title_gemini_key,
             0,
             R.string.setting_summary_gemini_key,
-            config.ai::geminiApiKey
+            config.ai::geminiApiKey,
         ),
         ValueSettingItem(
             R.string.setting_title_gemini_model_name,
             0,
             R.string.setting_summary_gemini_model_name,
-            config.ai::geminiModel
+            config.ai::geminiModel,
         ),
         ValueSettingItem(
             R.string.setting_title_gemini_transcribe_model_name,
             0,
             R.string.setting_summary_gemini_transcribe_model_name,
-            config.ai::geminiTranscribeModel
+            config.ai::geminiTranscribeModel,
         ),
         testConnectionItem(deps, GptActionType.Gemini) { config.ai.geminiModel },
     )

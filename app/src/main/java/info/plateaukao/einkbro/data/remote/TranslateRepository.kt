@@ -1,5 +1,6 @@
 package info.plateaukao.einkbro.data.remote
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
@@ -25,7 +26,6 @@ import org.koin.core.component.inject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import android.content.Context
 import java.security.InvalidKeyException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -33,7 +33,6 @@ import java.util.Locale
 import java.util.UUID
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
-
 
 class TranslateRepository : KoinComponent {
     private val client = OkHttpClient()
@@ -44,25 +43,33 @@ class TranslateRepository : KoinComponent {
         File(context.cacheDir, "translated_images").also { it.mkdirs() }
     }
 
-    private fun imageCacheKey(url: String, dstLang: String): String {
+    private fun imageCacheKey(
+        url: String,
+        dstLang: String,
+    ): String {
         val digest = MessageDigest.getInstance("MD5")
         val hash = digest.digest("$url|$dstLang".toByteArray())
         return hash.joinToString("") { "%02x".format(it) }
     }
 
-    private fun getCachedImageTranslation(url: String, dstLang: String): String? {
+    private fun getCachedImageTranslation(
+        url: String,
+        dstLang: String,
+    ): String? {
         val file = File(imageCacheDir, imageCacheKey(url, dstLang))
         return if (file.exists()) file.readText() else null
     }
 
-    private fun cacheImageTranslation(url: String, dstLang: String, base64Data: String) {
+    private fun cacheImageTranslation(
+        url: String,
+        dstLang: String,
+        base64Data: String,
+    ) {
         val file = File(imageCacheDir, imageCacheKey(url, dstLang))
         file.writeText(base64Data)
     }
 
-    private fun getICount(translateText: String): Int {
-        return translateText.split("i").size - 1
-    }
+    private fun getICount(translateText: String): Int = translateText.split("i").size - 1
 
     private fun getRandomNumber(): Int {
         val rand = (Math.random() * 99999).toInt() + 200000
@@ -79,7 +86,10 @@ class TranslateRepository : KoinComponent {
         }
     }
 
-    private fun processPostData(postData: JSONObject, id: Int): String {
+    private fun processPostData(
+        postData: JSONObject,
+        id: Int,
+    ): String {
         var postStr = postData.toString()
 
         if ((id + 5) % 29 == 0 || (id + 3) % 13 == 0) {
@@ -95,48 +105,65 @@ class TranslateRepository : KoinComponent {
         text: String,
         targetLanguage: TranslationLanguage,
     ): String? {
-        val target = when (targetLanguage) {
-            TranslationLanguage.ZH_TW,
-            TranslationLanguage.ZH_CN,
+        val target =
+            when (targetLanguage) {
+                TranslationLanguage.ZH_TW,
+                TranslationLanguage.ZH_CN,
                 -> "zh"
 
-            else -> config.translation.translationLanguage.value
-        }
+                else -> config.translation.translationLanguage.value
+            }
 
-        val headers = Headers.Builder()
-            .add("content-type", "application/json")
-            .build()
+        val headers =
+            Headers
+                .Builder()
+                .add("content-type", "application/json")
+                .build()
 
         val id = getRandomNumber()
-        val data = JSONObject().apply {
-            put("jsonrpc", "2.0")
-            put("method", "LMT_handle_texts")
-            put("id", id)
-            put("params", JSONObject().apply {
-                put("splitting", "newlines")
-                put("lang", JSONObject().apply {
-                    put("source_lang_user_selected", "AUTO")
-                    put("target_lang", target.uppercase(Locale.getDefault()))
-                })
-                put("texts", JSONArray().apply {
-                    put(JSONObject().apply {
-                        put("text", text)
-                        put("requestAlternatives", 1)
-                    })
-                })
-                put("timestamp", getTimeStamp(getICount(text)))
-            })
-        }
+        val data =
+            JSONObject().apply {
+                put("jsonrpc", "2.0")
+                put("method", "LMT_handle_texts")
+                put("id", id)
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put("splitting", "newlines")
+                        put(
+                            "lang",
+                            JSONObject().apply {
+                                put("source_lang_user_selected", "AUTO")
+                                put("target_lang", target.uppercase(Locale.getDefault()))
+                            },
+                        )
+                        put(
+                            "texts",
+                            JSONArray().apply {
+                                put(
+                                    JSONObject().apply {
+                                        put("text", text)
+                                        put("requestAlternatives", 1)
+                                    },
+                                )
+                            },
+                        )
+                        put("timestamp", getTimeStamp(getICount(text)))
+                    },
+                )
+            }
 
         val body =
             processPostData(data, id)
                 .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
-        val request = Request.Builder()
-            .url("https://www2.deepl.com/jsonrpc")
-            .headers(headers)
-            .post(body)
-            .build()
+        val request =
+            Request
+                .Builder()
+                .url("https://www2.deepl.com/jsonrpc")
+                .headers(headers)
+                .post(body)
+                .build()
 
         try {
             return withContext(IO) {
@@ -158,23 +185,27 @@ class TranslateRepository : KoinComponent {
         sourceLanguage: String = "auto",
     ): String? {
         return withContext(IO) {
-            val url = HttpUrl.Builder()
-                .scheme("https")
-                .host("translate.googleapis.com")
-                .addPathSegment("translate_a")
-                .addPathSegment("single")
-                .addQueryParameter("client", "gtx")
-                .addQueryParameter("tl", targetLanguage)
-                .addQueryParameter("sl", sourceLanguage)
-                .addQueryParameter("dt", "t")
-                .addQueryParameter("q", text)
-                .build()
+            val url =
+                HttpUrl
+                    .Builder()
+                    .scheme("https")
+                    .host("translate.googleapis.com")
+                    .addPathSegment("translate_a")
+                    .addPathSegment("single")
+                    .addQueryParameter("client", "gtx")
+                    .addQueryParameter("tl", targetLanguage)
+                    .addQueryParameter("sl", sourceLanguage)
+                    .addQueryParameter("dt", "t")
+                    .addQueryParameter("q", text)
+                    .build()
 
-            val request = Request.Builder()
-                .url(url)
-                .addHeader("User-Agent", "Mozilla/5.0")
-                .addHeader("Referer", "https://translate.google.com/")
-                .build()
+            val request =
+                Request
+                    .Builder()
+                    .url(url)
+                    .addHeader("User-Agent", "Mozilla/5.0")
+                    .addHeader("Referer", "https://translate.google.com/")
+                    .build()
 
             try {
                 client.newCall(request).execute().use { response ->
@@ -203,11 +234,12 @@ class TranslateRepository : KoinComponent {
         val urlToSign = url.take(255)
         val data = "$urlToSign$ts".toByteArray()
 
-        val hmac: Mac = try {
-            Mac.getInstance("HmacSHA1")
-        } catch (e: NoSuchAlgorithmException) {
-            throw RuntimeException("Failed to get HmacSHA1 Mac instance", e)
-        }
+        val hmac: Mac =
+            try {
+                Mac.getInstance("HmacSHA1")
+            } catch (e: NoSuchAlgorithmException) {
+                throw RuntimeException("Failed to get HmacSHA1 Mac instance", e)
+            }
         val keySpec = SecretKeySpec(config.ai.imageApiKey.toByteArray(), "HmacSHA1")
         try {
             hmac.init(keySpec)
@@ -233,8 +265,9 @@ class TranslateRepository : KoinComponent {
 
         val builder = createMultipartBuilder(srcLang, dstLang, langDetect)
         builder.addFormDataPart(
-            "image", "image.jpg",
-            byteArray.toRequestBody("image/*".toMediaType())
+            "image",
+            "image.jpg",
+            byteArray.toRequestBody("image/*".toMediaType()),
         )
         return getImageTranslateResult(builder.build())
     }
@@ -243,48 +276,56 @@ class TranslateRepository : KoinComponent {
         srcLang: String,
         dstLang: String,
         langDetect: Boolean,
-    ): MultipartBody.Builder = MultipartBody.Builder()
-        .setType(MultipartBody.FORM)
-        .addFormDataPart("lang", "ko")
-        .addFormDataPart("upload", "true")
-        .addFormDataPart("sid", sid)
-        .addFormDataPart("source", srcLang)
-        .addFormDataPart("target", dstLang)
-        .addFormDataPart("langDetect", if (langDetect) "true" else "false")
-        .addFormDataPart("imageId", "")
-        .addFormDataPart("reqType", "")
+    ): MultipartBody.Builder =
+        MultipartBody
+            .Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("lang", "ko")
+            .addFormDataPart("upload", "true")
+            .addFormDataPart("sid", sid)
+            .addFormDataPart("source", srcLang)
+            .addFormDataPart("target", dstLang)
+            .addFormDataPart("langDetect", if (langDetect) "true" else "false")
+            .addFormDataPart("imageId", "")
+            .addFormDataPart("reqType", "")
 
     private suspend fun getImageTranslateResult(requestBody: RequestBody): ImageTranslateResult? {
         val sig = signUrl(IMAGE_API_URL)
-        val finalUrl = HttpUrl.Builder()
-            .scheme("https")
-            .host("apis.naver.com")
-            .addPathSegments("papago/papago_app/ocr/detect")
-            .addQueryParameter("msgpad", sig.ts.toString())
-            .addQueryParameter("md", sig.msg)
-            .build().toString()
-        val request = Request.Builder()
-            .url(finalUrl)
-            .post(requestBody)
-            .build()
+        val finalUrl =
+            HttpUrl
+                .Builder()
+                .scheme("https")
+                .host("apis.naver.com")
+                .addPathSegments("papago/papago_app/ocr/detect")
+                .addQueryParameter("msgpad", sig.ts.toString())
+                .addQueryParameter("md", sig.msg)
+                .build()
+                .toString()
+        val request =
+            Request
+                .Builder()
+                .url(finalUrl)
+                .post(requestBody)
+                .build()
 
         return withContext(IO) {
-            client.newCall(request)
+            client
+                .newCall(request)
                 .execute()
                 .use { response ->
-                    if (!response.isSuccessful) null
-                    else {
+                    if (!response.isSuccessful) {
+                        null
+                    } else {
                         response.body?.let {
                             val jsonObject = JSONObject(it.string())
                             ImageTranslateResult(
                                 jsonObject.getString("imageId"),
-                                jsonObject.getString("renderedImage")
+                                jsonObject.getString("renderedImage"),
                             )
                         }
                     }
                 }
         }
-
     }
 
     suspend fun translateImageFromUrl(
@@ -308,8 +349,9 @@ class TranslateRepository : KoinComponent {
         val resizedFile = resizeImageIfNeeded(file, MAX_IMAGE_DIMENSION)
         val builder = createMultipartBuilder(srcLang, dstLang, langDetect)
         builder.addFormDataPart(
-            "image", resizedFile.name,
-            resizedFile.asRequestBody("image/*".toMediaType())
+            "image",
+            resizedFile.name,
+            resizedFile.asRequestBody("image/*".toMediaType()),
         )
         val result = getImageTranslateResult(builder.build())
         if (result != null) {
@@ -318,7 +360,10 @@ class TranslateRepository : KoinComponent {
         return result
     }
 
-    private fun resizeImageIfNeeded(file: File, maxDimension: Int): File {
+    private fun resizeImageIfNeeded(
+        file: File,
+        maxDimension: Int,
+    ): File {
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeFile(file.absolutePath, options)
         val width = options.outWidth
@@ -341,17 +386,22 @@ class TranslateRepository : KoinComponent {
         return resizedFile
     }
 
-    private suspend fun downloadImage(url: String, referer: String): File? {
-        return withContext(IO) {
+    private suspend fun downloadImage(
+        url: String,
+        referer: String,
+    ): File? =
+        withContext(IO) {
             val file = File.createTempFile("image", ".jpg")
-            val request = Request.Builder().url(url)
-                .addHeader(
-                    "User-Agent",
-                    "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Mobile Safari/537.36"
-                )
-                .addHeader("Accept-Language", "en-US,en;q=0.9")
-                .addHeader("Referer", referer)
-                .build()
+            val request =
+                Request
+                    .Builder()
+                    .url(url)
+                    .addHeader(
+                        "User-Agent",
+                        "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Mobile Safari/537.36",
+                    ).addHeader("Accept-Language", "en-US,en;q=0.9")
+                    .addHeader("Referer", referer)
+                    .build()
             client.newCall(request).execute().use { response ->
                 response.body?.byteStream().use { inputStream ->
                     FileOutputStream(file).use { outputStream ->
@@ -361,7 +411,6 @@ class TranslateRepository : KoinComponent {
                 }
             }
         }
-    }
 
     companion object {
         const val P_IMAGE_API_VERSION = "1.9.9"
@@ -371,7 +420,10 @@ class TranslateRepository : KoinComponent {
     }
 }
 
-data class Signature(val ts: Long, val msg: String)
+data class Signature(
+    val ts: Long,
+    val msg: String,
+)
 
 data class ImageTranslateResult(
     val imageId: String,

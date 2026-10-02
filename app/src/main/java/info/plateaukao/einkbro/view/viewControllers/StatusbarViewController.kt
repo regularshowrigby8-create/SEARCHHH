@@ -17,7 +17,6 @@ class StatusbarViewController(
     private val composeView: ComposeView,
     private val applyConstraints: (StatusbarPosition) -> Unit,
 ) : KoinComponent {
-
     private val config: ConfigManager by inject()
 
     private var items by mutableStateOf(config.ui.statusbarItems)

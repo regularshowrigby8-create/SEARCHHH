@@ -25,10 +25,10 @@ import info.plateaukao.einkbro.view.dialog.compose.HighlightStyleDialogFragment
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+
 class ActionModeMenuViewModel(
     private val configManager: ConfigManager,
 ) : ViewModel() {
-
     private var actionMode: ActionMode? = null
     private val _clickedPoint = MutableStateFlow(Point(100, 100))
     val clickedPoint: StateFlow<Point> = _clickedPoint.asStateFlow()
@@ -61,11 +61,12 @@ class ActionModeMenuViewModel(
         context: Context,
         translationViewModel: TranslationViewModel,
     ) {
-        menuInfos.value = getAllProcessTextMenuInfos(
-            context,
-            context.packageManager,
-            translationViewModel,
-        )
+        menuInfos.value =
+            getAllProcessTextMenuInfos(
+                context,
+                context.packageManager,
+                translationViewModel,
+            )
     }
 
     fun finish() {
@@ -96,10 +97,11 @@ class ActionModeMenuViewModel(
         packageManager: PackageManager,
         translationViewModel: TranslationViewModel,
     ): List<MenuInfo> {
-        val intent = Intent(Intent.ACTION_PROCESS_TEXT).apply {
-            type = "text/plain"
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val intent =
+            Intent(Intent.ACTION_PROCESS_TEXT).apply {
+                type = "text/plain"
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
         val resolveInfos = packageManager.queryIntentActivities(intent, 0)
 
         val menuInfos = resolveInfos.map { it.toMenuInfo(packageManager) }.toMutableList()
@@ -109,8 +111,8 @@ class ActionModeMenuViewModel(
             MenuInfo(
                 context.getString(R.string.read_from_here),
                 imageVector = Icons.Outlined.RecordVoiceOver,
-                action = { _actionModeMenuState.value = ActionModeMenuState.ReadFromHere }
-            )
+                action = { _actionModeMenuState.value = ActionModeMenuState.ReadFromHere },
+            ),
         )
         if (configManager.ai.imageApiKey.isNotEmpty()) {
         }
@@ -119,8 +121,8 @@ class ActionModeMenuViewModel(
             MenuInfo(
                 context.getString(R.string.google_translate),
                 drawable = ContextCompat.getDrawable(context, R.drawable.ic_translate_google),
-                action = { _actionModeMenuState.value = ActionModeMenuState.GoogleTranslate }
-            )
+                action = { _actionModeMenuState.value = ActionModeMenuState.GoogleTranslate },
+            ),
         )
         if (configManager.ai.imageApiKey.isNotBlank()) {
             menuInfos.add(
@@ -128,23 +130,25 @@ class ActionModeMenuViewModel(
                 MenuInfo(
                     context.getString(R.string.deepl_translate),
                     drawable = ContextCompat.getDrawable(context, R.drawable.ic_translate),
-                    action = { _actionModeMenuState.value = ActionModeMenuState.DeeplTranslate }
-                )
+                    action = { _actionModeMenuState.value = ActionModeMenuState.DeeplTranslate },
+                ),
             )
         }
         if (configManager.ai.gptActionList.isNotEmpty()) {
             configManager.ai.gptActionList.forEachIndexed { index, actionInfo ->
                 if (actionInfo.scope != GptActionScope.TextSelection) return@forEachIndexed
 
-                val actionType = actionInfo.actionType.takeIf { it != GptActionType.Default }
-                    ?: configManager.ai.getDefaultActionType()
+                val actionType =
+                    actionInfo.actionType.takeIf { it != GptActionType.Default }
+                        ?: configManager.ai.getDefaultActionType()
 
-                val iconRes = when (actionType) {
-                    GptActionType.OpenAi -> R.drawable.ic_chat_gpt
-                    GptActionType.SelfHosted -> R.drawable.ic_ollama
-                    GptActionType.Gemini -> R.drawable.ic_gemini
-                    else -> R.drawable.ic_chat_gpt
-                }
+                val iconRes =
+                    when (actionType) {
+                        GptActionType.OpenAi -> R.drawable.ic_chat_gpt
+                        GptActionType.SelfHosted -> R.drawable.ic_ollama
+                        GptActionType.Gemini -> R.drawable.ic_gemini
+                        else -> R.drawable.ic_chat_gpt
+                    }
                 menuInfos.add(
                     0 + index,
                     MenuInfo(
@@ -152,7 +156,7 @@ class ActionModeMenuViewModel(
                         action = { _actionModeMenuState.value = ActionModeMenuState.Gpt(index) },
                         longClickAction = { translationViewModel.showEditGptActionDialog(index) },
                         cornerDrawable = ContextCompat.getDrawable(context, iconRes),
-                    )
+                    ),
                 )
             }
         }
@@ -165,8 +169,8 @@ class ActionModeMenuViewModel(
                 closeMenu = false,
                 action = {
                     _actionModeMenuState.value = ActionModeMenuState.SelectParagraph
-                }
-            )
+                },
+            ),
         )
         menuInfos.add(
             0,
@@ -176,8 +180,8 @@ class ActionModeMenuViewModel(
                 closeMenu = false,
                 action = {
                     _actionModeMenuState.value = ActionModeMenuState.SelectSentence
-                }
-            )
+                },
+            ),
         )
         menuInfos.add(
             0,
@@ -188,8 +192,8 @@ class ActionModeMenuViewModel(
                     val processedText = selectedText.value.replace("\\n", "\n")
                     ShareUtil.copyToClipboard(context, processedText)
                     finish()
-                }
-            )
+                },
+            ),
         )
         if (configManager.splitSearchItemInfoList.isNotEmpty()) {
             configManager.splitSearchItemInfoList.forEach { itemInfo ->
@@ -200,8 +204,8 @@ class ActionModeMenuViewModel(
                         action = {
                             _actionModeMenuState.value =
                                 ActionModeMenuState.SplitSearch(itemInfo.stringPattern)
-                        }
-                    )
+                        },
+                    ),
                 )
             }
         }
@@ -224,10 +228,10 @@ class ActionModeMenuViewModel(
                         },
                         onDismissAction = {
                             finish()
-                        }
+                        },
                     ).show((context as FragmentActivity).supportFragmentManager, "highlight")
-                }
-            )
+                },
+            ),
         )
 
         return menuInfos
@@ -236,13 +240,30 @@ class ActionModeMenuViewModel(
 
 sealed class ActionModeMenuState {
     data object Idle : ActionModeMenuState()
-    class Gpt(val gptActionIndex: Int) : ActionModeMenuState()
+
+    class Gpt(
+        val gptActionIndex: Int,
+    ) : ActionModeMenuState()
+
     data object GoogleTranslate : ActionModeMenuState()
+
     data object DeeplTranslate : ActionModeMenuState()
-    data object ReadFromHere: ActionModeMenuState()
-    class SplitSearch(val stringFormat: String) : ActionModeMenuState()
-    class Tts(val text: String) : ActionModeMenuState()
-    class HighlightText(val highlightStyle: HighlightStyle) : ActionModeMenuState()
+
+    data object ReadFromHere : ActionModeMenuState()
+
+    class SplitSearch(
+        val stringFormat: String,
+    ) : ActionModeMenuState()
+
+    class Tts(
+        val text: String,
+    ) : ActionModeMenuState()
+
+    class HighlightText(
+        val highlightStyle: HighlightStyle,
+    ) : ActionModeMenuState()
+
     data object SelectSentence : ActionModeMenuState()
+
     data object SelectParagraph : ActionModeMenuState()
 }

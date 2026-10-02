@@ -7,9 +7,8 @@ import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
-import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -45,7 +44,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
-import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.database.ChatGptQuery
 import info.plateaukao.einkbro.unit.BackupUnit
@@ -55,6 +53,7 @@ import info.plateaukao.einkbro.unit.IntentUnit
 import info.plateaukao.einkbro.view.EBToast
 import info.plateaukao.einkbro.view.compose.ListScaffold
 import info.plateaukao.einkbro.view.compose.MyTheme
+import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import info.plateaukao.einkbro.viewmodel.GptQueryViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -63,10 +62,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
+import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
-class GptQueryListActivity : LocaleAwareComponentActivity()  {
+class GptQueryListActivity : LocaleAwareComponentActivity() {
     private val gptQueryViewModel: GptQueryViewModel by koinViewModel()
     private val backupUnit: BackupUnit by lazy { BackupUnit(this) }
+
     // Events, not state: a state write recomposed the whole screen twice per
     // press (value, then a postDelayed reset back to a sentinel).
     private val volumeKeyEvents = MutableSharedFlow<Int>(extraBufferCapacity = 4)
@@ -77,7 +78,10 @@ class GptQueryListActivity : LocaleAwareComponentActivity()  {
         BrowserUnit.createFilePicker(exportGptQueriesLauncher, "gpt_queries.html")
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+    override fun onKeyDown(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean {
         if (event.action == KeyEvent.ACTION_DOWN &&
             (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)
         ) {
@@ -106,7 +110,7 @@ class GptQueryListActivity : LocaleAwareComponentActivity()  {
                     }) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.icon_export),
-                            contentDescription = "Export"
+                            contentDescription = "Export",
                         )
                     }
                 },
@@ -116,7 +120,7 @@ class GptQueryListActivity : LocaleAwareComponentActivity()  {
                     volumeKeyEvents = volumeKeyEvents,
                     onLinkClick = {
                         IntentUnit.launchUrl(this, it.url)
-                    }
+                    },
                 )
             }
         }
@@ -135,10 +139,11 @@ class GptQueryListActivity : LocaleAwareComponentActivity()  {
     }
 
     companion object {
-        fun createIntent(context: Context) = Intent(
-            context,
-            GptQueryListActivity::class.java
-        )
+        fun createIntent(context: Context) =
+            Intent(
+                context,
+                GptQueryListActivity::class.java,
+            )
     }
 }
 
@@ -183,7 +188,7 @@ fun GptQueriesScreen(
                 gptQuery = gptQuery,
                 forceExpand = forceExpandIndex.value == index,
                 onLinkClick = { onLinkClick(gptQuery) },
-                deleteQuery = { gptQueryViewModel.deleteGptQuery(gptQuery) }
+                deleteQuery = { gptQueryViewModel.deleteGptQuery(gptQuery) },
             )
         }
     }
@@ -201,15 +206,16 @@ fun QueryItem(
     deleteQuery: () -> Unit,
 ) {
     var showResult by remember { mutableStateOf(false) }
-    val queryString = remember(gptQuery.selectedText) {
-        if (gptQuery.selectedText.contains("<<") &&
-            gptQuery.selectedText.contains(">>")
-        ) {
-            HelperUnit.parseMarkdown(gptQuery.selectedText.replace("<<", "**").replace(">>", "**"))
-        } else {
-            AnnotatedString(gptQuery.selectedText)
+    val queryString =
+        remember(gptQuery.selectedText) {
+            if (gptQuery.selectedText.contains("<<") &&
+                gptQuery.selectedText.contains(">>")
+            ) {
+                HelperUnit.parseMarkdown(gptQuery.selectedText.replace("<<", "**").replace(">>", "**"))
+            } else {
+                AnnotatedString(gptQuery.selectedText)
+            }
         }
-    }
 
     val interactionSource = remember { MutableInteractionSource() }
     Card(
@@ -220,14 +226,14 @@ fun QueryItem(
         elevation = 0.dp,
     ) {
         Column(
-            modifier = Modifier
-                .combinedClickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                    onClick = { showResult = !showResult },
-                    onLongClick = { deleteQuery() }
-                )
-                .padding(12.dp)
+            modifier =
+                Modifier
+                    .combinedClickable(
+                        interactionSource = interactionSource,
+                        indication = null,
+                        onClick = { showResult = !showResult },
+                        onLongClick = { deleteQuery() },
+                    ).padding(12.dp),
         ) {
             Text(
                 text = queryString,
@@ -244,31 +250,35 @@ fun QueryItem(
             }
             // metadata footer
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = gptQuery.model,
-                    style = MaterialTheme.typography.caption.copy(
-                        color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
-                    )
+                    style =
+                        MaterialTheme.typography.caption.copy(
+                            color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f),
+                        ),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = remember(gptQuery.date) { queryDateFormat.format(gptQuery.date) },
-                    style = MaterialTheme.typography.caption.copy(
-                        color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
-                    )
+                    style =
+                        MaterialTheme.typography.caption.copy(
+                            color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f),
+                        ),
                 )
                 if (gptQuery.url.isNotEmpty()) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
-                        modifier = Modifier
-                            .size(18.dp)
-                            .clickable { onLinkClick() },
+                        modifier =
+                            Modifier
+                                .size(18.dp)
+                                .clickable { onLinkClick() },
                         imageVector = ImageVector.vectorResource(id = R.drawable.icon_exit),
                         contentDescription = "link",
                         tint = MaterialTheme.colors.onBackground.copy(alpha = 0.6f),
@@ -276,9 +286,10 @@ fun QueryItem(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
-                    modifier = Modifier
-                        .size(18.dp)
-                        .clickable { deleteQuery() },
+                    modifier =
+                        Modifier
+                            .size(18.dp)
+                            .clickable { deleteQuery() },
                     imageVector = ImageVector.vectorResource(id = R.drawable.icon_delete),
                     contentDescription = "delete",
                     tint = MaterialTheme.colors.onBackground.copy(alpha = 0.6f),
@@ -294,15 +305,16 @@ fun PreviewQueryItem() {
     MyTheme {
         QueryItem(
             modifier = Modifier.padding(8.dp),
-            gptQuery = ChatGptQuery(
-                selectedText = "selected text",
-                result = "result",
-                date = System.currentTimeMillis(),
-                url = "https://example.com",
-                model = "gpt-4o",
-            ),
+            gptQuery =
+                ChatGptQuery(
+                    selectedText = "selected text",
+                    result = "result",
+                    date = System.currentTimeMillis(),
+                    url = "https://example.com",
+                    model = "gpt-4o",
+                ),
             onLinkClick = { Unit },
-            deleteQuery = { Unit }
+            deleteQuery = { Unit },
         )
     }
 }

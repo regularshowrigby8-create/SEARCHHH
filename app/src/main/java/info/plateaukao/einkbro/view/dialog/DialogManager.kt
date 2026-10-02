@@ -3,6 +3,7 @@
 package info.plateaukao.einkbro.view.dialog
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
@@ -13,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.webkit.URLUtil
 import androidx.activity.result.ActivityResultLauncher
-import android.app.AlertDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -39,16 +39,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
-import androidx.lifecycle.setViewTreeLifecycleOwner
-import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.unit.BackupCategory
@@ -58,12 +57,11 @@ import info.plateaukao.einkbro.unit.IntentUnit
 import info.plateaukao.einkbro.unit.ViewUnit
 import info.plateaukao.einkbro.util.Constants
 import info.plateaukao.einkbro.view.EBToast
+import info.plateaukao.einkbro.view.ThemedBorders
 import info.plateaukao.einkbro.view.compose.MyTheme
+import info.plateaukao.einkbro.view.withThemedFrame
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import info.plateaukao.einkbro.view.ThemedBorders
-import info.plateaukao.einkbro.view.withThemedFrame
-
 
 class DialogManager(
     private val activity: Activity,
@@ -72,15 +70,14 @@ class DialogManager(
     private val inflater = LayoutInflater.from(activity)
 
     @Suppress("DEPRECATION")
-    fun createProgressDialog(
-        titleResId: Int,
-    ): ProgressDialog = ProgressDialog(activity, R.style.TouchAreaDialog).apply {
-        setTitle(titleResId)
-        setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        isIndeterminate = false
-        max = 100
-        withThemedFrame()
-    }
+    fun createProgressDialog(titleResId: Int): ProgressDialog =
+        ProgressDialog(activity, R.style.TouchAreaDialog).apply {
+            setTitle(titleResId)
+            setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+            isIndeterminate = false
+            max = 100
+            withThemedFrame()
+        }
 
     fun showEpubDialog(
         onSaveEpub: (Uri?) -> Unit,
@@ -89,156 +86,175 @@ class DialogManager(
         val epubFiles = mutableStateOf(config.savedEpubFileInfos.reversed())
         var dialogRef: Dialog? = null
 
-        val composeView = ComposeView(activity).apply {
-            setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
-            setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
-            setContent {
-                MyTheme {
-                    var selectedTab by remember { mutableStateOf(0) }
-                    val tabTitles = listOf(
-                        stringResource(R.string.menu_save_epub),
-                        stringResource(R.string.menu_open_epub),
-                    )
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min),
-                        ) {
-                            tabTitles.forEachIndexed { index, title ->
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = null,
-                                        ) { selectedTab = index }
-                                        .padding(vertical = 12.dp),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text(
-                                            text = title,
-                                            color = MaterialTheme.colors.onSurface,
-                                        )
-                                        if (selectedTab == index) {
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .height(2.dp)
-                                                    .padding(horizontal = 16.dp)
-                                                    .background(MaterialTheme.colors.onSurface)
+        val composeView =
+            ComposeView(activity).apply {
+                setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
+                setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
+                setContent {
+                    MyTheme {
+                        var selectedTab by remember { mutableStateOf(0) }
+                        val tabTitles =
+                            listOf(
+                                stringResource(R.string.menu_save_epub),
+                                stringResource(R.string.menu_open_epub),
+                            )
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(IntrinsicSize.Min),
+                            ) {
+                                tabTitles.forEachIndexed { index, title ->
+                                    Box(
+                                        modifier =
+                                            Modifier
+                                                .weight(1f)
+                                                .clickable(
+                                                    interactionSource = remember { MutableInteractionSource() },
+                                                    indication = null,
+                                                ) { selectedTab = index }
+                                                .padding(vertical = 12.dp),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                            Text(
+                                                text = title,
+                                                color = MaterialTheme.colors.onSurface,
                                             )
+                                            if (selectedTab == index) {
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                                Box(
+                                                    modifier =
+                                                        Modifier
+                                                            .fillMaxWidth()
+                                                            .height(2.dp)
+                                                            .padding(horizontal = 16.dp)
+                                                            .background(MaterialTheme.colors.onSurface),
+                                                )
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        when (selectedTab) {
-                            0 -> {
-                                EpubListItem(
-                                    title = stringResource(R.string.new_epub_or_from_picker),
-                                    showRemove = false,
-                                    onClick = { onSaveEpub(null); dialogRef?.dismiss() },
-                                )
-                                epubFiles.value.forEach { epubFileInfo ->
+                            when (selectedTab) {
+                                0 -> {
                                     EpubListItem(
-                                        title = "${epubFileInfo.title} (${getFileSizeString(epubFileInfo.uri)})",
-                                        showRemove = true,
+                                        title = stringResource(R.string.new_epub_or_from_picker),
+                                        showRemove = false,
                                         onClick = {
-                                            onSaveEpub(epubFileInfo.uri.toUri())
+                                            onSaveEpub(null)
                                             dialogRef?.dismiss()
                                         },
-                                        onRemove = {
-                                            config.removeSavedEpubFile(epubFileInfo)
-                                            epubFiles.value = config.savedEpubFileInfos.reversed()
-                                        },
                                     )
+                                    epubFiles.value.forEach { epubFileInfo ->
+                                        EpubListItem(
+                                            title = "${epubFileInfo.title} (${getFileSizeString(epubFileInfo.uri)})",
+                                            showRemove = true,
+                                            onClick = {
+                                                onSaveEpub(epubFileInfo.uri.toUri())
+                                                dialogRef?.dismiss()
+                                            },
+                                            onRemove = {
+                                                config.removeSavedEpubFile(epubFileInfo)
+                                                epubFiles.value = config.savedEpubFileInfos.reversed()
+                                            },
+                                        )
+                                    }
                                 }
-                            }
-                            1 -> {
-                                EpubListItem(
-                                    title = stringResource(R.string.open_epub),
-                                    showRemove = false,
-                                    onClick = { onOpenEpub(null); dialogRef?.dismiss() },
-                                )
-                                epubFiles.value.forEach { epubFileInfo ->
+                                1 -> {
                                     EpubListItem(
-                                        title = "${epubFileInfo.title} (${getFileSizeString(epubFileInfo.uri)})",
-                                        showRemove = true,
+                                        title = stringResource(R.string.open_epub),
+                                        showRemove = false,
                                         onClick = {
-                                            onOpenEpub(epubFileInfo.uri.toUri())
+                                            onOpenEpub(null)
                                             dialogRef?.dismiss()
                                         },
-                                        onRemove = {
-                                            config.removeSavedEpubFile(epubFileInfo)
-                                            epubFiles.value = config.savedEpubFileInfos.reversed()
-                                        },
                                     )
+                                    epubFiles.value.forEach { epubFileInfo ->
+                                        EpubListItem(
+                                            title = "${epubFileInfo.title} (${getFileSizeString(epubFileInfo.uri)})",
+                                            showRemove = true,
+                                            onClick = {
+                                                onOpenEpub(epubFileInfo.uri.toUri())
+                                                dialogRef?.dismiss()
+                                            },
+                                            onRemove = {
+                                                config.removeSavedEpubFile(epubFileInfo)
+                                                epubFiles.value = config.savedEpubFileInfos.reversed()
+                                            },
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
 
-        dialogRef = AlertDialog.Builder(activity, R.style.TouchAreaDialog)
-            .apply { setView(composeView) }
-            .create().apply {
-                withThemedFrame()
-                window?.decorView?.setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
-                window?.decorView?.setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
-            }
+        dialogRef =
+            AlertDialog
+                .Builder(activity, R.style.TouchAreaDialog)
+                .apply { setView(composeView) }
+                .create()
+                .apply {
+                    withThemedFrame()
+                    window?.decorView?.setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
+                    window?.decorView?.setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
+                }
         dialogRef!!.show()
     }
 
     // Mirrors showEpubDialog's "save" tab: first entry opens the system picker (new file,
     // or an existing PDF to append into); the rest are previously used PDFs.
-    fun showPdfDialog(
-        onSavePdf: (Uri?) -> Unit,
-    ) {
+    fun showPdfDialog(onSavePdf: (Uri?) -> Unit) {
         val pdfFiles = mutableStateOf(config.savedPdfFileInfos.reversed())
         var dialogRef: Dialog? = null
 
-        val composeView = ComposeView(activity).apply {
-            setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
-            setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
-            setContent {
-                MyTheme {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        EpubListItem(
-                            title = stringResource(R.string.new_pdf_or_from_picker),
-                            showRemove = false,
-                            onClick = { onSavePdf(null); dialogRef?.dismiss() },
-                        )
-                        pdfFiles.value.forEach { pdfFileInfo ->
+        val composeView =
+            ComposeView(activity).apply {
+                setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
+                setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
+                setContent {
+                    MyTheme {
+                        Column(modifier = Modifier.fillMaxWidth()) {
                             EpubListItem(
-                                title = "${pdfFileInfo.title} (${getFileSizeString(pdfFileInfo.uri)})",
-                                showRemove = true,
+                                title = stringResource(R.string.new_pdf_or_from_picker),
+                                showRemove = false,
                                 onClick = {
-                                    onSavePdf(pdfFileInfo.uri.toUri())
+                                    onSavePdf(null)
                                     dialogRef?.dismiss()
                                 },
-                                onRemove = {
-                                    config.removeSavedPdfFile(pdfFileInfo)
-                                    pdfFiles.value = config.savedPdfFileInfos.reversed()
-                                },
                             )
+                            pdfFiles.value.forEach { pdfFileInfo ->
+                                EpubListItem(
+                                    title = "${pdfFileInfo.title} (${getFileSizeString(pdfFileInfo.uri)})",
+                                    showRemove = true,
+                                    onClick = {
+                                        onSavePdf(pdfFileInfo.uri.toUri())
+                                        dialogRef?.dismiss()
+                                    },
+                                    onRemove = {
+                                        config.removeSavedPdfFile(pdfFileInfo)
+                                        pdfFiles.value = config.savedPdfFileInfos.reversed()
+                                    },
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
 
-        dialogRef = AlertDialog.Builder(activity, R.style.TouchAreaDialog)
-            .apply { setView(composeView) }
-            .create().apply {
-                withThemedFrame()
-                window?.decorView?.setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
-                window?.decorView?.setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
-            }
+        dialogRef =
+            AlertDialog
+                .Builder(activity, R.style.TouchAreaDialog)
+                .apply { setView(composeView) }
+                .create()
+                .apply {
+                    withThemedFrame()
+                    window?.decorView?.setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
+                    window?.decorView?.setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
+                }
         dialogRef!!.show()
     }
 
@@ -258,40 +274,44 @@ class DialogManager(
         val titleState = mutableStateOf(HelperUnit.fileName(url))
         val extensionState = mutableStateOf(if (extension.length <= 8) extension else "")
 
-        val composeView = ComposeView(activity).apply {
-            setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
-            setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
-            setContent {
-                MyTheme {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 15.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = titleState.value,
-                            onValueChange = { titleState.value = it },
-                            label = { Text(stringResource(R.string.dialog_title_hint)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = MaterialTheme.colors.onBackground,
-                                cursorColor = MaterialTheme.colors.onBackground,
-                            ),
-                        )
-                        OutlinedTextField(
-                            value = extensionState.value,
-                            onValueChange = { extensionState.value = it },
-                            label = { Text(stringResource(R.string.dialog_extension_hint)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = MaterialTheme.colors.onBackground,
-                                cursorColor = MaterialTheme.colors.onBackground,
-                            ),
-                        )
+        val composeView =
+            ComposeView(activity).apply {
+                setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
+                setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
+                setContent {
+                    MyTheme {
+                        Column(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp, vertical = 15.dp),
+                        ) {
+                            OutlinedTextField(
+                                value = titleState.value,
+                                onValueChange = { titleState.value = it },
+                                label = { Text(stringResource(R.string.dialog_title_hint)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors =
+                                    TextFieldDefaults.outlinedTextFieldColors(
+                                        textColor = MaterialTheme.colors.onBackground,
+                                        cursorColor = MaterialTheme.colors.onBackground,
+                                    ),
+                            )
+                            OutlinedTextField(
+                                value = extensionState.value,
+                                onValueChange = { extensionState.value = it },
+                                label = { Text(stringResource(R.string.dialog_extension_hint)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors =
+                                    TextFieldDefaults.outlinedTextFieldColors(
+                                        textColor = MaterialTheme.colors.onBackground,
+                                        cursorColor = MaterialTheme.colors.onBackground,
+                                    ),
+                            )
+                        }
                     }
                 }
             }
-        }
 
         showOkCancelDialog(
             title = activity.getString(R.string.menu_edit),
@@ -306,7 +326,7 @@ class DialogManager(
                     saveFile(url, fileName)
                 }
             },
-            cancelAction = { ViewUnit.hideKeyboard(activity) }
+            cancelAction = { ViewUnit.hideKeyboard(activity) },
         ).allowImeForComposeContent()
     }
 
@@ -320,38 +340,41 @@ class DialogManager(
         showInCenter: Boolean = false,
         showNegativeButton: Boolean = true,
     ): Dialog {
-        val dialog = AlertDialog.Builder(activity, R.style.TouchAreaDialog)
-            .setPositiveButton(android.R.string.ok) { _, _ -> okAction() }
-            .apply {
-                title?.let { title -> setTitle(title) }
-                view?.let { setView(it) }
-                messageResId?.let { setMessage(messageResId) }
-                message?.let { setMessage(message) }
-                if (showNegativeButton) {
-                    setNegativeButton(android.R.string.cancel) { _, _ -> cancelAction?.invoke() }
+        val dialog =
+            AlertDialog
+                .Builder(activity, R.style.TouchAreaDialog)
+                .setPositiveButton(android.R.string.ok) { _, _ -> okAction() }
+                .apply {
+                    title?.let { title -> setTitle(title) }
+                    view?.let { setView(it) }
+                    messageResId?.let { setMessage(messageResId) }
+                    message?.let { setMessage(message) }
+                    if (showNegativeButton) {
+                        setNegativeButton(android.R.string.cancel) { _, _ -> cancelAction?.invoke() }
+                    }
+                }.create()
+                .apply {
+                    window?.setGravity(if (config.ui.isToolbarOnTop || showInCenter) Gravity.CENTER else Gravity.BOTTOM)
+                    withThemedFrame(ThemedBorders.dialogFrame(activity))
+                    window?.decorView?.setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
+                    window?.decorView?.setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
                 }
-            }
-            .create().apply {
-                window?.setGravity(if (config.ui.isToolbarOnTop || showInCenter) Gravity.CENTER else Gravity.BOTTOM)
-                withThemedFrame(ThemedBorders.dialogFrame(activity))
-                window?.decorView?.setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
-                window?.decorView?.setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
-            }
         dialog.show()
         return dialog
     }
 
-    fun showOptionDialog(
-        view: View,
-    ): Dialog {
-        val dialog = AlertDialog.Builder(activity, R.style.TouchAreaDialog)
-            .setView(view)
-            .create().apply {
-                window?.setGravity(if (config.ui.isToolbarOnTop) Gravity.CENTER else Gravity.BOTTOM)
-                withThemedFrame(ThemedBorders.dialogFrame(activity))
-                window?.decorView?.setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
-                window?.decorView?.setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
-            }
+    fun showOptionDialog(view: View): Dialog {
+        val dialog =
+            AlertDialog
+                .Builder(activity, R.style.TouchAreaDialog)
+                .setView(view)
+                .create()
+                .apply {
+                    window?.setGravity(if (config.ui.isToolbarOnTop) Gravity.CENTER else Gravity.BOTTOM)
+                    withThemedFrame(ThemedBorders.dialogFrame(activity))
+                    window?.decorView?.setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
+                    window?.decorView?.setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
+                }
         dialog.show()
         return dialog
     }
@@ -361,7 +384,7 @@ class DialogManager(
             activity,
             activity.getString(R.string.folder_name),
             activity.getString(R.string.folder_name_description),
-            ""
+            "",
         ).show()
 
     suspend fun <T> getTextInput(
@@ -373,7 +396,7 @@ class DialogManager(
             activity,
             activity.getString(titleId),
             if (descriptionId == 0) "" else activity.getString(descriptionId),
-            defaultValue.toString()
+            defaultValue.toString(),
         ).show()
 
     suspend fun getSelectedOption(
@@ -385,7 +408,7 @@ class DialogManager(
             activity,
             titleId,
             listSettings,
-            defaultValue
+            defaultValue,
         ).show()
 
     suspend fun getSelectedOptionWithString(
@@ -482,43 +505,47 @@ class DialogManager(
         sizes: List<Long>?,
         onSelected: (Set<BackupCategory>) -> Unit,
     ) {
-        val labels = categories.mapIndexed { index, category ->
-            val name = activity.getString(category.displayNameResId)
-            sizes?.getOrNull(index)
-                ?.let { "$name (${Formatter.formatShortFileSize(activity, it)})" }
-                ?: name
-        }.toTypedArray()
+        val labels =
+            categories
+                .mapIndexed { index, category ->
+                    val name = activity.getString(category.displayNameResId)
+                    sizes
+                        ?.getOrNull(index)
+                        ?.let { "$name (${Formatter.formatShortFileSize(activity, it)})" }
+                        ?: name
+                }.toTypedArray()
         val checked = BooleanArray(categories.size) { true }
         val allPrefsIndex = categories.indexOf(BackupCategory.ALL_PREFERENCES)
         val gptIndex = categories.indexOf(BackupCategory.GPT_SETTINGS)
 
-        val dialog = AlertDialog.Builder(activity, R.style.TouchAreaDialog)
-            .setTitle(titleResId)
-            .setMultiChoiceItems(labels, checked) { dialogInterface, which, isChecked ->
-                checked[which] = isChecked
-                val alertDialog = dialogInterface as AlertDialog
-                if (which == allPrefsIndex && gptIndex >= 0) {
-                    if (isChecked) {
+        val dialog =
+            AlertDialog
+                .Builder(activity, R.style.TouchAreaDialog)
+                .setTitle(titleResId)
+                .setMultiChoiceItems(labels, checked) { dialogInterface, which, isChecked ->
+                    checked[which] = isChecked
+                    val alertDialog = dialogInterface as AlertDialog
+                    if (which == allPrefsIndex && gptIndex >= 0) {
+                        if (isChecked) {
+                            alertDialog.listView.setItemChecked(gptIndex, true)
+                            checked[gptIndex] = true
+                        }
+                        setItemEnabled(alertDialog, gptIndex, !isChecked)
+                    }
+                    // revert if user taps GPT while ALL_PREFERENCES is checked
+                    if (which == gptIndex && allPrefsIndex >= 0 && checked[allPrefsIndex]) {
                         alertDialog.listView.setItemChecked(gptIndex, true)
                         checked[gptIndex] = true
                     }
-                    setItemEnabled(alertDialog, gptIndex, !isChecked)
+                }.setPositiveButton(android.R.string.ok) { _, _ ->
+                    val selected = categories.filterIndexed { i, _ -> checked[i] }.toSet()
+                    if (selected.isNotEmpty()) onSelected(selected)
+                }.setNegativeButton(android.R.string.cancel, null)
+                .create()
+                .apply {
+                    window?.setGravity(if (config.ui.isToolbarOnTop) Gravity.CENTER else Gravity.BOTTOM)
+                    withThemedFrame(ThemedBorders.dialogFrame(activity))
                 }
-                // revert if user taps GPT while ALL_PREFERENCES is checked
-                if (which == gptIndex && allPrefsIndex >= 0 && checked[allPrefsIndex]) {
-                    alertDialog.listView.setItemChecked(gptIndex, true)
-                    checked[gptIndex] = true
-                }
-            }
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                val selected = categories.filterIndexed { i, _ -> checked[i] }.toSet()
-                if (selected.isNotEmpty()) onSelected(selected)
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .create().apply {
-                window?.setGravity(if (config.ui.isToolbarOnTop) Gravity.CENTER else Gravity.BOTTOM)
-                withThemedFrame(ThemedBorders.dialogFrame(activity))
-            }
 
         dialog.setOnShowListener {
             if (allPrefsIndex >= 0 && gptIndex >= 0 && checked[allPrefsIndex]) {
@@ -528,7 +555,11 @@ class DialogManager(
         dialog.show()
     }
 
-    private fun setItemEnabled(dialog: AlertDialog, index: Int, enabled: Boolean) {
+    private fun setItemEnabled(
+        dialog: AlertDialog,
+        index: Int,
+        enabled: Boolean,
+    ) {
         val view = dialog.listView.getChildAt(index) ?: return
         view.isEnabled = enabled
         view.alpha = if (enabled) 1f else 0.5f
@@ -546,87 +577,89 @@ class DialogManager(
     fun showRestartConfirmDialog() {
         showOkCancelDialog(
             messageResId = R.string.toast_restart,
-            okAction = { restartApp(activity) }
+            okAction = { restartApp(activity) },
         )
     }
 
-    fun showInstapaperCredentialsDialog(
-        confirmAction: (username: String, password: String) -> Unit,
-    ) {
+    fun showInstapaperCredentialsDialog(confirmAction: (username: String, password: String) -> Unit) {
         val usernameState = mutableStateOf(config.instapaperUsername)
         val passwordState = mutableStateOf(config.instapaperPassword)
         var dialogRef: Dialog? = null
 
-        val composeView = ComposeView(activity).apply {
-            setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
-            setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
-            setContent {
-                MyTheme {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 15.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = usernameState.value,
-                            onValueChange = { usernameState.value = it },
-                            label = { Text(stringResource(R.string.instapaper_username_hint)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = MaterialTheme.colors.onBackground,
-                                cursorColor = MaterialTheme.colors.onBackground,
-                            ),
-                        )
-                        OutlinedTextField(
-                            value = passwordState.value,
-                            onValueChange = { passwordState.value = it },
-                            label = { Text(stringResource(R.string.instapaper_password_hint)) },
-                            visualTransformation = PasswordVisualTransformation(),
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = MaterialTheme.colors.onBackground,
-                                cursorColor = MaterialTheme.colors.onBackground,
-                            ),
-                        )
-                        Text(
-                            text = stringResource(R.string.instapaper_create_account),
-                            color = MaterialTheme.colors.primary,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .clickable {
-                                    IntentUnit.launchUrl(
-                                        activity,
-                                        "https://www.instapaper.com/user/register"
-                                    )
-                                    dialogRef?.dismiss()
-                                }
-                        )
+        val composeView =
+            ComposeView(activity).apply {
+                setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
+                setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
+                setContent {
+                    MyTheme {
+                        Column(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp, vertical = 15.dp),
+                        ) {
+                            OutlinedTextField(
+                                value = usernameState.value,
+                                onValueChange = { usernameState.value = it },
+                                label = { Text(stringResource(R.string.instapaper_username_hint)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors =
+                                    TextFieldDefaults.outlinedTextFieldColors(
+                                        textColor = MaterialTheme.colors.onBackground,
+                                        cursorColor = MaterialTheme.colors.onBackground,
+                                    ),
+                            )
+                            OutlinedTextField(
+                                value = passwordState.value,
+                                onValueChange = { passwordState.value = it },
+                                label = { Text(stringResource(R.string.instapaper_password_hint)) },
+                                visualTransformation = PasswordVisualTransformation(),
+                                modifier = Modifier.fillMaxWidth(),
+                                colors =
+                                    TextFieldDefaults.outlinedTextFieldColors(
+                                        textColor = MaterialTheme.colors.onBackground,
+                                        cursorColor = MaterialTheme.colors.onBackground,
+                                    ),
+                            )
+                            Text(
+                                text = stringResource(R.string.instapaper_create_account),
+                                color = MaterialTheme.colors.primary,
+                                fontSize = 14.sp,
+                                modifier =
+                                    Modifier
+                                        .padding(top = 16.dp)
+                                        .clickable {
+                                            IntentUnit.launchUrl(
+                                                activity,
+                                                "https://www.instapaper.com/user/register",
+                                            )
+                                            dialogRef?.dismiss()
+                                        },
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        dialogRef = showOkCancelDialog(
-            title = activity.getString(R.string.menu_instapaper),
-            view = composeView,
-            okAction = {
-                val username = usernameState.value.trim()
-                val password = passwordState.value.trim()
+        dialogRef =
+            showOkCancelDialog(
+                title = activity.getString(R.string.menu_instapaper),
+                view = composeView,
+                okAction = {
+                    val username = usernameState.value.trim()
+                    val password = passwordState.value.trim()
 
-                if (username.isEmpty() || password.isEmpty()) {
-                    EBToast.show(activity, activity.getString(R.string.toast_input_empty))
-                } else {
-                    config.instapaperUsername = username
-                    config.instapaperPassword = password
-                    confirmAction(username, password)
-                }
-            },
-            cancelAction = { ViewUnit.hideKeyboard(activity) }
-        ).allowImeForComposeContent()
+                    if (username.isEmpty() || password.isEmpty()) {
+                        EBToast.show(activity, activity.getString(R.string.toast_input_empty))
+                    } else {
+                        config.instapaperUsername = username
+                        config.instapaperPassword = password
+                        confirmAction(username, password)
+                    }
+                },
+                cancelAction = { ViewUnit.hideKeyboard(activity) },
+            ).allowImeForComposeContent()
     }
-
-
 }
 
 fun Dialog.dismissWithAction(action: () -> Unit) {
@@ -637,9 +670,10 @@ fun Dialog.dismissWithAction(action: () -> Unit) {
 // AlertController sets FLAG_ALT_FOCUSABLE_IM when its custom view reports no text editor
 // (canTextInput). A ComposeView hasn't composed at that point, so dialogs whose text fields
 // live in Compose are wrongly excluded from IME targeting and the keyboard never opens.
-fun Dialog.allowImeForComposeContent() = apply {
-    window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-}
+fun Dialog.allowImeForComposeContent() =
+    apply {
+        window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+    }
 
 @Composable
 private fun EpubListItem(
@@ -649,10 +683,11 @@ private fun EpubListItem(
     onRemove: (() -> Unit)? = null,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 15.dp, horizontal = 10.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable { onClick() }
+                .padding(vertical = 15.dp, horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -665,9 +700,10 @@ private fun EpubListItem(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_remove),
                 contentDescription = null,
                 tint = MaterialTheme.colors.onBackground,
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .clickable { onRemove() },
+                modifier =
+                    Modifier
+                        .padding(horizontal = 10.dp)
+                        .clickable { onRemove() },
             )
         }
     }

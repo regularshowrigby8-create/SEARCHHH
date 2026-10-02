@@ -32,7 +32,9 @@ import org.koin.core.component.inject
  * FragmentActivity (not LocaleAwareComponentActivity) because the custom
  * CSS/JS editors are DialogFragments.
  */
-class SiteSettingsActivity : FragmentActivity(), KoinComponent {
+class SiteSettingsActivity :
+    FragmentActivity(),
+    KoinComponent {
     private val config: ConfigManager by inject()
     private val adBlock: AdBlock by inject()
     private val javascript: Javascript by inject()
@@ -57,15 +59,17 @@ class SiteSettingsActivity : FragmentActivity(), KoinComponent {
                 onBack = { finish() },
             ) { innerPadding ->
                 Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize(),
+                    modifier =
+                        Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize(),
                     contentAlignment = Alignment.TopCenter,
                 ) {
                     SiteSettingsContent(
-                        modifier = Modifier
-                            .widthIn(max = 600.dp)
-                            .fillMaxHeight(),
+                        modifier =
+                            Modifier
+                                .widthIn(max = 600.dp)
+                                .fillMaxHeight(),
                         url = url,
                         domainConfigs = config.domain,
                         globalFontSize = config.display.fontSize,
@@ -106,9 +110,11 @@ class SiteSettingsActivity : FragmentActivity(), KoinComponent {
     companion object {
         private const val KEY_URL = "url"
 
-        fun createIntent(context: Context, url: String) =
-            Intent(context, SiteSettingsActivity::class.java).apply {
-                putExtra(KEY_URL, url)
-            }
+        fun createIntent(
+            context: Context,
+            url: String,
+        ) = Intent(context, SiteSettingsActivity::class.java).apply {
+            putExtra(KEY_URL, url)
+        }
     }
 }

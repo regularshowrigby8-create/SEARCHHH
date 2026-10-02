@@ -19,11 +19,12 @@ internal fun zipBytes(vararg entries: Pair<String, ByteArray>): ByteArray {
     return bos.toByteArray()
 }
 
-internal fun containerXml(opfPath: String): String = """
+internal fun containerXml(opfPath: String): String =
+    """
     <?xml version="1.0" encoding="UTF-8"?>
     <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
       <rootfiles>
         <rootfile full-path="$opfPath" media-type="application/oebps-package+xml"/>
       </rootfiles>
     </container>
-""".trimIndent()
+    """.trimIndent()

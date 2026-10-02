@@ -20,7 +20,6 @@ import java.util.Locale
 import java.util.regex.Pattern
 
 object UrlHelper : KoinComponent {
-
     private const val SEARCH_ENGINE_GOOGLE = "https://www.google.com/search?q="
     private const val SEARCH_ENGINE_DUCKDUCKGO = "https://duckduckgo.com/?q="
     private const val SEARCH_ENGINE_STARTPAGE = "https://startpage.com/do/search?query="
@@ -51,35 +50,44 @@ object UrlHelper : KoinComponent {
     fun isURL(url: String?): Boolean {
         var url = url ?: return false
         url = url.lowercase(Locale.getDefault())
-        if (url.startsWith(URL_ABOUT_BLANK)
-            || url.startsWith(URL_SCHEME_MAIL_TO)
-            || url.startsWith(URL_SCHEME_FILE)
+        if (url.startsWith(URL_ABOUT_BLANK) ||
+            url.startsWith(URL_SCHEME_MAIL_TO) ||
+            url.startsWith(URL_SCHEME_FILE)
         ) {
             return true
         }
-        val regex = ("^((ftp|http|https|intent)?://)" // support scheme
-                + "?(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?" // ftp的user@
-                + "(([0-9]{1,3}\\.){3}[0-9]{1,3}" // IP形式的URL -> 199.194.52.184
-                + "|" // 允许IP和DOMAIN（域名）
-                + "(.)*" // 域名 -> www.
+        val regex = (
+            "^((ftp|http|https|intent)?://)" + // support scheme
+                "?(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?" + // ftp的user@
+                "(([0-9]{1,3}\\.){3}[0-9]{1,3}" + // IP形式的URL -> 199.194.52.184
+                "|" + // 允许IP和DOMAIN（域名）
+                "(.)*" + // 域名 -> www.
                 // + "([0-9a-z_!~*'()-]+\\.)*"                               // 域名 -> www.
-                + "([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\\." // 二级域名
-                + "[a-z]{2,6})" // first level domain -> .com or .museum
-                + "(:[0-9]{1,4})?" // 端口 -> :80
-                + "((/?)|" // a slash isn't required if there is no file name
-                + "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$")
+                "([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\\." + // 二级域名
+                "[a-z]{2,6})" + // first level domain -> .com or .museum
+                "(:[0-9]{1,4})?" + // 端口 -> :80
+                "((/?)|" + // a slash isn't required if there is no file name
+                "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$"
+        )
         val pattern = Pattern.compile(regex)
         val isMatch = pattern.matcher(url).matches()
-        return if (isMatch) true else try {
-            val uri = Uri.parse(url)
-            val scheme = uri.scheme
-            scheme == "ftp" || scheme == "http" || scheme == "https" || scheme == "intent"
-        } catch (exception: Exception) {
-            false
+        return if (isMatch) {
+            true
+        } else {
+            try {
+                val uri = Uri.parse(url)
+                val scheme = uri.scheme
+                scheme == "ftp" || scheme == "http" || scheme == "https" || scheme == "intent"
+            } catch (exception: Exception) {
+                false
+            }
         }
     }
 
-    fun queryWrapper(context: Context, query: String): String {
+    fun queryWrapper(
+        context: Context,
+        query: String,
+    ): String {
         // Use prefix and suffix to process some special links
         var query = query
         val temp = query.lowercase(Locale.getDefault())
@@ -139,21 +147,23 @@ object UrlHelper : KoinComponent {
         return try {
             val uri = Uri.parse(url)
             if (uri.scheme != "http" && uri.scheme != "https") return null
-            val host = uri.host?.lowercase(Locale.getDefault())?.removePrefix("www.")
-                ?: return null
+            val host =
+                uri.host?.lowercase(Locale.getDefault())?.removePrefix("www.")
+                    ?: return null
             val path = uri.path.orEmpty()
-            val paramNames = when {
-                hostMatches(host, "duckduckgo.com") -> listOf("q")
-                hostMatches(host, "startpage.com") -> listOf("query", "q")
-                hostMatches(host, "bing.com") && path.startsWith("/search") -> listOf("q")
-                hostMatches(host, "baidu.com") -> listOf("wd", "word")
-                hostMatches(host, "qwant.com") -> listOf("q")
-                hostMatches(host, "ecosia.org") && path.startsWith("/search") -> listOf("q")
-                host.startsWith("yandex.") && path.startsWith("/search") -> listOf("text")
-                hostMatches(host, "searx.me") -> listOf("q")
-                host.startsWith("google.") && path == "/search" -> listOf("q")
-                else -> customSearchQueryParamNames(host, path) ?: return null
-            }
+            val paramNames =
+                when {
+                    hostMatches(host, "duckduckgo.com") -> listOf("q")
+                    hostMatches(host, "startpage.com") -> listOf("query", "q")
+                    hostMatches(host, "bing.com") && path.startsWith("/search") -> listOf("q")
+                    hostMatches(host, "baidu.com") -> listOf("wd", "word")
+                    hostMatches(host, "qwant.com") -> listOf("q")
+                    hostMatches(host, "ecosia.org") && path.startsWith("/search") -> listOf("q")
+                    host.startsWith("yandex.") && path.startsWith("/search") -> listOf("text")
+                    hostMatches(host, "searx.me") -> listOf("q")
+                    host.startsWith("google.") && path == "/search" -> listOf("q")
+                    else -> customSearchQueryParamNames(host, path) ?: return null
+                }
             paramNames.firstNotNullOfOrNull { name ->
                 uri.getQueryParameter(name)?.takeIf { it.isNotBlank() }
             }
@@ -162,15 +172,22 @@ object UrlHelper : KoinComponent {
         }
     }
 
-    private fun hostMatches(host: String, engineHost: String): Boolean =
-        host == engineHost || host.endsWith(".$engineHost")
+    private fun hostMatches(
+        host: String,
+        engineHost: String,
+    ): Boolean = host == engineHost || host.endsWith(".$engineHost")
 
-    private fun customSearchQueryParamNames(host: String, path: String): List<String>? {
+    private fun customSearchQueryParamNames(
+        host: String,
+        path: String,
+    ): List<String>? {
         if (config.browser.searchEngine.toInt() != SearchEngine.CUSTOM.ordinal) return null
         return try {
             val templateUri = Uri.parse(config.browser.searchEngineUrl.replace("%s", ""))
-            val templateHost = templateUri.host?.lowercase(Locale.getDefault())
-                ?.removePrefix("www.")
+            val templateHost =
+                templateUri.host
+                    ?.lowercase(Locale.getDefault())
+                    ?.removePrefix("www.")
             if (templateHost == host && templateUri.path.orEmpty() == path) {
                 templateUri.queryParameterNames
                     .firstOrNull { templateUri.getQueryParameter(it).isNullOrEmpty() }
@@ -216,7 +233,10 @@ object UrlHelper : KoinComponent {
         }
     }
 
-    internal fun matchNeatUrlConfig(host: String, param: String): Boolean {
+    internal fun matchNeatUrlConfig(
+        host: String,
+        param: String,
+    ): Boolean {
         neatUrlConfigs.forEach { paramConfig ->
             // handle host part
             if (paramConfig.contains("@")) {
@@ -239,7 +259,10 @@ object UrlHelper : KoinComponent {
         return false
     }
 
-    internal fun matchStarString(config: String, param: String): Boolean {
+    internal fun matchStarString(
+        config: String,
+        param: String,
+    ): Boolean {
         if (config.endsWith("*")) {
             if (param.startsWith(config.substring(0, config.length - 1))) return true
         } else if (config.startsWith("*")) {
@@ -250,22 +273,26 @@ object UrlHelper : KoinComponent {
         return false
     }
 
-    internal data class NeatUrlConfig(val name: String, val params: List<String>)
+    internal data class NeatUrlConfig(
+        val name: String,
+        val params: List<String>,
+    )
 
     @Suppress("UNCHECKED_CAST")
     internal fun parseNeatUrlConfigs(): List<String> {
-        val configArray = JSONObject(Constants.NEAT_URL_DATA)
-            .getJSONArray("categories")
+        val configArray =
+            JSONObject(Constants.NEAT_URL_DATA)
+                .getJSONArray("categories")
 
-        return (0 until configArray.length()).map { index ->
-            val config = configArray.getJSONObject(index)
-            val paramsArray = config.getJSONArray("params")
-            (0 until paramsArray.length()).map { s -> paramsArray.getString(s) }
-        }.flatten()
+        return (0 until configArray.length())
+            .map { index ->
+                val config = configArray.getJSONObject(index)
+                val paramsArray = config.getJSONArray("params")
+                (0 until paramsArray.length()).map { s -> paramsArray.getString(s) }
+            }.flatten()
     }
 
-    fun dataUrlToMimeType(dataUrl: String): String =
-        dataUrl.substring(dataUrl.indexOf("/") + 1, dataUrl.indexOf(";"))
+    fun dataUrlToMimeType(dataUrl: String): String = dataUrl.substring(dataUrl.indexOf("/") + 1, dataUrl.indexOf(";"))
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun dataUrlToStream(dataUrl: String): InputStream {

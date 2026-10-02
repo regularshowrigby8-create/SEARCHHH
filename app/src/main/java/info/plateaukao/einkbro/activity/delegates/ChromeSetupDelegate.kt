@@ -2,12 +2,10 @@ package info.plateaukao.einkbro.activity.delegates
 
 import android.annotation.SuppressLint
 import android.graphics.Point
-import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.os.Build
 import android.view.MotionEvent
 import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.core.graphics.Insets
@@ -76,22 +74,26 @@ class ChromeSetupDelegate(
         val swipeRefreshLayout = activity.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
         state.swipeRefreshLayout = swipeRefreshLayout
         state.mainContentLayout = activity.findViewById(R.id.main_content)
-        val translationPanelView = TranslationPanelView(activity).apply {
-            layoutParams = FrameLayout.LayoutParams(0, FrameLayout.LayoutParams.MATCH_PARENT)
-        }
+        val translationPanelView =
+            TranslationPanelView(activity).apply {
+                layoutParams = FrameLayout.LayoutParams(0, FrameLayout.LayoutParams.MATCH_PARENT)
+            }
         state.translationPanelView = translationPanelView
         binding.twoPanelLayout.addView(translationPanelView)
 
         swipeRefreshLayout.setOnChildScrollUpCallback { _, _ ->
             val ebWebView = state.ebWebView
-            ebWebView.isTouchOnInnerScrollable
-                || !ebWebView.wasAtTopOnTouchStart
-                || ebWebView.scrollY > 0
-                || !ebWebView.isInnerScrollAtTop
+            ebWebView.isTouchOnInnerScrollable ||
+                !ebWebView.wasAtTopOnTouchStart ||
+                ebWebView.scrollY > 0 ||
+                !ebWebView.isInnerScrollAtTop
         }
         swipeRefreshLayout.setOnRefreshListener {
-            if (state.currentAlbumController != null) state.ebWebView.reload()
-            else swipeRefreshLayout.isRefreshing = false
+            if (state.currentAlbumController != null) {
+                state.ebWebView.reload()
+            } else {
+                swipeRefreshLayout.isRefreshing = false
+            }
         }
         swipeRefreshLayout.isEnabled = config.browser.enablePullToRefresh
         ViewUnit.updateAppbarPosition(binding)
@@ -110,43 +112,52 @@ class ChromeSetupDelegate(
         }
         initFAB()
         if (config.touch.enableNavButtonGesture) {
-            val onNavButtonTouchListener = object : SwipeTouchListener(activity) {
-                override fun onSwipeTop() = gestureHandler.handle(config.touch.navGestureUp)
-                override fun onSwipeBottom() = gestureHandler.handle(config.touch.navGestureDown)
-                override fun onSwipeRight() = gestureHandler.handle(config.touch.navGestureRight)
-                override fun onSwipeLeft() = gestureHandler.handle(config.touch.navGestureLeft)
-            }
+            val onNavButtonTouchListener =
+                object : SwipeTouchListener(activity) {
+                    override fun onSwipeTop() = gestureHandler.handle(config.touch.navGestureUp)
+
+                    override fun onSwipeBottom() = gestureHandler.handle(config.touch.navGestureDown)
+
+                    override fun onSwipeRight() = gestureHandler.handle(config.touch.navGestureRight)
+
+                    override fun onSwipeLeft() = gestureHandler.handle(config.touch.navGestureLeft)
+                }
             state.fabImageViewController.defaultTouchListener = onNavButtonTouchListener
         }
         composeToolbarViewControllerProvider().updateIcons()
     }
 
     private fun initFAB() {
-        val controller = FabImageViewController(
-            displayConfigDelegate.orientation,
-            activity.findViewById(R.id.fab_imageButtonNav),
-            { fullscreenDelegate.showToolbar() },
-            longClickAction = {
-                if (config.touch.enableNavButtonGesture) gestureHandler.handle(config.touch.navButtonLongClickGesture)
-                else showFastToggleDialog()
-            },
-        )
+        val controller =
+            FabImageViewController(
+                displayConfigDelegate.orientation,
+                activity.findViewById(R.id.fab_imageButtonNav),
+                { fullscreenDelegate.showToolbar() },
+                longClickAction = {
+                    if (config.touch.enableNavButtonGesture) {
+                        gestureHandler.handle(config.touch.navButtonLongClickGesture)
+                    } else {
+                        showFastToggleDialog()
+                    }
+                },
+            )
         state.fabImageViewController = controller
     }
 
     fun initOverview() {
-        overviewDialogController = OverviewDialogController(
-            activity,
-            albumViewModel.albums,
-            albumViewModel.focusIndex,
-            state.binding.layoutOverview,
-            gotoUrlAction = { url -> updateAlbum(url) },
-            addTabAction = { title, url, isForeground -> addAlbum(title, url, isForeground) },
-            addIncognitoTabAction = { addIncognitoAlbum() },
-            splitScreenAction = { url -> toggleSplitScreen(url) },
-            addEmptyTabAction = { newATab() },
-            closeAllTabsAction = { closeAllTabs() },
-        )
+        overviewDialogController =
+            OverviewDialogController(
+                activity,
+                albumViewModel.albums,
+                albumViewModel.focusIndex,
+                state.binding.layoutOverview,
+                gotoUrlAction = { url -> updateAlbum(url) },
+                addTabAction = { title, url, isForeground -> addAlbum(title, url, isForeground) },
+                addIncognitoTabAction = { addIncognitoAlbum() },
+                splitScreenAction = { url -> toggleSplitScreen(url) },
+                addEmptyTabAction = { newATab() },
+                closeAllTabsAction = { closeAllTabs() },
+            )
     }
 
     fun initTouchArea() = composeToolbarViewControllerProvider().updateIcons()
@@ -157,7 +168,10 @@ class ChromeSetupDelegate(
 
     fun applyStatusbarConstraints(position: StatusbarPosition) {
         val root = state.binding.root
-        val cs = androidx.constraintlayout.widget.ConstraintSet().apply { clone(root) }
+        val cs =
+            androidx.constraintlayout.widget
+                .ConstraintSet()
+                .apply { clone(root) }
         val statusBarId = state.binding.statusBar.id
         val twoPanelId = state.binding.twoPanelLayout.id
         val appBarId = state.binding.appBar.id
@@ -176,42 +190,44 @@ class ChromeSetupDelegate(
         cs.clear(twoPanelId, bottom)
 
         when (position) {
-            StatusbarPosition.Top -> when {
-                isToolbarTop -> {
-                    // Stack: appBar (top) → statusBar → twoPanel → parent.bottom
-                    cs.connect(statusBarId, top, appBarId, bottom)
-                    cs.connect(twoPanelId, top, statusBarId, bottom)
-                    cs.connect(twoPanelId, bottom, parent, bottom)
+            StatusbarPosition.Top ->
+                when {
+                    isToolbarTop -> {
+                        // Stack: appBar (top) → statusBar → twoPanel → parent.bottom
+                        cs.connect(statusBarId, top, appBarId, bottom)
+                        cs.connect(twoPanelId, top, statusBarId, bottom)
+                        cs.connect(twoPanelId, bottom, parent, bottom)
+                    }
+                    isVertical -> {
+                        cs.connect(statusBarId, top, parent, top)
+                        cs.connect(twoPanelId, top, statusBarId, bottom)
+                        cs.connect(twoPanelId, bottom, parent, bottom)
+                    }
+                    else -> { // horizontal toolbar at Bottom
+                        cs.connect(statusBarId, top, parent, top)
+                        cs.connect(twoPanelId, top, statusBarId, bottom)
+                        cs.connect(twoPanelId, bottom, appBarId, top)
+                    }
                 }
-                isVertical -> {
-                    cs.connect(statusBarId, top, parent, top)
-                    cs.connect(twoPanelId, top, statusBarId, bottom)
-                    cs.connect(twoPanelId, bottom, parent, bottom)
+            StatusbarPosition.Bottom ->
+                when {
+                    isToolbarTop -> {
+                        // Stack: appBar (top) → twoPanel → statusBar (bottom)
+                        cs.connect(statusBarId, bottom, parent, bottom)
+                        cs.connect(twoPanelId, top, appBarId, bottom)
+                        cs.connect(twoPanelId, bottom, statusBarId, top)
+                    }
+                    isVertical -> {
+                        cs.connect(statusBarId, bottom, parent, bottom)
+                        cs.connect(twoPanelId, top, parent, top)
+                        cs.connect(twoPanelId, bottom, statusBarId, top)
+                    }
+                    else -> { // horizontal toolbar at Bottom
+                        cs.connect(statusBarId, bottom, appBarId, top)
+                        cs.connect(twoPanelId, top, parent, top)
+                        cs.connect(twoPanelId, bottom, statusBarId, top)
+                    }
                 }
-                else -> { // horizontal toolbar at Bottom
-                    cs.connect(statusBarId, top, parent, top)
-                    cs.connect(twoPanelId, top, statusBarId, bottom)
-                    cs.connect(twoPanelId, bottom, appBarId, top)
-                }
-            }
-            StatusbarPosition.Bottom -> when {
-                isToolbarTop -> {
-                    // Stack: appBar (top) → twoPanel → statusBar (bottom)
-                    cs.connect(statusBarId, bottom, parent, bottom)
-                    cs.connect(twoPanelId, top, appBarId, bottom)
-                    cs.connect(twoPanelId, bottom, statusBarId, top)
-                }
-                isVertical -> {
-                    cs.connect(statusBarId, bottom, parent, bottom)
-                    cs.connect(twoPanelId, top, parent, top)
-                    cs.connect(twoPanelId, bottom, statusBarId, top)
-                }
-                else -> { // horizontal toolbar at Bottom
-                    cs.connect(statusBarId, bottom, appBarId, top)
-                    cs.connect(twoPanelId, top, parent, top)
-                    cs.connect(twoPanelId, bottom, statusBarId, top)
-                }
-            }
         }
         cs.applyTo(root)
     }
@@ -229,11 +245,12 @@ class ChromeSetupDelegate(
             // url input bar.
             if (config.ui.hideStatusbar && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 val params = view.layoutParams as FrameLayout.LayoutParams
-                params.bottomMargin = when {
-                    insetsKeyboard.bottom > 0 -> insetsKeyboard.bottom
-                    insetsNavigationBar.bottom > 0 -> insetsNavigationBar.bottom
-                    else -> 0
-                }
+                params.bottomMargin =
+                    when {
+                        insetsKeyboard.bottom > 0 -> insetsKeyboard.bottom
+                        insetsNavigationBar.bottom > 0 -> insetsNavigationBar.bottom
+                        else -> 0
+                    }
                 view.layoutParams = params
             }
             updateTopInsetForPage(windowInsets)
@@ -265,20 +282,27 @@ class ChromeSetupDelegate(
     fun updateTopInsetForPage(insets: WindowInsetsCompat? = null) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
         val root = state.binding.root
-        val windowInsets = insets
-            ?: root.rootWindowInsets?.let { WindowInsetsCompat.toWindowInsetsCompat(it, root) }
-            ?: return
+        val windowInsets =
+            insets
+                ?: root.rootWindowInsets?.let { WindowInsetsCompat.toWindowInsetsCompat(it, root) }
+                ?: return
         val isStartPage =
             state.ebWebView.url?.startsWith(Constants.START_PAGE_URL) == true
         val top =
-            if (isStartPage) 0
-            else windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            if (isStartPage) {
+                0
+            } else {
+                windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            }
         val bottom =
-            if (config.ui.hideStatusbar) 0
-            else maxOf(
-                windowInsets.getInsets(WindowInsetsCompat.Type.tappableElement()).bottom,
-                windowInsets.getInsets(WindowInsetsCompat.Type.ime()).bottom,
-            )
+            if (config.ui.hideStatusbar) {
+                0
+            } else {
+                maxOf(
+                    windowInsets.getInsets(WindowInsetsCompat.Type.tappableElement()).bottom,
+                    windowInsets.getInsets(WindowInsetsCompat.Type.ime()).bottom,
+                )
+            }
         if (root.paddingTop != top || root.paddingBottom != bottom) {
             root.setPadding(0, top, 0, bottom)
         }
@@ -289,8 +313,11 @@ class ChromeSetupDelegate(
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {
             val controller = touchControllerInternal
             val keyboardDisplaying = inputBarDelegate.isKeyboardDisplaying()
-            if (keyboardDisplaying) controller?.maybeDisableTemporarily()
-            else controller?.maybeEnableAgain()
+            if (keyboardDisplaying) {
+                controller?.maybeDisableTemporarily()
+            } else {
+                controller?.maybeEnableAgain()
+            }
             updateToolbarForKeyboard(keyboardDisplaying)
             // tab switches and navigations all end in a layout pass; cheap check
             updateTopInsetForPage()
@@ -305,20 +332,23 @@ class ChromeSetupDelegate(
                 // navigation bar the decor already insets the root by, so that
                 // bar must not be counted again. Without fullscreen the window
                 // resizes itself and no margin is needed.
-                val keypadHeight = if (isFullscreen) {
-                    val rect = Rect()
-                    binding.root.getWindowVisibleDisplayFrame(rect)
-                    val screenHeight = binding.root.rootView.height
-                    val navigationBarHeight = binding.root.rootWindowInsets?.let {
-                        WindowInsetsCompat.toWindowInsetsCompat(it, binding.root)
-                            .getInsets(WindowInsetsCompat.Type.navigationBars())
-                            .bottom
-                    } ?: 0
-                    val height = (screenHeight - rect.bottom - navigationBarHeight).coerceAtLeast(0)
-                    if (height > screenHeight * 0.15) height else 0
-                } else {
-                    0
-                }
+                val keypadHeight =
+                    if (isFullscreen) {
+                        val rect = Rect()
+                        binding.root.getWindowVisibleDisplayFrame(rect)
+                        val screenHeight = binding.root.rootView.height
+                        val navigationBarHeight =
+                            binding.root.rootWindowInsets?.let {
+                                WindowInsetsCompat
+                                    .toWindowInsetsCompat(it, binding.root)
+                                    .getInsets(WindowInsetsCompat.Type.navigationBars())
+                                    .bottom
+                            } ?: 0
+                        val height = (screenHeight - rect.bottom - navigationBarHeight).coerceAtLeast(0)
+                        if (height > screenHeight * 0.15) height else 0
+                    } else {
+                        0
+                    }
                 val params = binding.root.layoutParams as FrameLayout.LayoutParams
                 if (params.bottomMargin != keypadHeight) {
                     params.bottomMargin = keypadHeight
@@ -357,31 +387,49 @@ class ChromeSetupDelegate(
 
     fun scrollChange() {
         val ebWebView = state.ebWebView
-        ebWebView.setScrollChangeListener(object : EBWebView.OnScrollChangeListener {
-            override fun onScrollChange(scrollY: Int, oldScrollY: Int) {
-                ebWebView.updatePageInfo()
-                twoPaneControllerProvider()?.scrollChange(scrollY - oldScrollY)
-                if (!config.ui.shouldHideToolbar) return
-                val height = floor(ebWebView.contentHeight * ebWebView.resources.displayMetrics.density.toDouble()).toInt()
-                val webViewHeight = ebWebView.height
-                val cutoff = height - webViewHeight - (112 * activity.resources.displayMetrics.density).roundToInt()
-                if (scrollY in (oldScrollY + 1)..cutoff) {
-                    if (state.binding.appBar.isVisible) toggleFullscreen()
+        ebWebView.setScrollChangeListener(
+            object : EBWebView.OnScrollChangeListener {
+                override fun onScrollChange(
+                    scrollY: Int,
+                    oldScrollY: Int,
+                ) {
+                    ebWebView.updatePageInfo()
+                    twoPaneControllerProvider()?.scrollChange(scrollY - oldScrollY)
+                    if (!config.ui.shouldHideToolbar) return
+                    val height =
+                        floor(
+                            ebWebView.contentHeight *
+                                ebWebView.resources.displayMetrics.density
+                                    .toDouble(),
+                        ).toInt()
+                    val webViewHeight = ebWebView.height
+                    val cutoff = height - webViewHeight - (112 * activity.resources.displayMetrics.density).roundToInt()
+                    if (scrollY in (oldScrollY + 1)..cutoff) {
+                        if (state.binding.appBar.isVisible) toggleFullscreen()
+                    }
                 }
-            }
-        })
+            },
+        )
     }
 
     fun createMultiTouchTouchListener(ebWebView: EBWebView): MultitouchListener =
         object : MultitouchListener(activity, ebWebView) {
             private var longPressStartPoint: Point? = null
+
             override fun onSwipeTop() = gestureHandler.handle(config.touch.multitouchUp)
+
             override fun onSwipeBottom() = gestureHandler.handle(config.touch.multitouchDown)
+
             override fun onSwipeRight() = gestureHandler.handle(config.touch.multitouchRight)
+
             override fun onSwipeLeft() = gestureHandler.handle(config.touch.multitouchLeft)
+
             override fun onLongPressMove(motionEvent: MotionEvent) {
                 super.onLongPressMove(motionEvent)
-                if (config.touch.enableDragUrlToAction && contextMenuDelegate.isInLongPressMode && contextMenuDelegate.activeContextMenuDialog != null) {
+                if (config.touch.enableDragUrlToAction &&
+                    contextMenuDelegate.isInLongPressMode &&
+                    contextMenuDelegate.activeContextMenuDialog != null
+                ) {
                     contextMenuDelegate.activeContextMenuDialog?.updateHoveredItem(motionEvent.rawX, motionEvent.rawY)
                     return
                 }
@@ -396,6 +444,7 @@ class ChromeSetupDelegate(
                     longPressStartPoint = null
                 }
             }
+
             override fun onMoveDone(motionEvent: MotionEvent) {
                 if (contextMenuDelegate.isInLongPressMode && contextMenuDelegate.activeContextMenuDialog != null) {
                     contextMenuDelegate.activeContextMenuDialog?.onFingerLifted()

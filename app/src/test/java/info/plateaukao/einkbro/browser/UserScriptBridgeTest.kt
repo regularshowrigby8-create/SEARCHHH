@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class UserScriptBridgeTest {
-
     @Test
     fun `isWebUrl accepts absolute http and https urls`() {
         assertTrue(UserScriptBridge.isWebUrl("https://example.com/a?b=c"))

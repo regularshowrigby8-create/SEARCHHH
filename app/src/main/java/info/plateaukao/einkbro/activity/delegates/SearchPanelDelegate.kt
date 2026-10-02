@@ -90,7 +90,7 @@ class SearchPanelDelegate(
         activity.lifecycleScope.launch {
             remoteConnViewModel.remoteConnected.collect { connected ->
                 remoteTextSearch.setImageResource(
-                    if (remoteConnViewModel.isSendingTextSearch) R.drawable.ic_send else R.drawable.ic_receive
+                    if (remoteConnViewModel.isSendingTextSearch) R.drawable.ic_send else R.drawable.ic_receive,
                 )
                 remoteTextSearch.isVisible = connected
             }

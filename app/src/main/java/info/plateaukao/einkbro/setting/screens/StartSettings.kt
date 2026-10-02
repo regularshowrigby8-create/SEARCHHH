@@ -26,13 +26,13 @@ fun buildStartSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> 
             R.string.setting_title_images,
             0,
             R.string.setting_summary_images,
-            config.browser::enableImages
+            config.browser::enableImages,
         ),
         BooleanSettingItem(
             R.string.setting_title_auto_fill_form,
             0,
             R.string.setting_summary_auto_fill_form,
-            config.browser::autoFillForm
+            config.browser::autoFillForm,
         ),
         ListSettingWithEnumItem(
             R.string.setting_title_history,
@@ -43,32 +43,32 @@ fun buildStartSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> 
                 R.string.save_history_mode_save_when_open,
                 R.string.save_history_mode_save_when_close,
                 R.string.save_history_mode_disabled,
-            )
+            ),
         ),
         BooleanSettingItem(
             R.string.setting_title_remote,
             0,
             R.string.setting_summary_remote,
-            config.browser::enableRemoteAccess
+            config.browser::enableRemoteAccess,
         ),
         BooleanSettingItem(
             R.string.setting_title_http,
             0,
             R.string.setting_summary_http,
-            config.browser::allowHttp
+            config.browser::allowHttp,
         ),
         BooleanSettingItem(
             R.string.setting_title_location,
             0,
             R.string.setting_summary_location,
-            config.browser::shareLocation
+            config.browser::shareLocation,
         ),
         DividerSettingItem(),
         BooleanSettingItem(
             R.string.setting_title_adblock,
             0,
             R.string.setting_summary_adblock,
-            config.browser::adBlock
+            config.browser::adBlock,
         ),
         ActionSettingItem(
             R.string.setting_title_update_adblock,
@@ -84,7 +84,7 @@ fun buildStartSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> 
             R.string.setting_summary_whitelist,
         ) {
             deps.activity.startActivity(
-                DataListActivity.createIntent(deps.activity, WhiteListType.Adblock)
+                DataListActivity.createIntent(deps.activity, WhiteListType.Adblock),
             )
         },
         DividerSettingItem(),
@@ -92,7 +92,7 @@ fun buildStartSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> 
             R.string.setting_title_javascript,
             0,
             R.string.setting_summary_javascript,
-            config.browser::enableJavascript
+            config.browser::enableJavascript,
         ),
         ActionSettingItem(
             R.string.setting_title_whitelistJS,
@@ -100,7 +100,7 @@ fun buildStartSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> 
             R.string.setting_summary_whitelistJS,
         ) {
             deps.activity.startActivity(
-                DataListActivity.createIntent(deps.activity, WhiteListType.Javascript)
+                DataListActivity.createIntent(deps.activity, WhiteListType.Javascript),
             )
         },
         ActionSettingItem(
@@ -113,7 +113,7 @@ fun buildStartSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> 
             R.string.setting_title_cookie,
             0,
             R.string.setting_summary_cookie,
-            config.browser::cookies
+            config.browser::cookies,
         ),
         ActionSettingItem(
             R.string.setting_title_whitelistCookie,
@@ -121,7 +121,7 @@ fun buildStartSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> 
             R.string.setting_summary_whitelistCookie,
         ) {
             deps.activity.startActivity(
-                DataListActivity.createIntent(deps.activity, WhiteListType.Cookie)
+                DataListActivity.createIntent(deps.activity, WhiteListType.Cookie),
             )
         },
         DividerSettingItem(),
@@ -129,7 +129,7 @@ fun buildStartSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> 
             R.string.setting_title_save_data,
             0,
             R.string.setting_summary_save_data,
-            config.browser::enableSaveData
+            config.browser::enableSaveData,
         ),
     )
 }

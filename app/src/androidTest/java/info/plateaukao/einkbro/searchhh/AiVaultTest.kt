@@ -19,13 +19,22 @@ class AiVaultTest {
             assertTrue(runCatching { vault.save("zai", key, "glm-4.5", true) }.isFailure)
             val before = vault.revision()
             vault.save("zai", key, "glm-4.5-flash", true)
-            assertTrue(vault.hasKey("zai")); assertNotEquals(before, vault.revision())
+            assertTrue(vault.hasKey("zai"))
+            assertNotEquals(before, vault.revision())
             assertEquals("glm-4.5-flash", AiVault(context).model("zai"))
             // Android EncryptedSharedPreferences commits data asynchronously; either
             // version on disk must never expose the secret as plaintext.
-            val files = java.io.File(context.applicationInfo.dataDir, "shared_prefs").listFiles().orEmpty()
+            val files =
+                java.io
+                    .File(context.applicationInfo.dataDir, "shared_prefs")
+                    .listFiles()
+                    .orEmpty()
             assertTrue(files.all { !it.readText().contains(key) })
-            vault.remove("zai"); assertFalse(AiVault(context).hasKey("zai"))
-        } finally { vault.remove("zai"); vault.setEnabled(false) }
+            vault.remove("zai")
+            assertFalse(AiVault(context).hasKey("zai"))
+        } finally {
+            vault.remove("zai")
+            vault.setEnabled(false)
+        }
     }
 }

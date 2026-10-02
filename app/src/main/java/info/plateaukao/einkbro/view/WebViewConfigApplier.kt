@@ -10,8 +10,8 @@ import androidx.webkit.UserAgentMetadata
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
-import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.browser.EBWebViewClient
+import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.unit.BrowserUnit
 import info.plateaukao.einkbro.unit.HelperUnit
 
@@ -29,20 +29,21 @@ class WebViewConfigApplier(
     fun updateDarkMode(url: String? = webView.url) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
 
-        val wantDark = config.getWebViewDarkMode(url.orEmpty())
-            ?: config.isAppDarkMode(webView.context)
+        val wantDark =
+            config.getWebViewDarkMode(url.orEmpty())
+                ?: config.isAppDarkMode(webView.context)
 
         if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
             WebSettingsCompat.setAlgorithmicDarkeningAllowed(webView.settings, wantDark)
             webView.setBackgroundColor(
-                if (wantDark) Color.parseColor("#000000") else Color.parseColor("#ffffff")
+                if (wantDark) Color.parseColor("#000000") else Color.parseColor("#ffffff"),
             )
         } else if (wantDark) {
             @Suppress("DEPRECATION")
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
                 WebSettingsCompat.setForceDarkStrategy(
                     webView.settings,
-                    WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING
+                    WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
                 )
             }
             @Suppress("DEPRECATION")
@@ -68,14 +69,14 @@ class WebViewConfigApplier(
 
     @Suppress("DEPRECATION")
     fun initPreferences() {
-
         updateUserAgentString()
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null) // Enable hardware acceleration
 
         with(webView.settings) {
             // don't load cache by default, so that it won't cause some issues
-            if (config.browser.webLoadCacheFirst)
+            if (config.browser.webLoadCacheFirst) {
                 cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+            }
 
             textZoom = config.display.fontSize
             // Local HTML/EPUB files must still open (allowFileAccess), but a file:// page
@@ -131,11 +132,12 @@ class WebViewConfigApplier(
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) return
         if (!supportsDocumentStartScript()) return
         if (dragStartBlockerHandler == null) {
-            dragStartBlockerHandler = WebViewCompat.addDocumentStartJavaScript(
-                webView,
-                HelperUnit.loadAssetFile("disable_drag_start.js"),
-                setOf("*"),
-            )
+            dragStartBlockerHandler =
+                WebViewCompat.addDocumentStartJavaScript(
+                    webView,
+                    HelperUnit.loadAssetFile("disable_drag_start.js"),
+                    setOf("*"),
+                )
         }
     }
 
@@ -149,11 +151,12 @@ class WebViewConfigApplier(
         if (!supportsDocumentStartScript()) return
         if (!config.browser.enableVideoAutoplay) {
             if (autoplayBlockerHandler == null) {
-                autoplayBlockerHandler = WebViewCompat.addDocumentStartJavaScript(
-                    webView,
-                    HelperUnit.loadAssetFile("disable_video_autoplay.js"),
-                    setOf("*"),
-                )
+                autoplayBlockerHandler =
+                    WebViewCompat.addDocumentStartJavaScript(
+                        webView,
+                        HelperUnit.loadAssetFile("disable_video_autoplay.js"),
+                        setOf("*"),
+                    )
             }
         } else {
             autoplayBlockerHandler?.remove()
@@ -168,17 +171,17 @@ class WebViewConfigApplier(
     private fun applyWebSpeechPolyfill() {
         if (!supportsDocumentStartScript()) return
         if (webSpeechPolyfillHandler == null) {
-            webSpeechPolyfillHandler = WebViewCompat.addDocumentStartJavaScript(
-                webView,
-                HelperUnit.loadAssetFile("speech_synthesis_polyfill.js"),
-                setOf("*"),
-            )
+            webSpeechPolyfillHandler =
+                WebViewCompat.addDocumentStartJavaScript(
+                    webView,
+                    HelperUnit.loadAssetFile("speech_synthesis_polyfill.js"),
+                    setOf("*"),
+                )
         }
     }
 
     companion object {
-        fun supportsDocumentStartScript(): Boolean =
-            WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)
+        fun supportsDocumentStartScript(): Boolean = WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)
     }
 
     /**
@@ -199,9 +202,10 @@ class WebViewConfigApplier(
                     // the trailing "Mobile Safari" token must go too — sites
                     // like zhihu/xiaohongshu match "Mobile" server-side and
                     // keep serving the app-jump page (issue #498)
-                    webView.settings.userAgentString = defaultUserAgentString
-                        .replace(prefix, BrowserUnit.UA_DESKTOP_PREFIX)
-                        .replace(" Mobile ", " ")
+                    webView.settings.userAgentString =
+                        defaultUserAgentString
+                            .replace(prefix, BrowserUnit.UA_DESKTOP_PREFIX)
+                            .replace(" Mobile ", " ")
 
                 config.browser.enableCustomUserAgent && config.browser.customUserAgent.isNotBlank() ->
                     webView.settings.userAgentString = config.browser.customUserAgent
@@ -231,8 +235,7 @@ class WebViewConfigApplier(
         }
     }
 
-    fun desktopModeChanged(url: String): Boolean =
-        config.getDesktopMode(url) != lastAppliedDesktopMode
+    fun desktopModeChanged(url: String): Boolean = config.getDesktopMode(url) != lastAppliedDesktopMode
 
     // Overriding the UA string doesn't stop WebView from sending the system
     // default client hints (Sec-CH-UA-Mobile: ?1, Sec-CH-UA-Platform:
@@ -245,31 +248,39 @@ class WebViewConfigApplier(
         // otherwise keep empty while the UA string is overridden
         if (!isDesktopMode && !uaMetadataOverridden) return
 
-        val defaultMetadata = defaultUserAgentMetadata
-            ?: WebSettingsCompat.getUserAgentMetadata(webView.settings)
-                .also { defaultUserAgentMetadata = it }
+        val defaultMetadata =
+            defaultUserAgentMetadata
+                ?: WebSettingsCompat
+                    .getUserAgentMetadata(webView.settings)
+                    .also { defaultUserAgentMetadata = it }
 
-        val metadata = if (isDesktopMode) {
-            // the brand list is sent on every request too, and "Android
-            // WebView" in it gives the platform away just like the UA string
-            val desktopBrands = defaultMetadata.brandVersionList.map { brandVersion ->
-                if (brandVersion.brand.contains("Android"))
-                    UserAgentMetadata.BrandVersion.Builder(brandVersion)
-                        .setBrand("Google Chrome")
-                        .build()
-                else brandVersion
+        val metadata =
+            if (isDesktopMode) {
+                // the brand list is sent on every request too, and "Android
+                // WebView" in it gives the platform away just like the UA string
+                val desktopBrands =
+                    defaultMetadata.brandVersionList.map { brandVersion ->
+                        if (brandVersion.brand.contains("Android")) {
+                            UserAgentMetadata.BrandVersion
+                                .Builder(brandVersion)
+                                .setBrand("Google Chrome")
+                                .build()
+                        } else {
+                            brandVersion
+                        }
+                    }
+                UserAgentMetadata
+                    .Builder(defaultMetadata)
+                    .setBrandVersionList(desktopBrands)
+                    .setMobile(false)
+                    .setPlatform("Linux")
+                    .setModel("")
+                    .setArchitecture("x86")
+                    .setBitness(64)
+                    .build()
+            } else {
+                defaultMetadata
             }
-            UserAgentMetadata.Builder(defaultMetadata)
-                .setBrandVersionList(desktopBrands)
-                .setMobile(false)
-                .setPlatform("Linux")
-                .setModel("")
-                .setArchitecture("x86")
-                .setBitness(64)
-                .build()
-        } else {
-            defaultMetadata
-        }
         WebSettingsCompat.setUserAgentMetadata(webView.settings, metadata)
         uaMetadataOverridden = isDesktopMode
     }

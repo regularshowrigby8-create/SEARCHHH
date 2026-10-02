@@ -6,10 +6,15 @@ import android.content.Intent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class TtsNotificationReceiver : BroadcastReceiver(), KoinComponent {
+class TtsNotificationReceiver :
+    BroadcastReceiver(),
+    KoinComponent {
     private val ttsNotificationManager: TtsNotificationManager by inject()
 
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun onReceive(
+        context: Context,
+        intent: Intent,
+    ) {
         ttsNotificationManager.handleAction(intent.action)
     }
 }

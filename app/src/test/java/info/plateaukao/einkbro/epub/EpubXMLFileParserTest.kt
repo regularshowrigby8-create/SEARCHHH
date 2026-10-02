@@ -5,7 +5,6 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class EpubXMLFileParserTest {
-
     @Test
     fun `parseAsDocument extracts first heading as title`() {
         val xhtml = "<html><body><h1>The Title</h1><p>Some text.</p></body></html>"
@@ -50,9 +49,10 @@ class EpubXMLFileParserTest {
     fun `parseAsImage falls back to default aspect ratio when bitmap cannot be decoded`() {
         // BitmapFactory is an Android framework stub on the JVM; decode fails and
         // the parser must fall back to the default 1.45 aspect ratio.
-        val zip = mapOf(
-            "images/pic.jpg" to EpubFile("images/pic.jpg", byteArrayOf(1, 2, 3))
-        )
+        val zip =
+            mapOf(
+                "images/pic.jpg" to EpubFile("images/pic.jpg", byteArrayOf(1, 2, 3)),
+            )
         val parser = EpubXMLFileParser("ch.xhtml", ByteArray(0), zip)
 
         val result = parser.parseAsImage("images/pic.jpg")

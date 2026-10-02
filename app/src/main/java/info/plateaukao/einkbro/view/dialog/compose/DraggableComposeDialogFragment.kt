@@ -8,7 +8,7 @@ import android.view.MotionEvent
 import android.view.Window
 import android.view.WindowManager
 
-abstract class DraggableComposeDialogFragment: ComposeDialogFragment() {
+abstract class DraggableComposeDialogFragment : ComposeDialogFragment() {
     override fun adjustHorizontalPosition() {
         // Draggable dialogs use setupDialogPosition() for their own positioning
     }
@@ -24,10 +24,11 @@ abstract class DraggableComposeDialogFragment: ComposeDialogFragment() {
         window.setGravity(Gravity.TOP or Gravity.LEFT)
 
         if (position.isValid()) {
-            val params = window.attributes.apply {
-                x = position.x
-                y = position.y
-            }
+            val params =
+                window.attributes.apply {
+                    x = position.x
+                    y = position.y
+                }
             window.attributes = params
         }
 

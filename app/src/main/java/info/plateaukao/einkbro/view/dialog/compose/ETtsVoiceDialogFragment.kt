@@ -21,9 +21,10 @@ import java.util.Locale
 class ETtsVoiceDialogFragment(
     private val selectedAction: (VoiceItem) -> Unit,
 ) : ComposeDialogFragment() {
-    private val voices: List<VoiceItem> = Json.decodeFromString(
-        HelperUnit.getStringFromAsset("eVoiceList.json")
-    )
+    private val voices: List<VoiceItem> =
+        Json.decodeFromString(
+            HelperUnit.getStringFromAsset("eVoiceList.json"),
+        )
 
     @Composable
     override fun Content() {
@@ -41,7 +42,7 @@ class ETtsVoiceDialogFragment(
         super.onStart()
         dialog?.window?.setLayout(
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.WRAP_CONTENT,
         )
     }
 }
@@ -53,46 +54,52 @@ fun LanguageListScreen(
     selectedAction: (VoiceItem) -> Unit = { Unit },
 ) {
     // create language list based on voices' first segment by - separator
-    val languageList = voices.map { it.getLanguageCode() }.distinct().toMutableList()
-        .apply {
-            remove("en")
-            remove("zh")
-            remove("ja")
-            remove("ko")
-            remove("fr")
-            add(0, "fr")
-            add(0, "ko")
-            add(0, "ja")
-            add(0, "zh")
-            add(0, "en")
-        }
+    val languageList =
+        voices
+            .map { it.getLanguageCode() }
+            .distinct()
+            .toMutableList()
+            .apply {
+                remove("en")
+                remove("zh")
+                remove("ja")
+                remove("ko")
+                remove("fr")
+                add(0, "fr")
+                add(0, "ko")
+                add(0, "ja")
+                add(0, "zh")
+                add(0, "en")
+            }
 
     LazyColumn(
-        modifier = Modifier.width(400.dp)
+        modifier = Modifier.width(400.dp),
     ) {
         languageList.forEach { language ->
             item {
                 val isExpanded = remember { mutableStateOf(false) }
                 Text(
                     text = Locale.forLanguageTag(language).displayName,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .clickable {
-                            isExpanded.value = !isExpanded.value
-                        },
-                    color = MaterialTheme.colors.onBackground
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .clickable {
+                                isExpanded.value = !isExpanded.value
+                            },
+                    color = MaterialTheme.colors.onBackground,
                 )
                 HorizontalSeparator()
                 if (isExpanded.value) {
-                    voices.filter { it.getLanguageCode() == language }
+                    voices
+                        .filter { it.getLanguageCode() == language }
                         .forEach { voice ->
                             VoiceItemRow(
                                 voice = voice,
                                 selected = voice == selectedVoiceItem,
                                 onClick = {
                                     selectedAction(voice)
-                                }
+                                },
                             )
                         }
                 }
@@ -110,13 +117,13 @@ fun VoiceItemRow(
     val country = Locale.forLanguageTag(voice.locale).displayCountry
     val role = voice.getVoiceRole()
     Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(28.dp, 16.dp, 16.dp, 16.dp)
-            .clickable(onClick = onClick),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(28.dp, 16.dp, 16.dp, 16.dp)
+                .clickable(onClick = onClick),
         text = "$country - $role",
-        color = MaterialTheme.colors.onBackground
+        color = MaterialTheme.colors.onBackground,
     )
     HorizontalSeparator()
 }
-

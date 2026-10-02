@@ -1,6 +1,5 @@
 package info.plateaukao.einkbro.unit
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -59,6 +58,7 @@ object BrowserUnit : KoinComponent {
     const val URL_SCHEME_ABOUT = "about:"
     const val URL_SCHEME_MAIL_TO = "mailto:"
     const val URL_SCHEME_INTENT = "intent://"
+
     // x86_64 regardless of device arch: sites treat aarch64 as a mobile hint
     const val UA_DESKTOP_PREFIX = "Mozilla/5.0 (X11; Linux x86_64)"
     val UA_MOBILE_PREFIX = "Mozilla/5.0 (Linux; Android " + Build.VERSION.RELEASE + ")"
@@ -80,21 +80,23 @@ object BrowserUnit : KoinComponent {
 
     var downloadFileId: Long
         get() = DownloadHelper.downloadFileId
-        set(value) { DownloadHelper.downloadFileId = value }
+        set(value) {
+            DownloadHelper.downloadFileId = value
+        }
 
-    fun createDownloadReceiver(activity: Activity): BroadcastReceiver =
-        DownloadHelper.createDownloadReceiver(activity)
+    fun createDownloadReceiver(activity: Activity): BroadcastReceiver = DownloadHelper.createDownloadReceiver(activity)
 
-    fun openDownloadFolder(activity: Activity) =
-        DownloadHelper.openDownloadFolder(activity)
+    fun openDownloadFolder(activity: Activity) = DownloadHelper.openDownloadFolder(activity)
 
     // --- Forwarding stubs for UrlHelper (preserves existing call sites) ---
 
     @JvmStatic
     fun isURL(url: String?): Boolean = UrlHelper.isURL(url)
 
-    fun queryWrapper(context: Context, query: String): String =
-        UrlHelper.queryWrapper(context, query)
+    fun queryWrapper(
+        context: Context,
+        query: String,
+    ): String = UrlHelper.queryWrapper(context, query)
 
     fun stripUrlQuery(url: String): String = UrlHelper.stripUrlQuery(url)
 
@@ -103,27 +105,35 @@ object BrowserUnit : KoinComponent {
 
     // --- Forwarding stubs for BookmarkRenderer (preserves existing call sites) ---
 
-    fun loadRecentlyUsedBookmarks(webView: EBWebView) =
-        BookmarkRenderer.loadRecentlyUsedBookmarks(webView)
+    fun loadRecentlyUsedBookmarks(webView: EBWebView) = BookmarkRenderer.loadRecentlyUsedBookmarks(webView)
 
-    fun getRecentBookmarksContent(context: Context): String =
-        BookmarkRenderer.getRecentBookmarksContent(context)
+    fun getRecentBookmarksContent(context: Context): String = BookmarkRenderer.getRecentBookmarksContent(context)
 
-    suspend fun getResourceAndMimetypeFromUrl(url: String, timeout: Int = 0): Pair<ByteArray, String> =
-        BookmarkRenderer.getResourceAndMimetypeFromUrl(url, timeout)
+    suspend fun getResourceAndMimetypeFromUrl(
+        url: String,
+        timeout: Int = 0,
+    ): Pair<ByteArray, String> = BookmarkRenderer.getResourceAndMimetypeFromUrl(url, timeout)
 
-    suspend fun getResourceFromUrl(url: String, timeout: Int = 0): ByteArray =
-        BookmarkRenderer.getResourceFromUrl(url, timeout)
+    suspend fun getResourceFromUrl(
+        url: String,
+        timeout: Int = 0,
+    ): ByteArray = BookmarkRenderer.getResourceFromUrl(url, timeout)
 
     // --- Remaining functions ---
 
-    fun getWebViewLinkImageUrl(webView: WebView, message: Message): String {
+    fun getWebViewLinkImageUrl(
+        webView: WebView,
+        message: Message,
+    ): String {
         val hitTestResult = webView.hitTestResult
         return hitTestResult.extra ?: message.data.getString("src").orEmpty()
     }
 
     @Suppress("DEPRECATION")
-    fun getWebViewLinkUrl(webView: WebView, message: Message): String {
+    fun getWebViewLinkUrl(
+        webView: WebView,
+        message: Message,
+    ): String {
         val hitTestResult = webView.hitTestResult
 
         if (!listOf(
@@ -131,25 +141,36 @@ object BrowserUnit : KoinComponent {
                 IMAGE_ANCHOR_TYPE,
                 SRC_ANCHOR_TYPE,
                 SRC_IMAGE_ANCHOR_TYPE,
-                ANCHOR_TYPE
-            )
-                .contains(hitTestResult.type)
-        ) return ""
+                ANCHOR_TYPE,
+            ).contains(hitTestResult.type)
+        ) {
+            return ""
+        }
 
         val linkUrl = message.data.getString("url")
         val imgUrl = message.data.getString("src")
         return linkUrl ?: imgUrl ?: return ""
     }
 
-    fun getWebViewLinkTitle(webView: WebView, action: (String) -> Unit) {
-        val newMessage = Message().apply {
-            target = object : Handler(Looper.getMainLooper()) {
-                override fun handleMessage(msg: Message) {
-                    val titleText = msg.data.getString("title")?.replace("\n", "")?.trim().orEmpty()
-                    action(titleText)
-                }
+    fun getWebViewLinkTitle(
+        webView: WebView,
+        action: (String) -> Unit,
+    ) {
+        val newMessage =
+            Message().apply {
+                target =
+                    object : Handler(Looper.getMainLooper()) {
+                        override fun handleMessage(msg: Message) {
+                            val titleText =
+                                msg.data
+                                    .getString("title")
+                                    ?.replace("\n", "")
+                                    ?.trim()
+                                    .orEmpty()
+                            action(titleText)
+                        }
+                    }
             }
-        }
         webView.requestFocusNodeHref(newMessage)
     }
 
@@ -157,11 +178,12 @@ object BrowserUnit : KoinComponent {
         context: Context,
         inputStream: InputStream,
         uri: Uri,
-        postAction: (Uri) -> Unit
+        postAction: (Uri) -> Unit,
     ) {
         coroutineScope.launch(Dispatchers.IO) {
             try {
-                context.contentResolver.openOutputStream(uri)
+                context.contentResolver
+                    .openOutputStream(uri)
                     .use { it?.write(inputStream.readBytes()) }
                 withContext(Dispatchers.Main) { postAction(uri) }
             } catch (e: IOException) {
@@ -183,17 +205,18 @@ object BrowserUnit : KoinComponent {
     }
 
     @JvmStatic
-    suspend fun clearCookie() = withContext(Dispatchers.Main) {
-        // removeAllCookies is asynchronous; flush after it completes so the
-        // removal reaches persistent storage before the process is killed.
-        suspendCancellableCoroutine { continuation ->
-            val cookieManager = android.webkit.CookieManager.getInstance()
-            cookieManager.removeAllCookies {
-                cookieManager.flush()
-                continuation.resume(Unit)
+    suspend fun clearCookie() =
+        withContext(Dispatchers.Main) {
+            // removeAllCookies is asynchronous; flush after it completes so the
+            // removal reaches persistent storage before the process is killed.
+            suspendCancellableCoroutine { continuation ->
+                val cookieManager = android.webkit.CookieManager.getInstance()
+                cookieManager.removeAllCookies {
+                    cookieManager.flush()
+                    continuation.resume(Unit)
+                }
             }
         }
-    }
 
     @JvmStatic
     suspend fun clearHistory(context: Context) {
@@ -229,7 +252,11 @@ object BrowserUnit : KoinComponent {
         return dir != null && dir.delete()
     }
 
-    fun bitmap2File(context: Context, bitmap: Bitmap, filename: String?): Boolean {
+    fun bitmap2File(
+        context: Context,
+        bitmap: Bitmap,
+        filename: String?,
+    ): Boolean {
         try {
             val fileOutputStream = context.openFileOutput(filename, Context.MODE_PRIVATE)
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
@@ -241,14 +268,16 @@ object BrowserUnit : KoinComponent {
         return true
     }
 
-    fun file2Bitmap(context: Context, filename: String?): Bitmap? {
-        return try {
+    fun file2Bitmap(
+        context: Context,
+        filename: String?,
+    ): Bitmap? =
+        try {
             val fileInputStream = context.openFileInput(filename)
             BitmapFactory.decodeStream(fileInputStream)
         } catch (e: Exception) {
             null
         }
-    }
 
     fun openFontFilePicker(resultLauncher: ActivityResultLauncher<Intent>) {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
@@ -259,8 +288,10 @@ object BrowserUnit : KoinComponent {
         resultLauncher.launch(intent)
     }
 
-
-    fun createFilePicker(resultLauncher: ActivityResultLauncher<Intent>, title: String) {
+    fun createFilePicker(
+        resultLauncher: ActivityResultLauncher<Intent>,
+        title: String,
+    ) {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = Constants.MIME_TYPE_ANY
@@ -273,34 +304,38 @@ object BrowserUnit : KoinComponent {
     private var tempImageInputStream: InputStream? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun saveImageFromUrl(url: String, resultLauncher: ActivityResultLauncher<Intent>) {
+    fun saveImageFromUrl(
+        url: String,
+        resultLauncher: ActivityResultLauncher<Intent>,
+    ) {
         val fileFormat = UrlHelper.dataUrlToMimeType(url)
         tempImageInputStream = UrlHelper.dataUrlToStream(url)
-        val mimeType = when (fileFormat.lowercase()) {
-            "png" -> "image/png"
-            "jpg" -> "image/jpeg"
-            "jpeg" -> "image/jpeg"
-            "gif" -> "image/gif"
-            "webp" -> "image/webp"
-            else -> "image/jpeg"
-        }
+        val mimeType =
+            when (fileFormat.lowercase()) {
+                "png" -> "image/png"
+                "jpg" -> "image/jpeg"
+                "jpeg" -> "image/jpeg"
+                "gif" -> "image/gif"
+                "webp" -> "image/webp"
+                else -> "image/jpeg"
+            }
 
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = mimeType
-            putExtra(Intent.EXTRA_TITLE, "download.$fileFormat")
-            addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
+        val intent =
+            Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = mimeType
+                putExtra(Intent.EXTRA_TITLE, "download.$fileFormat")
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
 
         resultLauncher.launch(intent)
     }
 
-
     fun handleFontSelectionResult(
         context: Context,
         activityResult: ActivityResult,
-        isReaderMode: Boolean = false
+        isReaderMode: Boolean = false,
     ) {
         if (activityResult.data == null || activityResult.resultCode != Activity.RESULT_OK) return
         val uri = activityResult.data?.data ?: return
@@ -319,7 +354,7 @@ object BrowserUnit : KoinComponent {
     fun handleSaveImageFilePickerResult(
         activity: ComponentActivity,
         activityResult: ActivityResult,
-        postAction: (Uri) -> Unit
+        postAction: (Uri) -> Unit,
     ) {
         if (activityResult.data == null || activityResult.resultCode != Activity.RESULT_OK) return
         val uri = activityResult.data?.data ?: return
@@ -329,7 +364,10 @@ object BrowserUnit : KoinComponent {
         tempImageInputStream = null
     }
 
-    fun createShortcut(activity: FragmentActivity, ebWebView: EBWebView) {
+    fun createShortcut(
+        activity: FragmentActivity,
+        ebWebView: EBWebView,
+    ) {
         val currentUrl = ebWebView.url ?: return
         ShortcutEditDialog(
             activity,
@@ -340,13 +378,13 @@ object BrowserUnit : KoinComponent {
                 ViewUnit.hideKeyboard(activity)
                 EBToast.show(activity, R.string.toast_edit_successful)
             },
-            { ViewUnit.hideKeyboard(activity) }
+            { ViewUnit.hideKeyboard(activity) },
         ).show()
     }
 
     fun restartApp(activity: Activity) {
         finishAffinity(activity) // Finishes all activities.
-        activity.startActivity(activity.packageManager.getLaunchIntentForPackage(activity.packageName))    // Start the launch activity
+        activity.startActivity(activity.packageManager.getLaunchIntentForPackage(activity.packageName)) // Start the launch activity
         activity.disablePendingTransitions()
         exitProcess(0)
     }

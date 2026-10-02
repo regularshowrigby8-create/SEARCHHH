@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ToolTextWindowTest {
-
     @Test
     fun `short document is returned whole with end-of-document header`() {
         val result = ToolTextWindow.window("hello world", maxChars = 100)

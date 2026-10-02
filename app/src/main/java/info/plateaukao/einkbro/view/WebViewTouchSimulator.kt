@@ -31,7 +31,7 @@ class WebViewTouchSimulator(
                      sel.removeAllRanges();
                  }
             })()
-        """.trimIndent()
+            """.trimIndent(),
         ) {
             webView.postDelayed({ simulateLongClick(point) }, 0)
         }
@@ -41,22 +41,31 @@ class WebViewTouchSimulator(
         val downTime = SystemClock.uptimeMillis()
         val downEvent =
             MotionEvent.obtain(
-                downTime, downTime, KeyEvent.ACTION_DOWN,
-                point.x.toFloat(), point.y.toFloat(), 0
+                downTime,
+                downTime,
+                KeyEvent.ACTION_DOWN,
+                point.x.toFloat(),
+                point.y.toFloat(),
+                0,
             )
         (webView.parent as ViewGroup).dispatchTouchEvent(downEvent)
 
         val upEvent =
             MotionEvent.obtain(
-                downTime, downTime + 700, KeyEvent.ACTION_UP,
-                point.x.toFloat(), point.y.toFloat(), 0
+                downTime,
+                downTime + 700,
+                KeyEvent.ACTION_UP,
+                point.x.toFloat(),
+                point.y.toFloat(),
+                0,
             )
         webView.postDelayed(
             {
                 (webView.parent as ViewGroup).dispatchTouchEvent(upEvent)
                 downEvent.recycle()
                 upEvent.recycle()
-            }, 50
+            },
+            50,
         )
     }
 
@@ -65,35 +74,46 @@ class WebViewTouchSimulator(
         val downTime = SystemClock.uptimeMillis()
         val downEvent =
             MotionEvent.obtain(
-                downTime, downTime, KeyEvent.ACTION_DOWN,
-                (point.x + 20).toFloat(), point.y.toFloat(), 0
+                downTime,
+                downTime,
+                KeyEvent.ACTION_DOWN,
+                (point.x + 20).toFloat(),
+                point.y.toFloat(),
+                0,
             )
         (webView.parent as ViewGroup).dispatchTouchEvent(downEvent)
 
         val upEvent =
             MotionEvent.obtain(
-                downTime, downTime + 700, KeyEvent.ACTION_UP,
-                point.x.toFloat(), point.y.toFloat(), 0
+                downTime,
+                downTime + 700,
+                KeyEvent.ACTION_UP,
+                point.x.toFloat(),
+                point.y.toFloat(),
+                0,
             )
         webView.postDelayed(
             {
                 (webView.parent as ViewGroup).dispatchTouchEvent(upEvent)
                 downEvent.recycle()
                 upEvent.recycle()
-            }, 700
+            },
+            700,
         )
         webView.postDelayed(
             {
                 webView.evaluateJavascript(
                     """
-                        var tt = window._touchTarget;
-                        if(tt){
-                            tt.setAttribute("href", window._hrefAttr);
-                        }
-                """.trimIndent(), null
+                    var tt = window._touchTarget;
+                    if(tt){
+                        tt.setAttribute("href", window._hrefAttr);
+                    }
+                    """.trimIndent(),
+                    null,
                 )
                 isSelectingText = false
-            }, 1000
+            },
+            1000,
         )
     }
 }

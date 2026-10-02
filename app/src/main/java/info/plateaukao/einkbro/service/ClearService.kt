@@ -15,19 +15,23 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.system.exitProcess
 
-class ClearService : Service(), KoinComponent {
+class ClearService :
+    Service(),
+    KoinComponent {
     private val config: ConfigManager by inject()
     private val coroutineScope: CoroutineScope by inject()
 
-    override fun onBind(intent: Intent): IBinder? {
-        return null
-    }
+    override fun onBind(intent: Intent): IBinder? = null
 
     override fun onDestroy() {
         exitProcess(0) // For remove all WebView thread
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(
+        intent: Intent,
+        flags: Int,
+        startId: Int,
+    ): Int {
         // stopSelf() kills the process (see onDestroy), so it must wait until
         // all clearing has completed and been persisted.
         coroutineScope.launch {

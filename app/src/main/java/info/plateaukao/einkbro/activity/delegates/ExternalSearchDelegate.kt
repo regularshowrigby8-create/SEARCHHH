@@ -9,12 +9,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.activity.BrowserState
+import info.plateaukao.einkbro.view.ThemedBorders
 import info.plateaukao.einkbro.viewmodel.ExternalSearchViewModel
 import kotlinx.coroutines.launch
 import java.util.Locale
-import info.plateaukao.einkbro.view.ThemedBorders
 
 class ExternalSearchDelegate(
     private val activity: FragmentActivity,
@@ -30,19 +29,20 @@ class ExternalSearchDelegate(
         }
         val externalSearchContainer = mainContent.externalSearchActionContainer
         externalSearchViewModel.searchActions.forEach { action ->
-            val button = TextView(activity).apply {
-                height = 40.dp.value.toInt()
-                textSize = 10.sp.value
-                gravity = Gravity.CENTER
-                background = ThemedBorders.panel(activity)
-                text = action.title.take(2).uppercase(Locale.getDefault())
-                setOnClickListener {
-                    externalSearchViewModel.currentSearchAction = action
-                    state.ebWebView.loadUrl(
-                        externalSearchViewModel.generateSearchUrl(splitSearchItemInfo = action),
-                    )
+            val button =
+                TextView(activity).apply {
+                    height = 40.dp.value.toInt()
+                    textSize = 10.sp.value
+                    gravity = Gravity.CENTER
+                    background = ThemedBorders.panel(activity)
+                    text = action.title.take(2).uppercase(Locale.getDefault())
+                    setOnClickListener {
+                        externalSearchViewModel.currentSearchAction = action
+                        state.ebWebView.loadUrl(
+                            externalSearchViewModel.generateSearchUrl(splitSearchItemInfo = action),
+                        )
+                    }
                 }
-            }
             externalSearchContainer.addView(button, 0)
         }
         activity.lifecycleScope.launch {

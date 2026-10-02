@@ -8,16 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.core.view.OneShotPreDrawListener
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.DialogFragment
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -26,24 +23,27 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import info.plateaukao.einkbro.preference.UiBorder
-import info.plateaukao.einkbro.view.compose.UiThemeState
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
+import androidx.core.view.OneShotPreDrawListener
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.DialogFragment
 import info.plateaukao.einkbro.R
-import info.plateaukao.einkbro.unit.ViewUnit
-import info.plateaukao.einkbro.view.compose.MyTheme
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.ToolbarPosition
+import info.plateaukao.einkbro.preference.UiBorder
+import info.plateaukao.einkbro.unit.ViewUnit
+import info.plateaukao.einkbro.view.ThemedBorders
+import info.plateaukao.einkbro.view.compose.MyTheme
+import info.plateaukao.einkbro.view.compose.UiThemeState
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import info.plateaukao.einkbro.view.ThemedBorders
 
-
-abstract class ComposeDialogFragment : DialogFragment(), KoinComponent {
+abstract class ComposeDialogFragment :
+    DialogFragment(),
+    KoinComponent {
     protected val config: ConfigManager by inject()
     protected lateinit var composeView: ComposeView
 
@@ -57,6 +57,7 @@ abstract class ComposeDialogFragment : DialogFragment(), KoinComponent {
 
         /** Horizontal center X (px) of the last clicked toolbar icon. Set by toolbar, consumed by dialog. */
         var anchorX: Int = -1
+
         /** Vertical center Y (px) of the last clicked toolbar icon. Set by toolbar, consumed by dialog. */
         var anchorY: Int = -1
     }
@@ -84,11 +85,12 @@ abstract class ComposeDialogFragment : DialogFragment(), KoinComponent {
         dialog?.apply {
             setCanceledOnTouchOutside(true)
             val w = window ?: return
-            w.attributes = w.attributes.apply {
-                // Enter/exit animations use this public API on every supported SDK.
-                // API 34+ movement suppression is supplied by EinkPanelDialogTheme.
-                windowAnimations = 0
-            }
+            w.attributes =
+                w.attributes.apply {
+                    // Enter/exit animations use this public API on every supported SDK.
+                    // API 34+ movement suppression is supplied by EinkPanelDialogTheme.
+                    windowAnimations = 0
+                }
             if (!shouldShowInCenter) {
                 if (config.ui.isVerticalToolbar) {
                     val horizontalGravity = if (config.ui.toolbarPosition == ToolbarPosition.Left) Gravity.START else Gravity.END
@@ -110,13 +112,14 @@ abstract class ComposeDialogFragment : DialogFragment(), KoinComponent {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         setupDialog()
 
-        composeView = ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-        }
+        composeView =
+            ComposeView(requireContext()).apply {
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            }
         beforeComposing()
         composeView.setContent { MyTheme { Content() } }
 
@@ -146,14 +149,18 @@ abstract class ComposeDialogFragment : DialogFragment(), KoinComponent {
             val w = dialog?.window ?: return@post
             val dialogWidth = w.decorView.width
             val screenWidth = resources.displayMetrics.widthPixels
-            val targetX = if (dialogWidth > 0 && screenWidth > 0) {
-                (dialogAnchorX - dialogWidth / 2)
-                    .coerceIn(0, maxOf(0, screenWidth - dialogWidth))
-            } else 0
-            w.attributes = w.attributes.apply {
-                x = targetX
-                alpha = 1f
-            }
+            val targetX =
+                if (dialogWidth > 0 && screenWidth > 0) {
+                    (dialogAnchorX - dialogWidth / 2)
+                        .coerceIn(0, maxOf(0, screenWidth - dialogWidth))
+                } else {
+                    0
+                }
+            w.attributes =
+                w.attributes.apply {
+                    x = targetX
+                    alpha = 1f
+                }
         }
     }
 
@@ -167,14 +174,18 @@ abstract class ComposeDialogFragment : DialogFragment(), KoinComponent {
             val w = dialog?.window ?: return@post
             val dialogHeight = w.decorView.height
             val screenHeight = resources.displayMetrics.heightPixels
-            val targetY = if (dialogHeight > 0 && screenHeight > 0) {
-                (dialogAnchorY - dialogHeight / 2)
-                    .coerceIn(0, maxOf(0, screenHeight - dialogHeight))
-            } else 0
-            w.attributes = w.attributes.apply {
-                y = targetY
-                alpha = 1f
-            }
+            val targetY =
+                if (dialogHeight > 0 && screenHeight > 0) {
+                    (dialogAnchorY - dialogHeight / 2)
+                        .coerceIn(0, maxOf(0, screenHeight - dialogHeight))
+                } else {
+                    0
+                }
+            w.attributes =
+                w.attributes.apply {
+                    y = targetY
+                    alpha = 1f
+                }
         }
     }
 
@@ -202,11 +213,12 @@ abstract class ComposeDialogFragment : DialogFragment(), KoinComponent {
     protected fun prepareFingerAnchor() {
         val window = dialog?.window ?: return
         window.setGravity(Gravity.TOP or Gravity.LEFT)
-        window.attributes = window.attributes.apply {
-            x = 0
-            y = topSystemInset()
-            alpha = 0f
-        }
+        window.attributes =
+            window.attributes.apply {
+                x = 0
+                y = topSystemInset()
+                alpha = 0f
+            }
         isFingerAnchorPending = true
     }
 
@@ -232,17 +244,22 @@ abstract class ComposeDialogFragment : DialogFragment(), KoinComponent {
             val screenWidth = resources.displayMetrics.widthPixels
 
             val aboveY = finger.y - originY - decor.height - gap
-            val targetY = if (decor.height > 0 && aboveY >= topInset) aboveY
-                else (finger.y - originY + gap).coerceAtLeast(topInset)
+            val targetY =
+                if (decor.height > 0 && aboveY >= topInset) {
+                    aboveY
+                } else {
+                    (finger.y - originY + gap).coerceAtLeast(topInset)
+                }
             val targetX = (finger.x - originX).coerceIn(0, maxOf(0, screenWidth - decor.width))
             // Hover hit-tests use on-screen item positions, which only update
             // once the moved window has gone through a traversal.
             OneShotPreDrawListener.add(decor) { isFingerAnchorPending = false }
-            w.attributes = w.attributes.apply {
-                x = targetX
-                y = targetY
-                alpha = 1f
-            }
+            w.attributes =
+                w.attributes.apply {
+                    x = targetX
+                    y = targetY
+                    alpha = 1f
+                }
         }
     }
 
@@ -250,15 +267,15 @@ abstract class ComposeDialogFragment : DialogFragment(), KoinComponent {
     private fun topSystemInset(): Int {
         val activityDecor = activity?.window?.decorView ?: return 0
         val insets = ViewCompat.getRootWindowInsets(activityDecor) ?: return 0
-        return insets.getInsets(
-            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-        ).top
+        return insets
+            .getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout(),
+            ).top
     }
 
     /** Dialog content; the base class wraps it in MyTheme and sets it on composeView. */
     @Composable
     protected abstract fun Content()
-
 }
 
 /**
@@ -278,33 +295,44 @@ fun VerticalSeparator(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ThemedSeparator(modifier: Modifier, horizontal: Boolean) {
+private fun ThemedSeparator(
+    modifier: Modifier,
+    horizontal: Boolean,
+) {
     val border = UiThemeState.uiBorder.value
     val color = MaterialTheme.colors.primary
-    val thickness = when (border) {
-        UiBorder.PAPER -> 4.dp
-        UiBorder.CERTIFICATE -> 5.dp
-        UiBorder.SKETCH -> 4.dp
-        UiBorder.STAMP -> 3.dp
-        else -> maxOf(border.widthDp, 1f).dp
-    }
+    val thickness =
+        when (border) {
+            UiBorder.PAPER -> 4.dp
+            UiBorder.CERTIFICATE -> 5.dp
+            UiBorder.SKETCH -> 4.dp
+            UiBorder.STAMP -> 3.dp
+            else -> maxOf(border.widthDp, 1f).dp
+        }
     Spacer(
         modifier
             .then(
-                if (horizontal) Modifier
-                    .fillMaxWidth()
-                    .height(thickness)
-                else Modifier
-                    .width(thickness)
-                    .height(30.dp)
-            )
-            .drawBehind { drawThemedSeparator(border, color, horizontal) }
+                if (horizontal) {
+                    Modifier
+                        .fillMaxWidth()
+                        .height(thickness)
+                } else {
+                    Modifier
+                        .width(thickness)
+                        .height(30.dp)
+                },
+            ).drawBehind { drawThemedSeparator(border, color, horizontal) },
     )
 }
 
-private fun DrawScope.drawThemedSeparator(border: UiBorder, color: Color, horizontal: Boolean) {
+private fun DrawScope.drawThemedSeparator(
+    border: UiBorder,
+    color: Color,
+    horizontal: Boolean,
+) {
     val length = if (horizontal) size.width else size.height
     val breadth = if (horizontal) size.height else size.width
+
     fun line(
         cross: Float,
         stroke: Float,
@@ -316,10 +344,12 @@ private fun DrawScope.drawThemedSeparator(border: UiBorder, color: Color, horizo
         drawLine(color, start, end, strokeWidth = stroke, pathEffect = effect, cap = cap)
     }
     when (border) {
-        UiBorder.DASHED -> line(
-            breadth / 2f, 1.5.dp.toPx(),
-            PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 4.dp.toPx()), 0f),
-        )
+        UiBorder.DASHED ->
+            line(
+                breadth / 2f,
+                1.5.dp.toPx(),
+                PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 4.dp.toPx()), 0f),
+            )
         UiBorder.PAPER -> {
             line(0.5.dp.toPx(), 1.dp.toPx())
             line(breadth - 0.5.dp.toPx(), 1.dp.toPx())
@@ -329,11 +359,13 @@ private fun DrawScope.drawThemedSeparator(border: UiBorder, color: Color, horizo
             line(breadth - 0.5.dp.toPx(), 1.dp.toPx())
         }
         // perforation row, echoing the stamp frame's bite holes
-        UiBorder.STAMP -> line(
-            breadth / 2f, 2.5.dp.toPx(),
-            PathEffect.dashPathEffect(floatArrayOf(0.1f, 6.dp.toPx()), 0f),
-            StrokeCap.Round,
-        )
+        UiBorder.STAMP ->
+            line(
+                breadth / 2f,
+                2.5.dp.toPx(),
+                PathEffect.dashPathEffect(floatArrayOf(0.1f, 6.dp.toPx()), 0f),
+                StrokeCap.Round,
+            )
         UiBorder.SKETCH -> {
             // same idea as sketchShape: short segments with a deterministic
             // wobble, so the line looks hand-drawn but doesn't shimmer
@@ -346,8 +378,11 @@ private fun DrawScope.drawThemedSeparator(border: UiBorder, color: Color, horizo
                 val t = k.toFloat() / n
                 val h = kotlin.math.sin(k * 12.9898 + length) * 43758.5453
                 val j =
-                    if (k == 0 || k == n) 0f
-                    else ((h - kotlin.math.floor(h)).toFloat() * 2f - 1f) * amplitude
+                    if (k == 0 || k == n) {
+                        0f
+                    } else {
+                        ((h - kotlin.math.floor(h)).toFloat() * 2f - 1f) * amplitude
+                    }
                 val along = t * length
                 val x = if (horizontal) along else mid + j
                 val y = if (horizontal) mid + j else along
@@ -359,4 +394,3 @@ private fun DrawScope.drawThemedSeparator(border: UiBorder, color: Color, horizo
         else -> line(breadth / 2f, maxOf(border.widthDp, 1f).dp.toPx())
     }
 }
-

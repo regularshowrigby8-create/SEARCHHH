@@ -5,14 +5,13 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class GithubUtilTest {
-
     @Test
     fun `branch blob page resolves to raw url`() {
         assertEquals(
             "https://github.com/plateaukao/einkbro/raw/main/CODE_OF_CONDUCT.md",
             GithubUtil.rawUrlForBlobPage(
-                "https://github.com/plateaukao/einkbro/blob/main/CODE_OF_CONDUCT.md"
-            )
+                "https://github.com/plateaukao/einkbro/blob/main/CODE_OF_CONDUCT.md",
+            ),
         )
     }
 
@@ -21,8 +20,8 @@ class GithubUtilTest {
         assertEquals(
             "https://github.com/owner/repo/raw/v1.2.3/path/to/file.txt",
             GithubUtil.rawUrlForBlobPage(
-                "https://github.com/owner/repo/blob/v1.2.3/path/to/file.txt"
-            )
+                "https://github.com/owner/repo/blob/v1.2.3/path/to/file.txt",
+            ),
         )
     }
 
@@ -31,8 +30,8 @@ class GithubUtilTest {
         assertEquals(
             "https://github.com/owner/repo/raw/abc1234/dir/file.go",
             GithubUtil.rawUrlForBlobPage(
-                "https://github.com/owner/repo/blob/abc1234/dir/file.go"
-            )
+                "https://github.com/owner/repo/blob/abc1234/dir/file.go",
+            ),
         )
     }
 

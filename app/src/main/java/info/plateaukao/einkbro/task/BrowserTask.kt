@@ -8,5 +8,6 @@ package info.plateaukao.einkbro.task
 interface BrowserTask {
     val id: String
     val displayName: String
+
     suspend fun run(tools: BrowserTools)
 }

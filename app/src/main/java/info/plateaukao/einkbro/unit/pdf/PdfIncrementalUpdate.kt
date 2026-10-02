@@ -8,8 +8,9 @@ import java.io.OutputStream
  * appended. Anything the parser didn't understand is preserved untouched,
  * which is why this replaces a full rewrite (the pdfbox approach) safely.
  */
-internal class PdfIncrementalUpdate(private val source: PdfFile) {
-
+internal class PdfIncrementalUpdate(
+    private val source: PdfFile,
+) {
     // object number -> (generation, object), in write order
     private val newObjects = LinkedHashMap<Int, Pair<Int, CosObject>>()
     private var nextObjNum = source.maxObjectNumber + 1
@@ -17,7 +18,10 @@ internal class PdfIncrementalUpdate(private val source: PdfFile) {
     fun allocate(): CosRef = CosRef(nextObjNum++, 0)
 
     /** Adds a new object, or an updated body for an existing object number. */
-    fun put(ref: CosRef, obj: CosObject) {
+    fun put(
+        ref: CosRef,
+        obj: CosObject,
+    ) {
         newObjects[ref.num] = ref.gen to obj
     }
 
@@ -65,7 +69,10 @@ internal class PdfIncrementalUpdate(private val source: PdfFile) {
         return runs
     }
 
-    private fun writeClassicXref(out: CountingOutputStream, offsets: Map<Int, Long>) {
+    private fun writeClassicXref(
+        out: CountingOutputStream,
+        offsets: Map<Int, Long>,
+    ) {
         out.writeAscii("xref\n")
         for ((start, nums) in entryRuns(offsets)) {
             out.writeAscii("$start ${nums.size}\n")
@@ -127,13 +134,21 @@ internal class PdfIncrementalUpdate(private val source: PdfFile) {
 
     // region serialization
 
-    private fun writeIndirectObject(out: CountingOutputStream, num: Int, gen: Int, obj: CosObject) {
+    private fun writeIndirectObject(
+        out: CountingOutputStream,
+        num: Int,
+        gen: Int,
+        obj: CosObject,
+    ) {
         out.writeAscii("$num $gen obj\n")
         serialize(out, obj)
         out.writeAscii("\nendobj\n")
     }
 
-    private fun serialize(out: CountingOutputStream, obj: CosObject) {
+    private fun serialize(
+        out: CountingOutputStream,
+        obj: CosObject,
+    ) {
         when (obj) {
             is CosNull -> out.writeAscii("null")
             is CosBool -> out.writeAscii(if (obj.value) "true" else "false")
@@ -163,7 +178,10 @@ internal class PdfIncrementalUpdate(private val source: PdfFile) {
         }
     }
 
-    private fun writeDict(out: CountingOutputStream, dict: CosDict) {
+    private fun writeDict(
+        out: CountingOutputStream,
+        dict: CosDict,
+    ) {
         out.writeAscii("<<")
         for ((key, value) in dict.entries) {
             writeName(out, CosName(key))
@@ -173,13 +191,25 @@ internal class PdfIncrementalUpdate(private val source: PdfFile) {
         out.writeAscii(">>")
     }
 
-    private fun writeName(out: CountingOutputStream, name: CosName) {
+    private fun writeName(
+        out: CountingOutputStream,
+        name: CosName,
+    ) {
         out.write('/'.code)
         for (ch in name.name) {
             val c = ch.code
-            if (c in 0x21..0x7e && c != '#'.code && c != '/'.code && c != '('.code &&
-                c != ')'.code && c != '<'.code && c != '>'.code && c != '['.code &&
-                c != ']'.code && c != '{'.code && c != '}'.code && c != '%'.code
+            if (c in 0x21..0x7e &&
+                c != '#'.code &&
+                c != '/'.code &&
+                c != '('.code &&
+                c != ')'.code &&
+                c != '<'.code &&
+                c != '>'.code &&
+                c != '['.code &&
+                c != ']'.code &&
+                c != '{'.code &&
+                c != '}'.code &&
+                c != '%'.code
             ) {
                 out.write(c)
             } else {
@@ -188,7 +218,10 @@ internal class PdfIncrementalUpdate(private val source: PdfFile) {
         }
     }
 
-    private fun writeString(out: CountingOutputStream, str: CosString) {
+    private fun writeString(
+        out: CountingOutputStream,
+        str: CosString,
+    ) {
         if (str.hex) {
             out.write('<'.code)
             for (b in str.bytes) {
@@ -215,7 +248,9 @@ internal class PdfIncrementalUpdate(private val source: PdfFile) {
 
     // endregion
 
-    private class CountingOutputStream(private val delegate: OutputStream) : OutputStream() {
+    private class CountingOutputStream(
+        private val delegate: OutputStream,
+    ) : OutputStream() {
         var count: Long = 0
             private set
 
@@ -224,7 +259,11 @@ internal class PdfIncrementalUpdate(private val source: PdfFile) {
             count++
         }
 
-        override fun write(b: ByteArray, off: Int, len: Int) {
+        override fun write(
+            b: ByteArray,
+            off: Int,
+            len: Int,
+        ) {
             delegate.write(b, off, len)
             count += len
         }

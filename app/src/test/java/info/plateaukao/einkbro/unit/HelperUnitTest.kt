@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HelperUnitTest {
-
     @Test
     fun `pruneWebTitle removes text after pipe`() {
         assertEquals("Google", "Google | Search".pruneWebTitle())

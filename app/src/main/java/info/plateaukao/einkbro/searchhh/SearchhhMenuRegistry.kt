@@ -14,9 +14,10 @@ data class SearchhhMenuItem(
     val showInBottomBar: Boolean = true,
 )
 
-val searchhhMenuRegistry = listOf(
-    SearchhhMenuItem(SearchhhRoute.DISCOVER, Icons.Outlined.Search),
-    SearchhhMenuItem(SearchhhRoute.SOURCES, Icons.Outlined.Hub),
-    SearchhhMenuItem(SearchhhRoute.SAVED, Icons.Outlined.BookmarkBorder),
-    SearchhhMenuItem(SearchhhRoute.SETTINGS, Icons.Outlined.Settings),
-)
+val searchhhMenuRegistry =
+    listOf(
+        SearchhhMenuItem(SearchhhRoute.DISCOVER, Icons.Outlined.Search),
+        SearchhhMenuItem(SearchhhRoute.SOURCES, Icons.Outlined.Hub),
+        SearchhhMenuItem(SearchhhRoute.SAVED, Icons.Outlined.BookmarkBorder),
+        SearchhhMenuItem(SearchhhRoute.SETTINGS, Icons.Outlined.Settings),
+    )

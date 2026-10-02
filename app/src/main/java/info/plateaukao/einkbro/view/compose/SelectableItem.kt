@@ -1,10 +1,8 @@
 package info.plateaukao.einkbro.view.compose
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -32,14 +30,15 @@ fun SelectableText(
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         textAlign = textAlign,
-        modifier = modifier
-            .ebItemFrame(borderWidth)
-            .padding(horizontal = 6.dp, vertical = 6.dp)
-            .clickable(
-                indication = null,
-                interactionSource = interactionSource,
-            ) {
-                if (isEnabled) onClick()
-            }
+        modifier =
+            modifier
+                .ebItemFrame(borderWidth)
+                .padding(horizontal = 6.dp, vertical = 6.dp)
+                .clickable(
+                    indication = null,
+                    interactionSource = interactionSource,
+                ) {
+                    if (isEnabled) onClick()
+                },
     )
 }

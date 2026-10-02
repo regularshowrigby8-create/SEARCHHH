@@ -1,7 +1,5 @@
 package info.plateaukao.einkbro.activity.delegates
 
-import android.graphics.Point
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
@@ -16,8 +14,6 @@ import info.plateaukao.einkbro.unit.ViewUnit
 import info.plateaukao.einkbro.util.TranslationLanguage
 import info.plateaukao.einkbro.view.EBToast
 import info.plateaukao.einkbro.view.EBWebView
-import info.plateaukao.einkbro.view.TranslationPanelView
-import info.plateaukao.einkbro.view.TwoPaneLayout
 import info.plateaukao.einkbro.view.dialog.TranslationLanguageDialog
 import info.plateaukao.einkbro.view.dialog.compose.LanguageSettingDialogFragment
 import info.plateaukao.einkbro.view.dialog.compose.ShowEditGptActionDialogFragment
@@ -112,20 +108,21 @@ class TranslationDelegate(
             } else if (translateApi == TRANSLATE_API.DEEPL) {
                 translateByParagraph(TRANSLATE_API.DEEPL)
             }
-        }
-            .show(activity.supportFragmentManager, "LanguageSettingDialog")
+        }.show(activity.supportFragmentManager, "LanguageSettingDialog")
     }
 
     fun showTranslationDialog(isWholePageMode: Boolean = false) {
         activity.supportFragmentManager.findFragmentByTag("translateDialog")?.let {
-            activity.supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
+            activity.supportFragmentManager
+                .beginTransaction()
+                .remove(it)
+                .commitAllowingStateLoss()
         }
         TranslateDialogFragment(
             translationViewModel,
             actionModeMenuViewModel.clickedPoint.value,
             isWholePageMode = isWholePageMode,
-        )
-            .show(activity.supportFragmentManager, "translateDialog")
+        ).show(activity.supportFragmentManager, "translateDialog")
     }
 
     fun showTranslation(webView: EBWebView? = null) {
@@ -190,15 +187,19 @@ class TranslationDelegate(
 
     fun translateWebView() {
         activity.lifecycleScope.launch {
-            val base64String = translationViewModel.translateWebView(
-                state.ebWebView,
-                config.translation.sourceLanguage,
-                config.translation.translationLanguage,
-            )
+            val base64String =
+                translationViewModel.translateWebView(
+                    state.ebWebView,
+                    config.translation.sourceLanguage,
+                    config.translation.translationLanguage,
+                )
             if (base64String != null) {
-                val translatedImageHtml = HelperUnit.loadAssetFileToString(
-                    activity, "translated_image.html"
-                ).replace("%%", base64String)
+                val translatedImageHtml =
+                    HelperUnit
+                        .loadAssetFileToString(
+                            activity,
+                            "translated_image.html",
+                        ).replace("%%", base64String)
                 if (config.translation.showTranslatedImageToSecondPanel) {
                     maybeInitTwoPaneController()
                     twoPaneControllerProvider().showSecondPaneWithData(translatedImageHtml)
@@ -220,18 +221,22 @@ class TranslationDelegate(
     }
 
     suspend fun translateImageSuspend(url: String): Boolean {
-        val result = translationViewModel.translateImage(
-            state.ebWebView.url.orEmpty(),
-            url,
-            TranslationLanguage.KO,
-            config.translation.translationLanguage,
-        )
+        val result =
+            translationViewModel.translateImage(
+                state.ebWebView.url.orEmpty(),
+                url,
+                TranslationLanguage.KO,
+                config.translation.translationLanguage,
+            )
         if (result != null) {
             val escapedUrl = url.replace("\\", "\\\\").replace("'", "\\'")
-            val js = HelperUnit.loadAssetFileToString(
-                activity, "translate_image_overlay.js"
-            ).replace("%%IMAGE_URL%%", escapedUrl)
-                .replace("%%BASE64_DATA%%", result.renderedImage)
+            val js =
+                HelperUnit
+                    .loadAssetFileToString(
+                        activity,
+                        "translate_image_overlay.js",
+                    ).replace("%%IMAGE_URL%%", escapedUrl)
+                    .replace("%%BASE64_DATA%%", result.renderedImage)
             state.ebWebView.evaluateJavascript(js, null)
             return result.imageId == "cached"
         }
@@ -241,13 +246,19 @@ class TranslationDelegate(
     fun translateAllImages(imageUrl: String) {
         activity.lifecycleScope.launch {
             val escapedUrl = imageUrl.replace("\\", "\\\\").replace("'", "\\'")
-            val js = HelperUnit.loadAssetFileToString(
-                activity, "get_remaining_images.js"
-            ).replace("%%IMAGE_URL%%", escapedUrl)
+            val js =
+                HelperUnit
+                    .loadAssetFileToString(
+                        activity,
+                        "get_remaining_images.js",
+                    ).replace("%%IMAGE_URL%%", escapedUrl)
 
             state.ebWebView.evaluateJavascript(js) { result ->
-                val urlsJson = result?.trim('"')?.replace("\\\"", "\"")
-                    ?.replace("\\\\", "\\") ?: return@evaluateJavascript
+                val urlsJson =
+                    result
+                        ?.trim('"')
+                        ?.replace("\\\"", "\"")
+                        ?.replace("\\\\", "\\") ?: return@evaluateJavascript
                 try {
                     val urls = org.json.JSONArray(urlsJson)
                     val imageUrls = mutableListOf<String>()
@@ -258,7 +269,7 @@ class TranslationDelegate(
 
                     EBToast.show(
                         activity,
-                        "Translating ${imageUrls.size} images..."
+                        "Translating ${imageUrls.size} images...",
                     )
                     activity.lifecycleScope.launch {
                         for ((index, url) in imageUrls.withIndex()) {

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +34,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.DialogFragment
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.view.ThemedBorders
 import info.plateaukao.einkbro.view.compose.MyTheme
@@ -46,7 +46,6 @@ class TextEditorDialogFragment(
     private val initialText: String,
     private val onSave: (String) -> Unit,
 ) : DialogFragment() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
@@ -64,21 +63,22 @@ class TextEditorDialogFragment(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = ComposeView(requireContext()).apply {
-        setContent {
-            MyTheme {
-                TextEditorScreen(
-                    title = title,
-                    initialText = initialText,
-                    onSave = {
-                        onSave(it)
-                        dialog?.dismiss()
-                    },
-                    onCancel = { dialog?.dismiss() },
-                )
+    ): View =
+        ComposeView(requireContext()).apply {
+            setContent {
+                MyTheme {
+                    TextEditorScreen(
+                        title = title,
+                        initialText = initialText,
+                        onSave = {
+                            onSave(it)
+                            dialog?.dismiss()
+                        },
+                        onCancel = { dialog?.dismiss() },
+                    )
+                }
             }
         }
-    }
 
     override fun onStart() {
         super.onStart()
@@ -103,9 +103,10 @@ private fun TextEditorScreen(
     var text by remember { mutableStateOf(initialText) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(12.dp),
     ) {
         Text(
             text = title,
@@ -118,20 +119,23 @@ private fun TextEditorScreen(
         OutlinedTextField(
             value = text,
             onValueChange = { text = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            textStyle = TextStyle(
-                fontSize = 13.sp,
-                fontFamily = FontFamily.Monospace,
-                color = MaterialTheme.colors.onBackground,
-            ),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = MaterialTheme.colors.onBackground,
-                cursorColor = MaterialTheme.colors.onBackground,
-                focusedBorderColor = MaterialTheme.colors.onBackground,
-                unfocusedBorderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.4f),
-            ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            textStyle =
+                TextStyle(
+                    fontSize = 13.sp,
+                    fontFamily = FontFamily.Monospace,
+                    color = MaterialTheme.colors.onBackground,
+                ),
+            colors =
+                TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = MaterialTheme.colors.onBackground,
+                    cursorColor = MaterialTheme.colors.onBackground,
+                    focusedBorderColor = MaterialTheme.colors.onBackground,
+                    unfocusedBorderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.4f),
+                ),
             singleLine = false,
         )
 
@@ -144,18 +148,20 @@ private fun TextEditorScreen(
                 onClick = onCancel,
                 border = themedButtonBorder(),
                 shape = themedItemShape(),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colors.onBackground,
-                ),
+                colors =
+                    ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colors.onBackground,
+                    ),
             ) { Text("Cancel", fontSize = 13.sp) }
             Spacer(Modifier.width(8.dp))
             Button(
                 onClick = { onSave(text) },
                 shape = themedItemShape(),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.onBackground,
-                    contentColor = MaterialTheme.colors.background,
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colors.onBackground,
+                        contentColor = MaterialTheme.colors.background,
+                    ),
             ) { Text("Save", fontSize = 13.sp) }
         }
     }

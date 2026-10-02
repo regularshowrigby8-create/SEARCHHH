@@ -2,16 +2,16 @@ package info.plateaukao.einkbro.browser
 
 import android.util.Log
 import android.webkit.JavascriptInterface
+import info.plateaukao.einkbro.data.remote.ChatMessage
+import info.plateaukao.einkbro.data.remote.ChatRole
+import info.plateaukao.einkbro.data.remote.OpenAiRepository
+import info.plateaukao.einkbro.data.remote.TranslateRepository
 import info.plateaukao.einkbro.database.BookmarkManager
 import info.plateaukao.einkbro.database.TRANSLATION_CACHE_EXPIRATION_DAYS
 import info.plateaukao.einkbro.database.TranslationCache
 import info.plateaukao.einkbro.preference.ChatGPTActionInfo
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.GptActionType
-import info.plateaukao.einkbro.data.remote.ChatMessage
-import info.plateaukao.einkbro.data.remote.ChatRole
-import info.plateaukao.einkbro.data.remote.OpenAiRepository
-import info.plateaukao.einkbro.data.remote.TranslateRepository
 import info.plateaukao.einkbro.service.WebSpeechHandler
 import info.plateaukao.einkbro.unit.DownloadHelper
 import info.plateaukao.einkbro.view.EBWebView
@@ -51,7 +51,8 @@ class JsWebInterface(
     private val webSpeechHandler: WebSpeechHandler by inject()
 
     private fun escapeForJs(text: String): String =
-        text.replace("\\", "\\\\")
+        text
+            .replace("\\", "\\\\")
             .replace("'", "\\'")
             .replace("\n", "\\n")
             .replace("\r", "\\r")
@@ -101,7 +102,12 @@ class JsWebInterface(
     }
 
     @JavascriptInterface
-    fun getTranslation(token: String, originalText: String, elementId: String, callback: String) {
+    fun getTranslation(
+        token: String,
+        originalText: String,
+        elementId: String,
+        callback: String,
+    ) {
         val activeToken = translationToken
         if (activeToken == null || token != activeToken) {
             Log.w("JsWebInterface", "getTranslation rejected: no active translation session")
@@ -131,14 +137,19 @@ class JsWebInterface(
                         // so regularly re-read documents don't expire mid-habit.
                         if (daysDiff >= 1) {
                             bookmarkManager.refreshTranslationCacheTimestamp(
-                                textHash, currentLanguage, translateApi.name, currentTime
+                                textHash,
+                                currentLanguage,
+                                translateApi.name,
+                                currentTime,
                             )
                         }
                         withContext(Dispatchers.Main) {
                             if (webView.isAttachedToWindow) {
                                 webView.evaluateJavascript(
-                                    "$callback('${escapeForJs(elementId)}', '${escapeForJs(originalText)}', '${escapeForJs(cachedEntry.translatedText)}')",
-                                    null
+                                    "$callback('${escapeForJs(
+                                        elementId,
+                                    )}', '${escapeForJs(originalText)}', '${escapeForJs(cachedEntry.translatedText)}')",
+                                    null,
                                 )
                             }
                         }
@@ -159,8 +170,8 @@ class JsWebInterface(
                             targetLanguage = currentLanguage,
                             translateApi = translateApi.name,
                             translatedText = translatedString,
-                            timestamp = currentTime
-                        )
+                            timestamp = currentTime,
+                        ),
                     )
                 }
 
@@ -171,7 +182,7 @@ class JsWebInterface(
                     if (webView.isAttachedToWindow) {
                         webView.evaluateJavascript(
                             "$callback('${escapeForJs(elementId)}', '${escapeForJs(originalText)}', '${escapeForJs(translatedString)}')",
-                            null
+                            null,
                         )
                     }
                 }
@@ -186,56 +197,67 @@ class JsWebInterface(
         return digest.joinToString("") { "%02x".format(it) }
     }
 
-    private fun getSemaphoreForApi(api: TRANSLATE_API): Semaphore {
-        return if (api == TRANSLATE_API.DEEPL || api == TRANSLATE_API.GEMINI) {
+    private fun getSemaphoreForApi(api: TRANSLATE_API): Semaphore =
+        if (api == TRANSLATE_API.DEEPL || api == TRANSLATE_API.GEMINI) {
             semaphoreForDeepL
         } else {
             semaphoreForTranslate
         }
-    }
 
-    private suspend fun performTranslation(originalText: String, api: TRANSLATE_API): String {
-        return when (api) {
-            TRANSLATE_API.GOOGLE -> translateRepository.gTranslateWithApi(
-                originalText,
-                configManager.translation.translationLanguage.value
-            ).orEmpty()
+    private suspend fun performTranslation(
+        originalText: String,
+        api: TRANSLATE_API,
+    ): String =
+        when (api) {
+            TRANSLATE_API.GOOGLE ->
+                translateRepository
+                    .gTranslateWithApi(
+                        originalText,
+                        configManager.translation.translationLanguage.value,
+                    ).orEmpty()
 
             TRANSLATE_API.OPENAI -> translateWithOpenAi(originalText)
 
             TRANSLATE_API.GEMINI -> translateWithGemini(originalText)
 
-            TRANSLATE_API.DEEPL -> translateRepository.deepLTranslate(
-                originalText,
-                configManager.translation.translationLanguage
-            ).orEmpty()
+            TRANSLATE_API.DEEPL ->
+                translateRepository
+                    .deepLTranslate(
+                        originalText,
+                        configManager.translation.translationLanguage,
+                    ).orEmpty()
 
             else -> ""
         }
-    }
 
     private suspend fun translateWithOpenAi(originalText: String): String {
-        val chatGptActionInfo = ChatGPTActionInfo(
-            userMessage = "translate following content to ${configManager.translation.translationLanguage.value}; no other extra explanation:\n",
-            actionType = GptActionType.OpenAi,
-            model = configManager.ai.gptModel,
-        )
+        val chatGptActionInfo =
+            ChatGPTActionInfo(
+                userMessage = "translate following content to ${configManager.translation.translationLanguage.value}; no other extra explanation:\n",
+                actionType = GptActionType.OpenAi,
+                model = configManager.ai.gptModel,
+            )
         val messages = listOf((chatGptActionInfo.userMessage + originalText).toUserMessage())
         val completion = openAiRepository.chatCompletion(messages, chatGptActionInfo)
         // Return empty on failure (matches Gemini path). The caller treats empty as
         // "no translation" — leaves the placeholder blank and skips caching, so a
         // transient API error doesn't get persisted as the canonical translation
         // for this string.
-        return completion?.choices?.firstOrNull { it.message.role == ChatRole.Assistant }?.message?.content
+        return completion
+            ?.choices
+            ?.firstOrNull { it.message.role == ChatRole.Assistant }
+            ?.message
+            ?.content
             .orEmpty()
     }
 
     private suspend fun translateWithGemini(originalText: String): String {
-        val chatGptActionInfo = ChatGPTActionInfo(
-            userMessage = "translate following content to ${configManager.translation.translationLanguage.value}; no other extra explanation:\n",
-            actionType = GptActionType.Gemini,
-            model = configManager.ai.geminiModel,
-        )
+        val chatGptActionInfo =
+            ChatGPTActionInfo(
+                userMessage = "translate following content to ${configManager.translation.translationLanguage.value}; no other extra explanation:\n",
+                actionType = GptActionType.Gemini,
+                model = configManager.ai.geminiModel,
+            )
         val messages = listOf((chatGptActionInfo.userMessage + originalText).toUserMessage())
         return openAiRepository.queryGemini(messages, chatGptActionInfo).valueOrNull().orEmpty()
     }
@@ -245,8 +267,14 @@ class JsWebInterface(
             delay(1500)
         }
     }
+
     @JavascriptInterface
-    fun getAnchorPosition(left: Float, top: Float, right: Float, bottom: Float) {
+    fun getAnchorPosition(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ) {
         Log.d("touch", "rect: $left, $top, $right, $bottom")
         jsBrowserCallback?.updateSelectionRect(left, top, right, bottom)
     }
@@ -257,27 +285,40 @@ class JsWebInterface(
         return if (callback.isActionModeActive()) {
             webView.post { callback.dismissActionMode() }
             true
-        } else false
+        } else {
+            false
+        }
     }
 
     @JavascriptInterface
     fun ebookPageUp() {
         webView.post {
-            if (!configManager.touch.switchTouchAreaAction) webView.pageUpWithNoAnimation()
-            else webView.pageDownWithNoAnimation()
+            if (!configManager.touch.switchTouchAreaAction) {
+                webView.pageUpWithNoAnimation()
+            } else {
+                webView.pageDownWithNoAnimation()
+            }
         }
     }
 
     @JavascriptInterface
     fun ebookPageDown() {
         webView.post {
-            if (!configManager.touch.switchTouchAreaAction) webView.pageDownWithNoAnimation()
-            else webView.pageUpWithNoAnimation()
+            if (!configManager.touch.switchTouchAreaAction) {
+                webView.pageDownWithNoAnimation()
+            } else {
+                webView.pageUpWithNoAnimation()
+            }
         }
     }
 
     @JavascriptInterface
-    fun onInnerScrollChanged(isAtTop: Boolean, scrollTop: Int, scrollHeight: Int, clientHeight: Int) {
+    fun onInnerScrollChanged(
+        isAtTop: Boolean,
+        scrollTop: Int,
+        scrollHeight: Int,
+        clientHeight: Int,
+    ) {
         webView.isInnerScrollAtTop = isAtTop
         webView.innerScrollTop = scrollTop
         webView.innerScrollHeight = scrollHeight
@@ -291,7 +332,10 @@ class JsWebInterface(
     }
 
     @JavascriptInterface
-    fun onBlobDownloadChunk(downloadId: String, base64Chunk: String) {
+    fun onBlobDownloadChunk(
+        downloadId: String,
+        base64Chunk: String,
+    ) {
         if (downloadId.length > MAX_DOWNLOAD_ID_LENGTH) {
             Log.w("JsWebInterface", "Ignoring blob download chunk with invalid id")
             return
@@ -300,7 +344,10 @@ class JsWebInterface(
     }
 
     @JavascriptInterface
-    fun onBlobDownloadComplete(downloadId: String, mimeType: String) {
+    fun onBlobDownloadComplete(
+        downloadId: String,
+        mimeType: String,
+    ) {
         if (downloadId.length > MAX_DOWNLOAD_ID_LENGTH) {
             Log.w("JsWebInterface", "Ignoring blob download completion with invalid id")
             return
@@ -309,7 +356,10 @@ class JsWebInterface(
     }
 
     @JavascriptInterface
-    fun onBlobDownloadError(downloadId: String, message: String?) {
+    fun onBlobDownloadError(
+        downloadId: String,
+        message: String?,
+    ) {
         if (downloadId.length > MAX_DOWNLOAD_ID_LENGTH) {
             Log.w("JsWebInterface", "Ignoring blob download error with invalid id")
             return
@@ -318,7 +368,10 @@ class JsWebInterface(
     }
 
     @JavascriptInterface
-    fun beginBlobDownload(fileName: String?, mimeType: String?): String {
+    fun beginBlobDownload(
+        fileName: String?,
+        mimeType: String?,
+    ): String {
         val activity = webView.context as? android.app.Activity ?: return ""
         val safeFileName = fileName?.takeIf { it.isNotBlank() } ?: "download"
         return DownloadHelper.beginBlobDownload(activity, safeFileName, mimeType.orEmpty())
@@ -353,15 +406,20 @@ class JsWebInterface(
     fun ttsGetVoices(): String = webSpeechHandler.getVoicesJson()
 }
 
-fun String.toUserMessage() = ChatMessage(
-    role = ChatRole.User,
-    content = this
-)
-fun String.toSystemMessage() = ChatMessage(
-    role = ChatRole.System,
-    content = this
-)
-fun String.toAssistantMessage() = ChatMessage(
-    role = ChatRole.Assistant,
-    content = this
-)
+fun String.toUserMessage() =
+    ChatMessage(
+        role = ChatRole.User,
+        content = this,
+    )
+
+fun String.toSystemMessage() =
+    ChatMessage(
+        role = ChatRole.System,
+        content = this,
+    )
+
+fun String.toAssistantMessage() =
+    ChatMessage(
+        role = ChatRole.Assistant,
+        content = this,
+    )

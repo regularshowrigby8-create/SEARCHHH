@@ -46,7 +46,6 @@ import java.util.*
 private val filterDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH)
 
 class AdBlockSettingActivity : LocaleAwareComponentActivity() {
-
     private val viewModel: FilterViewModel = AdFilter.get().viewModel
     private val dialogManager by lazy { DialogManager(this) }
 
@@ -59,16 +58,17 @@ class AdBlockSettingActivity : LocaleAwareComponentActivity() {
                     viewModel = viewModel,
                     addFilterDialog = { showEditDialog() },
                     deleteFilterDialog = { filter -> showDeleteDialog(filter) },
-                    onCloseAction = { finish() }
+                    onCloseAction = { finish() },
                 )
             }
         }
     }
 
     private fun showEditDialog() {
-        val editText = EditText(this).apply {
-            hint = "add filter"
-        }
+        val editText =
+            EditText(this).apply {
+                hint = "add filter"
+            }
         dialogManager.showOkCancelDialog(
             title = "add filter",
             view = editText,
@@ -80,7 +80,7 @@ class AdBlockSettingActivity : LocaleAwareComponentActivity() {
                 } else {
                     EBToast.show(this, "invalid url")
                 }
-            }
+            },
         )
     }
 
@@ -90,7 +90,7 @@ class AdBlockSettingActivity : LocaleAwareComponentActivity() {
             message = "Are you sure to delete this filter?",
             okAction = {
                 viewModel.removeFilter(filter.id)
-            }
+            },
         )
     }
 }
@@ -125,14 +125,16 @@ fun SettingsScreen(
                 val filterList = filters.value.values.toList()
                 items(filterList.size, key = { filterList[it].id }) { index ->
                     val filter = filterList[index]
-                    FilterRow(filter, filterDateFormat,
+                    FilterRow(
+                        filter,
+                        filterDateFormat,
                         onClick = {
                             viewModel.download(it.id)
                         },
                         onLongClick = { deleteFilterDialog(it) },
                         onToggled = { filter, enabled ->
                             viewModel.setFilterEnabled(filter.id, enabled)
-                        }
+                        },
                     )
                 }
             }
@@ -153,14 +155,15 @@ fun FilterRow(
     val isChecked = remember(filter.isEnabled) { mutableStateOf(filter.isEnabled) }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .combinedClickable(
-                onClick = { onClick(filter) },
-                onLongClick = { onLongClick(filter) }
-            ),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .combinedClickable(
+                    onClick = { onClick(filter) },
+                    onLongClick = { onLongClick(filter) },
+                ),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -172,31 +175,34 @@ fun FilterRow(
                 text = filter.url,
                 style = MaterialTheme.typography.body2,
                 maxLines = 1,
-                color = Color.Gray
+                color = Color.Gray,
             )
             Row {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = when (filter.downloadState) {
-                        DownloadState.ENQUEUED -> "waiting"
-                        DownloadState.DOWNLOADING -> "downloading"
-                        DownloadState.INSTALLING -> "installing"
-                        DownloadState.FAILED -> "failed"
-                        DownloadState.CANCELLED -> "cancelled"
-                        else -> {
-                            if (filter.hasDownloaded())
-                                dateFormatter.format(Date(filter.updateTime))
-                            else "not downloaded"
-                        }
-                    },
+                    text =
+                        when (filter.downloadState) {
+                            DownloadState.ENQUEUED -> "waiting"
+                            DownloadState.DOWNLOADING -> "downloading"
+                            DownloadState.INSTALLING -> "installing"
+                            DownloadState.FAILED -> "failed"
+                            DownloadState.CANCELLED -> "cancelled"
+                            else -> {
+                                if (filter.hasDownloaded()) {
+                                    dateFormatter.format(Date(filter.updateTime))
+                                } else {
+                                    "not downloaded"
+                                }
+                            }
+                        },
                     style = MaterialTheme.typography.caption,
-                    color = Color.Gray
+                    color = Color.Gray,
                 )
                 if (filter.hasDownloaded()) {
                     Text(
                         text = "filter count: ${filter.filtersCount}",
                         style = MaterialTheme.typography.caption,
-                        color = Color.Gray
+                        color = Color.Gray,
                     )
                 }
             }
@@ -207,9 +213,7 @@ fun FilterRow(
                 isChecked.value = it
                 onToggled(filter, it)
             },
-            enabled = filter.filtersCount > 0
+            enabled = filter.filtersCount > 0,
         )
     }
 }
-
-

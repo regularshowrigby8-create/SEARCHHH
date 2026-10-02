@@ -40,7 +40,6 @@ class ReaderSettingsDialogFragment(
     private val onKeepExtraContentChanged: () -> Unit = { Unit },
     private val onFontConfigClick: () -> Unit,
 ) : ComposeDialogFragment() {
-
     @Composable
     override fun Content() {
         ReaderSettingsContent(
@@ -90,9 +89,10 @@ fun ReaderSettingsContent(
     var keepExtraContent by remember { mutableStateOf(initKeepExtraContent) }
 
     Column(
-        modifier = Modifier
-            .width(300.dp)
-            .padding(horizontal = 10.dp, vertical = 5.dp)
+        modifier =
+            Modifier
+                .width(300.dp)
+                .padding(horizontal = 10.dp, vertical = 5.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -131,7 +131,8 @@ fun ReaderSettingsContent(
         )
 
         Text(
-            text = "${stringResource(R.string.line_spacing)}: " +
+            text =
+                "${stringResource(R.string.line_spacing)}: " +
                     String.format(Locale.ROOT, "%.1f", lineSpacing / 10f),
             color = MaterialTheme.colors.onBackground,
         )

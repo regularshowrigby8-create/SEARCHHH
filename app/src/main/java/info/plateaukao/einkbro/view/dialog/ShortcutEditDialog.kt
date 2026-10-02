@@ -14,10 +14,10 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.lifecycle.setViewTreeLifecycleOwner
-import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.unit.HelperUnit
 import info.plateaukao.einkbro.view.compose.MyTheme
@@ -36,38 +36,42 @@ class ShortcutEditDialog(
     private val urlState = mutableStateOf(url)
 
     fun show() {
-        val composeView = ComposeView(activity).apply {
-            setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
-            setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
-            setContent {
-                MyTheme {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 15.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = titleState.value,
-                            onValueChange = { titleState.value = it },
-                            label = { Text(stringResource(R.string.dialog_title_hint)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = MaterialTheme.colors.onBackground,
-                            ),
-                        )
-                        OutlinedTextField(
-                            value = urlState.value,
-                            onValueChange = { urlState.value = it },
-                            label = { Text(stringResource(R.string.dialog_url_hint)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = MaterialTheme.colors.onBackground,
-                            ),
-                        )
+        val composeView =
+            ComposeView(activity).apply {
+                setViewTreeLifecycleOwner(activity as androidx.lifecycle.LifecycleOwner)
+                setViewTreeSavedStateRegistryOwner(activity as androidx.savedstate.SavedStateRegistryOwner)
+                setContent {
+                    MyTheme {
+                        Column(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp, vertical = 15.dp),
+                        ) {
+                            OutlinedTextField(
+                                value = titleState.value,
+                                onValueChange = { titleState.value = it },
+                                label = { Text(stringResource(R.string.dialog_title_hint)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors =
+                                    TextFieldDefaults.outlinedTextFieldColors(
+                                        textColor = MaterialTheme.colors.onBackground,
+                                    ),
+                            )
+                            OutlinedTextField(
+                                value = urlState.value,
+                                onValueChange = { urlState.value = it },
+                                label = { Text(stringResource(R.string.dialog_url_hint)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors =
+                                    TextFieldDefaults.outlinedTextFieldColors(
+                                        textColor = MaterialTheme.colors.onBackground,
+                                    ),
+                            )
+                        }
                     }
                 }
             }
-        }
 
         dialogManager.showOkCancelDialog(
             title = activity.getString(R.string.menu_sc),
@@ -77,7 +81,7 @@ class ShortcutEditDialog(
                     createShortcut()
                 }
             },
-            cancelAction = { cancelAction.invoke() }
+            cancelAction = { cancelAction.invoke() },
         )
     }
 
@@ -87,7 +91,7 @@ class ShortcutEditDialog(
             activity,
             titleState.value.trim(),
             urlState.value.trim(),
-            bitmap
+            bitmap,
         )
         okAction.invoke()
     }

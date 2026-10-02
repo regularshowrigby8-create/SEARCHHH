@@ -29,7 +29,7 @@ class RecordRepository : KoinComponent {
                 TITLE = record.title.trim(),
                 URL = record.url.trim(),
                 TIME = record.time,
-            )
+            ),
         )
         purgeOldHistoryItem(14)
     }
@@ -56,7 +56,10 @@ class RecordRepository : KoinComponent {
         }
     }
 
-    suspend fun listEntries(listAll: Boolean, amount: Int = 0): List<Record> {
+    suspend fun listEntries(
+        listAll: Boolean,
+        amount: Int = 0,
+    ): List<Record> {
         val list = mutableListOf<Record>()
         if (listAll) {
             bookmarkManager.getAllBookmarksOnly().forEach { list.add(it.toRecord()) }
@@ -84,30 +87,33 @@ class RecordRepository : KoinComponent {
         return seen.values.toList()
     }
 
-    suspend fun listAllHistory(): List<Record> {
-        return withContext(Dispatchers.IO) {
+    suspend fun listAllHistory(): List<Record> =
+        withContext(Dispatchers.IO) {
             historyDao.getAllHistory().map { it.toRecord() }
         }
-    }
 
     suspend fun replaceAllHistory(records: List<Record>) {
         withContext(Dispatchers.IO) {
-            val entities = records
-                .filter { !it.title.isNullOrBlank() && it.url.isNotBlank() && it.time >= 0L }
-                .map {
-                    HistoryRecord(
-                        TITLE = it.title!!.trim(),
-                        URL = it.url.trim(),
-                        TIME = it.time,
-                    )
-                }
+            val entities =
+                records
+                    .filter { !it.title.isNullOrBlank() && it.url.isNotBlank() && it.time >= 0L }
+                    .map {
+                        HistoryRecord(
+                            TITLE = it.title!!.trim(),
+                            URL = it.url.trim(),
+                            TIME = it.time,
+                        )
+                    }
             historyDao.replaceAll(entities)
         }
     }
 
     // -- Domain lists --
 
-    suspend fun addDomain(domain: String?, table: String?) {
+    suspend fun addDomain(
+        domain: String?,
+        table: String?,
+    ) {
         if (domain.isNullOrBlank() || table == null) return
         val trimmed = domain.trim()
         withContext(Dispatchers.IO) {
@@ -119,7 +125,10 @@ class RecordRepository : KoinComponent {
         }
     }
 
-    suspend fun checkDomain(domain: String?, table: String?): Boolean {
+    suspend fun checkDomain(
+        domain: String?,
+        table: String?,
+    ): Boolean {
         if (domain.isNullOrBlank() || table == null) return false
         val trimmed = domain.trim()
         return withContext(Dispatchers.IO) {
@@ -132,7 +141,10 @@ class RecordRepository : KoinComponent {
         }
     }
 
-    suspend fun deleteDomain(domain: String?, table: String) {
+    suspend fun deleteDomain(
+        domain: String?,
+        table: String,
+    ) {
         if (domain.isNullOrBlank()) return
         val trimmed = domain.trim()
         withContext(Dispatchers.IO) {
@@ -173,9 +185,10 @@ class RecordRepository : KoinComponent {
     }
 }
 
-private fun Bookmark.toRecord(): Record = Record(
-    title = this.title,
-    url = this.url,
-    time = 0,
-    type = RecordType.Bookmark,
-)
+private fun Bookmark.toRecord(): Record =
+    Record(
+        title = this.title,
+        url = this.url,
+        time = 0,
+        type = RecordType.Bookmark,
+    )

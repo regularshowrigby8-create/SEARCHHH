@@ -15,7 +15,6 @@ import info.plateaukao.einkbro.preference.toggle
 import info.plateaukao.einkbro.unit.BrowserUnit
 import info.plateaukao.einkbro.unit.HelperUnit
 import info.plateaukao.einkbro.unit.IntentUnit
-import info.plateaukao.einkbro.unit.ShareUtil
 import info.plateaukao.einkbro.view.EBToast
 import info.plateaukao.einkbro.view.EBWebView
 import info.plateaukao.einkbro.view.dialog.ReceiveDataDialog
@@ -41,8 +40,9 @@ class MenuActionHandler(
             MenuItemType.BoldFont -> dispatch(BrowserAction.ShowFontBoldnessDialog)
             MenuItemType.ReaderMode -> dispatch(BrowserAction.ShowReaderSettingsDialog)
             MenuItemType.Settings -> IntentUnit.gotoSettings(activity)
-            MenuItemType.Tts -> TtsSettingDialogFragment()
-                .show(activity.supportFragmentManager, "TtsSettingDialog")
+            MenuItemType.Tts ->
+                TtsSettingDialogFragment()
+                    .show(activity.supportFragmentManager, "TtsSettingDialog")
 
             MenuItemType.Instapaper -> dispatch(BrowserAction.ConfigureInstapaper)
 
@@ -66,9 +66,11 @@ class MenuActionHandler(
             MenuItemType.ReaderMode -> dispatch(BrowserAction.ToggleReaderMode)
             MenuItemType.TouchSetting -> dispatch(BrowserAction.ShowTouchAreaDialog)
             MenuItemType.ToolbarSetting -> {
-                activity.startActivity(Intent(activity, ToolbarConfigActivity::class.java).apply {
-                    putExtra(ToolbarConfigActivity.EXTRA_IS_READER_MODE, activity is EpubReaderActivity)
-                })
+                activity.startActivity(
+                    Intent(activity, ToolbarConfigActivity::class.java).apply {
+                        putExtra(ToolbarConfigActivity.EXTRA_IS_READER_MODE, activity is EpubReaderActivity)
+                    },
+                )
             }
 
             MenuItemType.ReceiveData -> dispatch(BrowserAction.ToggleReceiveLink)
@@ -76,11 +78,12 @@ class MenuActionHandler(
 
             MenuItemType.ShareLink -> dispatch(BrowserAction.ShareLink)
 
-            MenuItemType.OpenWith -> HelperUnit.showBrowserChooser(
-                activity,
-                ebWebView.url,
-                activity.getString(R.string.menu_open_with)
-            )
+            MenuItemType.OpenWith ->
+                HelperUnit.showBrowserChooser(
+                    activity,
+                    ebWebView.url,
+                    activity.getString(R.string.menu_open_with),
+                )
 
             MenuItemType.Shortcut -> dispatch(BrowserAction.CreateShortcut)
 
@@ -113,11 +116,11 @@ class MenuActionHandler(
         }
     }
 
-
     private fun showReceiveDataDialog(ebWebView: EBWebView) {
         ReceiveDataDialog(activity, activity.lifecycleScope).show { text ->
-            if (text.startsWith("http")) ebWebView.loadUrl(text)
-            else {
+            if (text.startsWith("http")) {
+                ebWebView.loadUrl(text)
+            } else {
                 val clip = ClipData.newPlainText("Copied Text", text)
                 (activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
                     .setPrimaryClip(clip)
@@ -125,5 +128,4 @@ class MenuActionHandler(
             }
         }
     }
-
 }

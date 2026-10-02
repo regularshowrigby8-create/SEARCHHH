@@ -7,7 +7,9 @@ import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.util.zip.Inflater
 
-internal class PdfParseException(message: String) : Exception(message)
+internal class PdfParseException(
+    message: String,
+) : Exception(message)
 
 /**
  * Read-only view of one PDF file: cross-reference resolution (classic tables,
@@ -16,11 +18,19 @@ internal class PdfParseException(message: String) : Exception(message)
  * resident. Unsupported constructs throw [PdfParseException] — callers treat
  * any failure as "leave the file alone" and fall back.
  */
-internal class PdfFile private constructor(private val buf: ByteBuffer) {
-
+internal class PdfFile private constructor(
+    private val buf: ByteBuffer,
+) {
     sealed class XrefEntry {
-        class Regular(val offset: Long, val gen: Int) : XrefEntry()
-        class InObjectStream(val streamObjNum: Int, val index: Int) : XrefEntry()
+        class Regular(
+            val offset: Long,
+            val gen: Int,
+        ) : XrefEntry()
+
+        class InObjectStream(
+            val streamObjNum: Int,
+            val index: Int,
+        ) : XrefEntry()
     }
 
     private val xref = HashMap<Int, XrefEntry>()
@@ -47,7 +57,10 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
         return buf.get(pos.toInt()).toInt() and 0xff
     }
 
-    fun readBytes(offset: Long, length: Int): ByteArray {
+    fun readBytes(
+        offset: Long,
+        length: Int,
+    ): ByteArray {
         val out = ByteArray(length)
         val dup = buf.duplicate()
         dup.position(offset.toInt())
@@ -55,7 +68,11 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
         return out
     }
 
-    fun copyBytesTo(offset: Long, length: Int, out: OutputStream) {
+    fun copyBytesTo(
+        offset: Long,
+        length: Int,
+        out: OutputStream,
+    ) {
         val chunk = ByteArray(64 * 1024)
         var pos = offset
         var remaining = length
@@ -82,14 +99,23 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
 
     // region lexer
 
-    private class Cursor(var pos: Long)
+    private class Cursor(
+        var pos: Long,
+    )
 
     private fun isWhite(c: Int) = c == 0 || c == 9 || c == 10 || c == 12 || c == 13 || c == 32
 
     private fun isDelim(c: Int) =
-        c == '('.code || c == ')'.code || c == '<'.code || c == '>'.code ||
-            c == '['.code || c == ']'.code || c == '{'.code || c == '}'.code ||
-            c == '/'.code || c == '%'.code
+        c == '('.code ||
+            c == ')'.code ||
+            c == '<'.code ||
+            c == '>'.code ||
+            c == '['.code ||
+            c == ']'.code ||
+            c == '{'.code ||
+            c == '}'.code ||
+            c == '/'.code ||
+            c == '%'.code
 
     private fun skipWs(cur: Cursor) {
         while (true) {
@@ -116,7 +142,10 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
         return sb.toString()
     }
 
-    private fun expectKeyword(cur: Cursor, keyword: String) {
+    private fun expectKeyword(
+        cur: Cursor,
+        keyword: String,
+    ) {
         val actual = readKeyword(cur)
         if (actual != keyword) throw PdfParseException("expected '$keyword', got '$actual' at ${cur.pos}")
     }
@@ -134,12 +163,13 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
                 if (byteAt(cur.pos + 1) == '<'.code) parseDict(cur) else parseHexString(cur)
 
             '['.code -> parseArray(cur)
-            't'.code, 'f'.code, 'n'.code -> when (val kw = readKeyword(cur)) {
-                "true" -> CosBool(true)
-                "false" -> CosBool(false)
-                "null" -> CosNull
-                else -> throw PdfParseException("unexpected keyword '$kw' at ${cur.pos}")
-            }
+            't'.code, 'f'.code, 'n'.code ->
+                when (val kw = readKeyword(cur)) {
+                    "true" -> CosBool(true)
+                    "false" -> CosBool(false)
+                    "null" -> CosNull
+                    else -> throw PdfParseException("unexpected keyword '$kw' at ${cur.pos}")
+                }
 
             else ->
                 if (c == '+'.code || c == '-'.code || c == '.'.code || c in '0'.code..'9'.code) {
@@ -188,7 +218,9 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
                         'f'.code -> out.add(12)
                         '('.code, ')'.code, '\\'.code -> out.add(e.toByte())
                         '\r'.code -> if (byteAt(cur.pos) == '\n'.code) cur.pos++ // line continuation
-                        '\n'.code -> { Unit }
+                        '\n'.code -> {
+                            Unit
+                        }
                         in '0'.code..'7'.code -> {
                             var value = e - '0'.code
                             var digits = 1
@@ -232,8 +264,9 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
             if (c == '>'.code) break
             val digit = Character.digit(c, 16)
             if (digit < 0) continue
-            if (high < 0) high = digit
-            else {
+            if (high < 0) {
+                high = digit
+            } else {
                 out.add(((high shl 4) or digit).toByte())
                 high = -1
             }
@@ -264,8 +297,9 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
                 cur.pos += 2
                 return dict
             }
-            val key = parseObject(cur) as? CosName
-                ?: throw PdfParseException("dictionary key is not a name at ${cur.pos}")
+            val key =
+                parseObject(cur) as? CosName
+                    ?: throw PdfParseException("dictionary key is not a name at ${cur.pos}")
             dict[key.name] = parseObject(cur)
         }
     }
@@ -305,19 +339,28 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
             } else if (c == '.'.code) {
                 isReal = true
                 sb.append('.')
-            } else break
+            } else {
+                break
+            }
             cur.pos++
         }
         if (sb.isEmpty()) throw PdfParseException("expected number at ${cur.pos}")
-        return if (isReal) CosReal(sb.toString())
-        else CosInt(sb.toString().toLong())
+        return if (isReal) {
+            CosReal(sb.toString())
+        } else {
+            CosInt(sb.toString().toLong())
+        }
     }
 
     /** Parses "num gen obj ... endobj" at [offset], including stream data. */
-    private fun parseIndirectObjectAt(offset: Long, expectedNum: Int): CosObject {
+    private fun parseIndirectObjectAt(
+        offset: Long,
+        expectedNum: Int,
+    ): CosObject {
         val cur = Cursor(offset)
-        val num = (parseNumber(cur) as? CosInt)?.value?.toInt()
-            ?: throw PdfParseException("bad object header at $offset")
+        val num =
+            (parseNumber(cur) as? CosInt)?.value?.toInt()
+                ?: throw PdfParseException("bad object header at $offset")
         parseNumber(cur) // generation
         expectKeyword(cur, "obj")
         if (num != expectedNum) throw PdfParseException("object $expectedNum not found at $offset (found $num)")
@@ -330,15 +373,17 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
                 if (byteAt(cur.pos) == '\r'.code) cur.pos++
                 if (byteAt(cur.pos) == '\n'.code) cur.pos++
                 val dataStart = cur.pos
-                val length = (resolve(obj["Length"]) as? CosInt)?.value?.toInt()
-                    ?: throw PdfParseException("stream without valid /Length at $offset")
+                val length =
+                    (resolve(obj["Length"]) as? CosInt)?.value?.toInt()
+                        ?: throw PdfParseException("stream without valid /Length at $offset")
                 var dataLength = length
                 cur.pos = dataStart + length
                 skipWs(cur)
                 if (readKeyword(cur) != "endstream") {
                     // tolerate a wrong /Length: scan forward for "endstream"
-                    val found = scanForEndstream(dataStart)
-                        ?: throw PdfParseException("endstream not found for object $num")
+                    val found =
+                        scanForEndstream(dataStart)
+                            ?: throw PdfParseException("endstream not found for object $num")
                     dataLength = (found - dataStart).toInt()
                 }
                 return CosStream(obj, CosStream.RawData.InFile(this, dataStart, dataLength))
@@ -374,39 +419,44 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
     fun getObject(num: Int): CosObject {
         objectCache[num]?.let { return it }
         val entry = xref[num] ?: return CosNull
-        val obj = when (entry) {
-            is XrefEntry.Regular -> parseIndirectObjectAt(entry.offset, num)
-            is XrefEntry.InObjectStream ->
-                loadObjectStream(entry.streamObjNum)[entry.index] ?: CosNull
-        }
+        val obj =
+            when (entry) {
+                is XrefEntry.Regular -> parseIndirectObjectAt(entry.offset, num)
+                is XrefEntry.InObjectStream ->
+                    loadObjectStream(entry.streamObjNum)[entry.index] ?: CosNull
+            }
         objectCache[num] = obj
         return obj
     }
 
-    fun resolve(obj: CosObject?): CosObject? = when (obj) {
-        null -> null
-        is CosRef -> getObject(obj.num)
-        else -> obj
-    }
+    fun resolve(obj: CosObject?): CosObject? =
+        when (obj) {
+            null -> null
+            is CosRef -> getObject(obj.num)
+            else -> obj
+        }
 
-    fun resolveDict(obj: CosObject?): CosDict? = when (val r = resolve(obj)) {
-        is CosDict -> r
-        is CosStream -> r.dict
-        else -> null
-    }
+    fun resolveDict(obj: CosObject?): CosDict? =
+        when (val r = resolve(obj)) {
+            is CosDict -> r
+            is CosStream -> r.dict
+            else -> null
+        }
 
-    fun generationOf(num: Int): Int =
-        (xref[num] as? XrefEntry.Regular)?.gen ?: 0
+    fun generationOf(num: Int): Int = (xref[num] as? XrefEntry.Regular)?.gen ?: 0
 
     private fun loadObjectStream(streamObjNum: Int): Map<Int, CosObject> {
         objectStreamCache[streamObjNum]?.let { return it }
-        val stream = getObject(streamObjNum) as? CosStream
-            ?: throw PdfParseException("object stream $streamObjNum missing")
+        val stream =
+            getObject(streamObjNum) as? CosStream
+                ?: throw PdfParseException("object stream $streamObjNum missing")
         val data = decodeStream(stream)
-        val count = (resolve(stream.dict["N"]) as? CosInt)?.value?.toInt()
-            ?: throw PdfParseException("object stream without /N")
-        val first = (resolve(stream.dict["First"]) as? CosInt)?.value?.toInt()
-            ?: throw PdfParseException("object stream without /First")
+        val count =
+            (resolve(stream.dict["N"]) as? CosInt)?.value?.toInt()
+                ?: throw PdfParseException("object stream without /N")
+        val first =
+            (resolve(stream.dict["First"]) as? CosInt)?.value?.toInt()
+                ?: throw PdfParseException("object stream without /First")
         val inner = PdfFile(ByteBuffer.wrap(data))
         val headerCur = Cursor(0)
         val members = HashMap<Int, CosObject>(count)
@@ -432,27 +482,30 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
 
     fun decodeStream(stream: CosStream): ByteArray {
         var data = stream.readRaw()
-        val filters = when (val f = resolve(stream.dict["Filter"])) {
-            null -> emptyList()
-            is CosName -> listOf(f.name)
-            is CosArray -> f.items.map { (resolve(it) as? CosName)?.name ?: "?" }
-            else -> throw PdfParseException("bad /Filter")
-        }
-        val parmsList: List<CosDict?> = when (val p = resolve(stream.dict["DecodeParms"])) {
-            null -> List(filters.size) { null }
-            is CosDict -> listOf(p)
-            is CosArray -> p.items.map { resolve(it) as? CosDict }
-            else -> List(filters.size) { null }
-        }
-        filters.forEachIndexed { i, filter ->
-            data = when (filter) {
-                "FlateDecode", "Fl" -> {
-                    val inflated = inflate(data)
-                    applyPredictor(inflated, parmsList.getOrNull(i))
-                }
-
-                else -> throw PdfParseException("unsupported stream filter $filter")
+        val filters =
+            when (val f = resolve(stream.dict["Filter"])) {
+                null -> emptyList()
+                is CosName -> listOf(f.name)
+                is CosArray -> f.items.map { (resolve(it) as? CosName)?.name ?: "?" }
+                else -> throw PdfParseException("bad /Filter")
             }
+        val parmsList: List<CosDict?> =
+            when (val p = resolve(stream.dict["DecodeParms"])) {
+                null -> List(filters.size) { null }
+                is CosDict -> listOf(p)
+                is CosArray -> p.items.map { resolve(it) as? CosDict }
+                else -> List(filters.size) { null }
+            }
+        filters.forEachIndexed { i, filter ->
+            data =
+                when (filter) {
+                    "FlateDecode", "Fl" -> {
+                        val inflated = inflate(data)
+                        applyPredictor(inflated, parmsList.getOrNull(i))
+                    }
+
+                    else -> throw PdfParseException("unsupported stream filter $filter")
+                }
         }
         return data
     }
@@ -474,7 +527,10 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
         return out.toByteArray()
     }
 
-    private fun applyPredictor(data: ByteArray, parms: CosDict?): ByteArray {
+    private fun applyPredictor(
+        data: ByteArray,
+        parms: CosDict?,
+    ): ByteArray {
         val predictor = ((parms?.get("Predictor") as? CosInt)?.value ?: 1L).toInt()
         if (predictor < 10) return data // 1 = none, 2 = TIFF (unused for xref)
         val columns = ((parms?.get("Columns") as? CosInt)?.value ?: 1L).toInt()
@@ -489,7 +545,9 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
             val filterType = data[r * (rowLength + 1)].toInt() and 0xff
             val row = data.copyOfRange(r * (rowLength + 1) + 1, (r + 1) * (rowLength + 1))
             when (filterType) {
-                0 -> { Unit }
+                0 -> {
+                    Unit
+                }
                 1 -> for (i in bytesPerPixel until rowLength) {
                     row[i] = (row[i] + row[i - bytesPerPixel]).toByte()
                 }
@@ -512,7 +570,14 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
                     val pa = kotlin.math.abs(p - a)
                     val pb = kotlin.math.abs(p - b)
                     val pc = kotlin.math.abs(p - c)
-                    val pred = if (pa <= pb && pa <= pc) a else if (pb <= pc) b else c
+                    val pred =
+                        if (pa <= pb && pa <= pc) {
+                            a
+                        } else if (pb <= pc) {
+                            b
+                        } else {
+                            c
+                        }
                     row[i] = (row[i] + pred).toByte()
                 }
 
@@ -572,10 +637,12 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
                 return parseObject(cur) as? CosDict
                     ?: throw PdfParseException("trailer is not a dictionary")
             }
-            val start = (parseNumber(cur) as? CosInt)?.value?.toInt()
-                ?: throw PdfParseException("bad xref subsection header")
-            val count = (parseNumber(cur) as? CosInt)?.value?.toInt()
-                ?: throw PdfParseException("bad xref subsection header")
+            val start =
+                (parseNumber(cur) as? CosInt)?.value?.toInt()
+                    ?: throw PdfParseException("bad xref subsection header")
+            val count =
+                (parseNumber(cur) as? CosInt)?.value?.toInt()
+                    ?: throw PdfParseException("bad xref subsection header")
             skipWs(cur)
             for (i in 0 until count) {
                 val entry = String(readBytes(cur.pos, 18), Charsets.ISO_8859_1)
@@ -596,18 +663,23 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
 
     private fun parseXrefStreamAt(offset: Long): CosDict {
         val cur = Cursor(offset)
-        val num = (parseNumber(cur) as? CosInt)?.value?.toInt()
-            ?: throw PdfParseException("bad xref stream header")
-        val stream = parseIndirectObjectAt(offset, num) as? CosStream
-            ?: throw PdfParseException("xref stream is not a stream")
+        val num =
+            (parseNumber(cur) as? CosInt)?.value?.toInt()
+                ?: throw PdfParseException("bad xref stream header")
+        val stream =
+            parseIndirectObjectAt(offset, num) as? CosStream
+                ?: throw PdfParseException("xref stream is not a stream")
         val dict = stream.dict
         val data = decodeStream(stream)
-        val w = (dict["W"] as? CosArray)?.items?.map { (it as CosInt).value.toInt() }
-            ?: throw PdfParseException("xref stream without /W")
-        val sizeEntry = (dict["Size"] as? CosInt)?.value?.toInt()
-            ?: throw PdfParseException("xref stream without /Size")
-        val index = (dict["Index"] as? CosArray)?.items?.map { (it as CosInt).value.toInt() }
-            ?: listOf(0, sizeEntry)
+        val w =
+            (dict["W"] as? CosArray)?.items?.map { (it as CosInt).value.toInt() }
+                ?: throw PdfParseException("xref stream without /W")
+        val sizeEntry =
+            (dict["Size"] as? CosInt)?.value?.toInt()
+                ?: throw PdfParseException("xref stream without /Size")
+        val index =
+            (dict["Index"] as? CosArray)?.items?.map { (it as CosInt).value.toInt() }
+                ?: listOf(0, sizeEntry)
         val entryLength = w.sum()
         var pos = 0
         var i = 0
@@ -646,9 +718,10 @@ internal class PdfFile private constructor(private val buf: ByteBuffer) {
 
     companion object {
         fun open(file: File): PdfFile {
-            val mapped = RandomAccessFile(file, "r").use { raf ->
-                raf.channel.map(FileChannel.MapMode.READ_ONLY, 0, raf.length())
-            }
+            val mapped =
+                RandomAccessFile(file, "r").use { raf ->
+                    raf.channel.map(FileChannel.MapMode.READ_ONLY, 0, raf.length())
+                }
             return PdfFile(mapped).apply { parseXrefChain() }
         }
     }

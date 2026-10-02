@@ -43,7 +43,6 @@ class TocDialogFragment(
     private val onNavigate: (Int) -> Unit,
     private val onTocChanged: (List<TocItem>) -> Unit,
 ) : ComposeDialogFragment() {
-
     init {
         shouldShowInCenter = true
     }
@@ -58,18 +57,20 @@ class TocDialogFragment(
 
             Text(
                 text = stringResource(R.string.dialog_toc_title),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.onBackground,
             )
             HorizontalSeparator()
             TocList(
-                modifier = Modifier
-                    .weight(1F, fill = false)
-                    .width(300.dp)
-                    .padding(2.dp),
+                modifier =
+                    Modifier
+                        .weight(1F, fill = false)
+                        .width(300.dp)
+                        .padding(2.dp),
                 items = items,
                 isEditable = isEditable,
                 onNavigate = { index ->
@@ -107,9 +108,10 @@ private fun TocList(
     onItemMoved: (Int, Int) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
-    val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
-        onItemMoved(from.index, to.index)
-    }
+    val reorderableState =
+        rememberReorderableLazyListState(lazyListState) { from, to ->
+            onItemMoved(from.index, to.index)
+        }
 
     LazyColumn(
         modifier = modifier,
@@ -123,13 +125,13 @@ private fun TocList(
                 ) { isDragging ->
                     val borderWidth = if (isDragging) 1.5.dp else (-1).dp
                     TocRow(
-                        modifier = Modifier
-                            .border(
-                                borderWidth,
-                                MaterialTheme.colors.primary,
-                                RoundedCornerShape(3.dp)
-                            )
-                            .background(MaterialTheme.colors.background),
+                        modifier =
+                            Modifier
+                                .border(
+                                    borderWidth,
+                                    MaterialTheme.colors.primary,
+                                    RoundedCornerShape(3.dp),
+                                ).background(MaterialTheme.colors.background),
                         dragModifier = Modifier.draggableHandle(),
                         item = item,
                         isEditable = true,
@@ -161,17 +163,19 @@ private fun TocRow(
     onDelete: () -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 4.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clickable { onClick() }
+                .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (isEditable) {
             Icon(
-                modifier = dragModifier
-                    .padding(start = 8.dp)
-                    .size(24.dp),
+                modifier =
+                    dragModifier
+                        .padding(start = 8.dp)
+                        .size(24.dp),
                 imageVector = Icons.Outlined.DragHandle,
                 contentDescription = null,
                 tint = MaterialTheme.colors.onBackground,
@@ -179,9 +183,10 @@ private fun TocRow(
         }
         Text(
             text = item.title,
-            modifier = Modifier
-                .weight(1F)
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+            modifier =
+                Modifier
+                    .weight(1F)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
             fontSize = 15.sp,
             color = MaterialTheme.colors.onBackground,
             maxLines = 2,

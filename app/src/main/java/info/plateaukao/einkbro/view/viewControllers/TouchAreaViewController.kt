@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.view.MotionEvent
 import android.view.View
+import info.plateaukao.einkbro.browser.BrowserAction
+import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.preference.TouchAreaType
+import info.plateaukao.einkbro.preference.TouchConfig
 import info.plateaukao.einkbro.view.MainContentLayout
 import info.plateaukao.einkbro.view.TouchAreaHintView
-import info.plateaukao.einkbro.preference.ConfigManager
-import info.plateaukao.einkbro.preference.TouchConfig
-import info.plateaukao.einkbro.preference.TouchAreaType
-import info.plateaukao.einkbro.browser.BrowserAction
 import info.plateaukao.einkbro.view.handlers.GestureHandler
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -73,7 +73,10 @@ class TouchAreaViewController(
     private var dragOffsetY = 0f
     private var draggedCustomizeY = 0
 
-    private fun customOnTouch(view: View, event: MotionEvent): Boolean {
+    private fun customOnTouch(
+        view: View,
+        event: MotionEvent,
+    ): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 dragOffsetY = view.y - event.rawY
@@ -174,7 +177,8 @@ class TouchAreaViewController(
                     keyLeftAction()
                     return@setOnLongClickListener true
                 }
-                if (!config.touch.switchTouchAreaAction) pageTopAction() else pageBottomAction(); true
+                if (!config.touch.switchTouchAreaAction) pageTopAction() else pageBottomAction()
+                true
             }
         }
         with(touchAreaPageDown) {
@@ -186,7 +190,8 @@ class TouchAreaViewController(
                     keyRightAction()
                     return@setOnLongClickListener true
                 }
-                if (!config.touch.switchTouchAreaAction) pageBottomAction() else pageTopAction(); true
+                if (!config.touch.switchTouchAreaAction) pageBottomAction() else pageTopAction()
+                true
             }
         }
         with(touchAreaDragCustomize) {
@@ -205,7 +210,10 @@ class TouchAreaViewController(
     // Corner-hint views toggle their own drawing; the Long type's plain views
     // keep the dashed-line background, so its alpha is toggled instead of
     // swapping the drawable.
-    private fun setHintVisible(view: View, visible: Boolean) {
+    private fun setHintVisible(
+        view: View,
+        visible: Boolean,
+    ) {
         if (view is TouchAreaHintView) {
             view.hintVisible = visible
         } else {
@@ -226,11 +234,14 @@ class TouchAreaViewController(
         setHintVisible(touchAreaPageDown, true)
         if (!config.touch.touchAreaHint) {
             Timer("showTouchAreaHint", false)
-                .schedule(object : TimerTask() {
-                    override fun run() {
-                        hideTouchAreaHint()
-                    }
-                }, 1000)
+                .schedule(
+                    object : TimerTask() {
+                        override fun run() {
+                            hideTouchAreaHint()
+                        }
+                    },
+                    1000,
+                )
         }
     }
 
@@ -247,6 +258,7 @@ class TouchAreaViewController(
     }
 
     private var disabledTemporarily = false
+
     fun maybeDisableTemporarily() {
         if (config.touch.touchAreaType == TouchAreaType.Ebook) return
         if (config.touch.enableTouchTurn && config.touch.touchAreaHint && config.touch.hideTouchAreaWhenInput) {

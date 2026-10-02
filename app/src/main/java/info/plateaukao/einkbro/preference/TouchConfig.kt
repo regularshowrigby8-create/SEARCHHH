@@ -4,15 +4,16 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import info.plateaukao.einkbro.browser.BrowserAction
 
-class TouchConfig(private val sp: SharedPreferences) {
-
+class TouchConfig(
+    private val sp: SharedPreferences,
+) {
     var enableTouchTurn by BooleanPreference(sp, K_ENABLE_TOUCH, false)
     var isMultitouchEnabled by BooleanPreference(sp, K_MULTITOUCH, false)
     var useUpDownPageTurn by BooleanPreference(sp, K_UPDOWN_PAGE_TURN, false)
     var disableLongPressTouchArea by BooleanPreference(
         sp,
         "sp_disable_long_press_touch_area",
-        false
+        false,
     )
     var touchAreaHint by BooleanPreference(sp, K_TOUCH_HINT, true)
     var volumePageTurn by BooleanPreference(sp, K_VOLUME_PAGE_TURN, true)
@@ -40,7 +41,7 @@ class TouchConfig(private val sp: SharedPreferences) {
     var pageReservedOffsetInString: String by StringPreference(
         sp,
         K_PRESERVE_HEIGHT_IN_STRING,
-        pageReservedOffset.toString()
+        pageReservedOffset.toString(),
     )
 
     var multitouchUp by BrowserActionPreference(sp, K_MULTITOUCH_UP)
@@ -54,20 +55,28 @@ class TouchConfig(private val sp: SharedPreferences) {
     var navButtonLongClickGesture by BrowserActionPreference(
         sp,
         K_GESTURE_NAV_LONG_CLICK,
-        defaultValue = BrowserAction.ShowOverview
+        defaultValue = BrowserAction.ShowOverview,
     )
 
     var upClickGesture by BrowserActionPreference(
-        sp, "K_UP_CLICK_GESTURE", BrowserAction.PageUp
+        sp,
+        "K_UP_CLICK_GESTURE",
+        BrowserAction.PageUp,
     )
     var downClickGesture by BrowserActionPreference(
-        sp, "K_DOWN_CLICK_GESTURE", BrowserAction.PageDown
+        sp,
+        "K_DOWN_CLICK_GESTURE",
+        BrowserAction.PageDown,
     )
     var upLongClickGesture by BrowserActionPreference(
-        sp, "K_UP_LONG_CLICK_GESTURE", BrowserAction.JumpToTop
+        sp,
+        "K_UP_LONG_CLICK_GESTURE",
+        BrowserAction.JumpToTop,
     )
     var downLongClickGesture by BrowserActionPreference(
-        sp, "K_DOWN_LONG_CLICK_GESTURE", BrowserAction.JumpToBottom
+        sp,
+        "K_DOWN_LONG_CLICK_GESTURE",
+        BrowserAction.JumpToBottom,
     )
 
     companion object {

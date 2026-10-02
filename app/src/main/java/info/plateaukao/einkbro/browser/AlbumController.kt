@@ -13,8 +13,10 @@ interface AlbumController {
     var isAIPage: Boolean
 
     fun activate()
+
     fun deactivate()
 
     fun pauseWebView()
+
     fun resumeWebView()
 }

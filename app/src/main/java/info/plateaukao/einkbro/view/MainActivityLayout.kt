@@ -23,67 +23,78 @@ class MainActivityLayout(
 ) {
     companion object {
         fun create(context: Context): MainActivityLayout {
-            val root = ConstraintLayout(context).apply {
-                layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
-                )
-                fitsSystemWindows = false
-            }
+            val root =
+                ConstraintLayout(context).apply {
+                    layoutParams =
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        )
+                    fitsSystemWindows = false
+                }
 
             // appBar FrameLayout
-            val appBar = FrameLayout(context).apply {
-                id = R.id.appBar
-                layoutParams = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.MATCH_PARENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT
-                )
-            }
+            val appBar =
+                FrameLayout(context).apply {
+                    id = R.id.appBar
+                    layoutParams =
+                        ConstraintLayout.LayoutParams(
+                            ConstraintLayout.LayoutParams.MATCH_PARENT,
+                            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                        )
+                }
 
             // ComposeView for icon bar
-            val composeIconBar = ComposeView(context).apply {
-                id = R.id.compose_icon_bar
-                layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT
-                )
-            }
+            val composeIconBar =
+                ComposeView(context).apply {
+                    id = R.id.compose_icon_bar
+                    layoutParams =
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                        )
+                }
             appBar.addView(composeIconBar)
 
             // ComposeView for search panel
-            val mainSearchPanel = ComposeView(context).apply {
-                id = R.id.main_search_panel
-                layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT
-                )
-            }
+            val mainSearchPanel =
+                ComposeView(context).apply {
+                    id = R.id.main_search_panel
+                    layoutParams =
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                        )
+                }
             appBar.addView(mainSearchPanel)
 
             root.addView(appBar)
 
             // TwoPaneLayout
-            val twoPanelLayout = TwoPaneLayout(context).apply {
-                id = R.id.two_panel_layout
-                layoutParams = ConstraintLayout.LayoutParams(0, 0)
-            }
+            val twoPanelLayout =
+                TwoPaneLayout(context).apply {
+                    id = R.id.two_panel_layout
+                    layoutParams = ConstraintLayout.LayoutParams(0, 0)
+                }
 
             // Create main content and add it to TwoPaneLayout
             val mainContentLayout = MainContentLayout.create(context)
-            mainContentLayout.root.layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-            )
+            mainContentLayout.root.layoutParams =
+                FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                )
             twoPanelLayout.addView(mainContentLayout.root)
 
             root.addView(twoPanelLayout)
 
             // inputUrl ComposeView
-            val inputUrl = ComposeView(context).apply {
-                id = R.id.input_url
-                layoutParams = ConstraintLayout.LayoutParams(0, 0)
-                visibility = View.INVISIBLE
-            }
+            val inputUrl =
+                ComposeView(context).apply {
+                    id = R.id.input_url
+                    layoutParams = ConstraintLayout.LayoutParams(0, 0)
+                    visibility = View.INVISIBLE
+                }
             root.addView(inputUrl)
 
             // contentSeparator: the toolbar's page-facing edge as a themed
@@ -92,46 +103,53 @@ class MainActivityLayout(
             // and the page side stays transparent (stamp bites / sketch
             // wobble are die-cut, showing the page through them) — the same
             // semantics as the dialog frames.
-            val contentSeparator = ThemedEdgeBorderView(context).apply {
-                id = R.id.content_separator
-                layoutParams = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.MATCH_PARENT,
-                    (5 * context.resources.displayMetrics.density).toInt(),
-                )
-            }
+            val contentSeparator =
+                ThemedEdgeBorderView(context).apply {
+                    id = R.id.content_separator
+                    layoutParams =
+                        ConstraintLayout.LayoutParams(
+                            ConstraintLayout.LayoutParams.MATCH_PARENT,
+                            (5 * context.resources.displayMetrics.density).toInt(),
+                        )
+                }
             root.addView(contentSeparator)
 
             // layoutOverview ComposeView
-            val layoutOverview = ComposeView(context).apply {
-                id = R.id.layout_overview
-                layoutParams = ConstraintLayout.LayoutParams(0, 0)
-                visibility = View.INVISIBLE
-            }
+            val layoutOverview =
+                ComposeView(context).apply {
+                    id = R.id.layout_overview
+                    layoutParams = ConstraintLayout.LayoutParams(0, 0)
+                    visibility = View.INVISIBLE
+                }
             root.addView(layoutOverview)
 
             // statusBar ComposeView (shown when toolbar is hidden)
-            val statusBar = ComposeView(context).apply {
-                id = R.id.status_bar
-                layoutParams = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.MATCH_PARENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                )
-                visibility = View.GONE
-            }
+            val statusBar =
+                ComposeView(context).apply {
+                    id = R.id.status_bar
+                    layoutParams =
+                        ConstraintLayout.LayoutParams(
+                            ConstraintLayout.LayoutParams.MATCH_PARENT,
+                            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                        )
+                    visibility = View.GONE
+                }
             root.addView(statusBar)
 
             // sideTabBar ComposeView: the tab strip for vertical toolbar mode, where
             // the 50dp toolbar column has no room for it. Positioned at runtime by
             // ViewUnit.updateAppbarPosition; GONE for top/bottom toolbars, which keep
             // the strip inside the app bar itself.
-            val sideTabBar = ComposeView(context).apply {
-                id = R.id.side_tab_bar
-                layoutParams = ConstraintLayout.LayoutParams(
-                    0,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                )
-                visibility = View.GONE
-            }
+            val sideTabBar =
+                ComposeView(context).apply {
+                    id = R.id.side_tab_bar
+                    layoutParams =
+                        ConstraintLayout.LayoutParams(
+                            0,
+                            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                        )
+                    visibility = View.GONE
+                }
             root.addView(sideTabBar)
 
             // Apply constraints

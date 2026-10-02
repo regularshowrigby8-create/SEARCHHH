@@ -42,9 +42,10 @@ class MainContentLayout(
     val externalSearchActionContainer: LinearLayout,
 ) {
     companion object {
-        private fun dpToPx(context: Context, dp: Int): Int {
-            return (dp * context.resources.displayMetrics.density).toInt()
-        }
+        private fun dpToPx(
+            context: Context,
+            dp: Int,
+        ): Int = (dp * context.resources.displayMetrics.density).toInt()
 
         private fun resolveBackgroundColor(context: Context): Int {
             val tv = TypedValue()
@@ -66,287 +67,400 @@ class MainContentLayout(
         }
 
         fun create(context: Context): MainContentLayout {
-            val root = ConstraintLayout(context).apply {
-                layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
-                )
-            }
+            val root =
+                ConstraintLayout(context).apply {
+                    layoutParams =
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        )
+                }
 
             // SwipeRefreshLayout
-            val swipeRefreshLayout = MultiTouchSwipeRefreshLayout(context).apply {
-                id = R.id.swipe_refresh_layout
-                layoutParams = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.MATCH_PARENT,
-                    ConstraintLayout.LayoutParams.MATCH_PARENT
-                )
-            }
+            val swipeRefreshLayout =
+                MultiTouchSwipeRefreshLayout(context).apply {
+                    id = R.id.swipe_refresh_layout
+                    layoutParams =
+                        ConstraintLayout.LayoutParams(
+                            ConstraintLayout.LayoutParams.MATCH_PARENT,
+                            ConstraintLayout.LayoutParams.MATCH_PARENT,
+                        )
+                }
             root.addView(swipeRefreshLayout)
 
             // main_content FrameLayout inside SwipeRefreshLayout
-            val mainContent = FrameLayout(context).apply {
-                id = R.id.main_content
-                layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
-                )
-                setBackgroundColor(resolveBackgroundColor(context))
-            }
+            val mainContent =
+                FrameLayout(context).apply {
+                    id = R.id.main_content
+                    layoutParams =
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        )
+                    setBackgroundColor(resolveBackgroundColor(context))
+                }
             swipeRefreshLayout.addView(mainContent)
 
             // Touch area views. TouchAreaHintView draws only the corners that lie
             // inside the screen; the full-height Long areas keep the dashed line
             // because none of their corners is ever on screen.
-            val touchAreaMiddleLeft = TouchAreaHintView(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-            }
-            root.addView(touchAreaMiddleLeft, ConstraintLayout.LayoutParams(
-                dpToPx(context, 150), dpToPx(context, 250)
-            ).apply {
-                marginStart = dpToPx(context, -1)
-            })
+            val touchAreaMiddleLeft =
+                TouchAreaHintView(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                }
+            root.addView(
+                touchAreaMiddleLeft,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 150),
+                        dpToPx(context, 250),
+                    ).apply {
+                        marginStart = dpToPx(context, -1)
+                    },
+            )
 
-            val touchAreaLongLeft = View(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-                background = ContextCompat.getDrawable(context, R.drawable.touch_area_border)?.mutate()
-            }
-            root.addView(touchAreaLongLeft, ConstraintLayout.LayoutParams(
-                dpToPx(context, 150), 0
-            ).apply {
-                marginStart = dpToPx(context, -5)
-                topMargin = dpToPx(context, -5)
-                bottomMargin = dpToPx(context, -5)
-            })
+            val touchAreaLongLeft =
+                View(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                    background = ContextCompat.getDrawable(context, R.drawable.touch_area_border)?.mutate()
+                }
+            root.addView(
+                touchAreaLongLeft,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 150),
+                        0,
+                    ).apply {
+                        marginStart = dpToPx(context, -5)
+                        topMargin = dpToPx(context, -5)
+                        bottomMargin = dpToPx(context, -5)
+                    },
+            )
 
-            val touchAreaBottomLeft = TouchAreaHintView(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-            }
-            root.addView(touchAreaBottomLeft, ConstraintLayout.LayoutParams(
-                dpToPx(context, 150), dpToPx(context, 250)
-            ).apply {
-                marginStart = dpToPx(context, -2)
-                bottomMargin = dpToPx(context, -2)
-            })
+            val touchAreaBottomLeft =
+                TouchAreaHintView(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                }
+            root.addView(
+                touchAreaBottomLeft,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 150),
+                        dpToPx(context, 250),
+                    ).apply {
+                        marginStart = dpToPx(context, -2)
+                        bottomMargin = dpToPx(context, -2)
+                    },
+            )
 
-            val touchAreaMiddleRight = TouchAreaHintView(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-            }
-            root.addView(touchAreaMiddleRight, ConstraintLayout.LayoutParams(
-                dpToPx(context, 150), dpToPx(context, 250)
-            ).apply {
-                marginEnd = dpToPx(context, -2)
-            })
+            val touchAreaMiddleRight =
+                TouchAreaHintView(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                }
+            root.addView(
+                touchAreaMiddleRight,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 150),
+                        dpToPx(context, 250),
+                    ).apply {
+                        marginEnd = dpToPx(context, -2)
+                    },
+            )
 
-            val touchAreaLongRight = View(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-                background = ContextCompat.getDrawable(context, R.drawable.touch_area_border)?.mutate()
-            }
-            root.addView(touchAreaLongRight, ConstraintLayout.LayoutParams(
-                dpToPx(context, 150), 0
-            ).apply {
-                topMargin = dpToPx(context, -5)
-                marginEnd = dpToPx(context, -5)
-                bottomMargin = dpToPx(context, -5)
-            })
+            val touchAreaLongRight =
+                View(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                    background = ContextCompat.getDrawable(context, R.drawable.touch_area_border)?.mutate()
+                }
+            root.addView(
+                touchAreaLongRight,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 150),
+                        0,
+                    ).apply {
+                        topMargin = dpToPx(context, -5)
+                        marginEnd = dpToPx(context, -5)
+                        bottomMargin = dpToPx(context, -5)
+                    },
+            )
 
-            val touchAreaMiddleDrag = View(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-                setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            }
-            root.addView(touchAreaMiddleDrag, ConstraintLayout.LayoutParams(
-                dpToPx(context, 40), dpToPx(context, 40)
-            ).apply {
-                marginStart = dpToPx(context, -20)
-                topMargin = dpToPx(context, -20)
-            })
+            val touchAreaMiddleDrag =
+                View(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                    setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                }
+            root.addView(
+                touchAreaMiddleDrag,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 40),
+                        dpToPx(context, 40),
+                    ).apply {
+                        marginStart = dpToPx(context, -20)
+                        topMargin = dpToPx(context, -20)
+                    },
+            )
 
-            val touchAreaBottomRight = TouchAreaHintView(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-            }
-            root.addView(touchAreaBottomRight, ConstraintLayout.LayoutParams(
-                dpToPx(context, 150), dpToPx(context, 250)
-            ).apply {
-                marginEnd = dpToPx(context, -2)
-                bottomMargin = dpToPx(context, -2)
-            })
+            val touchAreaBottomRight =
+                TouchAreaHintView(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                }
+            root.addView(
+                touchAreaBottomRight,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 150),
+                        dpToPx(context, 250),
+                    ).apply {
+                        marginEnd = dpToPx(context, -2)
+                        bottomMargin = dpToPx(context, -2)
+                    },
+            )
 
-            val touchAreaBottomDrag = View(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-                setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            }
-            root.addView(touchAreaBottomDrag, ConstraintLayout.LayoutParams(
-                dpToPx(context, 40), dpToPx(context, 40)
-            ).apply {
-                marginStart = dpToPx(context, -20)
-                topMargin = dpToPx(context, -20)
-            })
+            val touchAreaBottomDrag =
+                View(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                    setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                }
+            root.addView(
+                touchAreaBottomDrag,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 40),
+                        dpToPx(context, 40),
+                    ).apply {
+                        marginStart = dpToPx(context, -20)
+                        topMargin = dpToPx(context, -20)
+                    },
+            )
 
-            val touchAreaRight1 = TouchAreaHintView(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-            }
-            root.addView(touchAreaRight1, ConstraintLayout.LayoutParams(
-                dpToPx(context, 150), dpToPx(context, 150)
-            ).apply {
-                marginEnd = dpToPx(context, -1)
-                bottomMargin = dpToPx(context, 150)
-            })
+            val touchAreaRight1 =
+                TouchAreaHintView(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                }
+            root.addView(
+                touchAreaRight1,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 150),
+                        dpToPx(context, 150),
+                    ).apply {
+                        marginEnd = dpToPx(context, -1)
+                        bottomMargin = dpToPx(context, 150)
+                    },
+            )
 
-            val touchAreaRight2 = TouchAreaHintView(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-            }
-            root.addView(touchAreaRight2, ConstraintLayout.LayoutParams(
-                dpToPx(context, 150), dpToPx(context, 150)
-            ).apply {
-                marginEnd = dpToPx(context, -1)
-                bottomMargin = dpToPx(context, -2)
-            })
+            val touchAreaRight2 =
+                TouchAreaHintView(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                }
+            root.addView(
+                touchAreaRight2,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 150),
+                        dpToPx(context, 150),
+                    ).apply {
+                        marginEnd = dpToPx(context, -1)
+                        bottomMargin = dpToPx(context, -2)
+                    },
+            )
 
-            val touchAreaRightDrag = View(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-                setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            }
-            root.addView(touchAreaRightDrag, ConstraintLayout.LayoutParams(
-                dpToPx(context, 40), dpToPx(context, 40)
-            ).apply {
-                marginStart = dpToPx(context, -20)
-                topMargin = dpToPx(context, -20)
-            })
+            val touchAreaRightDrag =
+                View(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                    setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                }
+            root.addView(
+                touchAreaRightDrag,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 40),
+                        dpToPx(context, 40),
+                    ).apply {
+                        marginStart = dpToPx(context, -20)
+                        topMargin = dpToPx(context, -20)
+                    },
+            )
 
-            val touchAreaLeft1 = TouchAreaHintView(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-            }
-            root.addView(touchAreaLeft1, ConstraintLayout.LayoutParams(
-                dpToPx(context, 150), dpToPx(context, 150)
-            ).apply {
-                marginStart = dpToPx(context, -1)
-                bottomMargin = dpToPx(context, 150)
-            })
+            val touchAreaLeft1 =
+                TouchAreaHintView(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                }
+            root.addView(
+                touchAreaLeft1,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 150),
+                        dpToPx(context, 150),
+                    ).apply {
+                        marginStart = dpToPx(context, -1)
+                        bottomMargin = dpToPx(context, 150)
+                    },
+            )
 
-            val touchAreaLeft2 = TouchAreaHintView(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-            }
-            root.addView(touchAreaLeft2, ConstraintLayout.LayoutParams(
-                dpToPx(context, 150), dpToPx(context, 150)
-            ).apply {
-                marginStart = dpToPx(context, -1)
-                bottomMargin = dpToPx(context, -2)
-            })
+            val touchAreaLeft2 =
+                TouchAreaHintView(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                }
+            root.addView(
+                touchAreaLeft2,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 150),
+                        dpToPx(context, 150),
+                    ).apply {
+                        marginStart = dpToPx(context, -1)
+                        bottomMargin = dpToPx(context, -2)
+                    },
+            )
 
-            val touchAreaLeftDrag = View(context).apply {
-                id = View.generateViewId()
-                visibility = View.INVISIBLE
-                setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            }
-            root.addView(touchAreaLeftDrag, ConstraintLayout.LayoutParams(
-                dpToPx(context, 40), dpToPx(context, 40)
-            ).apply {
-                topMargin = dpToPx(context, -20)
-                marginEnd = dpToPx(context, -20)
-            })
+            val touchAreaLeftDrag =
+                View(context).apply {
+                    id = View.generateViewId()
+                    visibility = View.INVISIBLE
+                    setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                }
+            root.addView(
+                touchAreaLeftDrag,
+                ConstraintLayout
+                    .LayoutParams(
+                        dpToPx(context, 40),
+                        dpToPx(context, 40),
+                    ).apply {
+                        topMargin = dpToPx(context, -20)
+                        marginEnd = dpToPx(context, -20)
+                    },
+            )
 
             // Horizontal ProgressBar (used when toolbar is at top/bottom)
-            val mainProgressBar = CenterExpandProgressBar(context).apply {
-                id = R.id.main_progress_bar
-                max = 100
-                // classic left-anchored reveal; drawn in the themed border style
-                anchor = CenterExpandProgressBar.Anchor.START
-            }
-            root.addView(mainProgressBar, ConstraintLayout.LayoutParams(
-                0, dpToPx(context, 4)
-            ).apply {
-                // maxHeight is handled by the height constraint
-            })
+            val mainProgressBar =
+                CenterExpandProgressBar(context).apply {
+                    id = R.id.main_progress_bar
+                    max = 100
+                    // classic left-anchored reveal; drawn in the themed border style
+                    anchor = CenterExpandProgressBar.Anchor.START
+                }
+            root.addView(
+                mainProgressBar,
+                ConstraintLayout
+                    .LayoutParams(
+                        0,
+                        dpToPx(context, 4),
+                    ).apply {
+                        // maxHeight is handled by the height constraint
+                    },
+            )
 
             // Vertical progress bar (used when toolbar is on left/right); fills from center outward
-            val mainProgressBarVertical = CenterExpandProgressBar(context).apply {
-                id = R.id.main_progress_bar_vertical
-                max = 100
-                orientation = CenterExpandProgressBar.Orientation.VERTICAL
-                visibility = View.GONE
-            }
-            root.addView(mainProgressBarVertical, ConstraintLayout.LayoutParams(
-                dpToPx(context, 4), 0
-            ))
+            val mainProgressBarVertical =
+                CenterExpandProgressBar(context).apply {
+                    id = R.id.main_progress_bar_vertical
+                    max = 100
+                    orientation = CenterExpandProgressBar.Orientation.VERTICAL
+                    visibility = View.GONE
+                }
+            root.addView(
+                mainProgressBarVertical,
+                ConstraintLayout.LayoutParams(
+                    dpToPx(context, 4),
+                    0,
+                ),
+            )
 
             // fab_imageButtonNav
-            val fabImageButtonNav = TextView(context).apply {
-                id = R.id.fab_imageButtonNav
-                layoutParams = ConstraintLayout.LayoutParams(
-                    dpToPx(context, 80), dpToPx(context, 80)
-                )
-                background = ContextCompat.getDrawable(context, R.drawable.roundcorner)
-                gravity = android.view.Gravity.CENTER
-                setShadowLayer(1.6f, 1.5f, 1.3f, android.graphics.Color.WHITE)
-                setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray))
-                textSize = 22f
-                visibility = View.GONE
-            }
+            val fabImageButtonNav =
+                TextView(context).apply {
+                    id = R.id.fab_imageButtonNav
+                    layoutParams =
+                        ConstraintLayout.LayoutParams(
+                            dpToPx(context, 80),
+                            dpToPx(context, 80),
+                        )
+                    background = ContextCompat.getDrawable(context, R.drawable.roundcorner)
+                    gravity = android.view.Gravity.CENTER
+                    setShadowLayer(1.6f, 1.5f, 1.3f, android.graphics.Color.WHITE)
+                    setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+                    textSize = 22f
+                    visibility = View.GONE
+                }
             root.addView(fabImageButtonNav)
 
             // translation_language
-            val translationLanguage = TextView(context).apply {
-                id = R.id.translation_language
-                val size = dpToPx(context, 40)
-                layoutParams = ConstraintLayout.LayoutParams(size, size)
-                val margin = dpToPx(context, 0) // 0.5dp rounds to 0 or 1
-                background = ThemedBorders.panel(context)
-                gravity = android.view.Gravity.CENTER
-                textAlignment = View.TEXT_ALIGNMENT_CENTER
-                textSize = 16f
-                val tintColor = resolveColorControlNormal(context)
-                visibility = View.GONE
-            }
+            val translationLanguage =
+                TextView(context).apply {
+                    id = R.id.translation_language
+                    val size = dpToPx(context, 40)
+                    layoutParams = ConstraintLayout.LayoutParams(size, size)
+                    val margin = dpToPx(context, 0) // 0.5dp rounds to 0 or 1
+                    background = ThemedBorders.panel(context)
+                    gravity = android.view.Gravity.CENTER
+                    textAlignment = View.TEXT_ALIGNMENT_CENTER
+                    textSize = 16f
+                    val tintColor = resolveColorControlNormal(context)
+                    visibility = View.GONE
+                }
             root.addView(translationLanguage)
 
             // remote_text_search
-            val remoteTextSearch = ImageButton(context).apply {
-                id = R.id.remote_text_search
-                val size = dpToPx(context, 40)
-                layoutParams = ConstraintLayout.LayoutParams(size, size)
-                background = ThemedBorders.panel(context)
-                setImageDrawable(ContextCompat.getDrawable(context, R.drawable.icon_search))
-                val tintColor = resolveColorControlNormal(context)
-                imageTintList = android.content.res.ColorStateList.valueOf(tintColor)
-                contentDescription = "Search"
-            }
+            val remoteTextSearch =
+                ImageButton(context).apply {
+                    id = R.id.remote_text_search
+                    val size = dpToPx(context, 40)
+                    layoutParams = ConstraintLayout.LayoutParams(size, size)
+                    background = ThemedBorders.panel(context)
+                    setImageDrawable(ContextCompat.getDrawable(context, R.drawable.icon_search))
+                    val tintColor = resolveColorControlNormal(context)
+                    imageTintList =
+                        android.content.res.ColorStateList
+                            .valueOf(tintColor)
+                    contentDescription = "Search"
+                }
             root.addView(remoteTextSearch)
 
             // external_search_action_container
-            val externalSearchActionContainer = LinearLayout(context).apply {
-                id = R.id.external_search_action_container
-                val width = dpToPx(context, 40)
-                layoutParams = ConstraintLayout.LayoutParams(width, ConstraintLayout.LayoutParams.WRAP_CONTENT)
-                visibility = View.INVISIBLE
-                orientation = LinearLayout.VERTICAL
-            }
+            val externalSearchActionContainer =
+                LinearLayout(context).apply {
+                    id = R.id.external_search_action_container
+                    val width = dpToPx(context, 40)
+                    layoutParams = ConstraintLayout.LayoutParams(width, ConstraintLayout.LayoutParams.WRAP_CONTENT)
+                    visibility = View.INVISIBLE
+                    orientation = LinearLayout.VERTICAL
+                }
 
             // external_search_close button inside container
-            val externalSearchClose = ImageButton(context).apply {
-                id = R.id.external_search_close
-                val size = dpToPx(context, 40)
-                layoutParams = LinearLayout.LayoutParams(size, size).apply {
-                    val m = dpToPx(context, 0) // 0.5dp
-                    setMargins(m, m, m, m)
+            val externalSearchClose =
+                ImageButton(context).apply {
+                    id = R.id.external_search_close
+                    val size = dpToPx(context, 40)
+                    layoutParams =
+                        LinearLayout.LayoutParams(size, size).apply {
+                            val m = dpToPx(context, 0) // 0.5dp
+                            setMargins(m, m, m, m)
+                        }
+                    background = ThemedBorders.panel(context)
+                    setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_minimize))
+                    val tintColor = resolveColorControlNormal(context)
+                    imageTintList =
+                        android.content.res.ColorStateList
+                            .valueOf(tintColor)
+                    contentDescription = "Close external search"
                 }
-                background = ThemedBorders.panel(context)
-                setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_minimize))
-                val tintColor = resolveColorControlNormal(context)
-                imageTintList = android.content.res.ColorStateList.valueOf(tintColor)
-                contentDescription = "Close external search"
-            }
             externalSearchActionContainer.addView(externalSearchClose)
             root.addView(externalSearchActionContainer)
 

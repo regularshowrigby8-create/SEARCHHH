@@ -19,7 +19,6 @@ import java.io.File
  * the expected pages, outline entries, and text.
  */
 class PdfTocEditorTest {
-
     private fun makePdf(pageTexts: List<String>): File {
         val file = File.createTempFile("src", ".pdf").apply { deleteOnExit() }
         PDDocument().use { doc ->
@@ -39,11 +38,16 @@ class PdfTocEditorTest {
         return file
     }
 
-    private fun textOfPage(doc: PDDocument, pageIndex: Int): String =
-        PDFTextStripper().apply {
-            startPage = pageIndex + 1
-            endPage = pageIndex + 1
-        }.getText(doc).trim()
+    private fun textOfPage(
+        doc: PDDocument,
+        pageIndex: Int,
+    ): String =
+        PDFTextStripper()
+            .apply {
+                startPage = pageIndex + 1
+                endPage = pageIndex + 1
+            }.getText(doc)
+            .trim()
 
     private fun outlineTitles(doc: PDDocument): List<String> {
         val outline = doc.documentCatalog.documentOutline ?: return emptyList()
@@ -61,7 +65,10 @@ class PdfTocEditorTest {
             assertEquals(2, doc.numberOfPages)
             assertEquals("page one", textOfPage(doc, 0))
             assertEquals(listOf("My Article"), outlineTitles(doc))
-            val item = doc.documentCatalog.documentOutline!!.children().first()
+            val item =
+                doc.documentCatalog.documentOutline!!
+                    .children()
+                    .first()
             val dest = item.destination as PDPageDestination
             assertEquals(0, doc.pages.indexOf(dest.page))
         }
@@ -82,9 +89,10 @@ class PdfTocEditorTest {
         val existing = makePdf(listOf("first doc"))
         val extra = makePdf(listOf("second doc page A", "second doc page B"))
         val out = File.createTempFile("out", ".pdf").apply { deleteOnExit() }
-        val ok = out.outputStream().use {
-            PdfTocEditor.appendWithToc(existing, extra, it, "Second Article")
-        }
+        val ok =
+            out.outputStream().use {
+                PdfTocEditor.appendWithToc(existing, extra, it, "Second Article")
+            }
         assertTrue(ok)
 
         PDDocument.load(out).use { doc ->
@@ -93,7 +101,10 @@ class PdfTocEditorTest {
             assertEquals("second doc page A", textOfPage(doc, 1))
             assertEquals("second doc page B", textOfPage(doc, 2))
             assertEquals(listOf("Second Article"), outlineTitles(doc))
-            val item = doc.documentCatalog.documentOutline!!.children().first()
+            val item =
+                doc.documentCatalog.documentOutline!!
+                    .children()
+                    .first()
             val dest = item.destination as PDPageDestination
             assertEquals(1, doc.pages.indexOf(dest.page))
         }
@@ -107,16 +118,20 @@ class PdfTocEditorTest {
 
         val extra1 = makePdf(listOf("chapter two"))
         val merged1 = File.createTempFile("merged1", ".pdf").apply { deleteOnExit() }
-        assertTrue(merged1.outputStream().use {
-            PdfTocEditor.appendWithToc(withToc, extra1, it, "Chapter 2")
-        })
+        assertTrue(
+            merged1.outputStream().use {
+                PdfTocEditor.appendWithToc(withToc, extra1, it, "Chapter 2")
+            },
+        )
 
         // second round parses the first round's incremental update
         val extra2 = makePdf(listOf("chapter three"))
         val merged2 = File.createTempFile("merged2", ".pdf").apply { deleteOnExit() }
-        assertTrue(merged2.outputStream().use {
-            PdfTocEditor.appendWithToc(merged1, extra2, it, "Chapter 3")
-        })
+        assertTrue(
+            merged2.outputStream().use {
+                PdfTocEditor.appendWithToc(merged1, extra2, it, "Chapter 3")
+            },
+        )
 
         PDDocument.load(merged2).use { doc ->
             assertEquals(3, doc.numberOfPages)
@@ -124,7 +139,10 @@ class PdfTocEditorTest {
             assertEquals("base", textOfPage(doc, 0))
             assertEquals("chapter two", textOfPage(doc, 1))
             assertEquals("chapter three", textOfPage(doc, 2))
-            val items = doc.documentCatalog.documentOutline!!.children().toList()
+            val items =
+                doc.documentCatalog.documentOutline!!
+                    .children()
+                    .toList()
             assertEquals(0, doc.pages.indexOf((items[0].destination as PDPageDestination).page))
             assertEquals(1, doc.pages.indexOf((items[1].destination as PDPageDestination).page))
             assertEquals(2, doc.pages.indexOf((items[2].destination as PDPageDestination).page))
@@ -152,9 +170,11 @@ class PdfTocEditorTest {
 
         val extra = makePdf(listOf("appended page"))
         val out = File.createTempFile("out", ".pdf").apply { deleteOnExit() }
-        assertTrue(out.outputStream().use {
-            PdfTocEditor.appendWithToc(existing, extra, it, "Appended")
-        })
+        assertTrue(
+            out.outputStream().use {
+                PdfTocEditor.appendWithToc(existing, extra, it, "Appended")
+            },
+        )
 
         PDDocument.load(out).use { doc ->
             assertEquals(2, doc.numberOfPages)
@@ -173,7 +193,9 @@ class PdfTocEditorTest {
      */
     private fun buildXrefStreamPdf(): File {
         val out = ByteArrayOutputStream()
+
         fun pos() = out.size().toLong()
+
         fun ascii(s: String) = out.write(s.toByteArray(Charsets.ISO_8859_1))
 
         ascii("%PDF-1.5\n")
@@ -182,7 +204,7 @@ class PdfTocEditorTest {
         ascii(
             "3 0 obj\n<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]" +
                 "/Resources<</Font<</F1<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>>>>>" +
-                "/Contents 4 0 R>>\nendobj\n"
+                "/Contents 4 0 R>>\nendobj\n",
         )
         val off4 = pos()
         ascii("4 0 obj\n<</Length ${content.length}>>\nstream\n$content\nendstream\nendobj\n")
@@ -196,7 +218,12 @@ class PdfTocEditorTest {
 
         val off6 = pos()
         val entries = ByteArrayOutputStream()
-        fun entry(type: Int, f2: Long, f3: Int) {
+
+        fun entry(
+            type: Int,
+            f2: Long,
+            f3: Int,
+        ) {
             entries.write(type)
             entries.write(((f2 shr 24) and 0xff).toInt())
             entries.write(((f2 shr 16) and 0xff).toInt())

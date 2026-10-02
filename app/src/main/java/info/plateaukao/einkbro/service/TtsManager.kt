@@ -28,15 +28,15 @@ class TtsManager(
 
     private val utterIdToTextMap = mutableMapOf<Int, String>()
 
-
     init {
         coroutineScope.launch {
             delay(1000)
-            tts = TextToSpeech(context) {
-                if (it == TextToSpeech.SUCCESS) {
-                    isInitialized = true
+            tts =
+                TextToSpeech(context) {
+                    if (it == TextToSpeech.SUCCESS) {
+                        isInitialized = true
+                    }
                 }
-            }
         }
     }
 
@@ -46,6 +46,7 @@ class TtsManager(
 
     private var utterId = 0
     private var isStopped = false
+
     suspend fun readText(
         text: String,
         onProgress: (Int, Int, String) -> Unit,
@@ -60,31 +61,33 @@ class TtsManager(
 
         val currentUtterId = utterId
 
-        tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-            override fun onStart(utteranceId: String) {
-                isPreparing = false
-                onProgress(
-                    (utteranceId.toInt() - currentUtterId) + 1,
-                    chunks.size,
-                    utterIdToTextMap[utteranceId.toInt()] ?: ""
-                )
-                Log.d("TtsManager", "Start speaking $utteranceId")
-            }
-
-            override fun onDone(utteranceId: String) {
-                if (utteranceId.toInt() == utterId - 1) {
-                    Log.d("TtsManager", "complete speaking $utteranceId")
-                    utterIdToTextMap.remove(utteranceId.toInt())
-                    cont.resume(Unit)
+        tts.setOnUtteranceProgressListener(
+            object : UtteranceProgressListener() {
+                override fun onStart(utteranceId: String) {
+                    isPreparing = false
+                    onProgress(
+                        (utteranceId.toInt() - currentUtterId) + 1,
+                        chunks.size,
+                        utterIdToTextMap[utteranceId.toInt()] ?: "",
+                    )
+                    Log.d("TtsManager", "Start speaking $utteranceId")
                 }
-                Log.d("TtsManager", "Done speaking $utteranceId")
-            }
 
-            override fun onError(utteranceId: String) {
-                utterIdToTextMap.remove(utteranceId.toInt())
-                Log.e("TtsManager", "Error on utterance $utteranceId")
-            }
-        })
+                override fun onDone(utteranceId: String) {
+                    if (utteranceId.toInt() == utterId - 1) {
+                        Log.d("TtsManager", "complete speaking $utteranceId")
+                        utterIdToTextMap.remove(utteranceId.toInt())
+                        cont.resume(Unit)
+                    }
+                    Log.d("TtsManager", "Done speaking $utteranceId")
+                }
+
+                override fun onError(utteranceId: String) {
+                    utterIdToTextMap.remove(utteranceId.toInt())
+                    Log.e("TtsManager", "Error on utterance $utteranceId")
+                }
+            },
+        )
 
         for (chunk in chunks) {
             if (isStopped) break

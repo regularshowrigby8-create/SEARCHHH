@@ -32,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import info.plateaukao.einkbro.R
-import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.DisplayConfig
 import info.plateaukao.einkbro.preference.FontType
 import info.plateaukao.einkbro.view.compose.MyTheme
@@ -41,22 +40,29 @@ import info.plateaukao.einkbro.view.dialog.TextInputDialog
 import kotlinx.coroutines.launch
 
 class FontDialogFragment(
-    private val onFontTypeChanged: () -> Unit
+    private val onFontTypeChanged: () -> Unit,
 ) : ComposeDialogFragment() {
     private val customFontNameState: MutableState<String> =
-        mutableStateOf(config.display.customFontInfo?.name.orEmpty())
+        mutableStateOf(
+            config.display.customFontInfo
+                ?.name
+                .orEmpty(),
+        )
 
     private val fontChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == DisplayConfig.K_CUSTOM_FONT) {
-                customFontNameState.value = config.display.customFontInfo?.name.orEmpty()
+                customFontNameState.value =
+                    config.display.customFontInfo
+                        ?.name
+                        .orEmpty()
             }
         }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         config.registerOnSharedPreferenceChangeListener(fontChangeListener)
@@ -97,7 +103,7 @@ class FontDialogFragment(
                         requireContext(),
                         getString(R.string.custom_scale),
                         getString(R.string.custom_scale_desc),
-                        config.display.customFontSize.toString()
+                        config.display.customFontSize.toString(),
                     ).show()?.toIntOrNull()?.let {
                         config.display.fontSize = it
                         config.display.customFontSize = it
@@ -110,23 +116,26 @@ class FontDialogFragment(
     }
 }
 
-val fontSizeList1 = listOf(
-    75,
-    90,
-    100,
-    110,
-)
+val fontSizeList1 =
+    listOf(
+        75,
+        90,
+        100,
+        110,
+    )
 
-val fontSizeList2 = listOf(
-    125,
-    150,
-    175,
-    200,
-)
+val fontSizeList2 =
+    listOf(
+        125,
+        150,
+        175,
+        200,
+    )
 
-val fontSizeList3 = listOf(
-    -1 // Custom
-)
+val fontSizeList3 =
+    listOf(
+        -1, // Custom
+    )
 
 @Composable
 fun MainFontDialog(
@@ -141,9 +150,10 @@ fun MainFontDialog(
     okAction: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
-            .width(IntrinsicSize.Max)
+        modifier =
+            Modifier
+                .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                .width(IntrinsicSize.Max),
     ) {
         Text(
             stringResource(id = R.string.font_size),
@@ -156,8 +166,9 @@ fun MainFontDialog(
             fontSizeList1.map { fontSize ->
                 val isSelect = selectedFontSizeValue == fontSize
                 SelectableText(
-                    modifier = Modifier
-                        .padding(horizontal = 1.dp, vertical = 3.dp),
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 1.dp, vertical = 3.dp),
                     selected = isSelect,
                     text = "$fontSize%",
                 ) {
@@ -170,8 +181,9 @@ fun MainFontDialog(
             fontSizeList2.map { fontSize ->
                 val isSelect = selectedFontSizeValue == fontSize
                 SelectableText(
-                    modifier = Modifier
-                        .padding(horizontal = 1.dp, vertical = 3.dp),
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 1.dp, vertical = 3.dp),
                     selected = isSelect,
                     text = "$fontSize%",
                 ) {
@@ -182,14 +194,16 @@ fun MainFontDialog(
         Row {
             fontSizeList3.map { fontSize ->
                 val isSelect = selectedFontSizeValue !in fontSizeList1 && selectedFontSizeValue !in fontSizeList2
-                val text = if (customFontSizeValue !in fontSizeList1 && customFontSizeValue !in fontSizeList2) {
-                    "$customFontSizeValue%"
-                } else {
-                    stringResource(id = R.string.custom_scale)
-                }
+                val text =
+                    if (customFontSizeValue !in fontSizeList1 && customFontSizeValue !in fontSizeList2) {
+                        "$customFontSizeValue%"
+                    } else {
+                        stringResource(id = R.string.custom_scale)
+                    }
                 SelectableText(
-                    modifier = Modifier
-                        .padding(horizontal = 1.dp, vertical = 3.dp),
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 1.dp, vertical = 3.dp),
                     selected = isSelect,
                     text = text,
                 ) {
@@ -220,13 +234,15 @@ fun MainFontDialog(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        val fontName = customFontName.ifBlank {
-                            stringResource(id = R.string.nothing)
-                        }
+                        val fontName =
+                            customFontName.ifBlank {
+                                stringResource(id = R.string.nothing)
+                            }
                         SelectableText(
-                            modifier = Modifier
-                                .padding(horizontal = 1.dp, vertical = 5.dp)
-                                .weight(1f),
+                            modifier =
+                                Modifier
+                                    .padding(horizontal = 1.dp, vertical = 5.dp)
+                                    .weight(1f),
                             selected = isSelect,
                             text = stringResource(id = fontType.resId) + " ($fontName)",
                         ) {
@@ -252,22 +268,21 @@ fun MainFontDialog(
 }
 
 @Composable
-fun DialogOkButtonBar(
-    okAction: () -> Unit,
-) {
+fun DialogOkButtonBar(okAction: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.End,
     ) {
         HorizontalSeparator()
         TextButton(
-            modifier = Modifier
-                .wrapContentWidth()
-                .fillMaxWidth(),
-            onClick = okAction
+            modifier =
+                Modifier
+                    .wrapContentWidth()
+                    .fillMaxWidth(),
+            onClick = okAction,
         ) {
             Text(
                 stringResource(id = android.R.string.ok),
-                color = MaterialTheme.colors.onBackground
+                color = MaterialTheme.colors.onBackground,
             )
         }
     }

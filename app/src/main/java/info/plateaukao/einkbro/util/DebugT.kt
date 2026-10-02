@@ -3,8 +3,11 @@ package info.plateaukao.einkbro.util
 import android.util.Log
 import info.plateaukao.einkbro.BuildConfig
 
-class DebugT(private val tag: String) {
+class DebugT(
+    private val tag: String,
+) {
     private val startTimeMillis = System.currentTimeMillis()
+
     init {
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "[debugT][$tag]: start")

@@ -9,7 +9,7 @@ data class TimedText(
     @SerialName("pens") val pens: List<Pen> = emptyList(),
     @SerialName("wsWinStyles") val wsWinStyles: List<WsWinStyle> = emptyList(),
     @SerialName("wpWinPositions") val wpWinPositions: List<WpWinPosition> = emptyList(),
-    @SerialName("events") val events: MutableList<Event> = mutableListOf()
+    @SerialName("events") val events: MutableList<Event> = mutableListOf(),
 )
 
 @Serializable
@@ -19,7 +19,7 @@ class Pen
 data class WsWinStyle(
     @SerialName("mhModeHint") var mhModeHint: Int? = null,
     @SerialName("juJustifCode") val juJustifCode: Int? = null,
-    @SerialName("sdScrollDir") var sdScrollDir: Int? = null
+    @SerialName("sdScrollDir") var sdScrollDir: Int? = null,
 )
 
 @Serializable
@@ -28,7 +28,7 @@ data class WpWinPosition(
     @SerialName("ahHorPos") val ahHorPos: Int? = null,
     @SerialName("avVerPos") val avVerPos: Int? = null,
     @SerialName("rcRows") val rcRows: Int? = null,
-    @SerialName("ccCols") val ccCols: Int? = null
+    @SerialName("ccCols") val ccCols: Int? = null,
 )
 
 @Serializable
@@ -39,11 +39,11 @@ data class Event(
     @SerialName("wpWinPosId") val wpWinPosId: Int? = null,
     @SerialName("wsWinStyleId") val wsWinStyleId: Int? = null,
     @SerialName("wWinId") val wWinId: Int? = 1,
-    @SerialName("segs") val segs: MutableList<Segment>? = mutableListOf()
+    @SerialName("segs") val segs: MutableList<Segment>? = mutableListOf(),
 )
 
 @Serializable
 data class Segment(
     @SerialName("utf8") var utf8: String,
-    @SerialName("acAsrConf") val acAsrConf: Int = 0
+    @SerialName("acAsrConf") val acAsrConf: Int = 0,
 )

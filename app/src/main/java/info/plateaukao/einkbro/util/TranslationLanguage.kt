@@ -1,7 +1,9 @@
 package info.plateaukao.einkbro.util
 
-
-enum class TranslationLanguage(val value: String, val language: String) {
+enum class TranslationLanguage(
+    val value: String,
+    val language: String,
+) {
     ZH_TW("zh-TW", "Chinese (Traditional)"),
     ZH_CN("zh-CN", "Chinese (Simplified)"),
     JA("ja", "Japanese"),
@@ -109,7 +111,8 @@ enum class TranslationLanguage(val value: String, val language: String) {
     XH("xh", "Xhosa"),
     YI("yi", "Yiddish"),
     YO("yo", "Yoruba"),
-    ZU("zu", "Zulu");
+    ZU("zu", "Zulu"),
+    ;
 
     companion object {
         fun findByLanguage(lan: String): TranslationLanguage {
@@ -122,5 +125,12 @@ enum class TranslationLanguage(val value: String, val language: String) {
         }
     }
 
-    val languageCode get() = if (value == "zh-TW") "zh-Hant" else if (value == "zh-CN") "zh-Hans" else value
+    val languageCode get() =
+        if (value == "zh-TW") {
+            "zh-Hant"
+        } else if (value == "zh-CN") {
+            "zh-Hans"
+        } else {
+            value
+        }
 }

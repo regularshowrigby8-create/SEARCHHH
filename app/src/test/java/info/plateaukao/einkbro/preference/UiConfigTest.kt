@@ -18,7 +18,6 @@ import org.junit.Before
 import org.junit.Test
 
 class UiConfigTest {
-
     private lateinit var sp: FakeSharedPreferences
     private lateinit var context: Context
     private lateinit var config: UiConfig

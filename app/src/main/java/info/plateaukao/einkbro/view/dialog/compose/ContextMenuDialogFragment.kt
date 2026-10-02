@@ -21,8 +21,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.automirrored.outlined.Segment
-import androidx.compose.material.icons.outlined.Fingerprint
 import androidx.compose.material.icons.outlined.Apps
+import androidx.compose.material.icons.outlined.Fingerprint
 import androidx.compose.material.icons.outlined.RecordVoiceOver
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Share
@@ -54,78 +54,84 @@ data class MenuItemConfig(
     val titleResId: Int,
     val imageVector: ImageVector? = null,
     val iconResId: Int = 0,
-    val shouldShow: (url: String, shouldShowAdBlock: Boolean, shouldShowTranslateImage: Boolean) -> Boolean = { _, _, _ -> true }
+    val shouldShow: (url: String, shouldShowAdBlock: Boolean, shouldShowTranslateImage: Boolean) -> Boolean = { _, _, _ -> true },
 )
 
 data class MenuLayout(
     val firstRowItems: List<MenuItemConfig>,
-    val secondRowItems: List<MenuItemConfig>
+    val secondRowItems: List<MenuItemConfig>,
 )
 
 private fun createMenuLayout(isEbookMode: Boolean = false): MenuLayout {
-    val firstRowItems = listOf(
-        MenuItemConfig(
-            ContextMenuItemType.NewTabForeground,
-            R.string.main_menu_new_tabOpen,
-            Icons.Outlined.Tab
-        ),
-        MenuItemConfig(
-            ContextMenuItemType.NewTabBackground,
-            R.string.main_menu_new_tab,
-            Icons.Outlined.TabUnselected
-        ),
-        MenuItemConfig(
-            ContextMenuItemType.OpenWith,
-            R.string.menu_open_with,
-            Icons.Outlined.Apps
-        ),
-        MenuItemConfig(
-            ContextMenuItemType.SplitScreen,
-            R.string.split_screen,
-            Icons.Outlined.ViewStream
-        ),
-        MenuItemConfig(
-            ContextMenuItemType.ShareLink,
-            R.string.menu_share_link,
-            Icons.Outlined.Share
+    val firstRowItems =
+        listOf(
+            MenuItemConfig(
+                ContextMenuItemType.NewTabForeground,
+                R.string.main_menu_new_tabOpen,
+                Icons.Outlined.Tab,
+            ),
+            MenuItemConfig(
+                ContextMenuItemType.NewTabBackground,
+                R.string.main_menu_new_tab,
+                Icons.Outlined.TabUnselected,
+            ),
+            MenuItemConfig(
+                ContextMenuItemType.OpenWith,
+                R.string.menu_open_with,
+                Icons.Outlined.Apps,
+            ),
+            MenuItemConfig(
+                ContextMenuItemType.SplitScreen,
+                R.string.split_screen,
+                Icons.Outlined.ViewStream,
+            ),
+            MenuItemConfig(
+                ContextMenuItemType.ShareLink,
+                R.string.menu_share_link,
+                Icons.Outlined.Share,
+            ),
         )
-    )
 
-    val secondRowItems = listOfNotNull(
-        if (isEbookMode) MenuItemConfig(
-            ContextMenuItemType.GotoLink,
-            R.string.go_to,
-            Icons.Outlined.Fingerprint
-        ) else null,
-        MenuItemConfig(
-            ContextMenuItemType.SelectText,
-            R.string.text_select,
-            Icons.AutoMirrored.Outlined.Segment
-        ),
-        MenuItemConfig(
-            ContextMenuItemType.TranslateImage,
-            R.string.translate,
-            iconResId = R.drawable.ic_papago,
-            shouldShow = { url, _, shouldShowTranslateImage ->
-                shouldShowTranslateImage && (url.lowercase().contains("jpg") || url.lowercase().contains("png"))
-            }
-        ),
-        MenuItemConfig(
-            ContextMenuItemType.Tts,
-            R.string.menu_tts,
-            Icons.Outlined.RecordVoiceOver
-        ),
-        MenuItemConfig(
-            ContextMenuItemType.SaveAs,
-            R.string.menu_save_as,
-            Icons.Outlined.Save
-        ),
-        MenuItemConfig(
-            ContextMenuItemType.Summarize,
-            R.string.menu_summarize,
-            Icons.AutoMirrored.Outlined.Chat
+    val secondRowItems =
+        listOfNotNull(
+            if (isEbookMode) {
+                MenuItemConfig(
+                    ContextMenuItemType.GotoLink,
+                    R.string.go_to,
+                    Icons.Outlined.Fingerprint,
+                )
+            } else {
+                null
+            },
+            MenuItemConfig(
+                ContextMenuItemType.SelectText,
+                R.string.text_select,
+                Icons.AutoMirrored.Outlined.Segment,
+            ),
+            MenuItemConfig(
+                ContextMenuItemType.TranslateImage,
+                R.string.translate,
+                iconResId = R.drawable.ic_papago,
+                shouldShow = { url, _, shouldShowTranslateImage ->
+                    shouldShowTranslateImage && (url.lowercase().contains("jpg") || url.lowercase().contains("png"))
+                },
+            ),
+            MenuItemConfig(
+                ContextMenuItemType.Tts,
+                R.string.menu_tts,
+                Icons.Outlined.RecordVoiceOver,
+            ),
+            MenuItemConfig(
+                ContextMenuItemType.SaveAs,
+                R.string.menu_save_as,
+                Icons.Outlined.Save,
+            ),
+            MenuItemConfig(
+                ContextMenuItemType.Summarize,
+                R.string.menu_summarize,
+                Icons.AutoMirrored.Outlined.Chat,
+            ),
         )
-    )
 
     return MenuLayout(firstRowItems, secondRowItems)
 }
@@ -139,11 +145,12 @@ class ContextMenuDialogFragment(
     private val itemClicked: (ContextMenuItemType) -> Unit,
     private val itemLongClicked: (ContextMenuItemType) -> Unit = { Unit },
 ) : ComposeDialogFragment() {
-
     private val hoveredItemState = mutableStateOf<ContextMenuItemType?>(null)
     var hoveredItem: ContextMenuItemType?
         get() = hoveredItemState.value
-        set(value) { hoveredItemState.value = value }
+        set(value) {
+            hoveredItemState.value = value
+        }
 
     // Kept as coordinates and resolved to screen rects per hit-test: the dialog
     // window can settle after layout, so rects captured at layout time go stale.
@@ -172,11 +179,14 @@ class ContextMenuDialogFragment(
                     dialog?.dismiss()
                     itemLongClicked(item)
                 }
-            }
+            },
         )
     }
 
-    fun updateHoveredItem(screenX: Float, screenY: Float) {
+    fun updateHoveredItem(
+        screenX: Float,
+        screenY: Float,
+    ) {
         if (!isAdded) return
         if (isFingerAnchorPending) {
             hoveredItem = null
@@ -184,10 +194,12 @@ class ContextMenuDialogFragment(
         }
 
         val position = Offset(screenX, screenY)
-        hoveredItem = itemCoordinates.entries.firstOrNull { (_, coordinates) ->
-            coordinates.isAttached &&
-                Rect(coordinates.positionOnScreen(), coordinates.size.toSize()).contains(position)
-        }?.key
+        hoveredItem =
+            itemCoordinates.entries
+                .firstOrNull { (_, coordinates) ->
+                    coordinates.isAttached &&
+                        Rect(coordinates.positionOnScreen(), coordinates.size.toSize()).contains(position)
+                }?.key
     }
 
     fun onFingerLifted() {
@@ -234,17 +246,19 @@ private fun ContextMenuItems(
     // that width rather than running past the edge (and needing a scroll to reach).
     BoxWithConstraints {
         val columnWidth = minOf(320.dp, maxWidth)
-        val secondRowItems = menuLayout.secondRowItems.filter { item ->
-            item.shouldShow(url, shouldShowAdBlock, shouldShowTranslateImage)
-        }
+        val secondRowItems =
+            menuLayout.secondRowItems.filter { item ->
+                item.shouldShow(url, shouldShowAdBlock, shouldShowTranslateImage)
+            }
         val firstRowCellWidth = fittedMenuItemWidth(menuLayout.firstRowItems.size, columnWidth)
         val secondRowCellWidth = fittedMenuItemWidth(secondRowItems.size, columnWidth)
 
         Column(
-            modifier = Modifier
-                .wrapContentHeight()
-                .width(columnWidth),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .wrapContentHeight()
+                    .width(columnWidth),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row {
                 menuLayout.firstRowItems.forEach { item ->
@@ -256,7 +270,7 @@ private fun ContextMenuItems(
                         isHovered = hoveredItem == item.type,
                         modifier = Modifier.onGloballyPositioned { onItemPositioned(item.type, it) },
                         cellWidth = firstRowCellWidth,
-                        onLongClicked = { onLongClicked(item.type) }
+                        onLongClicked = { onLongClicked(item.type) },
                     ) {
                         onClicked(item.type)
                     }
@@ -273,7 +287,7 @@ private fun ContextMenuItems(
                         isHovered = hoveredItem == item.type,
                         modifier = Modifier.onGloballyPositioned { onItemPositioned(item.type, it) },
                         cellWidth = secondRowCellWidth,
-                        onLongClicked = { onLongClicked(item.type) }
+                        onLongClicked = { onLongClicked(item.type) },
                     ) {
                         onClicked(item.type)
                     }
@@ -307,11 +321,12 @@ fun ContextMenuItem(
         if (isHovered) {
             // Top padding keeps the dot clear of the dialog border.
             Box(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 2.dp)
-                    .size(6.dp)
-                    .background(MaterialTheme.colors.onBackground, shape = CircleShape)
+                modifier =
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 2.dp)
+                        .size(6.dp)
+                        .background(MaterialTheme.colors.onBackground, shape = CircleShape),
             )
         }
         MenuItem(
@@ -322,16 +337,28 @@ fun ContextMenuItem(
             showIcon = showIcon,
             cellWidth = cellWidth,
             onLongClicked = onLongClicked,
-            onClicked = onClicked
+            onClicked = onClicked,
         )
     }
 }
 
 enum class ContextMenuItemType {
-    NewTabForeground, NewTabBackground,
-    ShareLink, SelectText, OpenWith,
-    SaveBookmark, SaveAs,
-    SplitScreen, AdBlock, TranslateImage, Tts, Edit, Delete, Summarize, GotoLink, RefreshIcon
+    NewTabForeground,
+    NewTabBackground,
+    ShareLink,
+    SelectText,
+    OpenWith,
+    SaveBookmark,
+    SaveAs,
+    SplitScreen,
+    AdBlock,
+    TranslateImage,
+    Tts,
+    Edit,
+    Delete,
+    Summarize,
+    GotoLink,
+    RefreshIcon,
 }
 
 @Preview(showBackground = true)

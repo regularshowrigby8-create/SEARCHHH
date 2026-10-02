@@ -35,7 +35,6 @@ class BookmarkContextMenuDlgFragment(
     private val anchorPoint: Point? = null,
     private val onClicked: (ContextMenuItemType) -> Unit,
 ) : ComposeDialogFragment() {
-
     private val hoveredItemState = mutableStateOf<ContextMenuItemType?>(null)
 
     // Kept as coordinates and resolved to screen rects per hit-test: the dialog
@@ -46,7 +45,10 @@ class BookmarkContextMenuDlgFragment(
         // Uses own anchor-point positioning
     }
 
-    fun updateHoveredItem(screenX: Float, screenY: Float) {
+    fun updateHoveredItem(
+        screenX: Float,
+        screenY: Float,
+    ) {
         if (!isAdded) return
         if (isFingerAnchorPending) {
             hoveredItemState.value = null
@@ -54,10 +56,12 @@ class BookmarkContextMenuDlgFragment(
         }
 
         val position = Offset(screenX, screenY)
-        hoveredItemState.value = itemCoordinates.entries.firstOrNull { (_, coordinates) ->
-            coordinates.isAttached &&
-                Rect(coordinates.positionOnScreen(), coordinates.size.toSize()).contains(position)
-        }?.key
+        hoveredItemState.value =
+            itemCoordinates.entries
+                .firstOrNull { (_, coordinates) ->
+                    coordinates.isAttached &&
+                        Rect(coordinates.positionOnScreen(), coordinates.size.toSize()).contains(position)
+                }?.key
     }
 
     fun onFingerLifted() {
@@ -76,7 +80,11 @@ class BookmarkContextMenuDlgFragment(
             allowEdit = allowEdit,
             hoveredItem = hoveredItemState.value,
             onItemPositioned = { type, coordinates -> itemCoordinates[type] = coordinates },
-            onClicked = { onClicked(it); dismiss() })
+            onClicked = {
+                onClicked(it)
+                dismiss()
+            },
+        )
     }
 
     override fun onCreateView(
@@ -103,20 +111,21 @@ fun BookmarkContextMenuScreen(
     onItemPositioned: (ContextMenuItemType, LayoutCoordinates) -> Unit = { _, _ -> },
     onClicked: (ContextMenuItemType) -> Unit,
 ) {
-    val items = buildList {
-        if (!bookmark.isDirectory) {
-            add(Triple(ContextMenuItemType.NewTabForeground, R.string.main_menu_new_tabOpen, Icons.Outlined.Tab))
-            add(Triple(ContextMenuItemType.NewTabBackground, R.string.main_menu_new_tab, Icons.Outlined.TabUnselected))
-            add(Triple(ContextMenuItemType.SplitScreen, R.string.split_screen, Icons.Outlined.ViewStream))
+    val items =
+        buildList {
+            if (!bookmark.isDirectory) {
+                add(Triple(ContextMenuItemType.NewTabForeground, R.string.main_menu_new_tabOpen, Icons.Outlined.Tab))
+                add(Triple(ContextMenuItemType.NewTabBackground, R.string.main_menu_new_tab, Icons.Outlined.TabUnselected))
+                add(Triple(ContextMenuItemType.SplitScreen, R.string.split_screen, Icons.Outlined.ViewStream))
+            }
+            if (allowEdit) {
+                add(Triple(ContextMenuItemType.Edit, R.string.menu_edit, Icons.Outlined.Edit))
+            }
+            if (!bookmark.isDirectory) {
+                add(Triple(ContextMenuItemType.RefreshIcon, R.string.menu_refresh_icon, Icons.Outlined.Refresh))
+            }
+            add(Triple(ContextMenuItemType.Delete, R.string.menu_delete, Icons.Outlined.Delete))
         }
-        if (allowEdit) {
-            add(Triple(ContextMenuItemType.Edit, R.string.menu_edit, Icons.Outlined.Edit))
-        }
-        if (!bookmark.isDirectory) {
-            add(Triple(ContextMenuItemType.RefreshIcon, R.string.menu_refresh_icon, Icons.Outlined.Refresh))
-        }
-        add(Triple(ContextMenuItemType.Delete, R.string.menu_delete, Icons.Outlined.Delete))
-    }
     // The dialog window caps the row's width; cells shrink evenly to fit it so
     // the last actions never end up cut off at the edge.
     BoxWithConstraints {

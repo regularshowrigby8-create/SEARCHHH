@@ -42,50 +42,56 @@ class TaskRunner(
         cancel()
         val openAi = OpenAiRepository()
 
-        val tools = BrowserToolsImpl(
-            context = context,
-            webViewCallback = webViewCallback,
-            browserState = browserState,
-            config = config,
-            openAiRepository = openAi,
-            ttsViewModel = ttsViewModel,
-            progressSink = { line -> appendStep(line) },
-            finishSink = { markdown -> markFinished(markdown) },
-        )
+        val tools =
+            BrowserToolsImpl(
+                context = context,
+                webViewCallback = webViewCallback,
+                browserState = browserState,
+                config = config,
+                openAiRepository = openAi,
+                ttsViewModel = ttsViewModel,
+                progressSink = { line -> appendStep(line) },
+                finishSink = { markdown -> markFinished(markdown) },
+            )
         currentTools = tools
 
-        _progress.value = TaskProgress(
-            taskName = task.displayName,
-            status = TaskProgress.Status.Running,
-            steps = emptyList(),
-            finalMarkdown = null,
-        )
+        _progress.value =
+            TaskProgress(
+                taskName = task.displayName,
+                status = TaskProgress.Status.Running,
+                steps = emptyList(),
+                finalMarkdown = null,
+            )
 
-        val job = activity.lifecycleScope.launch {
-            try {
-                task.run(tools)
-                val current = _progress.value
-                if (current?.status == TaskProgress.Status.Running) {
-                    // Task exited without calling finish()
-                    _progress.value = current.copy(
-                        status = TaskProgress.Status.Done,
-                        finalMarkdown = current.finalMarkdown
-                            ?: "(task ended without producing a result)",
-                    )
+        val job =
+            activity.lifecycleScope.launch {
+                try {
+                    task.run(tools)
+                    val current = _progress.value
+                    if (current?.status == TaskProgress.Status.Running) {
+                        // Task exited without calling finish()
+                        _progress.value =
+                            current.copy(
+                                status = TaskProgress.Status.Done,
+                                finalMarkdown =
+                                    current.finalMarkdown
+                                        ?: "(task ended without producing a result)",
+                            )
+                    }
+                } catch (e: CancellationException) {
+                    _progress.value = _progress.value?.copy(status = TaskProgress.Status.Cancelled)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Task failed", e)
+                    _progress.value =
+                        _progress.value?.copy(
+                            status = TaskProgress.Status.Failed,
+                            finalMarkdown = "Task failed: ${e.message}",
+                        )
+                } finally {
+                    tools.dispose()
+                    if (currentTools === tools) currentTools = null
                 }
-            } catch (e: CancellationException) {
-                _progress.value = _progress.value?.copy(status = TaskProgress.Status.Cancelled)
-            } catch (e: Exception) {
-                Log.e(TAG, "Task failed", e)
-                _progress.value = _progress.value?.copy(
-                    status = TaskProgress.Status.Failed,
-                    finalMarkdown = "Task failed: ${e.message}",
-                )
-            } finally {
-                tools.dispose()
-                if (currentTools === tools) currentTools = null
             }
-        }
         currentJob = job
         return job
     }
@@ -104,10 +110,11 @@ class TaskRunner(
 
     private fun markFinished(markdown: String) {
         val current = _progress.value ?: return
-        _progress.value = current.copy(
-            status = TaskProgress.Status.Done,
-            finalMarkdown = markdown,
-        )
+        _progress.value =
+            current.copy(
+                status = TaskProgress.Status.Done,
+                finalMarkdown = markdown,
+            )
     }
 
     companion object {

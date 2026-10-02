@@ -34,7 +34,8 @@ class SearchSuggestionViewModel : KoinComponent {
             SearchEngine.BING.ordinal.toString() -> OpenSearchSuggestionsRepository.bing()
             SearchEngine.ECOSIA.ordinal.toString() -> OpenSearchSuggestionsRepository.ecosia()
             SearchEngine.STARTPAGE.ordinal.toString(),
-            SearchEngine.STARTPAGE_DE.ordinal.toString() -> OpenSearchSuggestionsRepository.startpage()
+            SearchEngine.STARTPAGE_DE.ordinal.toString(),
+            -> OpenSearchSuggestionsRepository.startpage()
             SearchEngine.YANDEX.ordinal.toString() -> OpenSearchSuggestionsRepository.yandex()
             else -> GoogleSuggestionsRepository()
         }
@@ -45,29 +46,31 @@ class SearchSuggestionViewModel : KoinComponent {
 
     private var historyAndBookmarkRecords = listOf<Record>()
     private var queryString = ""
+
     suspend fun initSuggestions() {
         historyAndBookmarkRecords = recordDb.listEntries(config.browser.showBookmarksInInputBar)
-        _suggestions.value = if (config.ui.showHistoryThumbnailGrid) {
-            recordDb.listLatestHistoryPerDomain()
-        } else {
-            historyAndBookmarkRecords
-        }
+        _suggestions.value =
+            if (config.ui.showHistoryThumbnailGrid) {
+                recordDb.listLatestHistoryPerDomain()
+            } else {
+                historyAndBookmarkRecords
+            }
         queryString = ""
     }
 
     suspend fun updateSuggestions(query: String) {
         if (query.isEmpty()) {
-            _suggestions.value = if (config.ui.showHistoryThumbnailGrid) {
-                recordDb.listLatestHistoryPerDomain()
-            } else {
-                historyAndBookmarkRecords
-            }
+            _suggestions.value =
+                if (config.ui.showHistoryThumbnailGrid) {
+                    recordDb.listLatestHistoryPerDomain()
+                } else {
+                    historyAndBookmarkRecords
+                }
             queryString = ""
             return
         }
 
-        if (queryString.isNotEmpty() && query.startsWith(queryString) && _suggestions.value.isEmpty())
-        {
+        if (queryString.isNotEmpty() && query.startsWith(queryString) && _suggestions.value.isEmpty()) {
             // if the new query is an extension of the previous query and previous suggestions are empty, keep it empty
             queryString = query
             return
@@ -75,10 +78,11 @@ class SearchSuggestionViewModel : KoinComponent {
 
         queryString = query
 
-        val filteredRecords = historyAndBookmarkRecords.filter {
-            it.title?.contains(query, ignoreCase = true) == true ||
+        val filteredRecords =
+            historyAndBookmarkRecords.filter {
+                it.title?.contains(query, ignoreCase = true) == true ||
                     it.url.contains(query, ignoreCase = true)
-        }
+            }
 
         if ((query.length <= 1 && filteredRecords.isNotEmpty()) || !config.browser.enableSearchSuggestion) {
             _suggestions.value = filteredRecords
@@ -89,11 +93,10 @@ class SearchSuggestionViewModel : KoinComponent {
             val results = repository.searchSuggestionResults(query).take(4)
             _suggestions.value =
                 results.map { Record(title = it.title, url = it.url, time = -1, type = RecordType.Suggestion) } +
-                        filteredRecords
+                filteredRecords
         } catch (e: Exception) {
             e.printStackTrace()
             _suggestions.value = emptyList()
         }
     }
-
 }

@@ -19,18 +19,26 @@ class SplitSearchListType : BaseWhiteListType() {
     override fun addDomain(
         lifecycleScope: LifecycleCoroutineScope,
         dialogManager: DialogManager,
-        postAction: (String) -> Unit
+        postAction: (String) -> Unit,
     ) {
         lifecycleScope.launch {
-            val title = dialogManager.getTextInput(
-                titleId, R.string.description_split_screen_title, ""
-            )?.trim() ?: return@launch
-            val stringPattern = dialogManager.getTextInput(
-                titleId, R.string.description_split_screen_string_pattern, ""
-            )?.trim() ?: return@launch
+            val title =
+                dialogManager
+                    .getTextInput(
+                        titleId,
+                        R.string.description_split_screen_title,
+                        "",
+                    )?.trim() ?: return@launch
+            val stringPattern =
+                dialogManager
+                    .getTextInput(
+                        titleId,
+                        R.string.description_split_screen_string_pattern,
+                        "",
+                    )?.trim() ?: return@launch
             if (title.isNotBlank() && stringPattern.isNotBlank()) {
                 (domainHandler as SplitSearchHandler).addSplitSearchItem(
-                    SplitSearchItemInfo(title, stringPattern, true)
+                    SplitSearchItemInfo(title, stringPattern, true),
                 )
                 postAction(title)
             }
@@ -38,12 +46,14 @@ class SplitSearchListType : BaseWhiteListType() {
     }
 }
 
-private class SplitSearchHandler : DomainInterface, KoinComponent {
+private class SplitSearchHandler :
+    DomainInterface,
+    KoinComponent {
     private val configManager: ConfigManager by inject()
-    override suspend fun getDomains(): List<String> =
-        configManager.splitSearchItemInfoList.map { it.title }
 
-    override suspend fun addDomain(domain: String) { /* use addSplitSearchItem instead */
+    override suspend fun getDomains(): List<String> = configManager.splitSearchItemInfoList.map { it.title }
+
+    override suspend fun addDomain(domain: String) { // use addSplitSearchItem instead
     }
 
     fun addSplitSearchItem(splitSearchItemInfo: SplitSearchItemInfo) {

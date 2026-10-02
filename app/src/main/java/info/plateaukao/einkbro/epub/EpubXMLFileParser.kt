@@ -4,17 +4,18 @@ import android.graphics.BitmapFactory
 import org.jsoup.Jsoup
 import org.jsoup.nodes.TextNode
 import java.io.File
-import kotlin.io.path.invariantSeparatorsPathString
 
 internal class EpubXMLFileParser(
     fileAbsolutePath: String,
     val data: ByteArray,
-    private val zipFile: Map<String, EpubFile>
+    private val zipFile: Map<String, EpubFile>,
 ) {
-    data class Output(val title: String?, val body: String)
+    data class Output(
+        val title: String?,
+        val body: String,
+    )
 
     private val fileParentFolder: File = File(fileAbsolutePath).parentFile ?: File("")
-
 
     fun parseAsDocument(): Output {
         val body = Jsoup.parse(data.inputStream(), "UTF-8", "").body()
@@ -29,20 +30,25 @@ internal class EpubXMLFileParser(
 //        )
         return Output(
             title = title,
-            body = data.decodeToString()
+            body = data.decodeToString(),
         )
     }
 
     fun parseAsImage(absolutePathImage: String): String {
         // Use run catching so it can be run locally without crash
-        val bitmap = zipFile[absolutePathImage]?.data?.runCatching {
-            BitmapFactory.decodeByteArray(this, 0, this.size)
-        }?.getOrNull()
+        val bitmap =
+            zipFile[absolutePathImage]
+                ?.data
+                ?.runCatching {
+                    BitmapFactory.decodeByteArray(this, 0, this.size)
+                }?.getOrNull()
 
-        val text = BookTextMapper.ImgEntry(
-            path = absolutePathImage,
-            yrel = bitmap?.let { it.height.toFloat() / it.width.toFloat() } ?: 1.45f
-        ).toXMLString()
+        val text =
+            BookTextMapper
+                .ImgEntry(
+                    path = absolutePathImage,
+                    yrel = bitmap?.let { it.height.toFloat() / it.width.toFloat() } ?: 1.45f,
+                ).toXMLString()
 
         return "\n\n$text\n\n"
     }
@@ -52,10 +58,11 @@ internal class EpubXMLFileParser(
         val attrs = node.attributes().associate { it.key to it.value }
         val relPathEncoded = attrs["src"] ?: attrs["xlink:href"] ?: ""
 
-        val absolutePathImage = File(fileParentFolder, relPathEncoded.decodedURL)
-            .canonicalFile
-            .invariantSeparatorsPath
-            .removePrefix("/")
+        val absolutePathImage =
+            File(fileParentFolder, relPathEncoded.decodedURL)
+                .canonicalFile
+                .invariantSeparatorsPath
+                .removePrefix("/")
 
         return parseAsImage(absolutePathImage)
     }
@@ -78,8 +85,9 @@ internal class EpubXMLFileParser(
 
     private fun getNodeTextTraverse(node: org.jsoup.nodes.Node): String {
         val children = node.childNodes()
-        if (children.isEmpty())
+        if (children.isEmpty()) {
             return ""
+        }
 
         return children.joinToString("") { child ->
             when {
@@ -99,8 +107,9 @@ internal class EpubXMLFileParser(
 
     private fun getNodeStructuredText(node: org.jsoup.nodes.Node): String {
         val children = node.childNodes()
-        if (children.isEmpty())
+        if (children.isEmpty()) {
             return ""
+        }
 
         return children.joinToString("") { child ->
             when {

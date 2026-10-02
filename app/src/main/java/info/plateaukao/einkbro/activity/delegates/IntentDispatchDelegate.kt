@@ -10,8 +10,6 @@ import info.plateaukao.einkbro.activity.BrowserState
 import info.plateaukao.einkbro.epub.EpubManager
 import info.plateaukao.einkbro.preference.ChatGPTActionInfo
 import info.plateaukao.einkbro.preference.ConfigManager
-import info.plateaukao.einkbro.preference.GptActionDisplay
-import info.plateaukao.einkbro.preference.GptActionScope
 import info.plateaukao.einkbro.unit.BrowserUnit
 import info.plateaukao.einkbro.unit.HelperUnit
 import info.plateaukao.einkbro.unit.HelperUnit.toNormalScheme
@@ -55,11 +53,12 @@ class IntentDispatchDelegate(
         lazyLoad: Boolean = false,
     ) = addAlbumAction(title, url, foreground, lazyLoad)
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-        encodeDefaults = false
-        isLenient = true
-    }
+    private val json =
+        Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = false
+            isLenient = true
+        }
 
     @SuppressLint("InlinedApi")
     fun dispatchIntent(intent: Intent) {
@@ -77,37 +76,40 @@ class IntentDispatchDelegate(
                 val viewUri = intent.data?.toNormalScheme() ?: return
                 if (viewUri.scheme == "content") {
                     activity.lifecycleScope.launch {
-                        val (filename, mimeType) = withContext(Dispatchers.IO) {
-                            val (fName, _) = HelperUnit.getFileInfoFromContentUri(activity, viewUri)
-                            val mType = activity.contentResolver.getType(viewUri)
-                            Pair(fName, mType)
-                        }
+                        val (filename, mimeType) =
+                            withContext(Dispatchers.IO) {
+                                val (fName, _) = HelperUnit.getFileInfoFromContentUri(activity, viewUri)
+                                val mType = activity.contentResolver.getType(viewUri)
+                                Pair(fName, mType)
+                            }
 
                         if (filename?.endsWith(".srt") == true ||
                             mimeType == "application/x-subrip"
                         ) {
                             addAlbum("", config.favoriteUrl, true)
-                            val htmlContent = withContext(Dispatchers.IO) {
-                                val stringList =
-                                    HelperUnit.readContentAsStringList(activity.contentResolver, viewUri)
-                                HelperUnit.srtToHtml(stringList)
-                            }
+                            val htmlContent =
+                                withContext(Dispatchers.IO) {
+                                    val stringList =
+                                        HelperUnit.readContentAsStringList(activity.contentResolver, viewUri)
+                                    HelperUnit.srtToHtml(stringList)
+                                }
                             val ebWebView = state.ebWebView
                             ebWebView.isPlainText = true
                             ebWebView.rawHtmlCache = htmlContent
                             ebWebView.loadData(htmlContent, "text/html", "utf-8")
-
                         } else if (mimeType == "application/octet-stream") {
-                            val cachedPath = withContext(Dispatchers.IO) {
-                                HelperUnit.getCachedPathFromURI(activity, viewUri)
-                            }
+                            val cachedPath =
+                                withContext(Dispatchers.IO) {
+                                    HelperUnit.getCachedPathFromURI(activity, viewUri)
+                                }
                             cachedPath.let {
                                 addAlbum("", "file://$it", true)
                             }
                         } else if (filename?.endsWith(".mht") == true) {
-                            val cachedPath = withContext(Dispatchers.IO) {
-                                HelperUnit.getCachedPathFromURI(activity, viewUri)
-                            }
+                            val cachedPath =
+                                withContext(Dispatchers.IO) {
+                                    HelperUnit.getCachedPathFromURI(activity, viewUri)
+                                }
                             addAlbum("", "file://$cachedPath", true)
                         } else if (filename?.endsWith(".html") == true || mimeType == "text/html") {
                             updateAlbum(viewUri.toString())
@@ -134,7 +136,8 @@ class IntentDispatchDelegate(
             }
 
             "sc_history" -> {
-                addAlbum("", config.favoriteUrl, true); openHistoryPage()
+                addAlbum("", config.favoriteUrl, true)
+                openHistoryPage()
             }
 
             "sc_home" -> {
@@ -142,7 +145,8 @@ class IntentDispatchDelegate(
             }
 
             "sc_bookmark" -> {
-                addAlbum("", config.favoriteUrl, true); openBookmarkPage()
+                addAlbum("", config.favoriteUrl, true)
+                openBookmarkPage()
             }
 
             "sc_disable_adblock" -> {
@@ -154,9 +158,13 @@ class IntentDispatchDelegate(
                 initSavedTabs()
                 val sentKeyword = intent.getStringExtra(Intent.EXTRA_TEXT).orEmpty()
                 val url =
-                    if (BrowserUnit.isURL(sentKeyword)) sentKeyword else externalSearchViewModel.generateSearchUrl(
+                    if (BrowserUnit.isURL(sentKeyword)) {
                         sentKeyword
-                    )
+                    } else {
+                        externalSearchViewModel.generateSearchUrl(
+                            sentKeyword,
+                        )
+                    }
                 if (state.currentAlbumController != null && config.ai.isExternalSearchInSameTab) {
                     state.ebWebView.loadUrl(url)
                 } else {
@@ -170,7 +178,7 @@ class IntentDispatchDelegate(
 
                 if (remoteConnViewModel.isSendingTextSearch) {
                     remoteConnViewModel.sendTextSearch(
-                        externalSearchViewModel.generateSearchUrl(text)
+                        externalSearchViewModel.generateSearchUrl(text),
                     )
                     activity.moveTaskToBack(true)
                     return
@@ -191,7 +199,7 @@ class IntentDispatchDelegate(
 
                 if (remoteConnViewModel.isSendingTextSearch) {
                     remoteConnViewModel.sendTextSearch(
-                        externalSearchViewModel.generateSearchUrl(text)
+                        externalSearchViewModel.generateSearchUrl(text),
                     )
                     activity.moveTaskToBack(true)
                     return
@@ -248,5 +256,4 @@ class IntentDispatchDelegate(
     }
 
     var shouldLoadTabState: Boolean = false
-
 }

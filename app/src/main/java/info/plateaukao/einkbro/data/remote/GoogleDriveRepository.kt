@@ -42,7 +42,11 @@ data class DriveAuthState(
 )
 
 @Serializable
-data class DriveFileMeta(val id: String, val name: String, val modifiedTime: String? = null)
+data class DriveFileMeta(
+    val id: String,
+    val name: String,
+    val modifiedTime: String? = null,
+)
 
 /** The stored refresh token was revoked or expired; the user must sign in again. */
 class DriveReauthRequiredException : Exception()
@@ -55,8 +59,10 @@ class GoogleDriveRepository : KoinComponent {
     val isConfigured: Boolean get() = !BuildConfig.DRIVE_OAUTH_CLIENT_ID.startsWith("REPLACE")
 
     private var authState: DriveAuthState?
-        get() = config.driveAuthStateJson.takeIf { it.isNotEmpty() }
-            ?.let { runCatching { json.decodeFromString<DriveAuthState>(it) }.getOrNull() }
+        get() =
+            config.driveAuthStateJson
+                .takeIf { it.isNotEmpty() }
+                ?.let { runCatching { json.decodeFromString<DriveAuthState>(it) }.getOrNull() }
         set(value) {
             config.driveAuthStateJson = value?.let { json.encodeToString(DriveAuthState.serializer(), it) } ?: ""
         }
@@ -72,7 +78,10 @@ class GoogleDriveRepository : KoinComponent {
     /** In-flight interactive sign-in, persisted so the redirect can be completed
      *  from the browser even if the settings screen is long gone. */
     @Serializable
-    private data class PendingAuth(val codeVerifier: String, val state: String)
+    private data class PendingAuth(
+        val codeVerifier: String,
+        val state: String,
+    )
 
     /** Start an interactive sign-in: remember a fresh verifier/state pair and
      *  return the consent URL to open in the browser. */
@@ -85,9 +94,11 @@ class GoogleDriveRepository : KoinComponent {
     /** Complete the custom-scheme redirect intercepted by the WebView: validate
      *  state, exchange the code, persist tokens. */
     suspend fun completeAuth(redirectUri: Uri): Boolean {
-        val pending = config.drivePendingAuthJson.takeIf { it.isNotEmpty() }
-            ?.let { runCatching { json.decodeFromString<PendingAuth>(it) }.getOrNull() }
-            ?: return false
+        val pending =
+            config.drivePendingAuthJson
+                .takeIf { it.isNotEmpty() }
+                ?.let { runCatching { json.decodeFromString<PendingAuth>(it) }.getOrNull() }
+                ?: return false
         val code = redirectUri.getQueryParameter("code") ?: return false
         if (redirectUri.getQueryParameter("state") != pending.state) return false
         return exchangeCode(code, pending.codeVerifier).also { success ->
@@ -95,15 +106,23 @@ class GoogleDriveRepository : KoinComponent {
         }
     }
 
-    private fun generateRandomToken(): String = ByteArray(64)
-        .also { SecureRandom().nextBytes(it) }
-        .let { Base64.encodeToString(it, BASE64_URL_FLAGS) }
-
-    private fun authorizationUrl(codeVerifier: String, state: String): String {
-        val challenge = MessageDigest.getInstance("SHA-256")
-            .digest(codeVerifier.toByteArray())
+    private fun generateRandomToken(): String =
+        ByteArray(64)
+            .also { SecureRandom().nextBytes(it) }
             .let { Base64.encodeToString(it, BASE64_URL_FLAGS) }
-        return AUTH_ENDPOINT.toHttpUrl().newBuilder()
+
+    private fun authorizationUrl(
+        codeVerifier: String,
+        state: String,
+    ): String {
+        val challenge =
+            MessageDigest
+                .getInstance("SHA-256")
+                .digest(codeVerifier.toByteArray())
+                .let { Base64.encodeToString(it, BASE64_URL_FLAGS) }
+        return AUTH_ENDPOINT
+            .toHttpUrl()
+            .newBuilder()
             .addQueryParameter("client_id", BuildConfig.DRIVE_OAUTH_CLIENT_ID)
             .addQueryParameter("redirect_uri", BuildConfig.DRIVE_OAUTH_REDIRECT)
             .addQueryParameter("response_type", "code")
@@ -121,30 +140,43 @@ class GoogleDriveRepository : KoinComponent {
     }
 
     /** Exchange the redirect's auth code for tokens and persist them. */
-    private suspend fun exchangeCode(code: String, codeVerifier: String): Boolean = withContext(IO) {
-        val form = FormBody.Builder()
-            .add("grant_type", "authorization_code")
-            .add("code", code)
-            .add("code_verifier", codeVerifier)
-            .add("client_id", BuildConfig.DRIVE_OAUTH_CLIENT_ID)
-            .add("redirect_uri", BuildConfig.DRIVE_OAUTH_REDIRECT)
-            .build()
-        val request = Request.Builder().url(TOKEN_ENDPOINT).post(form).build()
-        client.newCall(request).execute().use { response ->
-            val body = response.body?.string() ?: return@withContext false
-            if (!response.isSuccessful) return@withContext false
-            val token = runCatching { json.decodeFromString<TokenResponse>(body) }.getOrNull()
-                ?: return@withContext false
-            if (token.accessToken.isEmpty() || token.refreshToken.isEmpty()) return@withContext false
-            authState = DriveAuthState(
-                accessToken = token.accessToken,
-                refreshToken = token.refreshToken,
-                expiresAt = nowSeconds() + token.expiresIn,
-                email = token.idToken?.let { emailFromIdToken(it) }.orEmpty(),
-            )
-            true
+    private suspend fun exchangeCode(
+        code: String,
+        codeVerifier: String,
+    ): Boolean =
+        withContext(IO) {
+            val form =
+                FormBody
+                    .Builder()
+                    .add("grant_type", "authorization_code")
+                    .add("code", code)
+                    .add("code_verifier", codeVerifier)
+                    .add("client_id", BuildConfig.DRIVE_OAUTH_CLIENT_ID)
+                    .add("redirect_uri", BuildConfig.DRIVE_OAUTH_REDIRECT)
+                    .build()
+            val request =
+                Request
+                    .Builder()
+                    .url(TOKEN_ENDPOINT)
+                    .post(form)
+                    .build()
+            client.newCall(request).execute().use { response ->
+                val body = response.body?.string() ?: return@withContext false
+                if (!response.isSuccessful) return@withContext false
+                val token =
+                    runCatching { json.decodeFromString<TokenResponse>(body) }.getOrNull()
+                        ?: return@withContext false
+                if (token.accessToken.isEmpty() || token.refreshToken.isEmpty()) return@withContext false
+                authState =
+                    DriveAuthState(
+                        accessToken = token.accessToken,
+                        refreshToken = token.refreshToken,
+                        expiresAt = nowSeconds() + token.expiresIn,
+                        email = token.idToken?.let { emailFromIdToken(it) }.orEmpty(),
+                    )
+                true
+            }
         }
-    }
 
     /** A valid access token, refreshed through the stored refresh token when
      *  expired. Throws [DriveReauthRequiredException] (after clearing the dead
@@ -157,105 +189,146 @@ class GoogleDriveRepository : KoinComponent {
         return refreshAccessToken()
     }
 
-    private suspend fun refreshAccessToken(): String = withContext(IO) {
-        val state = authState ?: throw DriveReauthRequiredException()
-        val form = FormBody.Builder()
-            .add("grant_type", "refresh_token")
-            .add("refresh_token", state.refreshToken)
-            .add("client_id", BuildConfig.DRIVE_OAUTH_CLIENT_ID)
-            .build()
-        val request = Request.Builder().url(TOKEN_ENDPOINT).post(form).build()
-        client.newCall(request).execute().use { response ->
-            val body = response.body?.string().orEmpty()
-            if (!response.isSuccessful) {
-                // invalid_grant means the refresh token was revoked or expired —
-                // permanent, so drop the session; other failures are transient.
-                if (body.contains("invalid_grant")) {
-                    signOut()
-                    throw DriveReauthRequiredException()
+    private suspend fun refreshAccessToken(): String =
+        withContext(IO) {
+            val state = authState ?: throw DriveReauthRequiredException()
+            val form =
+                FormBody
+                    .Builder()
+                    .add("grant_type", "refresh_token")
+                    .add("refresh_token", state.refreshToken)
+                    .add("client_id", BuildConfig.DRIVE_OAUTH_CLIENT_ID)
+                    .build()
+            val request =
+                Request
+                    .Builder()
+                    .url(TOKEN_ENDPOINT)
+                    .post(form)
+                    .build()
+            client.newCall(request).execute().use { response ->
+                val body = response.body?.string().orEmpty()
+                if (!response.isSuccessful) {
+                    // invalid_grant means the refresh token was revoked or expired —
+                    // permanent, so drop the session; other failures are transient.
+                    if (body.contains("invalid_grant")) {
+                        signOut()
+                        throw DriveReauthRequiredException()
+                    }
+                    error("Google token refresh failed: HTTP ${response.code}")
                 }
-                error("Google token refresh failed: HTTP ${response.code}")
+                val token = json.decodeFromString<TokenResponse>(body)
+                authState =
+                    state.copy(
+                        accessToken = token.accessToken,
+                        expiresAt = nowSeconds() + token.expiresIn,
+                    )
+                token.accessToken
             }
-            val token = json.decodeFromString<TokenResponse>(body)
-            authState = state.copy(
-                accessToken = token.accessToken,
-                expiresAt = nowSeconds() + token.expiresIn,
-            )
-            token.accessToken
         }
-    }
 
     // MARK: - Drive REST (appDataFolder)
 
-    private class DriveHttpException(val code: Int) : Exception("Drive request failed: HTTP $code")
+    private class DriveHttpException(
+        val code: Int,
+    ) : Exception("Drive request failed: HTTP $code")
 
     /** Run [block] with a valid token; on 401 (token revoked server-side while
      *  still locally unexpired) force one refresh and retry. */
-    private suspend fun <T> withAccessToken(block: (String) -> T): T = withContext(IO) {
-        try {
-            block(validAccessToken())
-        } catch (e: DriveHttpException) {
-            if (e.code != 401) throw e
-            block(refreshAccessToken())
+    private suspend fun <T> withAccessToken(block: (String) -> T): T =
+        withContext(IO) {
+            try {
+                block(validAccessToken())
+            } catch (e: DriveHttpException) {
+                if (e.code != 401) throw e
+                block(refreshAccessToken())
+            }
         }
-    }
 
     /** Metadata of the backup zip in the appDataFolder, or null when none exists. */
-    suspend fun getRemoteBackup(): DriveFileMeta? = withAccessToken { token ->
-        val url = "$DRIVE_FILES_ENDPOINT?spaces=appDataFolder&fields=files(id,name,modifiedTime)&pageSize=100"
-        val request = Request.Builder().url(url).header("Authorization", "Bearer $token").build()
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) throw DriveHttpException(response.code)
-            json.decodeFromString<FileList>(response.body!!.string())
-                .files.firstOrNull { it.name == BACKUP_FILE_NAME }
+    suspend fun getRemoteBackup(): DriveFileMeta? =
+        withAccessToken { token ->
+            val url = "$DRIVE_FILES_ENDPOINT?spaces=appDataFolder&fields=files(id,name,modifiedTime)&pageSize=100"
+            val request =
+                Request
+                    .Builder()
+                    .url(url)
+                    .header("Authorization", "Bearer $token")
+                    .build()
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) throw DriveHttpException(response.code)
+                json
+                    .decodeFromString<FileList>(response.body!!.string())
+                    .files
+                    .firstOrNull { it.name == BACKUP_FILE_NAME }
+            }
         }
-    }
 
     /** Stream the backup zip into [destination]. */
-    suspend fun downloadBackup(fileId: String, destination: File): Unit = withAccessToken { token ->
-        val request = Request.Builder()
-            .url("$DRIVE_FILES_ENDPOINT/$fileId?alt=media")
-            .header("Authorization", "Bearer $token")
-            .build()
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) throw DriveHttpException(response.code)
-            destination.outputStream().use { response.body!!.byteStream().copyTo(it) }
+    suspend fun downloadBackup(
+        fileId: String,
+        destination: File,
+    ): Unit =
+        withAccessToken { token ->
+            val request =
+                Request
+                    .Builder()
+                    .url("$DRIVE_FILES_ENDPOINT/$fileId?alt=media")
+                    .header("Authorization", "Bearer $token")
+                    .build()
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) throw DriveHttpException(response.code)
+                destination.outputStream().use { response.body!!.byteStream().copyTo(it) }
+            }
         }
-    }
 
     /** Create the backup file (when [existingId] is null) or replace its content,
      *  streaming from [file] rather than buffering the zip in memory. */
-    suspend fun uploadBackup(file: File, existingId: String?): Unit = withAccessToken { token ->
-        val media = file.asRequestBody("application/zip".toMediaType())
-        val request = if (existingId == null) {
-            val metadata = """{"name":"$BACKUP_FILE_NAME","parents":["appDataFolder"]}"""
-            val body = MultipartBody.Builder().setType("multipart/related".toMediaType())
-                .addPart(metadata.toRequestBody("application/json; charset=UTF-8".toMediaType()))
-                .addPart(media)
-                .build()
-            Request.Builder()
-                .url("$DRIVE_UPLOAD_ENDPOINT?uploadType=multipart")
-                .header("Authorization", "Bearer $token")
-                .post(body)
-                .build()
-        } else {
-            Request.Builder()
-                .url("$DRIVE_UPLOAD_ENDPOINT/$existingId?uploadType=media")
-                .header("Authorization", "Bearer $token")
-                .patch(media)
-                .build()
+    suspend fun uploadBackup(
+        file: File,
+        existingId: String?,
+    ): Unit =
+        withAccessToken { token ->
+            val media = file.asRequestBody("application/zip".toMediaType())
+            val request =
+                if (existingId == null) {
+                    val metadata = """{"name":"$BACKUP_FILE_NAME","parents":["appDataFolder"]}"""
+                    val body =
+                        MultipartBody
+                            .Builder()
+                            .setType("multipart/related".toMediaType())
+                            .addPart(metadata.toRequestBody("application/json; charset=UTF-8".toMediaType()))
+                            .addPart(media)
+                            .build()
+                    Request
+                        .Builder()
+                        .url("$DRIVE_UPLOAD_ENDPOINT?uploadType=multipart")
+                        .header("Authorization", "Bearer $token")
+                        .post(body)
+                        .build()
+                } else {
+                    Request
+                        .Builder()
+                        .url("$DRIVE_UPLOAD_ENDPOINT/$existingId?uploadType=media")
+                        .header("Authorization", "Bearer $token")
+                        .patch(media)
+                        .build()
+                }
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) throw DriveHttpException(response.code)
+            }
         }
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) throw DriveHttpException(response.code)
-        }
-    }
 
     /** Pull the `email` claim out of the id_token JWT for the settings UI. */
-    private fun emailFromIdToken(idToken: String): String? = runCatching {
-        val payload = idToken.split(".")[1]
-        val bytes = Base64.decode(payload, BASE64_URL_FLAGS)
-        Json.parseToJsonElement(String(bytes)).jsonObject["email"]?.jsonPrimitive?.contentOrNull
-    }.getOrNull()
+    private fun emailFromIdToken(idToken: String): String? =
+        runCatching {
+            val payload = idToken.split(".")[1]
+            val bytes = Base64.decode(payload, BASE64_URL_FLAGS)
+            Json
+                .parseToJsonElement(String(bytes))
+                .jsonObject["email"]
+                ?.jsonPrimitive
+                ?.contentOrNull
+        }.getOrNull()
 
     private fun nowSeconds(): Long = System.currentTimeMillis() / 1000
 
@@ -268,7 +341,9 @@ class GoogleDriveRepository : KoinComponent {
     )
 
     @Serializable
-    private data class FileList(val files: List<DriveFileMeta> = emptyList())
+    private data class FileList(
+        val files: List<DriveFileMeta> = emptyList(),
+    )
 
     companion object {
         const val SCOPE = "https://www.googleapis.com/auth/drive.appdata"

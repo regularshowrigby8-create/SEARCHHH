@@ -5,39 +5,50 @@ import androidx.core.content.edit
 import info.plateaukao.einkbro.util.TranslationLanguage
 import info.plateaukao.einkbro.view.Orientation
 
-class TranslationConfig(private val sp: SharedPreferences) {
-
+class TranslationConfig(
+    private val sp: SharedPreferences,
+) {
     var translationLanguage: TranslationLanguage
-        get() = TranslationLanguage.entries[sp.getInt(
-            K_TRANSLATE_LANGUAGE,
-            TranslationLanguage.EN.ordinal
-        )]
+        get() =
+            TranslationLanguage.entries[
+                sp.getInt(
+                    K_TRANSLATE_LANGUAGE,
+                    TranslationLanguage.EN.ordinal,
+                ),
+            ]
         set(value) {
             sp.edit { putInt(K_TRANSLATE_LANGUAGE, value.ordinal) }
         }
 
     var sourceLanguage: TranslationLanguage
-        get() = TranslationLanguage.entries[sp.getInt(
-            K_SOURCE_LANGUAGE,
-            TranslationLanguage.KO.ordinal
-        )]
+        get() =
+            TranslationLanguage.entries[
+                sp.getInt(
+                    K_SOURCE_LANGUAGE,
+                    TranslationLanguage.KO.ordinal,
+                ),
+            ]
         set(value) {
             sp.edit { putInt(K_SOURCE_LANGUAGE, value.ordinal) }
         }
 
     var translationOrientation: Orientation
-        get() = Orientation.entries[sp.getInt(
-            K_TRANSLATE_ORIENTATION,
-            Orientation.Horizontal.ordinal
-        )]
+        get() =
+            Orientation.entries[
+                sp.getInt(
+                    K_TRANSLATE_ORIENTATION,
+                    Orientation.Horizontal.ordinal,
+                ),
+            ]
         set(value) {
             sp.edit { putInt(K_TRANSLATE_ORIENTATION, value.ordinal) }
         }
 
     var translationMode: TranslationMode
-        get() = sp.getInt(K_TRANSLATION_MODE, TranslationMode.TRANSLATE_BY_PARAGRAPH.ordinal).let { index ->
-            TranslationMode.entries.getOrElse(index) { TranslationMode.TRANSLATE_BY_PARAGRAPH }
-        }
+        get() =
+            sp.getInt(K_TRANSLATION_MODE, TranslationMode.TRANSLATE_BY_PARAGRAPH.ordinal).let { index ->
+                TranslationMode.entries.getOrElse(index) { TranslationMode.TRANSLATE_BY_PARAGRAPH }
+            }
         set(value) = sp.edit { putInt(K_TRANSLATION_MODE, value.ordinal) }
 
     var translationTextStyle: TranslationTextStyle
@@ -51,11 +62,11 @@ class TranslationConfig(private val sp: SharedPreferences) {
     var showTranslatedImageToSecondPanel by BooleanPreference(
         sp,
         K_SHOW_TRANSLATED_IMAGE_TO_SECOND_PANEL,
-        true
+        true,
     )
 
     var enableInplaceParagraphTranslate by
-    BooleanPreference(sp, K_ENABLE_IN_PLACE_PARAGRAPH_TRANSLATE, true)
+        BooleanPreference(sp, K_ENABLE_IN_PLACE_PARAGRAPH_TRANSLATE, true)
 
     var preferredTranslateLanguageString by StringPreference(sp, K_TRANSLATED_LANGS)
 

@@ -28,12 +28,15 @@ import java.util.concurrent.TimeUnit
  * Here the host and the icon candidates come from the same document, so the
  * association can't drift.
  */
-class FaviconFetcher(private val bookmarkManager: BookmarkManager) {
-
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
-        .build()
+class FaviconFetcher(
+    private val bookmarkManager: BookmarkManager,
+) {
+    private val client =
+        OkHttpClient
+            .Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .build()
 
     // Hosts already fetched this process; one icon request per host per session is
     // enough to keep the store fresh and to heal rows poisoned by older versions.
@@ -42,7 +45,10 @@ class FaviconFetcher(private val bookmarkManager: BookmarkManager) {
     fun isHandled(host: String): Boolean = host in handledHosts
 
     /** Result of favicon_probe.js: the document's hostname and its icon links. */
-    data class Probe(val host: String, val candidates: List<Candidate>)
+    data class Probe(
+        val host: String,
+        val candidates: List<Candidate>,
+    )
 
     /**
      * Stores the best decodable icon among [candidates] (from the document at
@@ -57,32 +63,39 @@ class FaviconFetcher(private val bookmarkManager: BookmarkManager) {
         pageUrl: String,
         candidates: List<Candidate>,
         aliasHost: String? = null,
-    ): Bitmap? = withContext(Dispatchers.IO) {
-        val alias = aliasHost?.takeIf { it != host && handledHosts.add(it) }
-        if (!handledHosts.add(host) && alias == null) return@withContext null
-        // SPA hydration can have replaced the head before the probe ran; the
-        // served HTML still declares the icons, so re-read it like refresh() does.
-        val effective = candidates.ifEmpty {
-            val (finalUrl, html) = fetchHtml(pageUrl) ?: (pageUrl to "")
-            FaviconCandidates.parseIconLinks(html, finalUrl)
+    ): Bitmap? =
+        withContext(Dispatchers.IO) {
+            val alias = aliasHost?.takeIf { it != host && handledHosts.add(it) }
+            if (!handledHosts.add(host) && alias == null) return@withContext null
+            // SPA hydration can have replaced the head before the probe ran; the
+            // served HTML still declares the icons, so re-read it like refresh() does.
+            val effective =
+                candidates.ifEmpty {
+                    val (finalUrl, html) = fetchHtml(pageUrl) ?: (pageUrl to "")
+                    FaviconCandidates.parseIconLinks(html, finalUrl)
+                }
+            val bitmap =
+                download(FaviconCandidates.orderedUrls(effective, pageUrl))
+                    ?: return@withContext copyStoredToAlias(host, alias)
+            store(host, bitmap)
+            alias?.let { store(it, bitmap) }
+            bitmap
         }
-        val bitmap = download(FaviconCandidates.orderedUrls(effective, pageUrl))
-            ?: return@withContext copyStoredToAlias(host, alias)
-        store(host, bitmap)
-        alias?.let { store(it, bitmap) }
-        bitmap
-    }
 
     /**
      * Fetch failed, but the redirect target may have an icon stored from an
      * earlier session — good enough for the alias host, which serves nothing
      * itself (that's why it redirects).
      */
-    private suspend fun copyStoredToAlias(host: String, alias: String?): Bitmap? {
+    private suspend fun copyStoredToAlias(
+        host: String,
+        alias: String?,
+    ): Bitmap? {
         alias ?: return null
-        val bitmap = withContext(Dispatchers.Main) {
-            bookmarkManager.findFaviconBitmapBy("https://$host/")
-        } ?: return null
+        val bitmap =
+            withContext(Dispatchers.Main) {
+                bookmarkManager.findFaviconBitmapBy("https://$host/")
+            } ?: return null
         store(alias, bitmap)
         return bitmap
     }
@@ -92,17 +105,21 @@ class FaviconFetcher(private val bookmarkManager: BookmarkManager) {
      * then the icon — and replaces whatever is stored for its host. Used by the
      * bookmark "refresh icon" action, so it ignores the per-session guard.
      */
-    suspend fun refresh(pageUrl: String): Bitmap? = withContext(Dispatchers.IO) {
-        val host = Uri.parse(pageUrl).host ?: return@withContext null
-        val (finalUrl, html) = fetchHtml(pageUrl) ?: (pageUrl to "")
-        val candidates = FaviconCandidates.parseIconLinks(html, finalUrl)
-        handledHosts.add(host)
-        val bitmap = download(FaviconCandidates.orderedUrls(candidates, finalUrl)) ?: return@withContext null
-        store(host, bitmap)
-        bitmap
-    }
+    suspend fun refresh(pageUrl: String): Bitmap? =
+        withContext(Dispatchers.IO) {
+            val host = Uri.parse(pageUrl).host ?: return@withContext null
+            val (finalUrl, html) = fetchHtml(pageUrl) ?: (pageUrl to "")
+            val candidates = FaviconCandidates.parseIconLinks(html, finalUrl)
+            handledHosts.add(host)
+            val bitmap = download(FaviconCandidates.orderedUrls(candidates, finalUrl)) ?: return@withContext null
+            store(host, bitmap)
+            bitmap
+        }
 
-    private suspend fun store(host: String, bitmap: Bitmap) {
+    private suspend fun store(
+        host: String,
+        bitmap: Bitmap,
+    ) {
         val bytes = ByteArrayOutputStream().also { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }.toByteArray()
         // BookmarkManager's favicon cache is read from the main thread; mutate it there.
         withContext(Dispatchers.Main) {
@@ -111,38 +128,45 @@ class FaviconFetcher(private val bookmarkManager: BookmarkManager) {
         Log.d(TAG, "stored icon for $host (${bitmap.width}x${bitmap.height}, ${bytes.size} bytes)")
     }
 
-    private suspend fun download(urls: List<String>): Bitmap? = withContext(Dispatchers.IO) {
-        for (url in urls) {
-            val bytes = try {
-                if (url.startsWith("data:", ignoreCase = true)) decodeDataUri(url) else fetchBytes(url, "image/*", MAX_ICON_BYTES)
-            } catch (e: Exception) {
-                Log.d(TAG, "favicon fetch failed: $url: ${e.message}")
-                null
-            } ?: continue
-            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: continue
-            return@withContext shrink(bitmap)
+    private suspend fun download(urls: List<String>): Bitmap? =
+        withContext(Dispatchers.IO) {
+            for (url in urls) {
+                val bytes =
+                    try {
+                        if (url.startsWith("data:", ignoreCase = true)) decodeDataUri(url) else fetchBytes(url, "image/*", MAX_ICON_BYTES)
+                    } catch (e: Exception) {
+                        Log.d(TAG, "favicon fetch failed: $url: ${e.message}")
+                        null
+                    } ?: continue
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: continue
+                return@withContext shrink(bitmap)
+            }
+            Log.d(TAG, "no decodable icon among: $urls")
+            null
         }
-        Log.d(TAG, "no decodable icon among: $urls")
-        null
-    }
 
-    private fun fetchHtml(pageUrl: String): Pair<String, String>? = try {
-        client.newCall(request(pageUrl, "text/html,application/xhtml+xml")).execute().use { response ->
-            val body = response.body
-            if (!response.isSuccessful || body == null) return null
-            val type = body.contentType()?.toString().orEmpty()
-            if (type.isNotEmpty() && !type.contains("html", ignoreCase = true) && !type.contains("xml", ignoreCase = true)) return null
-            val source = body.source()
-            source.request(MAX_HTML_BYTES)
-            val html = source.buffer.readUtf8(minOf(source.buffer.size, MAX_HTML_BYTES))
-            response.request.url.toString() to html
+    private fun fetchHtml(pageUrl: String): Pair<String, String>? =
+        try {
+            client.newCall(request(pageUrl, "text/html,application/xhtml+xml")).execute().use { response ->
+                val body = response.body
+                if (!response.isSuccessful || body == null) return null
+                val type = body.contentType()?.toString().orEmpty()
+                if (type.isNotEmpty() && !type.contains("html", ignoreCase = true) && !type.contains("xml", ignoreCase = true)) return null
+                val source = body.source()
+                source.request(MAX_HTML_BYTES)
+                val html = source.buffer.readUtf8(minOf(source.buffer.size, MAX_HTML_BYTES))
+                response.request.url.toString() to html
+            }
+        } catch (e: Exception) {
+            Log.d(TAG, "page fetch failed: $pageUrl: ${e.message}")
+            null
         }
-    } catch (e: Exception) {
-        Log.d(TAG, "page fetch failed: $pageUrl: ${e.message}")
-        null
-    }
 
-    private fun fetchBytes(url: String, accept: String, limit: Long): ByteArray? =
+    private fun fetchBytes(
+        url: String,
+        accept: String,
+        limit: Long,
+    ): ByteArray? =
         client.newCall(request(url, accept)).execute().use { response ->
             val body = response.body
             if (!response.isSuccessful || body == null) return null
@@ -153,13 +177,21 @@ class FaviconFetcher(private val bookmarkManager: BookmarkManager) {
             source.buffer.readByteArray()
         }
 
-    private fun request(url: String, accept: String): Request {
-        val builder = Request.Builder().url(url)
-            .header("Accept", accept)
-            .header("User-Agent", USER_AGENT)
+    private fun request(
+        url: String,
+        accept: String,
+    ): Request {
+        val builder =
+            Request
+                .Builder()
+                .url(url)
+                .header("Accept", accept)
+                .header("User-Agent", USER_AGENT)
         // Icons on private sites (intranets, logged-in dashboards) need the session.
-        runCatching { CookieManager.getInstance().getCookie(url) }.getOrNull()
-            ?.takeIf { it.isNotBlank() }?.let { builder.header("Cookie", it) }
+        runCatching { CookieManager.getInstance().getCookie(url) }
+            .getOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?.let { builder.header("Cookie", it) }
         return builder.build()
     }
 
@@ -168,8 +200,11 @@ class FaviconFetcher(private val bookmarkManager: BookmarkManager) {
         if (comma < 0) return null
         val header = uri.substring(0, comma)
         val payload = uri.substring(comma + 1)
-        return if (header.contains(";base64", ignoreCase = true)) Base64.decode(payload, Base64.DEFAULT)
-        else Uri.decode(payload).toByteArray()
+        return if (header.contains(";base64", ignoreCase = true)) {
+            Base64.decode(payload, Base64.DEFAULT)
+        } else {
+            Uri.decode(payload).toByteArray()
+        }
     }
 
     /** Keeps stored icons small; list rows never draw them larger than this. */
@@ -200,11 +235,12 @@ class FaviconFetcher(private val bookmarkManager: BookmarkManager) {
                 val json = JSONObject(JSONTokener(result).nextValue() as? String ?: return null)
                 val host = json.optString("host").takeIf { it.isNotEmpty() } ?: return null
                 val icons = json.optJSONArray("icons")
-                val candidates = (0 until (icons?.length() ?: 0)).mapNotNull { i ->
-                    val o = icons!!.optJSONObject(i) ?: return@mapNotNull null
-                    val href = o.optString("href").takeIf { it.isNotEmpty() } ?: return@mapNotNull null
-                    Candidate(href, o.optString("rel", "icon"), o.optString("sizes"), o.optString("type"))
-                }
+                val candidates =
+                    (0 until (icons?.length() ?: 0)).mapNotNull { i ->
+                        val o = icons!!.optJSONObject(i) ?: return@mapNotNull null
+                        val href = o.optString("href").takeIf { it.isNotEmpty() } ?: return@mapNotNull null
+                        Candidate(href, o.optString("rel", "icon"), o.optString("sizes"), o.optString("type"))
+                    }
                 Probe(host, candidates)
             } catch (e: Exception) {
                 null

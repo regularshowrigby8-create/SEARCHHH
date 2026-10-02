@@ -4,8 +4,9 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import info.plateaukao.einkbro.view.compose.UiThemeState
 
-class DisplayConfig(private val sp: SharedPreferences) {
-
+class DisplayConfig(
+    private val sp: SharedPreferences,
+) {
     var fontSize: Int
         get() = sp.getString(K_FONT_SIZE, "100")?.toInt() ?: 100
         set(value) {
@@ -77,7 +78,7 @@ class DisplayConfig(private val sp: SharedPreferences) {
         get() {
             migrateUiStyleIfNeeded()
             return UiBorder.entries.getOrElse(
-                sp.getInt(K_UI_BORDER, UiBorder.CLASSIC.ordinal)
+                sp.getInt(K_UI_BORDER, UiBorder.CLASSIC.ordinal),
             ) { UiBorder.CLASSIC }
         }
         set(value) {
@@ -98,20 +99,21 @@ class DisplayConfig(private val sp: SharedPreferences) {
     // maps the legacy single style preference onto the border/fill pair
     private fun migrateUiStyleIfNeeded() {
         if (sp.contains(K_UI_BORDER) || !sp.contains(K_UI_STYLE)) return
-        val (border, fill) = when (sp.getInt(K_UI_STYLE, 0)) {
-            1 -> UiBorder.ROUND to UiFill.NONE
-            2 -> UiBorder.SHARP to UiFill.NONE
-            3 -> UiBorder.PAPER to UiFill.NONE
-            4 -> UiBorder.DASHED to UiFill.NONE
-            5 -> UiBorder.NONE to UiFill.TONAL
-            6 -> UiBorder.ROUND to UiFill.GRADIENT
-            7 -> UiBorder.STAMP to UiFill.NONE
-            8, 9 -> UiBorder.NONE to UiFill.GRADIENT
-            10 -> UiBorder.SKETCH to UiFill.NONE
-            11 -> UiBorder.CERTIFICATE to UiFill.NONE
-            12 -> UiBorder.STICKER to UiFill.NONE
-            else -> UiBorder.CLASSIC to UiFill.NONE
-        }
+        val (border, fill) =
+            when (sp.getInt(K_UI_STYLE, 0)) {
+                1 -> UiBorder.ROUND to UiFill.NONE
+                2 -> UiBorder.SHARP to UiFill.NONE
+                3 -> UiBorder.PAPER to UiFill.NONE
+                4 -> UiBorder.DASHED to UiFill.NONE
+                5 -> UiBorder.NONE to UiFill.TONAL
+                6 -> UiBorder.ROUND to UiFill.GRADIENT
+                7 -> UiBorder.STAMP to UiFill.NONE
+                8, 9 -> UiBorder.NONE to UiFill.GRADIENT
+                10 -> UiBorder.SKETCH to UiFill.NONE
+                11 -> UiBorder.CERTIFICATE to UiFill.NONE
+                12 -> UiBorder.STICKER to UiFill.NONE
+                else -> UiBorder.CLASSIC to UiFill.NONE
+            }
         sp.edit {
             putInt(K_UI_BORDER, border.ordinal)
             putInt(K_UI_FILL, fill.ordinal)
@@ -145,25 +147,29 @@ class DisplayConfig(private val sp: SharedPreferences) {
         get() = sp.getInt(K_CUSTOM_THEME_COLOR, DEFAULT_CUSTOM_THEME_COLOR)
         set(value) {
             sp.edit { putInt(K_CUSTOM_THEME_COLOR, value) }
-            UiThemeState.customColor.value = androidx.compose.ui.graphics.Color(value)
+            UiThemeState.customColor.value =
+                androidx.compose.ui.graphics
+                    .Color(value)
         }
 
     var einkImageAdjustment: EinkImageAdjustment
-        get() = try {
-            EinkImageAdjustment.entries.getOrElse(
-                sp.getInt(K_ENABLE_IMAGE_ADJUSTMENT, 0)
-            ) { EinkImageAdjustment.OFF }
-        } catch (e: ClassCastException) {
-            // migrate from old boolean preference
-            sp.edit { remove(K_ENABLE_IMAGE_ADJUSTMENT) }
-            EinkImageAdjustment.OFF
-        }
+        get() =
+            try {
+                EinkImageAdjustment.entries.getOrElse(
+                    sp.getInt(K_ENABLE_IMAGE_ADJUSTMENT, 0),
+                ) { EinkImageAdjustment.OFF }
+            } catch (e: ClassCastException) {
+                // migrate from old boolean preference
+                sp.edit { remove(K_ENABLE_IMAGE_ADJUSTMENT) }
+                EinkImageAdjustment.OFF
+            }
         set(value) = sp.edit { putInt(K_ENABLE_IMAGE_ADJUSTMENT, value.ordinal) }
 
     var einkImageMode: EinkImageMode
-        get() = EinkImageMode.entries.getOrElse(
-            sp.getInt(K_EINK_IMAGE_MODE, 0)
-        ) { EinkImageMode.DEEP }
+        get() =
+            EinkImageMode.entries.getOrElse(
+                sp.getInt(K_EINK_IMAGE_MODE, 0),
+            ) { EinkImageMode.DEEP }
         set(value) = sp.edit { putInt(K_EINK_IMAGE_MODE, value.ordinal) }
 
     var highlightStyle: HighlightStyle

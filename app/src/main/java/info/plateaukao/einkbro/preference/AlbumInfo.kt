@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AlbumInfo(
     val title: String,
-    val url: String
+    val url: String,
 )
 
 // Legacy "title::url" format; kept only to migrate entries saved before the JSON format.

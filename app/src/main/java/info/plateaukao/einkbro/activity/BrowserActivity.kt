@@ -9,13 +9,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Point
 import android.net.Uri
 import android.os.Build
-import androidx.core.content.ContextCompat
 import android.os.Bundle
 import android.os.Message
 import android.view.ActionMode
@@ -23,76 +21,27 @@ import android.view.KeyEvent
 import android.view.KeyEvent.ACTION_DOWN
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.CustomViewCallback
-import android.webkit.WebView
 import android.widget.FrameLayout
-import android.widget.ProgressBar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import info.plateaukao.einkbro.R
-import info.plateaukao.einkbro.browser.BrowserMemoryTrimmer
-import info.plateaukao.einkbro.browser.AlbumController
-import info.plateaukao.einkbro.browser.BrowserContainer
-import info.plateaukao.einkbro.browser.BrowserAction
-import info.plateaukao.einkbro.browser.BrowserController
-import info.plateaukao.einkbro.database.BookmarkManager
-import info.plateaukao.einkbro.database.Record
-import info.plateaukao.einkbro.database.RecordRepository
-import info.plateaukao.einkbro.view.MainActivityLayout
-import info.plateaukao.einkbro.preference.ChatGPTActionInfo
-import info.plateaukao.einkbro.preference.AiConfig
-import info.plateaukao.einkbro.preference.BrowserConfig
-import info.plateaukao.einkbro.preference.ConfigManager
-import info.plateaukao.einkbro.preference.TabConfig
-import info.plateaukao.einkbro.preference.UiConfig
-import info.plateaukao.einkbro.preference.DisplayConfig
-import info.plateaukao.einkbro.view.SplashThemer
-import info.plateaukao.einkbro.view.compose.UiThemeState
-import info.plateaukao.einkbro.preference.TouchConfig
-import info.plateaukao.einkbro.preference.TtsConfig
-import info.plateaukao.einkbro.preference.FabPosition
-import info.plateaukao.einkbro.preference.FontType
-import info.plateaukao.einkbro.preference.TranslationMode
-import info.plateaukao.einkbro.preference.toggle
-import info.plateaukao.einkbro.search.suggestion.SearchSuggestionViewModel
-import info.plateaukao.einkbro.service.ClearService
-import info.plateaukao.einkbro.unit.BookmarkRenderer
-import info.plateaukao.einkbro.unit.BrowserUnit
-import info.plateaukao.einkbro.unit.BrowserUnit.createDownloadReceiver
-import info.plateaukao.einkbro.unit.HelperUnit
-import info.plateaukao.einkbro.unit.disablePendingTransitions
-import info.plateaukao.einkbro.unit.IntentUnit
-import info.plateaukao.einkbro.unit.LocaleManager
-import info.plateaukao.einkbro.preference.ShareLongPressAction
-import info.plateaukao.einkbro.unit.ShareUtil
-import info.plateaukao.einkbro.unit.ViewUnit
-import info.plateaukao.einkbro.view.CenterExpandProgressBar
-import info.plateaukao.einkbro.view.EBToast
-import info.plateaukao.einkbro.view.EBWebView
-import info.plateaukao.einkbro.view.dialog.DialogManager
-import info.plateaukao.einkbro.view.dialog.ReceiveDataDialog
-import info.plateaukao.einkbro.view.dialog.SendLinkDialog
-import info.plateaukao.einkbro.view.dialog.compose.FastToggleDialogFragment
-import info.plateaukao.einkbro.view.dialog.compose.SiteSettingsDialogFragment
-import info.plateaukao.einkbro.view.dialog.compose.MenuDialogFragment
-import info.plateaukao.einkbro.view.dialog.compose.TouchAreaDialogFragment
-import info.plateaukao.einkbro.util.Constants
 import info.plateaukao.einkbro.activity.delegates.ActionModeDelegate
 import info.plateaukao.einkbro.activity.delegates.AiChatDelegate
 import info.plateaukao.einkbro.activity.delegates.BookmarkActionsDelegate
 import info.plateaukao.einkbro.activity.delegates.ChromeSetupDelegate
-import info.plateaukao.einkbro.activity.delegates.ExternalSearchDelegate
-import info.plateaukao.einkbro.task.TaskRunner
 import info.plateaukao.einkbro.activity.delegates.ContextMenuDelegate
 import info.plateaukao.einkbro.activity.delegates.DisplayConfigDelegate
+import info.plateaukao.einkbro.activity.delegates.ExternalSearchDelegate
 import info.plateaukao.einkbro.activity.delegates.FileHandlingDelegate
 import info.plateaukao.einkbro.activity.delegates.FullscreenDelegate
 import info.plateaukao.einkbro.activity.delegates.InputBarDelegate
@@ -103,6 +52,54 @@ import info.plateaukao.einkbro.activity.delegates.TabManager
 import info.plateaukao.einkbro.activity.delegates.TaskMenuDelegate
 import info.plateaukao.einkbro.activity.delegates.TranslationDelegate
 import info.plateaukao.einkbro.activity.delegates.TtsButtonDelegate
+import info.plateaukao.einkbro.browser.AlbumController
+import info.plateaukao.einkbro.browser.BrowserAction
+import info.plateaukao.einkbro.browser.BrowserContainer
+import info.plateaukao.einkbro.browser.BrowserController
+import info.plateaukao.einkbro.browser.BrowserMemoryTrimmer
+import info.plateaukao.einkbro.database.BookmarkManager
+import info.plateaukao.einkbro.database.Record
+import info.plateaukao.einkbro.database.RecordRepository
+import info.plateaukao.einkbro.preference.AiConfig
+import info.plateaukao.einkbro.preference.BrowserConfig
+import info.plateaukao.einkbro.preference.ChatGPTActionInfo
+import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.preference.DisplayConfig
+import info.plateaukao.einkbro.preference.FabPosition
+import info.plateaukao.einkbro.preference.FontType
+import info.plateaukao.einkbro.preference.ShareLongPressAction
+import info.plateaukao.einkbro.preference.TabConfig
+import info.plateaukao.einkbro.preference.TouchConfig
+import info.plateaukao.einkbro.preference.TranslationMode
+import info.plateaukao.einkbro.preference.TtsConfig
+import info.plateaukao.einkbro.preference.UiConfig
+import info.plateaukao.einkbro.preference.toggle
+import info.plateaukao.einkbro.search.suggestion.SearchSuggestionViewModel
+import info.plateaukao.einkbro.service.ClearService
+import info.plateaukao.einkbro.task.TaskRunner
+import info.plateaukao.einkbro.unit.BookmarkRenderer
+import info.plateaukao.einkbro.unit.BrowserUnit
+import info.plateaukao.einkbro.unit.BrowserUnit.createDownloadReceiver
+import info.plateaukao.einkbro.unit.HelperUnit
+import info.plateaukao.einkbro.unit.IntentUnit
+import info.plateaukao.einkbro.unit.LocaleManager
+import info.plateaukao.einkbro.unit.ShareUtil
+import info.plateaukao.einkbro.unit.ViewUnit
+import info.plateaukao.einkbro.unit.disablePendingTransitions
+import info.plateaukao.einkbro.util.Constants
+import info.plateaukao.einkbro.view.CenterExpandProgressBar
+import info.plateaukao.einkbro.view.EBToast
+import info.plateaukao.einkbro.view.EBWebView
+import info.plateaukao.einkbro.view.MainActivityLayout
+import info.plateaukao.einkbro.view.SplashThemer
+import info.plateaukao.einkbro.view.compose.UiThemeState
+import info.plateaukao.einkbro.view.dialog.DialogManager
+import info.plateaukao.einkbro.view.dialog.ReceiveDataDialog
+import info.plateaukao.einkbro.view.dialog.SendLinkDialog
+import info.plateaukao.einkbro.view.dialog.compose.FastToggleDialogFragment
+import info.plateaukao.einkbro.view.dialog.compose.MenuDialogFragment
+import info.plateaukao.einkbro.view.dialog.compose.SiteSettingsDialogFragment
+import info.plateaukao.einkbro.view.dialog.compose.TouchAreaDialogFragment
 import info.plateaukao.einkbro.view.handlers.GestureHandler
 import info.plateaukao.einkbro.view.handlers.MenuActionHandler
 import info.plateaukao.einkbro.view.handlers.ToolbarActionHandler
@@ -128,8 +125,9 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
-
-open class BrowserActivity : FragmentActivity(), BrowserController {
+open class BrowserActivity :
+    FragmentActivity(),
+    BrowserController {
     protected open var shouldRunClearService: Boolean = true
 
     // DI
@@ -160,31 +158,49 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
     // Fields delegated through browserState for delegate sharing
     protected var ebWebView: EBWebView
         get() = browserState.ebWebView
-        set(value) { browserState.ebWebView = value }
+        set(value) {
+            browserState.ebWebView = value
+        }
     private var currentAlbumController: AlbumController?
         get() = browserState.currentAlbumController
-        set(value) { browserState.currentAlbumController = value }
+        set(value) {
+            browserState.currentAlbumController = value
+        }
     private var searchOnSite: Boolean
         get() = browserState.searchOnSite
-        set(value) { browserState.searchOnSite = value }
+        set(value) {
+            browserState.searchOnSite = value
+        }
     private var longPressPoint: Point
         get() = browserState.longPressPoint
-        set(value) { browserState.longPressPoint = value }
+        set(value) {
+            browserState.longPressPoint = value
+        }
     private var binding: MainActivityLayout
         get() = browserState.binding
-        set(value) { browserState.binding = value }
+        set(value) {
+            browserState.binding = value
+        }
     private var mainContentLayout: FrameLayout
         get() = browserState.mainContentLayout
-        set(value) { browserState.mainContentLayout = value }
+        set(value) {
+            browserState.mainContentLayout = value
+        }
     private var progressBar: CenterExpandProgressBar
         get() = browserState.progressBar
-        set(value) { browserState.progressBar = value }
+        set(value) {
+            browserState.progressBar = value
+        }
     private var progressBarVertical: CenterExpandProgressBar
         get() = browserState.progressBarVertical
-        set(value) { browserState.progressBarVertical = value }
+        set(value) {
+            browserState.progressBarVertical = value
+        }
     private var fabImageViewController: FabImageViewController
         get() = browserState.fabImageViewController
-        set(value) { browserState.fabImageViewController = value }
+        set(value) {
+            browserState.fabImageViewController = value
+        }
 
     private val keyHandler: KeyHandler by lazy { KeyHandler(this, ebWebView, config) }
     private val dialogManager: DialogManager by lazy { DialogManager(this) }
@@ -218,7 +234,10 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
             activity = this,
             config = config,
             state = browserState,
-            searchPanelHideAction = { searchOnSite = false; ViewUnit.hideKeyboard(this) },
+            searchPanelHideAction = {
+                searchOnSite = false
+                ViewUnit.hideKeyboard(this)
+            },
         )
     }
 
@@ -264,7 +283,10 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
             translateAllImages = { url -> translationDelegate.translateAllImages(url) },
             saveFile = { url, fileName ->
                 info.plateaukao.einkbro.unit.DownloadHelper.saveFileWithName(
-                    this, url, fileName, fileHandlingDelegate.saveImageFilePickerLauncher,
+                    this,
+                    url,
+                    fileName,
+                    fileHandlingDelegate.saveImageFilePickerLauncher,
                 )
             },
         )
@@ -482,156 +504,221 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
     }
 
     protected val statusbarViewController: info.plateaukao.einkbro.view.viewControllers.StatusbarViewController by lazy {
-        info.plateaukao.einkbro.view.viewControllers.StatusbarViewController(
-            composeView = binding.statusBar,
-            applyConstraints = { position -> chromeSetupDelegate.applyStatusbarConstraints(position) },
-        ).also { browserState.statusbarViewController = it }
+        info.plateaukao.einkbro.view.viewControllers
+            .StatusbarViewController(
+                composeView = binding.statusBar,
+                applyConstraints = { position -> chromeSetupDelegate.applyStatusbarConstraints(position) },
+            ).also { browserState.statusbarViewController = it }
     }
 
     // ── BrowserAction dispatch ─────────────────────────────────────────────
 
-    fun dispatch(action: BrowserAction) = when (action) {
-        is BrowserAction.Noop -> Unit
-        is BrowserAction.NewATab -> newATab()
-        is BrowserAction.DuplicateTab -> duplicateTab()
-        is BrowserAction.RemoveAlbum -> removeAlbum()
-        is BrowserAction.GotoLeftTab -> gotoLeftTab()
-        is BrowserAction.GotoRightTab -> gotoRightTab()
-        is BrowserAction.AddNewTab -> addNewTab(action.url)
-        is BrowserAction.UpdateAlbum -> updateAlbum(action.url)
-        is BrowserAction.GoForward -> goForward()
-        is BrowserAction.HandleBackKey -> handleBackKey()
-        is BrowserAction.RefreshAction -> refreshAction()
-        is BrowserAction.JumpToTop -> jumpToTop()
-        is BrowserAction.JumpToBottom -> jumpToBottom()
-        is BrowserAction.PageUp -> pageUp()
-        is BrowserAction.PageDown -> pageDown()
-        is BrowserAction.SendPageUpKey -> sendPageUpKey()
-        is BrowserAction.SendPageDownKey -> sendPageDownKey()
-        is BrowserAction.SendLeftKey -> sendLeftKey()
-        is BrowserAction.SendRightKey -> sendRightKey()
-        is BrowserAction.ToggleReaderMode -> toggleReaderMode()
-        is BrowserAction.ToggleVerticalRead -> toggleVerticalRead()
-        is BrowserAction.IncreaseFontSize -> increaseFontSize()
-        is BrowserAction.DecreaseFontSize -> decreaseFontSize()
-        is BrowserAction.ShowFontSizeChangeDialog -> showFontSizeChangeDialog()
-        is BrowserAction.ShowFontBoldnessDialog -> showFontBoldnessDialog()
-        is BrowserAction.ShowReaderSettingsDialog -> displayConfigDelegate.showReaderSettingsDialog()
-        is BrowserAction.InvertColors -> invertColors()
-        is BrowserAction.ShowOverview -> showOverview()
-        is BrowserAction.ToggleFullscreen -> toggleFullscreen()
-        is BrowserAction.ToggleSplitScreen -> toggleSplitScreen(action.url)
-        is BrowserAction.ShowTranslation -> showTranslation()
-        is BrowserAction.ShowTranslationConfigDialog -> showTranslationConfigDialog(action.translateDirectly)
-        is BrowserAction.Translate -> translate(action.mode)
-        is BrowserAction.ConfigureTranslationLanguage -> configureTranslationLanguage(action.api)
-        is BrowserAction.HandleTtsButton -> handleTtsButton()
-        is BrowserAction.OpenBookmarkPage -> openBookmarkPage()
-        is BrowserAction.OpenHistoryPage -> openHistoryPage(action.amount)
-        is BrowserAction.SaveBookmark -> saveBookmark(action.url, action.title)
-        is BrowserAction.ShowSearchPanel -> showSearchPanel()
-        is BrowserAction.ToggleTextSearch -> toggleTextSearch()
-        is BrowserAction.ToggleReceiveTextSearch -> toggleReceiveTextSearch()
-        is BrowserAction.CreateShortcut -> createShortcut()
-        is BrowserAction.ShareLink -> shareLink()
-        is BrowserAction.ShareLinkToLastTarget -> shareLinkToLastTarget()
-        is BrowserAction.ShareLinkLongPress -> handleShareLongPress()
-        is BrowserAction.SendToRemote -> sendToRemote(action.text)
-        is BrowserAction.AddToInstapaper -> addToInstapaper()
-        is BrowserAction.ConfigureInstapaper -> configureInstapaper()
-        is BrowserAction.ToggleReceiveLink -> toggleReceiveLink()
-        is BrowserAction.ToggleTouchTurnPage -> toggleTouchTurnPageFeature()
-        is BrowserAction.ToggleSwitchTouchAreaAction -> toggleSwitchTouchAreaAction()
-        is BrowserAction.ShowTouchAreaDialog -> showTouchAreaDialog()
-        is BrowserAction.ToggleTouchPagination -> toggleTouchPagination()
-        is BrowserAction.SummarizeContent -> summarizeContent()
-        is BrowserAction.ChatWithWeb -> chatWithWeb(action.useSplitScreen, action.content, action.runWithAction)
-        is BrowserAction.ShowPageAiActionMenu -> showPageAiActionMenu()
-        is BrowserAction.ShowTaskMenu -> showTaskMenu()
-        is BrowserAction.RunTask -> runTaskById(action.taskId)
-        is BrowserAction.RunCustomTask -> runCustomTask(action.prompt)
-        is BrowserAction.ShowEpubDialog -> showEpubDialog()
-        is BrowserAction.SavePageForLater -> savePageForLater()
-        is BrowserAction.ShowSavedPages -> showSavedPages()
-        is BrowserAction.SaveWebArchive -> showWebArchiveFilePicker()
-        is BrowserAction.SavePdf -> showPdfDialog()
-        is BrowserAction.FocusOnInput -> focusOnInput()
-        is BrowserAction.ShowMenuDialog -> showMenuDialog()
-        is BrowserAction.ShowFastToggleDialog -> showFastToggleDialog()
-        is BrowserAction.ShowTocDialog -> showTocDialog()
-        is BrowserAction.RotateScreen -> rotateScreen()
-        is BrowserAction.ToggleAudioOnlyMode -> toggleAudioOnlyMode()
-        is BrowserAction.ShowSiteSettingsDialog -> showSiteSettingsDialog()
-        is BrowserAction.ShowUserScriptCommands -> showUserScriptCommands()
-    }
+    fun dispatch(action: BrowserAction) =
+        when (action) {
+            is BrowserAction.Noop -> Unit
+            is BrowserAction.NewATab -> newATab()
+            is BrowserAction.DuplicateTab -> duplicateTab()
+            is BrowserAction.RemoveAlbum -> removeAlbum()
+            is BrowserAction.GotoLeftTab -> gotoLeftTab()
+            is BrowserAction.GotoRightTab -> gotoRightTab()
+            is BrowserAction.AddNewTab -> addNewTab(action.url)
+            is BrowserAction.UpdateAlbum -> updateAlbum(action.url)
+            is BrowserAction.GoForward -> goForward()
+            is BrowserAction.HandleBackKey -> handleBackKey()
+            is BrowserAction.RefreshAction -> refreshAction()
+            is BrowserAction.JumpToTop -> jumpToTop()
+            is BrowserAction.JumpToBottom -> jumpToBottom()
+            is BrowserAction.PageUp -> pageUp()
+            is BrowserAction.PageDown -> pageDown()
+            is BrowserAction.SendPageUpKey -> sendPageUpKey()
+            is BrowserAction.SendPageDownKey -> sendPageDownKey()
+            is BrowserAction.SendLeftKey -> sendLeftKey()
+            is BrowserAction.SendRightKey -> sendRightKey()
+            is BrowserAction.ToggleReaderMode -> toggleReaderMode()
+            is BrowserAction.ToggleVerticalRead -> toggleVerticalRead()
+            is BrowserAction.IncreaseFontSize -> increaseFontSize()
+            is BrowserAction.DecreaseFontSize -> decreaseFontSize()
+            is BrowserAction.ShowFontSizeChangeDialog -> showFontSizeChangeDialog()
+            is BrowserAction.ShowFontBoldnessDialog -> showFontBoldnessDialog()
+            is BrowserAction.ShowReaderSettingsDialog -> displayConfigDelegate.showReaderSettingsDialog()
+            is BrowserAction.InvertColors -> invertColors()
+            is BrowserAction.ShowOverview -> showOverview()
+            is BrowserAction.ToggleFullscreen -> toggleFullscreen()
+            is BrowserAction.ToggleSplitScreen -> toggleSplitScreen(action.url)
+            is BrowserAction.ShowTranslation -> showTranslation()
+            is BrowserAction.ShowTranslationConfigDialog -> showTranslationConfigDialog(action.translateDirectly)
+            is BrowserAction.Translate -> translate(action.mode)
+            is BrowserAction.ConfigureTranslationLanguage -> configureTranslationLanguage(action.api)
+            is BrowserAction.HandleTtsButton -> handleTtsButton()
+            is BrowserAction.OpenBookmarkPage -> openBookmarkPage()
+            is BrowserAction.OpenHistoryPage -> openHistoryPage(action.amount)
+            is BrowserAction.SaveBookmark -> saveBookmark(action.url, action.title)
+            is BrowserAction.ShowSearchPanel -> showSearchPanel()
+            is BrowserAction.ToggleTextSearch -> toggleTextSearch()
+            is BrowserAction.ToggleReceiveTextSearch -> toggleReceiveTextSearch()
+            is BrowserAction.CreateShortcut -> createShortcut()
+            is BrowserAction.ShareLink -> shareLink()
+            is BrowserAction.ShareLinkToLastTarget -> shareLinkToLastTarget()
+            is BrowserAction.ShareLinkLongPress -> handleShareLongPress()
+            is BrowserAction.SendToRemote -> sendToRemote(action.text)
+            is BrowserAction.AddToInstapaper -> addToInstapaper()
+            is BrowserAction.ConfigureInstapaper -> configureInstapaper()
+            is BrowserAction.ToggleReceiveLink -> toggleReceiveLink()
+            is BrowserAction.ToggleTouchTurnPage -> toggleTouchTurnPageFeature()
+            is BrowserAction.ToggleSwitchTouchAreaAction -> toggleSwitchTouchAreaAction()
+            is BrowserAction.ShowTouchAreaDialog -> showTouchAreaDialog()
+            is BrowserAction.ToggleTouchPagination -> toggleTouchPagination()
+            is BrowserAction.SummarizeContent -> summarizeContent()
+            is BrowserAction.ChatWithWeb -> chatWithWeb(action.useSplitScreen, action.content, action.runWithAction)
+            is BrowserAction.ShowPageAiActionMenu -> showPageAiActionMenu()
+            is BrowserAction.ShowTaskMenu -> showTaskMenu()
+            is BrowserAction.RunTask -> runTaskById(action.taskId)
+            is BrowserAction.RunCustomTask -> runCustomTask(action.prompt)
+            is BrowserAction.ShowEpubDialog -> showEpubDialog()
+            is BrowserAction.SavePageForLater -> savePageForLater()
+            is BrowserAction.ShowSavedPages -> showSavedPages()
+            is BrowserAction.SaveWebArchive -> showWebArchiveFilePicker()
+            is BrowserAction.SavePdf -> showPdfDialog()
+            is BrowserAction.FocusOnInput -> focusOnInput()
+            is BrowserAction.ShowMenuDialog -> showMenuDialog()
+            is BrowserAction.ShowFastToggleDialog -> showFastToggleDialog()
+            is BrowserAction.ShowTocDialog -> showTocDialog()
+            is BrowserAction.RotateScreen -> rotateScreen()
+            is BrowserAction.ToggleAudioOnlyMode -> toggleAudioOnlyMode()
+            is BrowserAction.ShowSiteSettingsDialog -> showSiteSettingsDialog()
+            is BrowserAction.ShowUserScriptCommands -> showUserScriptCommands()
+        }
 
     // ── BrowserController implementation ──────────────────────────────────
 
     override fun newATab() = tabManager.newATab(searchOnSite, { hideSearchPanel() }, { focusOnInput() })
+
     override fun duplicateTab() = tabManager.duplicateTab()
+
     override fun refreshAction() {
-        if (ebWebView.isLoadFinish && ebWebView.url?.isNotEmpty() == true) ebWebView.reload()
-        else ebWebView.stopLoading()
+        if (ebWebView.isLoadFinish && ebWebView.url?.isNotEmpty() == true) {
+            ebWebView.reload()
+        } else {
+            ebWebView.stopLoading()
+        }
     }
 
     override fun isAtTop(): Boolean = ebWebView.isAtTop()
+
     override fun jumpToTop() = ebWebView.jumpToTop()
+
     override fun jumpToBottom() = ebWebView.jumpToBottom()
+
     override fun pageDown() = ebWebView.pageDownWithNoAnimation()
+
     override fun pageUp() = ebWebView.pageUpWithNoAnimation()
+
     override fun toggleReaderMode() = ebWebView.toggleReaderMode()
+
     override fun toggleVerticalRead() = ebWebView.toggleVerticalRead()
+
     override fun toggleAudioOnlyMode() = ebWebView.toggleAudioOnlyMode()
+
     override fun updatePageInfo(info: String) {
         composeToolbarViewController.updatePageInfo(info)
         statusbarViewController.updatePageInfo(info)
     }
+
     override fun sendPageUpKey() = ebWebView.sendPageUpKey()
+
     override fun sendPageDownKey() = ebWebView.sendPageDownKey()
-    override fun sendLeftKey() { ebWebView.dispatchKeyEvent(KeyEvent(ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT)) }
-    override fun sendRightKey() { ebWebView.dispatchKeyEvent(KeyEvent(ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT)) }
+
+    override fun sendLeftKey() {
+        ebWebView.dispatchKeyEvent(KeyEvent(ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT))
+    }
+
+    override fun sendRightKey() {
+        ebWebView.dispatchKeyEvent(KeyEvent(ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT))
+    }
 
     override fun translate(translationMode: TranslationMode) = translationDelegate.translate(translationMode)
+
     override fun resetTranslateUI() = translationDelegate.resetTranslateUI()
+
     override fun configureTranslationLanguage(translateApi: TRANSLATE_API) = translationDelegate.configureTranslationLanguage(translateApi)
+
     override fun showTranslation(webView: EBWebView?) = translationDelegate.showTranslation(webView)
-    override fun showTranslationConfigDialog(translateDirectly: Boolean) = translationDelegate.showTranslationConfigDialog(translateDirectly)
+
+    override fun showTranslationConfigDialog(translateDirectly: Boolean) =
+        translationDelegate.showTranslationConfigDialog(translateDirectly)
 
     override fun toggleTouchPagination() = toggleTouchTurnPageFeature()
-    override fun toggleTextSearch() { remoteConnViewModel.toggleTextSearch() }
+
+    override fun toggleTextSearch() {
+        remoteConnViewModel.toggleTextSearch()
+    }
+
     override fun toggleTouchTurnPageFeature() = config.touch::enableTouchTurn.toggle()
+
     override fun toggleSwitchTouchAreaAction() = config.touch::switchTouchAreaAction.toggle()
 
-    override fun onShowCustomView(view: View?, callback: CustomViewCallback?) = fullscreenDelegate.onShowCustomView(view, callback)
+    override fun onShowCustomView(
+        view: View?,
+        callback: CustomViewCallback?,
+    ) = fullscreenDelegate.onShowCustomView(view, callback)
+
     override fun onHideCustomView(): Boolean = fullscreenDelegate.onHideCustomView()
+
     override fun toggleFullscreen() = fullscreenDelegate.toggleFullscreen()
+
     override fun showOverview() = chromeSetupDelegate.overviewDialogController.show()
+
     override fun hideOverview() = chromeSetupDelegate.overviewDialogController.hide()
+
     override fun rotateScreen() = IntentUnit.rotateScreen(this)
 
-    override fun addHistory(title: String, url: String) {
+    override fun addHistory(
+        title: String,
+        url: String,
+    ) {
         lifecycleScope.launch { recordDb.addHistory(Record(title, url, System.currentTimeMillis())) }
     }
 
     override fun isCurrentAlbum(albumController: AlbumController): Boolean = tabManager.isCurrentAlbum(albumController)
+
     override fun showAlbum(albumController: AlbumController) = tabManager.showAlbum(albumController)
+
     override fun addNewTab(url: String) = tabManager.addNewTab(url)
-    override fun removeAlbum(albumController: AlbumController, showHomePage: Boolean) = tabManager.removeAlbum(albumController, showHomePage)
+
+    override fun removeAlbum(
+        albumController: AlbumController,
+        showHomePage: Boolean,
+    ) = tabManager.removeAlbum(albumController, showHomePage)
+
     override fun removeAlbum() = tabManager.removeCurrentAlbum()
+
     override fun gotoLeftTab() = tabManager.gotoLeftTab()
+
     override fun gotoRightTab() = tabManager.gotoRightTab()
+
     override fun updateAlbum(url: String?) = tabManager.updateAlbum(url)
 
     override fun showFileChooser(filePathCallback: ValueCallback<Array<Uri>>) = fileHandlingDelegate.showFileChooser(filePathCallback)
+
     override fun showEpubDialog() = fileHandlingDelegate.showEpubDialog()
+
     override fun showWebArchiveFilePicker() = fileHandlingDelegate.showWebArchiveFilePicker()
+
     override fun showPdfDialog() = fileHandlingDelegate.showPdfDialog()
+
     override fun showOpenEpubFilePicker() = fileHandlingDelegate.showOpenEpubFilePicker()
+
     override fun savePageForLater() = fileHandlingDelegate.savePageForLater()
+
     override fun showSavedPages() = fileHandlingDelegate.showSavedPages()
 
-    override fun onLongPress(message: Message, event: MotionEvent?) = contextMenuDelegate.onLongPress(message, event)
+    override fun onLongPress(
+        message: Message,
+        event: MotionEvent?,
+    ) = contextMenuDelegate.onLongPress(message, event)
+
     override fun handleKeyEvent(event: KeyEvent): Boolean = keyHandler.handleKeyEvent(event)
+
     override fun focusOnInput() = inputBarDelegate.focusOnInput()
 
     override fun onRenderProcessGone(webView: EBWebView) {
@@ -643,7 +730,13 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
     }
 
     override fun summarizeContent() = aiChatDelegate.summarizeContent()
-    override fun chatWithWeb(useSplitScreen: Boolean, content: String?, runWithAction: ChatGPTActionInfo?) = aiChatDelegate.chatWithWeb(useSplitScreen, content, runWithAction)
+
+    override fun chatWithWeb(
+        useSplitScreen: Boolean,
+        content: String?,
+        runWithAction: ChatGPTActionInfo?,
+    ) = aiChatDelegate.chatWithWeb(useSplitScreen, content, runWithAction)
+
     override fun showPageAiActionMenu() = aiChatDelegate.showPageAiActionMenu()
 
     private fun showTaskMenu() = taskMenuDelegate.showTaskMenu()
@@ -652,8 +745,15 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
 
     private fun runCustomTask(prompt: String) = taskMenuDelegate.runCustomTask(prompt)
 
-    override fun updateSelectionRect(left: Float, top: Float, right: Float, bottom: Float) = actionModeDelegate.updateSelectionRect(left, top, right, bottom)
+    override fun updateSelectionRect(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ) = actionModeDelegate.updateSelectionRect(left, top, right, bottom)
+
     override fun isActionModeActive(): Boolean = actionModeDelegate.isActionModeActive()
+
     override fun dismissActionMode() = actionModeDelegate.dismissActionMode()
 
     override fun handleBackKey() {
@@ -669,18 +769,27 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
             if (!ebWebView.isTranslatePage && ebWebView.canGoBack()) {
                 ebWebView.goBack()
             } else {
-                if (config.tab.closeTabWhenNoMoreBackHistory) removeAlbum()
-                else EBToast.show(this, R.string.no_previous_page)
+                if (config.tab.closeTabWhenNoMoreBackHistory) {
+                    removeAlbum()
+                } else {
+                    EBToast.show(this, R.string.no_previous_page)
+                }
             }
         }
     }
 
     override fun goForward() {
-        if (ebWebView.canGoForward()) ebWebView.goForward()
-        else EBToast.show(this, R.string.toast_webview_forward)
+        if (ebWebView.canGoForward()) {
+            ebWebView.goForward()
+        } else {
+            EBToast.show(this, R.string.toast_webview_forward)
+        }
     }
 
-    override fun saveBookmark(url: String?, title: String?) = bookmarkActionsDelegate.saveBookmark(url, title)
+    override fun saveBookmark(
+        url: String?,
+        title: String?,
+    ) = bookmarkActionsDelegate.saveBookmark(url, title)
 
     override fun createShortcut() = bookmarkActionsDelegate.createShortcut()
 
@@ -705,10 +814,11 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
 
     private fun handleShareLongPress() {
         when (config.browser.shareLongPressAction) {
-            ShareLongPressAction.COPY_LINK -> ShareUtil.copyToClipboard(
-                this,
-                BrowserUnit.stripUrlQuery(ebWebView.url.orEmpty())
-            )
+            ShareLongPressAction.COPY_LINK ->
+                ShareUtil.copyToClipboard(
+                    this,
+                    BrowserUnit.stripUrlQuery(ebWebView.url.orEmpty()),
+                )
             ShareLongPressAction.LAST_SHARE_TARGET -> shareLinkToLastTarget()
         }
     }
@@ -732,7 +842,10 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
         }
         ReceiveDataDialog(this, lifecycleScope).show {
             ShareUtil.startReceiving(lifecycleScope) { url ->
-                if (url.isNotBlank()) { ebWebView.loadUrl(url); ShareUtil.stopBroadcast() }
+                if (url.isNotBlank()) {
+                    ebWebView.loadUrl(url)
+                    ShareUtil.stopBroadcast()
+                }
             }
         }
     }
@@ -757,40 +870,53 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
 
     override fun loadInSecondPane(url: String): Boolean =
         if (config.translation.twoPanelLinkHere && isTwoPaneControllerInitialized() && twoPaneController.isSecondPaneDisplayed()) {
-            toggleSplitScreen(url); true
-        } else false
+            toggleSplitScreen(url)
+            true
+        } else {
+            false
+        }
 
     override fun showFastToggleDialog() {
         if (!browserState.isWebViewInitialized) return
-        FastToggleDialogFragment { ebWebView.initPreferences(); ebWebView.reload() }.show(supportFragmentManager, "fast_toggle_dialog")
+        FastToggleDialogFragment {
+            ebWebView.initPreferences()
+            ebWebView.reload()
+        }.show(supportFragmentManager, "fast_toggle_dialog")
     }
 
-    override fun showMenuDialog() = MenuDialogFragment(
-        ebWebView.url.orEmpty(), ttsViewModel.isReading(), ebWebView.isAudioOnlyMode,
-        ebWebView.hasVideo, config.touch.enableTouchTurn,
-        { menuActionHandler.handle(it) }, { menuActionHandler.handleLongClick(it) }
-    ).show(supportFragmentManager, "menu_dialog")
+    override fun showMenuDialog() =
+        MenuDialogFragment(
+            ebWebView.url.orEmpty(),
+            ttsViewModel.isReading(),
+            ebWebView.isAudioOnlyMode,
+            ebWebView.hasVideo,
+            config.touch.enableTouchTurn,
+            { menuActionHandler.handle(it) },
+            { menuActionHandler.handleLongClick(it) },
+        ).show(supportFragmentManager, "menu_dialog")
 
-    private val siteSettingsLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        // The result arrives between onStart and onResume, while the WebView
-        // timers are still paused (see onPause) — a reload() issued here is
-        // dropped. Defer to onResume, which runs right after resumeTimers().
-        if (result.resultCode == RESULT_OK) pendingSiteSettingsReload = true
-    }
+    private val siteSettingsLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            // The result arrives between onStart and onResume, while the WebView
+            // timers are still paused (see onPause) — a reload() issued here is
+            // dropped. Defer to onResume, which runs right after resumeTimers().
+            if (result.resultCode == RESULT_OK) pendingSiteSettingsReload = true
+        }
 
     private var pendingSiteSettingsReload = false
 
-    private val startPageBackgroundLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val uri = result.data?.data
-        if (result.resultCode != RESULT_OK || uri == null) return@registerForActivityResult
-        // Don't read the uri here: the result arrives while the WebView timers
-        // are still paused (see onPause); defer to onResume.
-        pendingStartPageBackgroundUri = uri
-    }
+    private val startPageBackgroundLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            val uri = result.data?.data
+            if (result.resultCode != RESULT_OK || uri == null) return@registerForActivityResult
+            // Don't read the uri here: the result arrives while the WebView timers
+            // are still paused (see onPause); defer to onResume.
+            pendingStartPageBackgroundUri = uri
+        }
 
     private var pendingStartPageBackgroundUri: Uri? = null
 
@@ -802,7 +928,7 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
             Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "image/*"
-            }
+            },
         )
     }
 
@@ -811,12 +937,15 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
         if (ViewUnit.isTablet(this)) {
             SiteSettingsDialogFragment(
                 url = ebWebView.url.orEmpty(),
-                onDismissAction = { ebWebView.initPreferences(); ebWebView.reload() },
+                onDismissAction = {
+                    ebWebView.initPreferences()
+                    ebWebView.reload()
+                },
             ).show(supportFragmentManager, "site_settings_dialog")
         } else {
             // on phones the dialog is too cramped; use the whole screen
             siteSettingsLauncher.launch(
-                SiteSettingsActivity.createIntent(this, ebWebView.url.orEmpty())
+                SiteSettingsActivity.createIntent(this, ebWebView.url.orEmpty()),
             )
         }
     }
@@ -831,14 +960,15 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
             return
         }
         lifecycleScope.launch {
-            val index = dialogManager.getSelectedOptionWithString(
-                R.string.setting_title_userscripts,
-                commands.map { it.first },
-                -1,
-                titleActionIconResId = R.drawable.ic_settings,
-                titleActionDescriptionResId = R.string.settings,
-                onTitleAction = { startActivity(UserScriptListActivity.createIntent(this@BrowserActivity)) },
-            ) ?: return@launch
+            val index =
+                dialogManager.getSelectedOptionWithString(
+                    R.string.setting_title_userscripts,
+                    commands.map { it.first },
+                    -1,
+                    titleActionIconResId = R.drawable.ic_settings,
+                    titleActionDescriptionResId = R.string.settings,
+                    onTitleAction = { startActivity(UserScriptListActivity.createIntent(this@BrowserActivity)) },
+                ) ?: return@launch
             commands.getOrNull(index)?.let { ebWebView.invokeUserScriptMenuCommand(it.second) }
         }
     }
@@ -855,6 +985,7 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
         // show them without reloading the pages
         tabManager.updateSavedAlbumInfoDebounced()
     }
+
     override fun updateProgress(progress: Int) {
         progressBar.progress = progress
         progressBarVertical.progress = progress
@@ -906,7 +1037,7 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
 
         // ViewModel survives activity recreation (e.g. keyboard config change + recreate()).
         // Clear stale album entries so initSavedTabs() doesn't append duplicates
-        albumViewModel.clearAlbums();
+        albumViewModel.clearAlbums()
 
         dispatchIntent(intent)
         intentDispatchDelegate.shouldLoadTabState = false
@@ -950,7 +1081,7 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
             this,
             downloadReceiver,
             IntentFilter(ACTION_DOWNLOAD_COMPLETE),
-            ContextCompat.RECEIVER_EXPORTED
+            ContextCompat.RECEIVER_EXPORTED,
         )
     }
 
@@ -962,12 +1093,17 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
     override fun onResume() {
         super.onResume()
         displayConfigDelegate.onResume()
-        if (config.restartChanged) { config.restartChanged = false; dialogManager.showRestartConfirmDialog() }
+        if (config.restartChanged) {
+            config.restartChanged = false
+            dialogManager.showRestartConfirmDialog()
+        }
         statusbarViewController.refresh()
         if (!binding.appBar.isVisible) statusbarViewController.show() else statusbarViewController.hide()
         updateTitle()
         disablePendingTransitions()
-        if (config.display.customFontChanged && (config.display.fontType == FontType.CUSTOM || config.display.readerFontType == FontType.CUSTOM)) {
+        if (config.display.customFontChanged &&
+            (config.display.fontType == FontType.CUSTOM || config.display.readerFontType == FontType.CUSTOM)
+        ) {
             // The custom font URL is versioned by font file, so a style update is
             // enough to fetch the new font; no reload needed.
             ebWebView.updateCssStyle()
@@ -1050,9 +1186,20 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
         if (isMeetPipCriteria()) enterPipMode()
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean = keyHandler.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event)
-    override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean = keyHandler.onKeyLongPress(keyCode, event) || super.onKeyLongPress(keyCode, event)
-    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean = keyHandler.onKeyUp(keyCode, event) || super.onKeyUp(keyCode, event)
+    override fun onKeyDown(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean = keyHandler.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event)
+
+    override fun onKeyLongPress(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean = keyHandler.onKeyLongPress(keyCode, event) || super.onKeyLongPress(keyCode, event)
+
+    override fun onKeyUp(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean = keyHandler.onKeyUp(keyCode, event) || super.onKeyUp(keyCode, event)
 
     override fun onActionModeStarted(mode: ActionMode) {
         actionModeDelegate.onActionModeStarted(mode)
@@ -1065,39 +1212,46 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        if (config.uiLocaleLanguage.isNotEmpty()) super.attachBaseContext(LocaleManager.setLocale(newBase, config.uiLocaleLanguage))
-        else super.attachBaseContext(newBase)
+        if (config.uiLocaleLanguage.isNotEmpty()) {
+            super.attachBaseContext(LocaleManager.setLocale(newBase, config.uiLocaleLanguage))
+        } else {
+            super.attachBaseContext(newBase)
+        }
     }
 
     // ── Private helpers ───────────────────────────────────────────────────
 
     private fun prepareRecord(): Boolean = bookmarkActionsDelegate.prepareRecord()
 
-    private fun getFocusedWebView(): EBWebView = when {
-        ebWebView.hasFocus() -> ebWebView
-        isTwoPaneControllerInitialized() && twoPaneController.getSecondWebView().hasFocus() -> twoPaneController.getSecondWebView()
-        else -> ebWebView
-    }
+    private fun getFocusedWebView(): EBWebView =
+        when {
+            ebWebView.hasFocus() -> ebWebView
+            isTwoPaneControllerInitialized() && twoPaneController.getSecondWebView().hasFocus() -> twoPaneController.getSecondWebView()
+            else -> ebWebView
+        }
 
     private fun isTwoPaneControllerInitialized(): Boolean = ::twoPaneController.isInitialized
 
     private fun maybeInitTwoPaneController() {
         if (!isTwoPaneControllerInitialized()) {
-            twoPaneController = TwoPaneController(
-                this, lifecycleScope, browserState.translationPanelView, binding.twoPanelLayout,
-                { showTranslation() },
-                { if (ebWebView.isReaderModeOn) ebWebView.toggleReaderMode() },
-                { url -> ebWebView.loadUrl(url) },
-                { api, webView -> translationDelegate.translateByParagraph(api, webView) },
-                this::translateWebView
-            )
+            twoPaneController =
+                TwoPaneController(
+                    this,
+                    lifecycleScope,
+                    browserState.translationPanelView,
+                    binding.twoPanelLayout,
+                    { showTranslation() },
+                    { if (ebWebView.isReaderModeOn) ebWebView.toggleReaderMode() },
+                    { url -> ebWebView.loadUrl(url) },
+                    { api, webView -> translationDelegate.translateByParagraph(api, webView) },
+                    this::translateWebView,
+                )
         }
     }
 
     private fun translateWebView() = translationDelegate.translateWebView()
 
     private fun hideSearchPanel() = fullscreenDelegate.hideSearchPanel()
-
 
     private fun updateTitle() {
         if (!browserState.isWebViewInitialized) return
@@ -1109,10 +1263,13 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
         composeToolbarViewController.updateRefresh(isRunning)
     }
 
-    private fun isMeetPipCriteria() = config.browser.enableVideoPip && fullscreenDelegate.fullscreenHolder != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+    private fun isMeetPipCriteria() =
+        config.browser.enableVideoPip && fullscreenDelegate.fullscreenHolder != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun enterPipMode() { enterPictureInPictureMode(PictureInPictureParams.Builder().build()) }
+    private fun enterPipMode() {
+        enterPictureInPictureMode(PictureInPictureParams.Builder().build())
+    }
 
     private fun initLaunchers() = fileHandlingDelegate.initLaunchers()
 
@@ -1147,81 +1304,135 @@ open class BrowserActivity : FragmentActivity(), BrowserController {
             checkAdBlockerList()
             return
         }
-        val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) checkAdBlockerList()
-        }
+        val requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted) checkAdBlockerList()
+            }
         requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 
-    private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        when (key) {
-            UiConfig.K_HIDE_STATUSBAR -> { if (config.ui.hideStatusbar) fullscreenDelegate.hideStatusBar() else fullscreenDelegate.showStatusBar() }
-            UiConfig.K_STATUSBAR_ENABLED,
-            UiConfig.K_STATUSBAR_POSITION,
-            UiConfig.K_STATUSBAR_ITEMS -> {
-                statusbarViewController.refresh()
-                if (!binding.appBar.isVisible && config.ui.statusbarEnabled) statusbarViewController.show()
-                else statusbarViewController.hide()
+    private val preferenceChangeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            when (key) {
+                UiConfig.K_HIDE_STATUSBAR -> {
+                    if (config.ui.hideStatusbar) fullscreenDelegate.hideStatusBar() else fullscreenDelegate.showStatusBar()
+                }
+                UiConfig.K_STATUSBAR_ENABLED,
+                UiConfig.K_STATUSBAR_POSITION,
+                UiConfig.K_STATUSBAR_ITEMS,
+                -> {
+                    statusbarViewController.refresh()
+                    if (!binding.appBar.isVisible && config.ui.statusbarEnabled) {
+                        statusbarViewController.show()
+                    } else {
+                        statusbarViewController.hide()
+                    }
+                }
+                UiConfig.K_TOOLBAR_ICONS_FOR_LARGE, UiConfig.K_TOOLBAR_ICONS -> composeToolbarViewController.updateIcons()
+                TabConfig.K_SHOW_TAB_BAR -> {
+                    composeToolbarViewController.showTabbar(config.tab.shouldShowTabBar)
+                    // In vertical mode the strip is a separate view outside the app bar, so
+                    // toggling the setting has to re-run the constraints that show it and
+                    // push the content down.
+                    ViewUnit.updateAppbarPosition(binding)
+                }
+                TabConfig.K_SIDE_TAB_BAR_ON_TOP -> {
+                    composeToolbarViewController.updateIcons()
+                    ViewUnit.updateAppbarPosition(binding)
+                }
+                DisplayConfig.K_FONT_TYPE -> ebWebView.updateCssStyle()
+                DisplayConfig.K_READER_FONT_TYPE -> ebWebView.updateCssStyle()
+                DisplayConfig.K_FONT_SIZE -> ebWebView.settings.textZoom = config.display.fontSize
+                DisplayConfig.K_READER_FONT_SIZE -> {
+                    if (ebWebView.shouldUseReaderFont()) {
+                        ebWebView.settings.textZoom =
+                            config.display.readerFontSize
+                    }
+                }
+                DisplayConfig.K_BOLD_FONT -> {
+                    composeToolbarViewController.updateIcons()
+                    ebWebView.updateCssStyle()
+                }
+                DisplayConfig.K_BLACK_FONT -> {
+                    composeToolbarViewController.updateIcons()
+                    ebWebView.updateCssStyle()
+                }
+                DisplayConfig.K_ENABLE_IMAGE_ADJUSTMENT -> ebWebView.reload()
+                DisplayConfig.K_CUSTOM_FONT -> {
+                    if (config.display.fontType == FontType.CUSTOM) ebWebView.updateCssStyle()
+                }
+                DisplayConfig.K_READER_CUSTOM_FONT -> {
+                    if (config.display.readerFontType == FontType.CUSTOM &&
+                        ebWebView.shouldUseReaderFont()
+                    ) {
+                        ebWebView.updateCssStyle()
+                    }
+                }
+                ConfigManager.K_IS_INCOGNITO_MODE -> {
+                    ebWebView.incognito = config.isIncognitoMode
+                    composeToolbarViewController.updateIcons()
+                    EBToast.showShort(this, "Incognito mode is " + if (config.isIncognitoMode) "enabled." else "disabled.")
+                }
+                UiConfig.K_KEEP_AWAKE -> {
+                    if (config.ui.keepAwake) {
+                        window.addFlags(
+                            android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                        )
+                    } else {
+                        window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    }
+                }
+                BrowserConfig.K_DESKTOP -> {
+                    ebWebView.updateUserAgentString()
+                    ebWebView.reload()
+                    composeToolbarViewController.updateIcons()
+                }
+                DisplayConfig.K_DARK_MODE -> {
+                    UiThemeState.darkMode.value = config.display.darkMode
+                    config.restartChanged = true
+                }
+                DisplayConfig.K_UI_THEME -> {
+                    UiThemeState.current.value = config.display.uiTheme
+                    SplashThemer.apply(this)
+                }
+                DisplayConfig.K_UI_BORDER -> UiThemeState.uiBorder.value = config.display.uiBorder
+                DisplayConfig.K_UI_FILL -> UiThemeState.uiFill.value = config.display.uiFill
+                DisplayConfig.K_UI_THEME_INVERTED -> UiThemeState.inverted.value = config.display.uiThemeInverted
+                DisplayConfig.K_GRADIENT_ANGLE ->
+                    UiThemeState.gradientAngle.value = config.display.gradientAngle
+                DisplayConfig.K_GRADIENT_LEVEL -> UiThemeState.gradientLevel.value = config.display.gradientLevel
+                DisplayConfig.K_CUSTOM_THEME_COLOR -> {
+                    UiThemeState.customColor.value =
+                        androidx.compose.ui.graphics
+                            .Color(config.display.customThemeColor)
+                    SplashThemer.apply(this)
+                }
+                UiConfig.K_TOOLBAR_TOP -> ViewUnit.updateAppbarPosition(binding)
+                UiConfig.K_TOOLBAR_POSITION -> {
+                    composeToolbarViewController.updateIcons()
+                    ViewUnit.updateAppbarPosition(binding)
+                }
+                UiConfig.K_NAV_POSITION -> fabImageViewController.applyFabPosition()
+                TtsConfig.K_TTS_SPEED_VALUE -> ttsViewModel.setSpeechRate(config.tts.ttsSpeedValue / 100f)
+                BrowserConfig.K_CUSTOM_USER_AGENT, BrowserConfig.K_ENABLE_CUSTOM_USER_AGENT -> {
+                    ebWebView.updateUserAgentString()
+                    ebWebView.reload()
+                }
+                BrowserConfig.K_ENABLE_VIDEO_AUTOPLAY -> {
+                    ebWebView.initPreferences()
+                    ebWebView.reload()
+                }
+                BrowserConfig.K_ENABLE_PULL_TO_REFRESH -> {
+                    browserState.swipeRefreshLayout.isEnabled = config.browser.enablePullToRefresh
+                }
+                TouchConfig.K_ENABLE_TOUCH -> {
+                    composeToolbarViewController.updateIcons()
+                    chromeSetupDelegate.touchController?.toggleTouchPageTurn(config.touch.enableTouchTurn)
+                }
+                TouchConfig.K_TOUCH_AREA_ACTION_SWITCH -> composeToolbarViewController.updateIcons()
+                AiConfig.K_GPT_ACTION_ITEMS -> actionModeMenuViewModel.updateMenuInfos(this, translationViewModel)
             }
-            UiConfig.K_TOOLBAR_ICONS_FOR_LARGE, UiConfig.K_TOOLBAR_ICONS -> composeToolbarViewController.updateIcons()
-            TabConfig.K_SHOW_TAB_BAR -> {
-                composeToolbarViewController.showTabbar(config.tab.shouldShowTabBar)
-                // In vertical mode the strip is a separate view outside the app bar, so
-                // toggling the setting has to re-run the constraints that show it and
-                // push the content down.
-                ViewUnit.updateAppbarPosition(binding)
-            }
-            TabConfig.K_SIDE_TAB_BAR_ON_TOP -> {
-                composeToolbarViewController.updateIcons()
-                ViewUnit.updateAppbarPosition(binding)
-            }
-            DisplayConfig.K_FONT_TYPE -> ebWebView.updateCssStyle()
-            DisplayConfig.K_READER_FONT_TYPE -> ebWebView.updateCssStyle()
-            DisplayConfig.K_FONT_SIZE -> ebWebView.settings.textZoom = config.display.fontSize
-            DisplayConfig.K_READER_FONT_SIZE -> { if (ebWebView.shouldUseReaderFont()) ebWebView.settings.textZoom = config.display.readerFontSize }
-            DisplayConfig.K_BOLD_FONT -> { composeToolbarViewController.updateIcons(); ebWebView.updateCssStyle() }
-            DisplayConfig.K_BLACK_FONT -> { composeToolbarViewController.updateIcons(); ebWebView.updateCssStyle() }
-            DisplayConfig.K_ENABLE_IMAGE_ADJUSTMENT -> ebWebView.reload()
-            DisplayConfig.K_CUSTOM_FONT -> { if (config.display.fontType == FontType.CUSTOM) ebWebView.updateCssStyle() }
-            DisplayConfig.K_READER_CUSTOM_FONT -> { if (config.display.readerFontType == FontType.CUSTOM && ebWebView.shouldUseReaderFont()) ebWebView.updateCssStyle() }
-            ConfigManager.K_IS_INCOGNITO_MODE -> {
-                ebWebView.incognito = config.isIncognitoMode
-                composeToolbarViewController.updateIcons()
-                EBToast.showShort(this, "Incognito mode is " + if (config.isIncognitoMode) "enabled." else "disabled.")
-            }
-            UiConfig.K_KEEP_AWAKE -> { if (config.ui.keepAwake) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) else window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
-            BrowserConfig.K_DESKTOP -> { ebWebView.updateUserAgentString(); ebWebView.reload(); composeToolbarViewController.updateIcons() }
-            DisplayConfig.K_DARK_MODE -> {
-                UiThemeState.darkMode.value = config.display.darkMode
-                config.restartChanged = true
-            }
-            DisplayConfig.K_UI_THEME -> {
-                UiThemeState.current.value = config.display.uiTheme
-                SplashThemer.apply(this)
-            }
-            DisplayConfig.K_UI_BORDER -> UiThemeState.uiBorder.value = config.display.uiBorder
-            DisplayConfig.K_UI_FILL -> UiThemeState.uiFill.value = config.display.uiFill
-            DisplayConfig.K_UI_THEME_INVERTED -> UiThemeState.inverted.value = config.display.uiThemeInverted
-            DisplayConfig.K_GRADIENT_ANGLE ->
-                UiThemeState.gradientAngle.value = config.display.gradientAngle
-            DisplayConfig.K_GRADIENT_LEVEL -> UiThemeState.gradientLevel.value = config.display.gradientLevel
-            DisplayConfig.K_CUSTOM_THEME_COLOR -> {
-                UiThemeState.customColor.value =
-                    androidx.compose.ui.graphics.Color(config.display.customThemeColor)
-                SplashThemer.apply(this)
-            }
-            UiConfig.K_TOOLBAR_TOP -> ViewUnit.updateAppbarPosition(binding)
-            UiConfig.K_TOOLBAR_POSITION -> { composeToolbarViewController.updateIcons(); ViewUnit.updateAppbarPosition(binding) }
-            UiConfig.K_NAV_POSITION -> fabImageViewController.applyFabPosition()
-            TtsConfig.K_TTS_SPEED_VALUE -> ttsViewModel.setSpeechRate(config.tts.ttsSpeedValue / 100f)
-            BrowserConfig.K_CUSTOM_USER_AGENT, BrowserConfig.K_ENABLE_CUSTOM_USER_AGENT -> { ebWebView.updateUserAgentString(); ebWebView.reload() }
-            BrowserConfig.K_ENABLE_VIDEO_AUTOPLAY -> { ebWebView.initPreferences(); ebWebView.reload() }
-            BrowserConfig.K_ENABLE_PULL_TO_REFRESH -> { browserState.swipeRefreshLayout.isEnabled = config.browser.enablePullToRefresh }
-            TouchConfig.K_ENABLE_TOUCH -> { composeToolbarViewController.updateIcons(); chromeSetupDelegate.touchController?.toggleTouchPageTurn(config.touch.enableTouchTurn) }
-            TouchConfig.K_TOUCH_AREA_ACTION_SWITCH -> composeToolbarViewController.updateIcons()
-            AiConfig.K_GPT_ACTION_ITEMS -> actionModeMenuViewModel.updateMenuInfos(this, translationViewModel)
         }
-    }
 
     companion object {
         private const val K_SHOULD_LOAD_TAB_STATE = "k_should_load_tab_state"

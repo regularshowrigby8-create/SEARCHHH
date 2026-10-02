@@ -1,10 +1,10 @@
 package info.plateaukao.einkbro.view.dialog
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.view.Gravity
-import android.app.AlertDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,11 +33,11 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.view.ThemedBorders
 import info.plateaukao.einkbro.view.compose.MyTheme
+import info.plateaukao.einkbro.view.withThemedFrame
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import info.plateaukao.einkbro.view.ThemedBorders
-import info.plateaukao.einkbro.view.withThemedFrame
 
 /**
  * In-process replacement for [Intent.createChooser]. The system chooser
@@ -52,10 +52,13 @@ class OpenWithDialog(
     private val title: String,
     private val extraTargets: List<Target> = emptyList(),
 ) : KoinComponent {
-
     private val config: ConfigManager by inject()
 
-    data class Target(val label: String, val icon: Drawable?, val intent: Intent)
+    data class Target(
+        val label: String,
+        val icon: Drawable?,
+        val intent: Intent,
+    )
 
     fun show() {
         val targets = buildTargets()
@@ -70,28 +73,32 @@ class OpenWithDialog(
     private fun showOnMain(targets: List<Target>) {
         val composeView = ComposeView(activity)
 
-        val dialog = AlertDialog.Builder(activity, R.style.TouchAreaDialog)
-            .setView(composeView)
-            .create()
-            .apply {
-                window?.setGravity(if (config.ui.isToolbarOnTop) Gravity.CENTER else Gravity.BOTTOM)
-                withThemedFrame(ThemedBorders.dialogFrame(activity))
-                window?.decorView?.setViewTreeLifecycleOwner(activity as LifecycleOwner)
-                window?.decorView?.setViewTreeSavedStateRegistryOwner(activity as SavedStateRegistryOwner)
-            }
+        val dialog =
+            AlertDialog
+                .Builder(activity, R.style.TouchAreaDialog)
+                .setView(composeView)
+                .create()
+                .apply {
+                    window?.setGravity(if (config.ui.isToolbarOnTop) Gravity.CENTER else Gravity.BOTTOM)
+                    withThemedFrame(ThemedBorders.dialogFrame(activity))
+                    window?.decorView?.setViewTreeLifecycleOwner(activity as LifecycleOwner)
+                    window?.decorView?.setViewTreeSavedStateRegistryOwner(activity as SavedStateRegistryOwner)
+                }
 
         composeView.setContent {
             MyTheme {
                 Column(
-                    modifier = Modifier
-                        .width(320.dp)
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .width(320.dp)
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
                 ) {
                     Text(
                         text = title,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 4.dp, vertical = 8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 4.dp, vertical = 8.dp),
                         style = MaterialTheme.typography.h6,
                         color = MaterialTheme.colors.onBackground,
                     )
@@ -108,10 +115,11 @@ class OpenWithDialog(
                     }
                     Text(
                         text = stringResource(android.R.string.cancel),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { dialog.dismiss() }
-                            .padding(horizontal = 4.dp, vertical = 8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { dialog.dismiss() }
+                                .padding(horizontal = 4.dp, vertical = 8.dp),
                         textAlign = androidx.compose.ui.text.style.TextAlign.End,
                         color = MaterialTheme.colors.onBackground,
                     )
@@ -124,19 +132,22 @@ class OpenWithDialog(
 
     private fun buildTargets(): List<Target> {
         val pm = activity.packageManager
-        val resolved = pm.queryIntentActivities(viewIntent, 0).map { info ->
-            val launch = Intent(viewIntent).apply {
-                component = android.content.ComponentName(
-                    info.activityInfo.packageName,
-                    info.activityInfo.name,
+        val resolved =
+            pm.queryIntentActivities(viewIntent, 0).map { info ->
+                val launch =
+                    Intent(viewIntent).apply {
+                        component =
+                            android.content.ComponentName(
+                                info.activityInfo.packageName,
+                                info.activityInfo.name,
+                            )
+                    }
+                Target(
+                    label = info.loadLabel(pm).toString(),
+                    icon = info.loadIcon(pm),
+                    intent = launch,
                 )
             }
-            Target(
-                label = info.loadLabel(pm).toString(),
-                icon = info.loadIcon(pm),
-                intent = launch,
-            )
-        }
         // Extras first so they're easy to spot (e.g. Supernote entry).
         return extraTargets + resolved
     }
@@ -149,10 +160,11 @@ private fun TargetRow(
     onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 4.dp, vertical = 10.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 4.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
     ) {
@@ -165,9 +177,10 @@ private fun TargetRow(
         }
         Text(
             text = label,
-            modifier = Modifier
-                .weight(1F)
-                .padding(start = 16.dp),
+            modifier =
+                Modifier
+                    .weight(1F)
+                    .padding(start = 16.dp),
             fontSize = 15.sp,
             color = MaterialTheme.colors.onBackground,
             maxLines = 1,

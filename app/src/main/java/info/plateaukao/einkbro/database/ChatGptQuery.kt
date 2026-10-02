@@ -3,7 +3,6 @@ package info.plateaukao.einkbro.database
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
 @Entity(tableName = "chat_gpt_query")
 data class ChatGptQuery(
     var date: Long,

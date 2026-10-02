@@ -21,15 +21,16 @@ object SplashThemer {
         val theme = UiThemeState.current.value
         val target =
             if (theme == UiTheme.CUSTOM) nearestPreset(UiThemeState.customColor.value) else theme
-        val styleRes = when (target) {
-            UiTheme.LIGHT_BLUE -> R.style.SplashTheme_LightBlue
-            UiTheme.DARK_BLUE -> R.style.SplashTheme_DarkBlue
-            UiTheme.GREEN -> R.style.SplashTheme_Green
-            UiTheme.SEPIA -> R.style.SplashTheme_Sepia
-            UiTheme.PURPLE -> R.style.SplashTheme_Purple
-            UiTheme.RED -> R.style.SplashTheme_Red
-            else -> R.style.SplashTheme_Classic
-        }
+        val styleRes =
+            when (target) {
+                UiTheme.LIGHT_BLUE -> R.style.SplashTheme_LightBlue
+                UiTheme.DARK_BLUE -> R.style.SplashTheme_DarkBlue
+                UiTheme.GREEN -> R.style.SplashTheme_Green
+                UiTheme.SEPIA -> R.style.SplashTheme_Sepia
+                UiTheme.PURPLE -> R.style.SplashTheme_Purple
+                UiTheme.RED -> R.style.SplashTheme_Red
+                else -> R.style.SplashTheme_Classic
+            }
         activity.splashScreen.setSplashScreenTheme(styleRes)
     }
 

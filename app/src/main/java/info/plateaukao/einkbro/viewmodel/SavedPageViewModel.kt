@@ -10,7 +10,6 @@ import java.io.File
 class SavedPageViewModel(
     private val bookmarkManager: BookmarkManager,
 ) : ViewModel() {
-
     fun getAllSavedPages() = bookmarkManager.getAllSavedPages()
 
     fun deleteSavedPage(savedPage: SavedPage) {

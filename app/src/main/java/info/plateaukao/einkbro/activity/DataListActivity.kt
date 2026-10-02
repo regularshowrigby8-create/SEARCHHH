@@ -35,14 +35,13 @@ import info.plateaukao.einkbro.browser.Javascript
 import info.plateaukao.einkbro.search.SplitSearchListType
 import info.plateaukao.einkbro.view.compose.EmptyListPlaceholder
 import info.plateaukao.einkbro.view.compose.ListScaffold
+import info.plateaukao.einkbro.view.compose.onTopBar
 import info.plateaukao.einkbro.view.dialog.DialogManager
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import info.plateaukao.einkbro.view.compose.onTopBar
 
 class DataListActivity : LocaleAwareComponentActivity() {
-
     private lateinit var whitelistType: BaseWhiteListType
     private val dialogManager: DialogManager by lazy { DialogManager(this) }
 
@@ -66,19 +65,19 @@ class DataListActivity : LocaleAwareComponentActivity() {
                         Icon(
                             tint = MaterialTheme.colors.onTopBar,
                             imageVector = Icons.Filled.Delete,
-                            contentDescription = stringResource(R.string.menu_delete)
+                            contentDescription = stringResource(R.string.menu_delete),
                         )
                     }
                     IconButton(onClick = {
                         whitelistType.addDomain(
                             lifecycleScope,
-                            dialogManager
+                            dialogManager,
                         ) { whitelist.value += it }
                     }) {
                         Icon(
                             tint = MaterialTheme.colors.onTopBar,
                             imageVector = Icons.Filled.Add,
-                            contentDescription = stringResource(R.string.whitelist_add)
+                            contentDescription = stringResource(R.string.whitelist_add),
                         )
                     }
                 },
@@ -88,9 +87,13 @@ class DataListActivity : LocaleAwareComponentActivity() {
                     list = whitelist,
                     editAction = { domain ->
                         lifecycleScope.launch {
-                            val value = dialogManager.getTextInput(
-                                R.string.menu_edit, whitelistType.titleId, domain
-                            )?.trim() ?: return@launch
+                            val value =
+                                dialogManager
+                                    .getTextInput(
+                                        R.string.menu_edit,
+                                        whitelistType.titleId,
+                                        domain,
+                                    )?.trim() ?: return@launch
                             if (value.isBlank() || value == domain) return@launch
                             whitelistType.deleteDomain(domain)
                             if (whitelist.value.contains(value)) {
@@ -119,9 +122,13 @@ class DataListActivity : LocaleAwareComponentActivity() {
 
     companion object {
         private const val TYPE = "type"
-        fun createIntent(context: Context, type: WhiteListType) = Intent(
+
+        fun createIntent(
+            context: Context,
+            type: WhiteListType,
+        ) = Intent(
             context,
-            DataListActivity::class.java
+            DataListActivity::class.java,
         ).apply {
             putExtra(TYPE, type)
         }
@@ -132,9 +139,8 @@ enum class WhiteListType {
     Adblock,
     Cookie,
     Javascript,
-    SplitSearch
+    SplitSearch,
 }
-
 
 @Composable
 fun WhiteListContent(
@@ -145,7 +151,7 @@ fun WhiteListContent(
 ) {
     if (list.value.isEmpty()) {
         EmptyListPlaceholder(
-            stringResource(R.string.list_empty) + "\n" + stringResource(R.string.empty_whitelist_hint)
+            stringResource(R.string.list_empty) + "\n" + stringResource(R.string.empty_whitelist_hint),
         )
     } else {
         LazyColumn(
@@ -155,12 +161,13 @@ fun WhiteListContent(
                     val itemText = list.value[index]
                     Row(
                         Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clickable { editAction(itemText) },
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .clickable { editAction(itemText) },
                             text = itemText,
                         )
                         IconButton(onClick = {
@@ -170,12 +177,12 @@ fun WhiteListContent(
                             Icon(
                                 tint = MaterialTheme.colors.onBackground,
                                 imageVector = Icons.Filled.Close,
-                                contentDescription = stringResource(R.string.menu_delete)
+                                contentDescription = stringResource(R.string.menu_delete),
                             )
                         }
                     }
                 }
-            }
+            },
         )
     }
 }
@@ -183,16 +190,21 @@ fun WhiteListContent(
 abstract class BaseWhiteListType {
     abstract val titleId: Int
     abstract val domainHandler: DomainInterface
+
     suspend fun getDomains(): List<String> = domainHandler.getDomains()
+
     open fun addDomain(
         lifecycleScope: LifecycleCoroutineScope,
         dialogManager: DialogManager,
         postAction: (String) -> Unit,
     ) {
         lifecycleScope.launch {
-            val value = dialogManager.getTextInput(
-                R.string.whitelist_add, titleId, ""
-            ) ?: return@launch
+            val value =
+                dialogManager.getTextInput(
+                    R.string.whitelist_add,
+                    titleId,
+                    "",
+                ) ?: return@launch
             if (value.isNotBlank()) {
                 domainHandler.addDomain(value.trim())
                 postAction(value.trim())
@@ -201,22 +213,29 @@ abstract class BaseWhiteListType {
     }
 
     suspend fun deleteDomain(domain: String) = domainHandler.deleteDomain(domain)
+
     suspend fun deleteAllDomains() = domainHandler.deleteAllDomains()
 }
 
-class WhiteListTypeAdblock : BaseWhiteListType(), KoinComponent {
+class WhiteListTypeAdblock :
+    BaseWhiteListType(),
+    KoinComponent {
     override val titleId: Int = R.string.setting_title_whitelist
     private val adBlock: AdBlock by inject()
     override val domainHandler: DomainInterface by lazy { adBlock }
 }
 
-class BaseWhiteListTypeJavascript : BaseWhiteListType(), KoinComponent {
+class BaseWhiteListTypeJavascript :
+    BaseWhiteListType(),
+    KoinComponent {
     override val titleId: Int = R.string.setting_title_whitelistJS
     private val javascript: Javascript by inject()
     override val domainHandler: DomainInterface by lazy { javascript }
 }
 
-class BaseWhiteListTypeCookie : BaseWhiteListType(), KoinComponent {
+class BaseWhiteListTypeCookie :
+    BaseWhiteListType(),
+    KoinComponent {
     override val titleId: Int = R.string.setting_title_whitelistCookie
     private val cookie: Cookie by inject()
     override val domainHandler: DomainInterface by lazy { cookie }

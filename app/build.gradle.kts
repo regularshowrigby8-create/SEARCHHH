@@ -22,15 +22,15 @@ plugins {
 // configuration cache is reused — a plain config-time value gets frozen into the
 // cache entry and goes stale. SOURCE_DATE_EPOCH still wins so reproducible
 // (F-Droid) builds stay deterministic.
-abstract class BuildTimeValueSource :
-    ValueSource<String, ValueSourceParameters.None> {
+abstract class BuildTimeValueSource : ValueSource<String, ValueSourceParameters.None> {
     override fun obtain(): String {
         val epoch = System.getenv("SOURCE_DATE_EPOCH")?.toLongOrNull()
-        val date = if (epoch != null) {
-            Date(epoch * 1_000) // Convert seconds to milliseconds
-        } else {
-            Date()
-        }
+        val date =
+            if (epoch != null) {
+                Date(epoch * 1_000) // Convert seconds to milliseconds
+            } else {
+                Date()
+            }
 
         val dateFormat = SimpleDateFormat("MMddHHmm")
         dateFormat.timeZone = TimeZone.getTimeZone("Asia/Taipei")
@@ -42,13 +42,15 @@ abstract class BuildTimeValueSource :
 // live outside the repo in ~/.secrets/einkbro-keystore.properties (keys:
 // storeFile [absolute path], storePassword, keyAlias, keyPassword). Override the
 // location with -Peinkbro.keystoreProperties=<path>.
-val keystorePropsFile = File(
-    project.findProperty("einkbro.keystoreProperties")?.toString()
-        ?: (System.getProperty("user.home") + "/.secrets/einkbro-keystore.properties")
-)
-val keystoreProps = Properties().apply {
-    if (keystorePropsFile.exists()) load(FileInputStream(keystorePropsFile))
-}
+val keystorePropsFile =
+    File(
+        project.findProperty("einkbro.keystoreProperties")?.toString()
+            ?: (System.getProperty("user.home") + "/.secrets/einkbro-keystore.properties"),
+    )
+val keystoreProps =
+    Properties().apply {
+        if (keystorePropsFile.exists()) load(FileInputStream(keystorePropsFile))
+    }
 val hasUploadKeystore = keystoreProps.containsKey("storeFile")
 
 // Searchhh distribution signing is independent of the upstream Play variant.
@@ -91,8 +93,9 @@ android {
         // Google Drive backup sync: an "installed app" OAuth client (not a secret;
         // PKCE, no client secret) with the reversed-client-id custom-scheme redirect.
         // Override locally with -Peinkbro.driveOAuthClientId=<id>.apps.googleusercontent.com
-        val driveOAuthClientId = project.findProperty("einkbro.driveOAuthClientId")?.toString()
-            ?: "540228800389-7e35n5f8vvcf9bfq6lb3ra8ud2vclffk.apps.googleusercontent.com"
+        val driveOAuthClientId =
+            project.findProperty("einkbro.driveOAuthClientId")?.toString()
+                ?: "540228800389-7e35n5f8vvcf9bfq6lb3ra8ud2vclffk.apps.googleusercontent.com"
         val driveOAuthScheme =
             "com.googleusercontent.apps." + driveOAuthClientId.removeSuffix(".apps.googleusercontent.com")
         buildConfigField("String", "DRIVE_OAUTH_CLIENT_ID", "\"$driveOAuthClientId\"")
@@ -116,7 +119,7 @@ android {
             // not acceptable for a ~7MB release. Don't re-try this without a new plan.
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.txt"
+                "proguard-rules.txt",
             )
         }
         create("releaseDebuggable") {
@@ -125,7 +128,7 @@ android {
             isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.txt"
+                "proguard-rules.txt",
             )
         }
         // Same as `release` (minify, shrink, proguard, signing) but with a `.a`
@@ -180,11 +183,40 @@ android {
         // AppCompat (and formerly Material Components) add ~80 extra locale configs
         // to resources.arsc for strings the app never shows in those languages.
         // Keep in sync with values-*/ and TranslationLanguageDialog.showAppLocale().
-        localeFilters += listOf(
-            "af", "ar", "ca", "cs", "da", "de", "el", "en", "es", "fi", "fr",
-            "he", "hu", "in", "it", "ja", "ko", "nl", "no", "pl", "pt",
-            "ro", "ru", "sat", "sr", "sv", "tr", "uk", "vi", "zh-rCN", "zh-rTW",
-        )
+        localeFilters +=
+            listOf(
+                "af",
+                "ar",
+                "ca",
+                "cs",
+                "da",
+                "de",
+                "el",
+                "en",
+                "es",
+                "fi",
+                "fr",
+                "he",
+                "hu",
+                "in",
+                "it",
+                "ja",
+                "ko",
+                "nl",
+                "no",
+                "pl",
+                "pt",
+                "ro",
+                "ru",
+                "sat",
+                "sr",
+                "sv",
+                "tr",
+                "uk",
+                "vi",
+                "zh-rCN",
+                "zh-rTW",
+            )
     }
 
     lint {
@@ -203,8 +235,9 @@ android {
                 gradle.startParameter.taskNames.any { it.lowercase().contains("bundle") }
             isEnable = !isBuildingBundle
             reset()
-            val abis = (project.findProperty("buildAbis") as String?)?.split(",")
-                ?: listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            val abis =
+                (project.findProperty("buildAbis") as String?)?.split(",")
+                    ?: listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
             include(*abis.toTypedArray())
             // Only emit the universal APK when explicitly requested (`-PuniversalApk`).
             // Skipping it saves a full packaging pass for local iteration; the release
@@ -233,9 +266,9 @@ play {
         file(
             keystoreProps.getProperty(
                 "playCredentials",
-                System.getProperty("user.home") + "/.secrets/einkbro-play-publisher.json"
-            )
-        )
+                System.getProperty("user.home") + "/.secrets/einkbro-play-publisher.json",
+            ),
+        ),
     )
     defaultToAppBundles.set(true)
     // Safe default; production releases pass --track production explicitly.
@@ -249,8 +282,9 @@ androidComponents {
         // invalidating the configuration cache.
         variant.buildConfigFields?.put(
             "lastCommitTime",
-            providers.of(BuildTimeValueSource::class.java) {}
-                .map { BuildConfigField("String", "\"$it\"", "build timestamp") }
+            providers
+                .of(BuildTimeValueSource::class.java) {}
+                .map { BuildConfigField("String", "\"$it\"", "build timestamp") },
         )
     }
 }
@@ -341,7 +375,7 @@ dependencies {
     testImplementation(libs.pdfbox.test)
 
     // memory leak detection
-    //debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
+    // debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
 
     // compose
     // Compose Material Design
@@ -370,39 +404,49 @@ dependencies {
 val verifyReleaseRuntimeDependencies by tasks.registering {
     group = "verification"
     description = "Reject test runners and developer tooling in the shipped release runtime"
-    val identities = configurations.getByName("releaseRuntimeClasspath")
-        .incoming.resolutionResult.rootComponent.map { root ->
-            val visited = mutableSetOf<ComponentIdentifier>()
-            val modules = mutableSetOf<String>()
-            val pending = ArrayDeque<ResolvedComponentResult>()
-            pending.add(root)
-            while (pending.isNotEmpty()) {
-                val component = pending.removeFirst()
-                if (visited.add(component.id)) {
-                    component.moduleVersion?.let { modules.add("${it.group}:${it.name}") }
-                    component.dependencies.forEach { dependency ->
-                        when (dependency) {
-                            is ResolvedDependencyResult -> pending.add(dependency.selected)
-                            is UnresolvedDependencyResult ->
-                                throw GradleException("Unresolved release runtime dependency", dependency.failure)
+    val identities =
+        configurations
+            .getByName("releaseRuntimeClasspath")
+            .incoming.resolutionResult.rootComponent
+            .map { root ->
+                val visited = mutableSetOf<ComponentIdentifier>()
+                val modules = mutableSetOf<String>()
+                val pending = ArrayDeque<ResolvedComponentResult>()
+                pending.add(root)
+                while (pending.isNotEmpty()) {
+                    val component = pending.removeFirst()
+                    if (visited.add(component.id)) {
+                        component.moduleVersion?.let { modules.add("${it.group}:${it.name}") }
+                        component.dependencies.forEach { dependency ->
+                            when (dependency) {
+                                is ResolvedDependencyResult -> pending.add(dependency.selected)
+                                is UnresolvedDependencyResult ->
+                                    throw GradleException("Unresolved release runtime dependency", dependency.failure)
+                            }
                         }
                     }
                 }
+                modules.sorted()
             }
-            modules.sorted()
-        }
     inputs.property("releaseRuntimeDependencies", identities)
     doLast {
         val modules = inputs.properties.getValue("releaseRuntimeDependencies") as List<*>
-        val forbidden = modules.map { it.toString() }.filter {
-            val group = it.substringBefore(':')
-            val module = it.substringAfter(':')
-            group == "junit" || group == "com.google.errorprone" || group.startsWith("org.junit") ||
-                group.startsWith("org.mockito") || group.startsWith("io.mockk") ||
-                group == "androidx.test" || group.startsWith("androidx.test.") ||
-                (group == "androidx.compose.ui" &&
-                    (module.startsWith("ui-test") || module in setOf("ui-tooling", "ui-tooling-android")))
-        }
+        val forbidden =
+            modules.map { it.toString() }.filter {
+                val group = it.substringBefore(':')
+                val module = it.substringAfter(':')
+                group == "junit" ||
+                    group == "com.google.errorprone" ||
+                    group.startsWith("org.junit") ||
+                    group.startsWith("org.mockito") ||
+                    group.startsWith("io.mockk") ||
+                    group == "androidx.test" ||
+                    group.startsWith("androidx.test.") ||
+                    (
+                        group == "androidx.compose.ui" &&
+                            (module.startsWith("ui-test") || module in setOf("ui-tooling", "ui-tooling-android"))
+                    )
+            }
         check(forbidden.isEmpty()) { "Developer/test dependencies in release runtime: $forbidden" }
     }
 }

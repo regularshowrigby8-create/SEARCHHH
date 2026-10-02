@@ -2,11 +2,12 @@ package info.plateaukao.einkbro.preference
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import java.util.Locale
 import info.plateaukao.einkbro.search.SearchEngine
+import java.util.Locale
 
-class BrowserConfig(private val sp: SharedPreferences) {
-
+class BrowserConfig(
+    private val sp: SharedPreferences,
+) {
     var enableJavascript by BooleanPreference(sp, K_JAVASCRIPT, true)
     var adBlock by BooleanPreference(sp, K_ADBLOCK, true)
     var cookies by BooleanPreference(sp, K_COOKIES, true)
@@ -17,9 +18,11 @@ class BrowserConfig(private val sp: SharedPreferences) {
     var shouldTrimInputUrl by BooleanPreference(sp, K_TRIM_INPUT_URL, false)
     var shouldPruneQueryParameters by BooleanPreference(sp, K_PRUNE_QUERY_PARAMETERS, false)
     var debugWebView by BooleanPreference(sp, K_DEBUG_WEBVIEW, false)
+
     // Off by default: this lets a file:// page read other local files (the app's own
     // shared_prefs/databases included) and reach any origin. See GHSA-rcv7-662w-4gvr.
     var enableRemoteAccess by BooleanPreference(sp, K_ENABLE_REMOTE_ACCESS, false)
+
     // HTTP is opt-in; HTTPS remains the normal navigation path.
     var allowHttp by BooleanPreference(sp, K_ALLOW_HTTP, false)
     var enableImages by BooleanPreference(sp, K_ENABLE_IMAGES, true)
@@ -41,9 +44,10 @@ class BrowserConfig(private val sp: SharedPreferences) {
     var lastShareComponentClass by StringPreference(sp, K_LAST_SHARE_COMPONENT_CLASS, "")
 
     var shareLongPressAction: ShareLongPressAction
-        get() = ShareLongPressAction.entries[
-            sp.getString(K_SHARE_LONG_PRESS_ACTION, "0")?.toIntOrNull() ?: 0
-        ]
+        get() =
+            ShareLongPressAction.entries[
+                sp.getString(K_SHARE_LONG_PRESS_ACTION, "0")?.toIntOrNull() ?: 0,
+            ]
         set(value) = sp.edit { putString(K_SHARE_LONG_PRESS_ACTION, value.ordinal.toString()) }
 
     var customUserAgent by StringPreference(sp, K_CUSTOM_USER_AGENT)
@@ -57,17 +61,17 @@ class BrowserConfig(private val sp: SharedPreferences) {
     var searchEngine by StringPreference(
         sp,
         K_SEARCH_ENGINE,
-        if (Locale.getDefault().country == "CN") SearchEngine.BAIDU.ordinal.toString() else SearchEngine.GOOGLE.ordinal.toString()
+        if (Locale.getDefault().country == "CN") SearchEngine.BAIDU.ordinal.toString() else SearchEngine.GOOGLE.ordinal.toString(),
     )
     var searchEngineUrl by StringPreference(
         sp,
         K_SEARCH_ENGINE_URL,
-        "https://www.google.com/search?q=%s"
+        "https://www.google.com/search?q=%s",
     )
     var adblockHostUrl by StringPreference(
         sp,
         K_ADBLOCK_HOSTS_URL,
-        ADBLOCK_URL_DEFAULT
+        ADBLOCK_URL_DEFAULT,
     )
 
     var adSites: MutableSet<String>
@@ -110,8 +114,10 @@ class BrowserConfig(private val sp: SharedPreferences) {
         const val K_SUPERNOTE_FOLDER_URI = "sp_supernote_folder_uri"
         const val K_ENABLE_PULL_TO_REFRESH = "sp_enable_pull_to_refresh"
 
-        fun shouldBlockHttp(scheme: String?, allowHttp: Boolean): Boolean =
-            scheme.equals("http", ignoreCase = true) && !allowHttp
+        fun shouldBlockHttp(
+            scheme: String?,
+            allowHttp: Boolean,
+        ): Boolean = scheme.equals("http", ignoreCase = true) && !allowHttp
 
         const val ADBLOCK_URL_DEFAULT =
             "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"

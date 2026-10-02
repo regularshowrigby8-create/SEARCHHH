@@ -9,29 +9,32 @@ import okhttp3.Request
 import org.koin.core.component.KoinComponent
 
 class InstapaperRepository : KoinComponent {
-    
     private val client = OkHttpClient()
-    
+
     suspend fun addUrl(
         url: String,
         username: String,
         password: String,
-        title: String? = null
-    ): InstapaperResult {
-        return withContext(IO) {
+        title: String? = null,
+    ): InstapaperResult =
+        withContext(IO) {
             try {
-                val formBuilder = FormBody.Builder()
-                    .add("url", url)
-                
+                val formBuilder =
+                    FormBody
+                        .Builder()
+                        .add("url", url)
+
                 title?.let { formBuilder.add("title", it) }
-                
-                val request = Request.Builder()
-                    .url(ADD_URL_ENDPOINT)
-                    .post(formBuilder.build())
-                    .addHeader("User-Agent", USER_AGENT)
-                    .addHeader("Authorization", createBasicAuth(username, password))
-                    .build()
-                
+
+                val request =
+                    Request
+                        .Builder()
+                        .url(ADD_URL_ENDPOINT)
+                        .post(formBuilder.build())
+                        .addHeader("User-Agent", USER_AGENT)
+                        .addHeader("Authorization", createBasicAuth(username, password))
+                        .build()
+
                 client.newCall(request).execute().use { response ->
                     when (response.code) {
                         200, 201 -> {
@@ -61,18 +64,22 @@ class InstapaperRepository : KoinComponent {
                 InstapaperResult.Error("Network error: ${e.message}")
             }
         }
-    }
-    
-    suspend fun authenticate(username: String, password: String): InstapaperResult {
-        return withContext(IO) {
+
+    suspend fun authenticate(
+        username: String,
+        password: String,
+    ): InstapaperResult =
+        withContext(IO) {
             try {
-                val request = Request.Builder()
-                    .url(AUTHENTICATE_ENDPOINT)
-                    .post(FormBody.Builder().build())
-                    .addHeader("User-Agent", USER_AGENT)
-                    .addHeader("Authorization", createBasicAuth(username, password))
-                    .build()
-                
+                val request =
+                    Request
+                        .Builder()
+                        .url(AUTHENTICATE_ENDPOINT)
+                        .post(FormBody.Builder().build())
+                        .addHeader("User-Agent", USER_AGENT)
+                        .addHeader("Authorization", createBasicAuth(username, password))
+                        .build()
+
                 client.newCall(request).execute().use { response ->
                     when (response.code) {
                         200 -> {
@@ -94,17 +101,20 @@ class InstapaperRepository : KoinComponent {
                 InstapaperResult.Error("Network error: ${e.message}")
             }
         }
-    }
-    
-    private fun createBasicAuth(username: String, password: String): String {
+
+    private fun createBasicAuth(
+        username: String,
+        password: String,
+    ): String {
         val credentials = "$username:$password"
-        val encodedCredentials = android.util.Base64.encodeToString(
-            credentials.toByteArray(),
-            android.util.Base64.NO_WRAP
-        )
+        val encodedCredentials =
+            android.util.Base64.encodeToString(
+                credentials.toByteArray(),
+                android.util.Base64.NO_WRAP,
+            )
         return "Basic $encodedCredentials"
     }
-    
+
     companion object {
         private const val TAG = "InstapaperRepository"
         private const val BASE_URL = "https://www.instapaper.com/api"
@@ -115,6 +125,11 @@ class InstapaperRepository : KoinComponent {
 }
 
 sealed class InstapaperResult {
-    data class Success(val message: String) : InstapaperResult()
-    data class Error(val message: String) : InstapaperResult()
+    data class Success(
+        val message: String,
+    ) : InstapaperResult()
+
+    data class Error(
+        val message: String,
+    ) : InstapaperResult()
 }

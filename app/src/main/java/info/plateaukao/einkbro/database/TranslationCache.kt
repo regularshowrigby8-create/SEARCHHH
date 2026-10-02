@@ -15,5 +15,5 @@ data class TranslationCache(
     val targetLanguage: String,
     val translateApi: String,
     val translatedText: String,
-    val timestamp: Long
+    val timestamp: Long,
 )

@@ -9,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -32,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -59,12 +56,14 @@ class StatusbarConfigActivity : LocaleAwareComponentActivity() {
         val initial = config.ui.statusbarItems
         setContent {
             // Saveable so an unsaved arrangement survives rotation.
-            val list = rememberSaveable(
-                stateSaver = listSaver(
-                    save = { items -> items.map { it.ordinal } },
-                    restore = { saved -> saved.map { StatusbarItem.entries[it] } },
-                )
-            ) { mutableStateOf(initial) }
+            val list =
+                rememberSaveable(
+                    stateSaver =
+                        listSaver(
+                            save = { items -> items.map { it.ordinal } },
+                            restore = { saved -> saved.map { StatusbarItem.entries[it] } },
+                        ),
+                ) { mutableStateOf(initial) }
             ListScaffold(
                 title = stringResource(id = R.string.setting_title_statusbar_items),
                 onBack = { finish() },
@@ -91,9 +90,10 @@ private fun StatusbarConfigPanel(list: MutableState<List<StatusbarItem>>) {
         list.value = list.value.toMutableList().apply { remove(item) }
     }
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 8.dp, start = 1.dp, end = 1.dp, bottom = 50.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(top = 8.dp, start = 1.dp, end = 1.dp, bottom = 50.dp),
         verticalArrangement = Arrangement.Bottom,
     ) {
         Column(
@@ -139,9 +139,10 @@ private fun StatusbarConfigPanel(list: MutableState<List<StatusbarItem>>) {
             style = MaterialTheme.typography.caption,
         )
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colors.primary),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, MaterialTheme.colors.primary),
             contentAlignment = Alignment.CenterEnd,
         ) {
             ReorderableStatusbarRow(list = list, onClick = onRemove)
@@ -156,10 +157,11 @@ private fun ReorderableStatusbarRow(
     onClick: (StatusbarItem) -> Unit,
 ) {
     ReorderableRow(
-        modifier = Modifier
-            .height(40.dp)
-            .fillMaxWidth()
-            .background(MaterialTheme.colors.background),
+        modifier =
+            Modifier
+                .height(40.dp)
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.background),
         list = list.value,
         onSettle = { from, to ->
             list.value = list.value.toMutableList().apply { add(to, removeAt(from)) }
@@ -169,15 +171,15 @@ private fun ReorderableStatusbarRow(
     ) { _, item, isDragging ->
         key(item) {
             Box(
-                modifier = Modifier
-                    .longPressDraggableHandle()
-                    .border(
-                        if (isDragging) 1.5.dp else (-1).dp,
-                        MaterialTheme.colors.primary,
-                        RoundedCornerShape(3.dp),
-                    )
-                    .clickable { onClick(item) }
-                    .padding(horizontal = 6.dp),
+                modifier =
+                    Modifier
+                        .longPressDraggableHandle()
+                        .border(
+                            if (isDragging) 1.5.dp else (-1).dp,
+                            MaterialTheme.colors.primary,
+                            RoundedCornerShape(3.dp),
+                        ).clickable { onClick(item) }
+                        .padding(horizontal = 6.dp),
             ) {
                 StatusbarPreviewIcon(item)
             }
@@ -186,23 +188,29 @@ private fun ReorderableStatusbarRow(
 }
 
 @Composable
-private fun AvailableItem(item: StatusbarItem, onClick: () -> Unit) {
+private fun AvailableItem(
+    item: StatusbarItem,
+    onClick: () -> Unit,
+) {
     Column(
-        modifier = Modifier
-            .padding(vertical = 5.dp)
-            .clickable(onClick = onClick),
+        modifier =
+            Modifier
+                .padding(vertical = 5.dp)
+                .clickable(onClick = onClick),
     ) {
         StatusbarPreviewIcon(
             item = item,
-            modifier = Modifier
-                .size(48.dp)
-                .padding(horizontal = 6.dp)
-                .align(Alignment.CenterHorizontally),
+            modifier =
+                Modifier
+                    .size(48.dp)
+                    .padding(horizontal = 6.dp)
+                    .align(Alignment.CenterHorizontally),
         )
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally),
             text = stringResource(id = item.titleResId),
             textAlign = TextAlign.Center,
             fontSize = 10.sp,
@@ -217,8 +225,9 @@ private fun StatusbarPreviewIcon(
     item: StatusbarItem,
     modifier: Modifier = Modifier.size(24.dp),
 ) {
-    val vector: ImageVector = item.previewIcon
-        ?: ImageVector.vectorResource(id = item.previewIconResId)
+    val vector: ImageVector =
+        item.previewIcon
+            ?: ImageVector.vectorResource(id = item.previewIconResId)
     Icon(
         imageVector = vector,
         contentDescription = null,

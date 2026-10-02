@@ -20,9 +20,13 @@ class InstapaperDelegate(
     fun init() {
         activity.lifecycleScope.launch {
             instapaperViewModel.uiState.collect { uiState ->
-                if (uiState.showConfigureDialog) configureInstapaper()
-                else if (uiState.successMessage != null) EBToast.show(activity, uiState.successMessage)
-                else if (uiState.errorMessage != null) EBToast.show(activity, uiState.errorMessage)
+                if (uiState.showConfigureDialog) {
+                    configureInstapaper()
+                } else if (uiState.successMessage != null) {
+                    EBToast.show(activity, uiState.successMessage)
+                } else if (uiState.errorMessage != null) {
+                    EBToast.show(activity, uiState.errorMessage)
+                }
                 instapaperViewModel.resetState()
             }
         }

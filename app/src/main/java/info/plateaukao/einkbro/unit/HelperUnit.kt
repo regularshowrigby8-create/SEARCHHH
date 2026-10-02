@@ -35,16 +35,15 @@ import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
-import androidx.core.content.FileProvider
-import info.plateaukao.einkbro.view.dialog.OpenWithDialog
-import java.io.File
 import androidx.compose.ui.text.AnnotatedString
+import androidx.core.content.FileProvider
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.activity.EpubReaderActivity
 import info.plateaukao.einkbro.util.Constants
 import info.plateaukao.einkbro.view.EBToast
 import info.plateaukao.einkbro.view.dialog.DialogManager
-
+import info.plateaukao.einkbro.view.dialog.OpenWithDialog
+import java.io.File
 
 object HelperUnit {
     private const val REQUEST_CODE_ASK_PERMISSIONS = 123
@@ -52,36 +51,40 @@ object HelperUnit {
     private const val REQUEST_CODE_LOCATION_PERMISSION = 1235
 
     // --- Forwarding functions for MarkdownParser ---
-    fun parseMarkdown(markdownText: String): AnnotatedString =
-        MarkdownParser.parseMarkdown(markdownText)
+    fun parseMarkdown(markdownText: String): AnnotatedString = MarkdownParser.parseMarkdown(markdownText)
 
     // --- Forwarding functions for FileHelper ---
-    fun getStringFromAsset(fileName: String): String =
-        FileHelper.getStringFromAsset(fileName)
+    fun getStringFromAsset(fileName: String): String = FileHelper.getStringFromAsset(fileName)
 
-    fun getCachedPathFromURI(context: Context, contentURI: Uri): String =
-        FileHelper.getCachedPathFromURI(context, contentURI)
+    fun getCachedPathFromURI(
+        context: Context,
+        contentURI: Uri,
+    ): String = FileHelper.getCachedPathFromURI(context, contentURI)
 
-    fun readContentAsStringList(contentResolver: ContentResolver, contentUri: Uri): List<String> =
-        FileHelper.readContentAsStringList(contentResolver, contentUri)
+    fun readContentAsStringList(
+        contentResolver: ContentResolver,
+        contentUri: Uri,
+    ): List<String> = FileHelper.readContentAsStringList(contentResolver, contentUri)
 
-    fun getFileInfoFromContentUri(context: Context, contentUri: Uri): Pair<String?, String?> =
-        FileHelper.getFileInfoFromContentUri(context, contentUri)
+    fun getFileInfoFromContentUri(
+        context: Context,
+        contentUri: Uri,
+    ): Pair<String?, String?> = FileHelper.getFileInfoFromContentUri(context, contentUri)
 
-    fun loadAssetFileToString(context: Context, filename: String): String =
-        FileHelper.loadAssetFileToString(context, filename)
+    fun loadAssetFileToString(
+        context: Context,
+        filename: String,
+    ): String = FileHelper.loadAssetFileToString(context, filename)
 
-    fun loadAssetFile(fileName: String): String =
-        FileHelper.loadAssetFile(fileName)
+    fun loadAssetFile(fileName: String): String = FileHelper.loadAssetFile(fileName)
 
     @JvmStatic
-    fun fileName(url: String?): String =
-        FileHelper.fileName(url)
+    fun fileName(url: String?): String = FileHelper.fileName(url)
 
     // --- Remaining functions ---
 
-    @JvmStatic
     // return true if need permissions
+    @JvmStatic
     fun needGrantStoragePermission(activity: Activity): Boolean {
         if (Build.VERSION.SDK_INT in 23..28) {
             val hasWriteExternalStoragePermission =
@@ -89,7 +92,7 @@ object HelperUnit {
             if (hasWriteExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
                 activity.requestPermissions(
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    REQUEST_CODE_ASK_PERMISSIONS
+                    REQUEST_CODE_ASK_PERMISSIONS,
                 )
                 return true
             }
@@ -104,7 +107,7 @@ object HelperUnit {
         if (hasRecordAudioPermission != PackageManager.PERMISSION_GRANTED) {
             activity.requestPermissions(
                 arrayOf(Manifest.permission.RECORD_AUDIO),
-                REQUEST_CODE_ASK_PERMISSIONS_1
+                REQUEST_CODE_ASK_PERMISSIONS_1,
             )
         }
     }
@@ -117,7 +120,10 @@ object HelperUnit {
      * when necessary. The hosting activity must forward onRequestPermissionsResult to
      * [handlePermissionsResult]; until then [onResult] stays pending.
      */
-    fun requestLocationPermission(activity: Activity, onResult: (Boolean) -> Unit) {
+    fun requestLocationPermission(
+        activity: Activity,
+        onResult: (Boolean) -> Unit,
+    ) {
         val hasAccessFineLocation =
             activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         if (hasAccessFineLocation == PackageManager.PERMISSION_GRANTED) {
@@ -132,17 +138,20 @@ object HelperUnit {
             okAction = {
                 activity.requestPermissions(
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    REQUEST_CODE_LOCATION_PERMISSION
+                    REQUEST_CODE_LOCATION_PERMISSION,
                 )
             },
-            cancelAction = { resolvePendingLocationPermission(false) }
+            cancelAction = { resolvePendingLocationPermission(false) },
         )
     }
 
-    fun handlePermissionsResult(requestCode: Int, grantResults: IntArray): Boolean {
+    fun handlePermissionsResult(
+        requestCode: Int,
+        grantResults: IntArray,
+    ): Boolean {
         if (requestCode != REQUEST_CODE_LOCATION_PERMISSION) return false
         resolvePendingLocationPermission(
-            grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED,
         )
         return true
     }
@@ -155,10 +164,14 @@ object HelperUnit {
     @JvmStatic
     fun applyTheme(context: Context) = context.setTheme(R.style.AppTheme)
 
-
     @RequiresApi(Build.VERSION_CODES.O)
     @JvmStatic
-    fun createShortcut(context: Context, title: String?, url: String?, bitmap: Bitmap?) {
+    fun createShortcut(
+        context: Context,
+        title: String?,
+        url: String?,
+        bitmap: Bitmap?,
+    ) {
         val url = url ?: return
         val uri = convertUrlToAppScheme(url)
         try {
@@ -170,19 +183,22 @@ object HelperUnit {
 
             val shortcutManager =
                 context.getSystemService(ShortcutManager::class.java) ?: return
-            var icon: Icon = if (bitmap != null) {
-                Icon.createWithBitmap(bitmap)
-            } else {
-                Icon.createWithResource(context, R.drawable.qc_bookmarks)
-            }
+            var icon: Icon =
+                if (bitmap != null) {
+                    Icon.createWithBitmap(bitmap)
+                } else {
+                    Icon.createWithResource(context, R.drawable.qc_bookmarks)
+                }
 
             if (shortcutManager.isRequestPinShortcutSupported) {
-                val pinShortcutInfo = ShortcutInfo.Builder(context, uri.toString())
-                    .setShortLabel(title!!)
-                    .setLongLabel(title)
-                    .setIcon(icon)
-                    .setIntent(intent)
-                    .build()
+                val pinShortcutInfo =
+                    ShortcutInfo
+                        .Builder(context, uri.toString())
+                        .setShortLabel(title!!)
+                        .setLongLabel(title)
+                        .setIcon(icon)
+                        .setIntent(intent)
+                        .build()
                 shortcutManager.requestPinShortcut(pinShortcutInfo, null)
             } else {
                 println("failed_to_add")
@@ -194,20 +210,22 @@ object HelperUnit {
 
     private fun convertUrlToAppScheme(url: String): Uri {
         val originalUri = Uri.parse(url)
-        val scheme = when (originalUri.scheme) {
-            "https" -> "einkbros"
-            "http" -> "einkbro"
-            else -> originalUri.scheme
-        }
+        val scheme =
+            when (originalUri.scheme) {
+                "https" -> "einkbros"
+                "http" -> "einkbro"
+                else -> originalUri.scheme
+            }
         return originalUri.buildUpon().scheme(scheme).build()
     }
 
     fun Uri.toNormalScheme(): Uri {
-        val scheme = when (scheme) {
-            "einkbros" -> "https"
-            "einkbro" -> "https"
-            else -> scheme
-        }
+        val scheme =
+            when (scheme) {
+                "einkbros" -> "https"
+                "einkbro" -> "https"
+                else -> scheme
+            }
         return buildUpon().scheme(scheme).build()
     }
 
@@ -224,26 +242,33 @@ object HelperUnit {
             }
         }
 
-        return subtitles.joinToString(separator = "") { "<p>${it}</p>" }
+        return subtitles.joinToString(separator = "") { "<p>$it</p>" }
     }
 
     @JvmStatic
     fun secString(string: String?): String = string?.replace("'".toRegex(), "\'\'") ?: "No title"
 
     @JvmStatic
-    fun domain(url: String?): String {
-        return if (url == null) {
+    fun domain(url: String?): String =
+        if (url == null) {
             ""
         } else {
             try {
-                Uri.parse(url).host?.replace("www.", "")?.trim { it <= ' ' }.orEmpty()
+                Uri
+                    .parse(url)
+                    .host
+                    ?.replace("www.", "")
+                    ?.trim { it <= ' ' }
+                    .orEmpty()
             } catch (e: Exception) {
                 ""
             }
         }
-    }
 
-    fun openEpubToLastChapter(activity: Activity, uri: Uri) {
+    fun openEpubToLastChapter(
+        activity: Activity,
+        uri: Uri,
+    ) {
         openFile(activity, uri, shouldGoToEnd = true)
     }
 
@@ -259,11 +284,12 @@ object HelperUnit {
         // so the path ends in .epub/.pdf and matches their intent filters.
         val effectiveUri = reExposeWithFilename(activity, uri) ?: uri
         val mimeType = resolveMimeType(activity, effectiveUri)
-        val intent = Intent().apply {
-            action = Intent.ACTION_VIEW
-            if (mimeType != null) setDataAndType(effectiveUri, mimeType) else data = effectiveUri
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
-        }
+        val intent =
+            Intent().apply {
+                action = Intent.ACTION_VIEW
+                if (mimeType != null) setDataAndType(effectiveUri, mimeType) else data = effectiveUri
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            }
 
         if (shouldGoToEnd) {
             intent.putExtra(EpubReaderActivity.ARG_TO_LAST_CHAPTER, true)
@@ -283,12 +309,15 @@ object HelperUnit {
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = Constants.MIME_TYPE_ANY
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            intent.putExtra("android.provider.extra.INITIAL_URI", uri);
+            intent.putExtra("android.provider.extra.INITIAL_URI", uri)
             resultLauncher?.launch(intent)
         }
     }
 
-    private fun resolveMimeType(activity: Activity, uri: Uri): String? {
+    private fun resolveMimeType(
+        activity: Activity,
+        uri: Uri,
+    ): String? {
         val path = (uri.lastPathSegment ?: uri.toString()).lowercase()
         return when {
             path.endsWith(".epub") -> "application/epub+zip"
@@ -297,7 +326,10 @@ object HelperUnit {
         }
     }
 
-    private fun reExposeWithFilename(activity: Activity, uri: Uri): Uri? {
+    private fun reExposeWithFilename(
+        activity: Activity,
+        uri: Uri,
+    ): Uri? {
         if (uri.scheme != ContentResolver.SCHEME_CONTENT) return null
         val displayName = queryDisplayName(activity, uri) ?: return null
         val lower = displayName.lowercase()
@@ -323,22 +355,23 @@ object HelperUnit {
     private const val SUPERNOTE_INBOX_ACTIVITY =
         "com.ratta.supernote.inbox.InBoxMainActivity"
 
-    fun isSupernoteDocumentInstalled(context: Context): Boolean = try {
-        context.packageManager.getPackageInfo(SUPERNOTE_DOCUMENT_PACKAGE, 0)
-        true
-    } catch (_: PackageManager.NameNotFoundException) {
-        false
-    }
+    fun isSupernoteDocumentInstalled(context: Context): Boolean =
+        try {
+            context.packageManager.getPackageInfo(SUPERNOTE_DOCUMENT_PACKAGE, 0)
+            true
+        } catch (_: PackageManager.NameNotFoundException) {
+            false
+        }
 
-    private fun isSupernoteInboxInstalled(context: Context): Boolean = try {
-        context.packageManager.getPackageInfo(SUPERNOTE_INBOX_PACKAGE, 0)
-        true
-    } catch (_: PackageManager.NameNotFoundException) {
-        false
-    }
+    private fun isSupernoteInboxInstalled(context: Context): Boolean =
+        try {
+            context.packageManager.getPackageInfo(SUPERNOTE_INBOX_PACKAGE, 0)
+            true
+        } catch (_: PackageManager.NameNotFoundException) {
+            false
+        }
 
-    fun supernoteDocumentInitialUri(): Uri =
-        Uri.parse("content://com.android.externalstorage.documents/document/primary%3ADocument")
+    fun supernoteDocumentInitialUri(): Uri = Uri.parse("content://com.android.externalstorage.documents/document/primary%3ADocument")
 
     /**
      * One level above [supernoteDocumentInitialUri] — the root of primary
@@ -346,8 +379,7 @@ object HelperUnit {
      * appears as a tappable item instead of starting inside it (which forces
      * the user to navigate up then back down to reveal the grant button).
      */
-    fun supernoteStorageRootInitialUri(): Uri =
-        Uri.parse("content://com.android.externalstorage.documents/document/primary%3A")
+    fun supernoteStorageRootInitialUri(): Uri = Uri.parse("content://com.android.externalstorage.documents/document/primary%3A")
 
     /**
      * Supernote's reader registers no VIEW intent filter, so it never resolves
@@ -365,28 +397,32 @@ object HelperUnit {
         val targetIntent: Intent
         val iconPackage: String
         if (absolutePath != null) {
-            targetIntent = Intent(Intent.ACTION_MAIN).apply {
-                component = ComponentName(
-                    SUPERNOTE_DOCUMENT_PACKAGE,
-                    "$SUPERNOTE_DOCUMENT_PACKAGE.MainActivity",
-                )
-                putExtra("file_path", absolutePath)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
+            targetIntent =
+                Intent(Intent.ACTION_MAIN).apply {
+                    component =
+                        ComponentName(
+                            SUPERNOTE_DOCUMENT_PACKAGE,
+                            "$SUPERNOTE_DOCUMENT_PACKAGE.MainActivity",
+                        )
+                    putExtra("file_path", absolutePath)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
             iconPackage = SUPERNOTE_DOCUMENT_PACKAGE
         } else if (isSupernoteInboxInstalled(activity)) {
-            targetIntent = Intent(Intent.ACTION_MAIN).apply {
-                addCategory(Intent.CATEGORY_LAUNCHER)
-                component = ComponentName(SUPERNOTE_INBOX_PACKAGE, SUPERNOTE_INBOX_ACTIVITY)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            }
+            targetIntent =
+                Intent(Intent.ACTION_MAIN).apply {
+                    addCategory(Intent.CATEGORY_LAUNCHER)
+                    component = ComponentName(SUPERNOTE_INBOX_PACKAGE, SUPERNOTE_INBOX_ACTIVITY)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
             iconPackage = SUPERNOTE_INBOX_PACKAGE
         } else {
             return null
         }
-        val icon = runCatching {
-            activity.packageManager.getApplicationIcon(iconPackage)
-        }.getOrNull()
+        val icon =
+            runCatching {
+                activity.packageManager.getApplicationIcon(iconPackage)
+            }.getOrNull()
         return OpenWithDialog.Target(
             label = "Supernote",
             icon = icon,
@@ -396,13 +432,16 @@ object HelperUnit {
 
     private fun resolveExternalStoragePath(uri: Uri): String? {
         if (uri.authority != "com.android.externalstorage.documents") return null
-        val docId = try {
-            DocumentsContract.getDocumentId(uri)
-        } catch (_: IllegalArgumentException) {
-            return null
-        } ?: return null
-        val (volume, relative) = docId.split(":", limit = 2)
-            .takeIf { it.size == 2 } ?: return null
+        val docId =
+            try {
+                DocumentsContract.getDocumentId(uri)
+            } catch (_: IllegalArgumentException) {
+                return null
+            } ?: return null
+        val (volume, relative) =
+            docId
+                .split(":", limit = 2)
+                .takeIf { it.size == 2 } ?: return null
         return if (volume.equals("primary", ignoreCase = true)) {
             "/storage/emulated/0/$relative"
         } else {
@@ -410,21 +449,30 @@ object HelperUnit {
         }
     }
 
-    private fun queryDisplayName(activity: Activity, uri: Uri): String? {
-        return try {
-            activity.contentResolver.query(
-                uri,
-                arrayOf(OpenableColumns.DISPLAY_NAME),
-                null, null, null,
-            )?.use { cursor ->
-                if (cursor.moveToFirst()) cursor.getString(0).takeIf { !it.isNullOrBlank() } else null
-            }
+    private fun queryDisplayName(
+        activity: Activity,
+        uri: Uri,
+    ): String? =
+        try {
+            activity.contentResolver
+                .query(
+                    uri,
+                    arrayOf(OpenableColumns.DISPLAY_NAME),
+                    null,
+                    null,
+                    null,
+                )?.use { cursor ->
+                    if (cursor.moveToFirst()) cursor.getString(0).takeIf { !it.isNullOrBlank() } else null
+                }
         } catch (e: Exception) {
             null
         }
-    }
 
-    fun showBrowserChooser(activity: Activity, url: String?, title: String) {
+    fun showBrowserChooser(
+        activity: Activity,
+        url: String?,
+        title: String,
+    ) {
         val nonNullUrl = url ?: return
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(nonNullUrl))
         activity.startActivity(Intent.createChooser(intent, title))
@@ -457,7 +505,7 @@ object HelperUnit {
                         }
                     }
 
-                    else -> stringBuilder.append(nextChar)  // if it's not an escape sequence, keep the original
+                    else -> stringBuilder.append(nextChar) // if it's not an escape sequence, keep the original
                 }
                 i += 1 // skip next character
             } else {
@@ -470,20 +518,23 @@ object HelperUnit {
 }
 
 fun processedTextToChunks(text: String): MutableList<String> {
-    val processedText = text.replace("\\n", " ")
-        .replace("\\\"", "")
-        .replace("\\t", "")
-        .replace("\\", "")
+    val processedText =
+        text
+            .replace("\\n", " ")
+            .replace("\\\"", "")
+            .replace("\\t", "")
+            .replace("\\", "")
     val sentences = processedText.split("(?<=\\.)(?!\\d)|(?<=。)|(?<=？)|(?<=\\?)".toRegex())
-    val chunks = sentences.fold(mutableListOf<String>()) { acc, sentence ->
-        if (acc.isEmpty() || (acc.last() + sentence).getWordCount() > 60) {
-            acc.add(sentence.trim())
-        } else {
-            val last = acc.last()
-            acc[acc.size - 1] = "$last$sentence"
+    val chunks =
+        sentences.fold(mutableListOf<String>()) { acc, sentence ->
+            if (acc.isEmpty() || (acc.last() + sentence).getWordCount() > 60) {
+                acc.add(sentence.trim())
+            } else {
+                val last = acc.last()
+                acc[acc.size - 1] = "$last$sentence"
+            }
+            acc
         }
-        acc
-    }
     return chunks
 }
 

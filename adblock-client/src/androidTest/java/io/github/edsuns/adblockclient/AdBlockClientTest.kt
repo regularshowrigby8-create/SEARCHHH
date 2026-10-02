@@ -15,19 +15,20 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class AdBlockClientTest {
-
-    private val list = """
+    private val list =
+        """
         ! Title: test list
         ||ads.example.net^
         @@||ads.example.net/allowed^
         /^https?:\/\/tracker\.[a-z]+\.test\/t\d+\.js/${'$'}script
         @@/\/t42\.js/
         example.org##.banner
-    """.trimIndent()
+        """.trimIndent()
 
-    private fun freshClient(): AdBlockClient = AdBlockClient("test").apply {
-        loadBasicData(list.toByteArray(), preserveRules = true)
-    }
+    private fun freshClient(): AdBlockClient =
+        AdBlockClient("test").apply {
+            loadBasicData(list.toByteArray(), preserveRules = true)
+        }
 
     private fun roundTripped(): AdBlockClient {
         val processed = freshClient().getProcessedData()

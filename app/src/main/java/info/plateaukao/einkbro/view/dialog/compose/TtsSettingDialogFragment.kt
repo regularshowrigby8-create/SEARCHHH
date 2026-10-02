@@ -72,20 +72,22 @@ class TtsSettingDialogFragment : ComposeDialogFragment() {
         val showReadingContext = ttsViewModel.showCurrentText.collectAsState()
 
         Column(
-            modifier = Modifier
-                .padding(top = 8.dp, start = 8.dp, end = 8.dp)
-                .width(IntrinsicSize.Max)
+            modifier =
+                Modifier
+                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                    .width(IntrinsicSize.Max),
         ) {
             if (readingState.value != IDLE && showReadingContext.value) {
                 Text(
                     currentReadingContent.value,
-                    modifier = Modifier
-                        .defaultMinSize(minHeight = 300.dp)
-                        .padding(vertical = 6.dp)
-                        .clickable {
-                            ttsViewModel.toggleShowTranslation()
-                        },
-                    color = MaterialTheme.colors.onBackground
+                    modifier =
+                        Modifier
+                            .defaultMinSize(minHeight = 300.dp)
+                            .padding(vertical = 6.dp)
+                            .clickable {
+                                ttsViewModel.toggleShowTranslation()
+                            },
+                    color = MaterialTheme.colors.onBackground,
                 )
             } else {
                 MainTtsSettingDialog(
@@ -95,7 +97,10 @@ class TtsSettingDialogFragment : ComposeDialogFragment() {
                     selectedGptVoice = gptVoice.value,
                     selectedEttsVoice = ettsVoice.value,
                     selectedSpeedValue = ttsSpeedValue.value,
-                    onSpeedValueClick = { config.tts.ttsSpeedValue = it; ttsSpeedValue.value = it },
+                    onSpeedValueClick = {
+                        config.tts.ttsSpeedValue = it
+                        ttsSpeedValue.value = it
+                    },
                     recentVoices = config.tts.recentUsedTtsVoices,
                     showLocaleDialog = { TtsLanguageDialog(requireContext()).show(ttsManager.getAvailableLanguages()) },
                     onTtsTypeSelected = {
@@ -107,8 +112,14 @@ class TtsSettingDialogFragment : ComposeDialogFragment() {
                             ettsVoice.value = it
                         }.show(parentFragmentManager, "ETtsVoiceDialog")
                     },
-                    onGptVoiceSelected = { config.ai.gptVoiceOption = it; gptVoice.value = it },
-                    onVoiceSelected = { config.tts.ettsVoice = it; ettsVoice.value = it },
+                    onGptVoiceSelected = {
+                        config.ai.gptVoiceOption = it
+                        gptVoice.value = it
+                    },
+                    onVoiceSelected = {
+                        config.tts.ettsVoice = it
+                        ettsVoice.value = it
+                    },
                 )
             }
             TtsDialogButtonBar(
@@ -122,7 +133,7 @@ class TtsSettingDialogFragment : ComposeDialogFragment() {
                 pauseOrResumeAction = ttsViewModel::pauseOrResume,
                 addToReadListAction = this@TtsSettingDialogFragment::readCurrentArticle,
                 dismissAction = ::dismiss,
-                clickProgressAction = { ttsViewModel.toggleShowCurrentText() }
+                clickProgressAction = { ttsViewModel.toggleShowCurrentText() },
             )
         }
     }
@@ -133,17 +144,19 @@ class TtsSettingDialogFragment : ComposeDialogFragment() {
     }
 }
 
-private val speedRateValueList = listOf(
-    75,
-    100,
-    125,
-)
+private val speedRateValueList =
+    listOf(
+        75,
+        100,
+        125,
+    )
 
-private val speedRateValueList2 = listOf(
-    150,
-    175,
-    200
-)
+private val speedRateValueList2 =
+    listOf(
+        150,
+        175,
+        200,
+    )
 
 @Composable
 private fun MainTtsSettingDialog(
@@ -162,9 +175,10 @@ private fun MainTtsSettingDialog(
     showEttsVoiceDialog: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
-            .width(IntrinsicSize.Max)
+        modifier =
+            Modifier
+                .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                .width(IntrinsicSize.Max),
     ) {
         TtsEngineTitle()
         TtsEngineSelection(selectedType, readingState, onTtsTypeSelected)
@@ -188,13 +202,17 @@ private fun MainTtsSettingDialog(
 }
 
 @Composable
-private fun ReadingSpeedSelection2ndRow(selectedSpeedValue: Int, onSpeedValueClick: (Int) -> Unit) {
+private fun ReadingSpeedSelection2ndRow(
+    selectedSpeedValue: Int,
+    onSpeedValueClick: (Int) -> Unit,
+) {
     Row {
         speedRateValueList2.map { speedRate ->
             val isSelect = selectedSpeedValue == speedRate
             SelectableText(
-                modifier = Modifier
-                    .padding(horizontal = 1.dp, vertical = 3.dp),
+                modifier =
+                    Modifier
+                        .padding(horizontal = 1.dp, vertical = 3.dp),
                 selected = isSelect,
                 text = "$speedRate%",
             ) {
@@ -205,7 +223,10 @@ private fun ReadingSpeedSelection2ndRow(selectedSpeedValue: Int, onSpeedValueCli
 }
 
 @Composable
-private fun ReadingSpeedSelection(selectedSpeedValue: Int, onSpeedValueClick: (Int) -> Unit) {
+private fun ReadingSpeedSelection(
+    selectedSpeedValue: Int,
+    onSpeedValueClick: (Int) -> Unit,
+) {
     Text(
         stringResource(id = R.string.read_speed),
         modifier = Modifier.padding(vertical = 6.dp),
@@ -217,8 +238,9 @@ private fun ReadingSpeedSelection(selectedSpeedValue: Int, onSpeedValueClick: (I
         speedRateValueList.map { speedRate ->
             val isSelect = selectedSpeedValue == speedRate
             SelectableText(
-                modifier = Modifier
-                    .padding(horizontal = 1.dp, vertical = 3.dp),
+                modifier =
+                    Modifier
+                        .padding(horizontal = 1.dp, vertical = 3.dp),
                 selected = isSelect,
                 text = "$speedRate%",
             ) {
@@ -229,8 +251,9 @@ private fun ReadingSpeedSelection(selectedSpeedValue: Int, onSpeedValueClick: (I
             speedRateValueList2.map { speedRate ->
                 val isSelect = selectedSpeedValue == speedRate
                 SelectableText(
-                    modifier = Modifier
-                        .padding(horizontal = 1.dp, vertical = 3.dp),
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 1.dp, vertical = 3.dp),
                     selected = isSelect,
                     text = "$speedRate%",
                 ) {
@@ -242,7 +265,10 @@ private fun ReadingSpeedSelection(selectedSpeedValue: Int, onSpeedValueClick: (I
 }
 
 @Composable
-private fun SystemLanguageSelection(selectedLocale: Locale, showLocaleDialog: () -> Unit) {
+private fun SystemLanguageSelection(
+    selectedLocale: Locale,
+    showLocaleDialog: () -> Unit,
+) {
     Text(
         stringResource(id = R.string.setting_tts_locale),
         modifier = Modifier.padding(vertical = 6.dp),
@@ -252,7 +278,8 @@ private fun SystemLanguageSelection(selectedLocale: Locale, showLocaleDialog: ()
     )
     SelectableText(
         modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
-        selected = true, text = selectedLocale.displayName
+        selected = true,
+        text = selectedLocale.displayName,
     ) {
         showLocaleDialog()
     }
@@ -268,8 +295,9 @@ private fun ETtsVoiceSelection(
     SelectableText(
         modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
         selected = true,
-        text = Locale.forLanguageTag(selectedEttsVoice.getLanguageCode()).displayName
-                + " " + selectedEttsVoice.getShortNameWithoutNeural()
+        text =
+            Locale.forLanguageTag(selectedEttsVoice.getLanguageCode()).displayName +
+                " " + selectedEttsVoice.getShortNameWithoutNeural(),
     ) {
         showEttsVoiceDialog()
     }
@@ -277,8 +305,9 @@ private fun ETtsVoiceSelection(
         SelectableText(
             modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
             selected = false,
-            text = Locale.forLanguageTag(voice.getLanguageCode()).displayName
-                    + " " + voice.getShortNameWithoutNeural()
+            text =
+                Locale.forLanguageTag(voice.getLanguageCode()).displayName +
+                    " " + voice.getShortNameWithoutNeural(),
         ) {
             onVoiceSelected(voice)
         }
@@ -286,7 +315,7 @@ private fun ETtsVoiceSelection(
     SelectableText(
         modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
         selected = false,
-        text = LocalContext.current.getString(R.string.other_voices)
+        text = LocalContext.current.getString(R.string.other_voices),
     ) {
         showEttsVoiceDialog()
     }
@@ -302,7 +331,7 @@ private fun GptVoiceSelection(
         SelectableText(
             modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
             selected = isSelect,
-            text = it.name
+            text = it.name,
         ) {
             onGptVoiceSelected(it)
         }
@@ -330,8 +359,9 @@ private fun TtsEngineSelection(
         TtsType.entries.forEach { type ->
             val isSelect = selectedType == type
             SelectableText(
-                modifier = Modifier
-                    .padding(horizontal = 1.dp, vertical = 3.dp),
+                modifier =
+                    Modifier
+                        .padding(horizontal = 1.dp, vertical = 3.dp),
                 selected = isSelect,
                 isEnabled = readingState == IDLE || isSelect,
                 text = stringResource(type.toStringResId()),
@@ -373,97 +403,99 @@ fun TtsDialogButtonBar(
     Column {
         HorizontalSeparator()
         Row(
-            modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
             if (readingState != IDLE) {
                 Text(
                     readProgress(),
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .clickable { clickProgressAction() },
-                    color = MaterialTheme.colors.primary
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 8.dp)
+                            .clickable { clickProgressAction() },
+                    color = MaterialTheme.colors.primary,
                 )
                 VerticalSeparator()
                 IconButton(
                     onClick = addToReadListAction,
-                    modifier = Modifier.wrapContentWidth()
+                    modifier = Modifier.wrapContentWidth(),
                 ) {
                     Icon(
                         Icons.Default.Add,
                         "Add to read list",
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colors.primary,
                     )
                 }
                 if (ttsType != TtsType.SYSTEM) {
                     IconButton(
                         onClick = pauseOrResumeAction,
-                        modifier = Modifier.wrapContentWidth()
+                        modifier = Modifier.wrapContentWidth(),
                     ) {
                         Icon(
                             if (readingState != PAUSED) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                             "pause or resume",
-                            tint = MaterialTheme.colors.primary
+                            tint = MaterialTheme.colors.primary,
                         )
                     }
                 }
                 if (showNextButton) {
                     IconButton(
                         onClick = nextArticleAction,
-                        modifier = Modifier.wrapContentWidth()
+                        modifier = Modifier.wrapContentWidth(),
                     ) {
                         Icon(
                             Icons.Filled.SkipNext,
                             "Next Article",
-                            tint = MaterialTheme.colors.primary
+                            tint = MaterialTheme.colors.primary,
                         )
                     }
                 }
                 IconButton(
                     onClick = stopAction,
-                    modifier = Modifier.wrapContentWidth()
+                    modifier = Modifier.wrapContentWidth(),
                 ) {
                     Icon(
                         Icons.Default.Stop,
                         "Stop",
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colors.primary,
                     )
                 }
             }
             if (ttsType == TtsType.SYSTEM) {
                 TextButton(
                     modifier = Modifier.wrapContentWidth(),
-                    onClick = gotoSettingAction
+                    onClick = gotoSettingAction,
                 ) {
                     Text(
                         stringResource(id = R.string.system_settings),
-                        color = MaterialTheme.colors.primary
+                        color = MaterialTheme.colors.primary,
                     )
                 }
             }
             if (readingState == IDLE) {
                 IconButton(
                     onClick = addToReadListAction,
-                    modifier = Modifier.wrapContentWidth()
+                    modifier = Modifier.wrapContentWidth(),
                 ) {
                     Icon(
                         Icons.Default.PlayArrow,
                         "pause or resume",
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colors.primary,
                     )
                 }
             }
             TextButton(
                 modifier = Modifier.wrapContentWidth(),
-                onClick = dismissAction
+                onClick = dismissAction,
             ) {
                 Icon(
                     Icons.Default.KeyboardArrowDown,
                     "Stop",
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colors.primary,
                 )
             }
         }
@@ -487,7 +519,7 @@ fun PreviewMainTtsDialog() {
             onTtsTypeSelected = { Unit },
             showEttsVoiceDialog = { Unit },
             selectedEttsVoice = defaultVoiceItem,
-            onGptVoiceSelected = { Unit }
+            onGptVoiceSelected = { Unit },
         )
     }
 }

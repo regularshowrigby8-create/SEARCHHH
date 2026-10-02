@@ -43,10 +43,14 @@ private data class PlayerCaptions(
 )
 
 @Serializable
-private data class CaptionTracklist(val captionTracks: List<YouTubeCaptionTrack> = emptyList())
+private data class CaptionTracklist(
+    val captionTracks: List<YouTubeCaptionTrack> = emptyList(),
+)
 
 @Serializable
-private data class GeminiFileData(@SerialName("file_uri") val fileUri: String)
+private data class GeminiFileData(
+    @SerialName("file_uri") val fileUri: String,
+)
 
 @Serializable
 private data class GeminiPart(
@@ -55,10 +59,15 @@ private data class GeminiPart(
 )
 
 @Serializable
-private data class GeminiContent(val parts: List<GeminiPart>)
+private data class GeminiContent(
+    val parts: List<GeminiPart>,
+)
 
 @Serializable
-private data class GeminiSafetySetting(val category: String, val threshold: String)
+private data class GeminiSafetySetting(
+    val category: String,
+    val threshold: String,
+)
 
 @Serializable
 private data class GeminiThinkingConfig(
@@ -80,27 +89,42 @@ private data class GeminiRequest(
 )
 
 @Serializable
-private data class GeminiResponse(val candidates: List<GeminiCandidate> = emptyList())
+private data class GeminiResponse(
+    val candidates: List<GeminiCandidate> = emptyList(),
+)
 
 @Serializable
-private data class GeminiCandidate(val content: GeminiResponseContent = GeminiResponseContent())
+private data class GeminiCandidate(
+    val content: GeminiResponseContent = GeminiResponseContent(),
+)
 
 @Serializable
-private data class GeminiResponseContent(val parts: List<GeminiResponsePart> = emptyList())
+private data class GeminiResponseContent(
+    val parts: List<GeminiResponsePart> = emptyList(),
+)
 
 @Serializable
-private data class GeminiResponsePart(val text: String = "")
+private data class GeminiResponsePart(
+    val text: String = "",
+)
 
 @Serializable
-private data class GeminiErrorResponse(val error: GeminiErrorBody = GeminiErrorBody())
+private data class GeminiErrorResponse(
+    val error: GeminiErrorBody = GeminiErrorBody(),
+)
 
 @Serializable
-private data class GeminiErrorBody(val message: String = "", val status: String = "")
+private data class GeminiErrorBody(
+    val message: String = "",
+    val status: String = "",
+)
 
 /** Outcome of a caption/transcript lookup for a video page. */
 sealed interface CaptionFetchResult {
     /** Timedtext JSON in the shape EBWebView.dualCaption expects. */
-    data class Captions(val timedTextJson: String) : CaptionFetchResult
+    data class Captions(
+        val timedTextJson: String,
+    ) : CaptionFetchResult
 
     /** No captions and nothing to transcribe with — fall back to page text quietly. */
     data object None : CaptionFetchResult
@@ -110,7 +134,10 @@ sealed interface CaptionFetchResult {
      * user-showable. [transient] failures (rate limit, network) may succeed on a
      * later attempt and shouldn't be remembered against the video.
      */
-    data class Failed(val message: String, val transient: Boolean) : CaptionFetchResult
+    data class Failed(
+        val message: String,
+        val transient: Boolean,
+    ) : CaptionFetchResult
 }
 
 /**
@@ -145,9 +172,13 @@ class YouTubeCaptionFetcher : KoinComponent {
     ): CaptionFetchResult {
         val videoId = extractVideoId(pageUrl) ?: return CaptionFetchResult.None
         val player = fetchPlayerResponse(videoId)
-        val tracks = player?.captions?.tracklist?.captionTracks
-            ?.filter { it.baseUrl.isNotEmpty() }
-            .orEmpty()
+        val tracks =
+            player
+                ?.captions
+                ?.tracklist
+                ?.captionTracks
+                ?.filter { it.baseUrl.isNotEmpty() }
+                .orEmpty()
         fetchTimedTextFromTracks(tracks)?.let { return CaptionFetchResult.Captions(it) }
 
         // Gemini can only watch videos the anonymous YouTube API can play. For
@@ -165,9 +196,10 @@ class YouTubeCaptionFetcher : KoinComponent {
 
     private suspend fun fetchTimedTextFromTracks(tracks: List<YouTubeCaptionTrack>): String? {
         val track = pickTrack(tracks, Locale.getDefault().language) ?: return null
-        val captionJson = withContext(Dispatchers.IO) {
-            dualCaptionProcessor.processUrl(captionUrl(track.baseUrl))
-        } ?: return null
+        val captionJson =
+            withContext(Dispatchers.IO) {
+                dualCaptionProcessor.processUrl(captionUrl(track.baseUrl))
+            } ?: return null
         return captionJson.takeIf(::isTimedTextWithContent)
     }
 
@@ -205,7 +237,7 @@ class YouTubeCaptionFetcher : KoinComponent {
         return when (val outcome = requestGeminiTranscript(videoId)) {
             is GeminiOutcome.Transcript -> {
                 bookmarkManager.insertVideoTranscript(
-                    VideoTranscript(videoId, outcome.text, System.currentTimeMillis())
+                    VideoTranscript(videoId, outcome.text, System.currentTimeMillis()),
                 )
                 CaptionFetchResult.Captions(transcriptToTimedTextJson(outcome.text))
             }
@@ -218,8 +250,12 @@ class YouTubeCaptionFetcher : KoinComponent {
     }
 
     private sealed interface GeminiOutcome {
-        data class Transcript(val text: String) : GeminiOutcome
+        data class Transcript(
+            val text: String,
+        ) : GeminiOutcome
+
         data object NoSpeech : GeminiOutcome
+
         data class Error(
             val message: String,
             val transient: Boolean,
@@ -228,8 +264,9 @@ class YouTubeCaptionFetcher : KoinComponent {
     }
 
     private suspend fun requestGeminiTranscript(videoId: String): GeminiOutcome {
-        val model = config.ai.geminiTranscribeModel
-            .ifBlank { AiConfig.DEFAULT_GEMINI_TRANSCRIBE_MODEL }
+        val model =
+            config.ai.geminiTranscribeModel
+                .ifBlank { AiConfig.DEFAULT_GEMINI_TRANSCRIBE_MODEL }
         val outcome = postGenerateContent(model, geminiRequestBody(videoId, thinkingConfigFor(model)))
         // The thinking knob is the one part of the request that differs per model
         // generation, and a model that doesn't know it answers with a bare 400
@@ -249,14 +286,21 @@ class YouTubeCaptionFetcher : KoinComponent {
      * 3.8-flash rejects "minimal", so "low" is the cheapest value every 3.x accepts.
      */
     private fun thinkingConfigFor(model: String): GeminiThinkingConfig =
-        if (model.startsWith("gemini-2")) GeminiThinkingConfig(thinkingBudget = 0)
-        else GeminiThinkingConfig(thinkingLevel = "low")
+        if (model.startsWith("gemini-2")) {
+            GeminiThinkingConfig(thinkingBudget = 0)
+        } else {
+            GeminiThinkingConfig(thinkingLevel = "low")
+        }
 
-    private suspend fun postGenerateContent(model: String, body: String): GeminiOutcome =
+    private suspend fun postGenerateContent(
+        model: String,
+        body: String,
+    ): GeminiOutcome =
         withContext(Dispatchers.IO) {
             try {
-                val connection = URL("$GEMINI_API_PREFIX$model:generateContent")
-                    .openConnection() as HttpURLConnection
+                val connection =
+                    URL("$GEMINI_API_PREFIX$model:generateContent")
+                        .openConnection() as HttpURLConnection
                 connection.requestMethod = "POST"
                 connection.doOutput = true
                 connection.setRequestProperty("Content-Type", "application/json")
@@ -270,9 +314,10 @@ class YouTubeCaptionFetcher : KoinComponent {
                 connection.outputStream.use { it.write(body.toByteArray()) }
                 val code = connection.responseCode
                 if (code != HttpURLConnection.HTTP_OK) {
-                    val errorBody = connection.errorStream
-                        ?.use { String(it.readBytes()) }
-                        .orEmpty()
+                    val errorBody =
+                        connection.errorStream
+                            ?.use { String(it.readBytes()) }
+                            .orEmpty()
                     Timber.e("Gemini transcription failed ($code): $errorBody")
                     return@withContext GeminiOutcome.Error(
                         "Gemini ($code): ${parseGeminiError(errorBody)}",
@@ -281,58 +326,77 @@ class YouTubeCaptionFetcher : KoinComponent {
                     )
                 }
                 val body = connection.inputStream.use { String(it.readBytes()) }
-                val text = json.decodeFromString(GeminiResponse.serializer(), body)
-                    .candidates.firstOrNull()
-                    ?.content?.parts
-                    ?.joinToString("") { it.text }
-                    ?.trim()
-                if (text.isNullOrBlank()) GeminiOutcome.NoSpeech
-                else GeminiOutcome.Transcript(text)
+                val text =
+                    json
+                        .decodeFromString(GeminiResponse.serializer(), body)
+                        .candidates
+                        .firstOrNull()
+                        ?.content
+                        ?.parts
+                        ?.joinToString("") { it.text }
+                        ?.trim()
+                if (text.isNullOrBlank()) {
+                    GeminiOutcome.NoSpeech
+                } else {
+                    GeminiOutcome.Transcript(text)
+                }
             } catch (e: Exception) {
                 Timber.e(e, "Gemini transcription request failed")
                 GeminiOutcome.Error(e.message ?: "network error", transient = true)
             }
         }
 
-    private fun parseGeminiError(errorBody: String): String = try {
-        val error = json.decodeFromString(GeminiErrorResponse.serializer(), errorBody).error
-        error.message.ifBlank { error.status.ifBlank { "unknown error" } }
-    } catch (e: Exception) {
-        "unknown error"
-    }
+    private fun parseGeminiError(errorBody: String): String =
+        try {
+            val error = json.decodeFromString(GeminiErrorResponse.serializer(), errorBody).error
+            error.message.ifBlank { error.status.ifBlank { "unknown error" } }
+        } catch (e: Exception) {
+            "unknown error"
+        }
 
-    private fun geminiRequestBody(videoId: String, thinkingConfig: GeminiThinkingConfig?): String {
-        val request = GeminiRequest(
-            contents = listOf(
-                GeminiContent(
-                    parts = listOf(
-                        GeminiPart(fileData = GeminiFileData(fileUri = "https://www.youtube.com/watch?v=$videoId")),
-                        GeminiPart(text = TRANSCRIBE_PROMPT),
-                    )
-                )
-            ),
-            safety_settings = listOf(
-                GeminiSafetySetting("HARM_CATEGORY_SEXUALLY_EXPLICIT", "BLOCK_NONE"),
-                GeminiSafetySetting("HARM_CATEGORY_HATE_SPEECH", "BLOCK_NONE"),
-                GeminiSafetySetting("HARM_CATEGORY_HARASSMENT", "BLOCK_ONLY_HIGH"),
-                GeminiSafetySetting("HARM_CATEGORY_DANGEROUS_CONTENT", "BLOCK_NONE"),
-            ),
-            generationConfig = GeminiGenerationConfig(
-                thinkingConfig = thinkingConfig,
-                // Transcription only needs the audio track; low resolution cuts the
-                // video-frame token cost roughly 4x, which matters on the free tier.
-                mediaResolution = "MEDIA_RESOLUTION_LOW",
-            ),
-        )
+    private fun geminiRequestBody(
+        videoId: String,
+        thinkingConfig: GeminiThinkingConfig?,
+    ): String {
+        val request =
+            GeminiRequest(
+                contents =
+                    listOf(
+                        GeminiContent(
+                            parts =
+                                listOf(
+                                    GeminiPart(fileData = GeminiFileData(fileUri = "https://www.youtube.com/watch?v=$videoId")),
+                                    GeminiPart(text = TRANSCRIBE_PROMPT),
+                                ),
+                        ),
+                    ),
+                safety_settings =
+                    listOf(
+                        GeminiSafetySetting("HARM_CATEGORY_SEXUALLY_EXPLICIT", "BLOCK_NONE"),
+                        GeminiSafetySetting("HARM_CATEGORY_HATE_SPEECH", "BLOCK_NONE"),
+                        GeminiSafetySetting("HARM_CATEGORY_HARASSMENT", "BLOCK_ONLY_HIGH"),
+                        GeminiSafetySetting("HARM_CATEGORY_DANGEROUS_CONTENT", "BLOCK_NONE"),
+                    ),
+                generationConfig =
+                    GeminiGenerationConfig(
+                        thinkingConfig = thinkingConfig,
+                        // Transcription only needs the audio track; low resolution cuts the
+                        // video-frame token cost roughly 4x, which matters on the free tier.
+                        mediaResolution = "MEDIA_RESOLUTION_LOW",
+                    ),
+            )
         return json.encodeToString(GeminiRequest.serializer(), request)
     }
 
-    private fun isTimedTextWithContent(jsonString: String): Boolean = try {
-        json.decodeFromString(TimedText.serializer(), jsonString)
-            .events.any { event -> event.segs?.any { it.utf8.isNotBlank() } == true }
-    } catch (e: Exception) {
-        false
-    }
+    private fun isTimedTextWithContent(jsonString: String): Boolean =
+        try {
+            json
+                .decodeFromString(TimedText.serializer(), jsonString)
+                .events
+                .any { event -> event.segs?.any { it.utf8.isNotBlank() } == true }
+        } catch (e: Exception) {
+            false
+        }
 
     companion object {
         private const val PLAYER_API_URL = "https://www.youtube.com/youtubei/v1/player"
@@ -342,9 +406,9 @@ class YouTubeCaptionFetcher : KoinComponent {
             "com.google.android.youtube/20.10.38 (Linux; U; Android 11) gzip"
         private const val TRANSCRIBE_PROMPT =
             "Transcribe all spoken content of this video in its original spoken language. " +
-                    "Output only the transcript as plain text paragraphs. Do not include " +
-                    "timestamps, speaker labels, or any commentary. If the video has no " +
-                    "speech, output nothing."
+                "Output only the transcript as plain text paragraphs. Do not include " +
+                "timestamps, speaker labels, or any commentary. If the video has no " +
+                "speech, output nothing."
         private val videoIdPattern = Regex("^[A-Za-z0-9_-]{6,20}$")
         private val timedTextJson = Json { ignoreUnknownKeys = true }
 
@@ -356,27 +420,34 @@ class YouTubeCaptionFetcher : KoinComponent {
 
         fun isVideoUrl(url: String?): Boolean = url != null && extractVideoId(url) != null
 
-        fun extractVideoId(url: String): String? = try {
-            val uri = URI(url)
-            val host = uri.host.orEmpty().removePrefix("www.").removePrefix("m.")
-            val path = uri.path.orEmpty()
-            when {
-                host == "youtu.be" -> path.trim('/').substringBefore('/')
+        fun extractVideoId(url: String): String? =
+            try {
+                val uri = URI(url)
+                val host =
+                    uri.host
+                        .orEmpty()
+                        .removePrefix("www.")
+                        .removePrefix("m.")
+                val path = uri.path.orEmpty()
+                when {
+                    host == "youtu.be" -> path.trim('/').substringBefore('/')
 
-                host.endsWith("youtube.com") && path == "/watch" ->
-                    uri.rawQuery.orEmpty().split('&')
-                        .firstOrNull { it.startsWith("v=") }
-                        ?.substringAfter('=')
+                    host.endsWith("youtube.com") && path == "/watch" ->
+                        uri.rawQuery
+                            .orEmpty()
+                            .split('&')
+                            .firstOrNull { it.startsWith("v=") }
+                            ?.substringAfter('=')
 
-                host.endsWith("youtube.com") &&
+                    host.endsWith("youtube.com") &&
                         (path.startsWith("/shorts/") || path.startsWith("/live/")) ->
-                    path.split('/').getOrNull(2)
+                        path.split('/').getOrNull(2)
 
-                else -> null
-            }?.takeIf { videoIdPattern.matches(it) }
-        } catch (e: Exception) {
-            null
-        }
+                    else -> null
+                }?.takeIf { videoIdPattern.matches(it) }
+            } catch (e: Exception) {
+                null
+            }
 
         fun pickTrack(
             tracks: List<YouTubeCaptionTrack>,
@@ -405,13 +476,15 @@ class YouTubeCaptionFetcher : KoinComponent {
         // Wraps a plain-text transcript in the TimedText shape so it flows through the
         // same dualCaption pipeline (getRawText, TTS, EPUB export) as real captions.
         fun transcriptToTimedTextJson(transcript: String): String {
-            val events = transcript.split('\n')
-                .map { it.trim() }
-                .filter { it.isNotEmpty() }
-                .map { line -> Event(segs = mutableListOf(Segment(utf8 = line))) }
+            val events =
+                transcript
+                    .split('\n')
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .map { line -> Event(segs = mutableListOf(Segment(utf8 = line))) }
             return timedTextJson.encodeToString(
                 TimedText.serializer(),
-                TimedText(events = events.toMutableList())
+                TimedText(events = events.toMutableList()),
             )
         }
     }

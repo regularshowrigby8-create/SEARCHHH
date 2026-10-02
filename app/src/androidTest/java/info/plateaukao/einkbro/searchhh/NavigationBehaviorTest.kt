@@ -28,10 +28,14 @@ class NavigationBehaviorTest {
     private fun prepare() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         LocalIdentity.create(context, "Navigation behavior test")
-        ConnectionSettings.prefs(context).edit()
-            .remove("job").remove("last_status")
+        ConnectionSettings
+            .prefs(context)
+            .edit()
+            .remove("job")
+            .remove("last_status")
             .putBoolean("relay_enabled", false)
-            .putBoolean("server_enabled", false).commit()
+            .putBoolean("server_enabled", false)
+            .commit()
     }
 
     @Test
@@ -53,14 +57,18 @@ class NavigationBehaviorTest {
     fun enteredQuerySurvivesNavigationAndActivityRecreation() {
         prepare()
         ActivityScenario.launch(SearchhhActivity::class.java).use { activity ->
-            compose.onNodeWithTag(SearchhhTestTags.SEARCH_FIELD).performScrollTo()
+            compose
+                .onNodeWithTag(SearchhhTestTags.SEARCH_FIELD)
+                .performScrollTo()
                 .performTextInput("global fellowship")
             compose.onNodeWithTag(SearchhhTestTags.MENU_SETTINGS).performClick()
             compose.onNodeWithTag(SearchhhTestTags.SETTINGS).assertIsDisplayed()
             activity.recreate()
             compose.onNodeWithTag(SearchhhTestTags.MENU_SETTINGS).assertIsSelected()
             compose.onNodeWithTag(SearchhhTestTags.MENU_HOME).performClick()
-            compose.onNodeWithTag(SearchhhTestTags.SEARCH_FIELD).performScrollTo()
+            compose
+                .onNodeWithTag(SearchhhTestTags.SEARCH_FIELD)
+                .performScrollTo()
                 .assertTextContains("global fellowship")
         }
     }

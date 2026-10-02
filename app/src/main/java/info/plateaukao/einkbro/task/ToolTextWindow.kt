@@ -6,7 +6,6 @@ package info.plateaukao.einkbro.task
  * in the document and how to page for more.
  */
 object ToolTextWindow {
-
     const val DEFAULT_SEARCH_PRE_CONTEXT_CHARS = 200
 
     /**

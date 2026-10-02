@@ -31,7 +31,6 @@ import java.util.zip.ZipOutputStream
  * spinning up the full KoinComponent dependency graph.
  */
 class BackupUnitJsonTest {
-
     @get:Rule
     val tempFolder = TemporaryFolder()
 
@@ -72,10 +71,12 @@ class BackupUnitJsonTest {
 
     @Test
     fun `bookmarks survive a JSON export-import round trip`() {
-        val folder = Bookmark("Tech", "", isDirectory = true, parent = 0, order = 0)
-            .apply { id = 1 }
-        val child = Bookmark("EinkBro", "https://github.com/plateaukao/einkbro", false, 1, 2)
-            .apply { id = 5 }
+        val folder =
+            Bookmark("Tech", "", isDirectory = true, parent = 0, order = 0)
+                .apply { id = 1 }
+        val child =
+            Bookmark("EinkBro", "https://github.com/plateaukao/einkbro", false, 1, 2)
+                .apply { id = 5 }
         val original = listOf(folder, child)
 
         val jsonString = bookmarksToJsonString(original)
@@ -138,10 +139,11 @@ class BackupUnitJsonTest {
 
     @Test
     fun `getAvailableCategoryOptions reads categories and sizes from manifest`() {
-        val manifest = JSONObject().apply {
-            put("version", 2)
-            put("categories", JSONArray(listOf("BOOKMARKS", "HISTORY")))
-        }
+        val manifest =
+            JSONObject().apply {
+                put("version", 2)
+                put("categories", JSONArray(listOf("BOOKMARKS", "HISTORY")))
+            }
         val options = backupUnit.getAvailableCategoryOptions(createBackupZip(manifest))
         // bookmarks.json contains "[]" (2 bytes); HISTORY is listed but has no entry.
         assertEquals(
@@ -152,10 +154,11 @@ class BackupUnitJsonTest {
 
     @Test
     fun `getAvailableCategoryOptions ignores unknown category names`() {
-        val manifest = JSONObject().apply {
-            put("version", 99)
-            put("categories", JSONArray(listOf("BOOKMARKS", "FROM_THE_FUTURE")))
-        }
+        val manifest =
+            JSONObject().apply {
+                put("version", 99)
+                put("categories", JSONArray(listOf("BOOKMARKS", "FROM_THE_FUTURE")))
+            }
         val options = backupUnit.getAvailableCategoryOptions(createBackupZip(manifest))
         assertEquals(listOf(BackupCategory.BOOKMARKS to 2L), options)
     }
@@ -167,7 +170,10 @@ class BackupUnitJsonTest {
 
     // ── GPT settings export/import ───────────────────────────────────────────
 
-    private fun invokePrivate(name: String, vararg args: Any?): Any? {
+    private fun invokePrivate(
+        name: String,
+        vararg args: Any?,
+    ): Any? {
         val method: Method = BackupUnit::class.java.declaredMethods.first { it.name == name }
         method.isAccessible = true
         return method.invoke(backupUnit, *args)

@@ -33,7 +33,7 @@ class AuthenticationDialogFragment(
                 okAction(username, password)
                 dismiss()
             },
-            onCancel = { dismiss() }
+            onCancel = { dismiss() },
         )
     }
 }
@@ -47,9 +47,10 @@ private fun AuthenticationContent(
     val password = remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(

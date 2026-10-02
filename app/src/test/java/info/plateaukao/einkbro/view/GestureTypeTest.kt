@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class GestureTypeTest {
-
     @Test
     fun `from returns correct type for valid value`() {
         assertEquals(GestureType.Forward, GestureType.from("02"))

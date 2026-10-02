@@ -55,16 +55,17 @@ enum class ToolbarAction(
     Refresh(
         imageVector = Icons.Outlined.Refresh,
         titleResId = R.string.refresh,
-        iconActiveInfo = IconActiveInfo(true, R.drawable.ic_stop, R.drawable.icon_refresh)
+        iconActiveInfo = IconActiveInfo(true, R.drawable.ic_stop, R.drawable.icon_refresh),
     ),
     Touch(
         imageVector = Icons.Outlined.TouchApp,
         titleResId = R.string.touch_turn_page,
-        iconActiveInfo = IconActiveInfo(
-            true,
-            R.drawable.ic_touch_enabled,
-            R.drawable.ic_touch_disabled
-        )
+        iconActiveInfo =
+            IconActiveInfo(
+                true,
+                R.drawable.ic_touch_enabled,
+                R.drawable.ic_touch_disabled,
+            ),
     ),
     PageUp(imageVector = Icons.Outlined.Upload, titleResId = R.string.page_up),
     PageDown(imageVector = Icons.Outlined.Download, titleResId = R.string.page_down),
@@ -78,11 +79,12 @@ enum class ToolbarAction(
     BoldFont(
         iconResId = R.drawable.ic_bold_font,
         titleResId = R.string.bold_font,
-        iconActiveInfo = IconActiveInfo(
-            true,
-            R.drawable.ic_bold_font_active,
-            R.drawable.ic_bold_font
-        )
+        iconActiveInfo =
+            IconActiveInfo(
+                true,
+                R.drawable.ic_bold_font_active,
+                R.drawable.ic_bold_font,
+            ),
     ),
     IncreaseFont(imageVector = Icons.Outlined.TextIncrease, titleResId = R.string.font_size_increase),
     DecreaseFont(imageVector = Icons.Outlined.TextDecrease, titleResId = R.string.font_size_decrease),
@@ -96,11 +98,12 @@ enum class ToolbarAction(
     Desktop(
         imageVector = Icons.Outlined.DesktopWindows,
         titleResId = R.string.desktop_mode,
-        iconActiveInfo = IconActiveInfo(
-            true,
-            R.drawable.icon_desktop_activate,
-            R.drawable.icon_desktop
-        )
+        iconActiveInfo =
+            IconActiveInfo(
+                true,
+                R.drawable.icon_desktop_activate,
+                R.drawable.icon_desktop,
+            ),
     ),
     TOC(imageVector = Icons.AutoMirrored.Outlined.Toc, titleResId = R.string.title_in_toc, isAddable = false),
     Search(imageVector = Icons.Outlined.Search, titleResId = R.string.setting_title_search),
@@ -108,42 +111,45 @@ enum class ToolbarAction(
     Tts(
         imageVector = Icons.Outlined.RecordVoiceOver,
         titleResId = R.string.menu_tts,
-        iconActiveInfo = IconActiveInfo(
-            true,
-            R.drawable.ic_tts,
-            R.drawable.ic_voice_off
-        )
+        iconActiveInfo =
+            IconActiveInfo(
+                true,
+                R.drawable.ic_tts,
+                R.drawable.ic_voice_off,
+            ),
     ),
     PageInfo(iconResId = R.drawable.ic_page_count, titleResId = R.string.page_count),
     GoogleInPlace(
         imageVector = Icons.Outlined.GTranslate,
-        titleResId = R.string.google_in_place
+        titleResId = R.string.google_in_place,
     ),
     TranslateByParagraph(
         imageVector = Icons.AutoMirrored.Outlined.Segment,
-        titleResId = R.string.inter_translate
+        titleResId = R.string.inter_translate,
     ),
     MoveToBackground(
         imageVector = Icons.Outlined.Minimize,
-        titleResId = R.string.move_to_background
+        titleResId = R.string.move_to_background,
     ),
     TouchDirectionUpDown(
         imageVector = Icons.Outlined.SwipeVertical,
         titleResId = R.string.switch_touch_area_action_short,
-        iconActiveInfo = IconActiveInfo(
-            true,
-            R.drawable.ic_touch_direction_up,
-            R.drawable.ic_touch_direction_down
-        )
+        iconActiveInfo =
+            IconActiveInfo(
+                true,
+                R.drawable.ic_touch_direction_up,
+                R.drawable.ic_touch_direction_down,
+            ),
     ),
     TouchDirectionLeftRight(
         imageVector = Icons.Outlined.Swipe,
         titleResId = R.string.switch_touch_area_action_short,
-        iconActiveInfo = IconActiveInfo(
-            true,
-            R.drawable.ic_touch_direction_left,
-            R.drawable.ic_touch_direction_right
-        )
+        iconActiveInfo =
+            IconActiveInfo(
+                true,
+                R.drawable.ic_touch_direction_left,
+                R.drawable.ic_touch_direction_right,
+            ),
     ),
     Time(
         imageVector = Icons.Outlined.AccessTime,
@@ -180,54 +186,60 @@ enum class ToolbarAction(
     AudioOnly(
         iconResId = R.drawable.ic_audio_only_off,
         titleResId = R.string.audio_only_mode,
-        iconActiveInfo = IconActiveInfo(
-            true,
-            R.drawable.ic_audio_only_on,
-            R.drawable.ic_audio_only_off
-        )
+        iconActiveInfo =
+            IconActiveInfo(
+                true,
+                R.drawable.ic_audio_only_on,
+                R.drawable.ic_audio_only_off,
+            ),
     ),
+
     // New entries must be appended: ordinals are persisted in toolbar configs.
     Userscript(
         imageVector = Icons.Outlined.Extension,
         titleResId = R.string.setting_title_userscripts,
-    );
-
+    ),
+    ;
 
     companion object {
         fun fromOrdinal(value: Int) = entries[value]
-        val defaultActionsForPhone: List<ToolbarAction> = listOf(
-            NewTab,
-            Touch,
-            ReaderMode,
-            Refresh,
-            Back,
-            Bookmark,
-            TabCount,
-            InputUrl,
-            Settings,
-        )
-        val defaultActions: List<ToolbarAction> = listOf(
-            Title,
-            NewTab,
-            Touch,
-            ReaderMode,
-            Refresh,
-            Back,
-            Bookmark,
-            TabCount,
-            Settings,
-        )
-        val defaultReaderActions: List<ToolbarAction> = listOf(
-            RotateScreen,
-            FullScreen,
-            BoldFont,
-            Font,
-            Touch,
-            TOC,
-            PageInfo,
-            Settings,
-            CloseTab,
-        )
+
+        val defaultActionsForPhone: List<ToolbarAction> =
+            listOf(
+                NewTab,
+                Touch,
+                ReaderMode,
+                Refresh,
+                Back,
+                Bookmark,
+                TabCount,
+                InputUrl,
+                Settings,
+            )
+        val defaultActions: List<ToolbarAction> =
+            listOf(
+                Title,
+                NewTab,
+                Touch,
+                ReaderMode,
+                Refresh,
+                Back,
+                Bookmark,
+                TabCount,
+                Settings,
+            )
+        val defaultReaderActions: List<ToolbarAction> =
+            listOf(
+                RotateScreen,
+                FullScreen,
+                BoldFont,
+                Font,
+                Touch,
+                TOC,
+                PageInfo,
+                Settings,
+                CloseTab,
+            )
     }
 
     fun getCurrentResId(state: Boolean): Int =

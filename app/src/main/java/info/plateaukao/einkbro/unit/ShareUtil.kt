@@ -30,18 +30,23 @@ object ShareUtil : KoinComponent {
     private var broadcastJob: Job? = null
     private var socket: MulticastSocket? = null
 
-    fun copyToClipboard(context: Context, url: String) {
+    fun copyToClipboard(
+        context: Context,
+        url: String,
+    ) {
         val clipboard =
             context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("text", url)
         clipboard.setPrimaryClip(clip)
         EBToast.show(context, R.string.toast_copy_successful)
     }
+
     private var bytesToBeSent = ByteArray(0)
+
     fun startBroadcastingUrl(
         lifecycleCoroutineScope: CoroutineScope,
         url: String,
-        times: Int = 3
+        times: Int = 3,
     ) {
         if (socket == null || socket?.isClosed == true) {
             socket?.leaveGroup(group)
@@ -53,17 +58,18 @@ object ShareUtil : KoinComponent {
             broadcastJob?.cancel()
         }
 
-        broadcastJob = lifecycleCoroutineScope.launch(Dispatchers.IO) {
-            try {
-                bytesToBeSent = url.toByteArray()
-                repeat(times) {
-                    socket?.send(DatagramPacket(bytesToBeSent, bytesToBeSent.size, group, multicastPort))
-                    delay(broadcastIntervalInMilli) // 1 second
+        broadcastJob =
+            lifecycleCoroutineScope.launch(Dispatchers.IO) {
+                try {
+                    bytesToBeSent = url.toByteArray()
+                    repeat(times) {
+                        socket?.send(DatagramPacket(bytesToBeSent, bytesToBeSent.size, group, multicastPort))
+                        delay(broadcastIntervalInMilli) // 1 second
+                    }
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
                 }
-            } catch (exception: Exception) {
-                exception.printStackTrace()
             }
-        }
     }
 
     fun stopBroadcast() {
@@ -72,57 +78,65 @@ object ShareUtil : KoinComponent {
         socket?.leaveGroup(group)
         socket?.close()
         socket = null
-        try { serverSocket?.close() } catch (_: Exception) {}
+        try {
+            serverSocket?.close()
+        } catch (_: Exception) {
+        }
         serverSocket = null
     }
 
     fun startReceiving(
         lifecycleCoroutineScope: CoroutineScope,
-        receivedAction: (String) -> Unit
+        receivedAction: (String) -> Unit,
     ) {
         var receivedString = ""
         var lastReceivedTime = System.currentTimeMillis()
         val receiveData = ByteArray(4096)
         val receivePacket = DatagramPacket(receiveData, receiveData.size)
 
-        broadcastJob = lifecycleCoroutineScope.launch(Dispatchers.IO) {
-            try {
-                socket = MulticastSocket(multicastPort).apply { joinGroup(group) }
-            } catch (exception: SocketException) {
-                return@launch
-            }
-            while(true) {
+        broadcastJob =
+            lifecycleCoroutineScope.launch(Dispatchers.IO) {
                 try {
-                    socket?.receive(receivePacket)
+                    socket = MulticastSocket(multicastPort).apply { joinGroup(group) }
                 } catch (exception: SocketException) {
                     return@launch
                 }
-
-                val newString = String(receivePacket.data, 0, receivePacket.length)
-                if (newString == receivedString && System.currentTimeMillis() - lastReceivedTime < 5_000L) {
-                    continue // Ignore duplicate messages within the interval
-                }
-
-                lastReceivedTime = System.currentTimeMillis()
-                if (receivedString != newString) {
-                    receivedString = newString
-
-                    val processedString = if (receivedString.startsWith("http") || receivedString.startsWith("action")) {
-                        receivedString // EinkBro case
-                    } else {
-                        convertSharikResponse(receivePacket.address.toString(), receivedString)
+                while (true) {
+                    try {
+                        socket?.receive(receivePacket)
+                    } catch (exception: SocketException) {
+                        return@launch
                     }
-                    withContext(Dispatchers.Main) {
-                        receivedAction(processedString)
-                    }
-                }
 
-                delay(300L)
+                    val newString = String(receivePacket.data, 0, receivePacket.length)
+                    if (newString == receivedString && System.currentTimeMillis() - lastReceivedTime < 5_000L) {
+                        continue // Ignore duplicate messages within the interval
+                    }
+
+                    lastReceivedTime = System.currentTimeMillis()
+                    if (receivedString != newString) {
+                        receivedString = newString
+
+                        val processedString =
+                            if (receivedString.startsWith("http") || receivedString.startsWith("action")) {
+                                receivedString // EinkBro case
+                            } else {
+                                convertSharikResponse(receivePacket.address.toString(), receivedString)
+                            }
+                        withContext(Dispatchers.Main) {
+                            receivedAction(processedString)
+                        }
+                    }
+
+                    delay(300L)
+                }
             }
-        }
     }
 
-    private fun convertSharikResponse(address: String, jsonString: String): String {
+    private fun convertSharikResponse(
+        address: String,
+        jsonString: String,
+    ): String {
         val jsonObject = JSONObject(jsonString)
         val type = jsonObject.getString("type")
         val port = jsonObject.getString("port")
@@ -177,55 +191,56 @@ object ShareUtil : KoinComponent {
         val receiveData = ByteArray(4096)
         val receivePacket = DatagramPacket(receiveData, receiveData.size)
 
-        broadcastJob = scope.launch(Dispatchers.IO) {
-            try {
-                socket = MulticastSocket(multicastPort).apply { joinGroup(group) }
-            } catch (e: SocketException) {
-                return@launch
-            }
-            while (true) {
+        broadcastJob =
+            scope.launch(Dispatchers.IO) {
                 try {
-                    socket?.receive(receivePacket) ?: return@launch
+                    socket = MulticastSocket(multicastPort).apply { joinGroup(group) }
                 } catch (e: SocketException) {
                     return@launch
                 }
+                while (true) {
+                    try {
+                        socket?.receive(receivePacket) ?: return@launch
+                    } catch (e: SocketException) {
+                        return@launch
+                    }
 
-                val message = String(receivePacket.data, 0, receivePacket.length)
-                if (message == receivedString && System.currentTimeMillis() - lastReceivedTime < 5_000L) {
-                    continue
-                }
-                lastReceivedTime = System.currentTimeMillis()
-                receivedString = message
+                    val message = String(receivePacket.data, 0, receivePacket.length)
+                    if (message == receivedString && System.currentTimeMillis() - lastReceivedTime < 5_000L) {
+                        continue
+                    }
+                    lastReceivedTime = System.currentTimeMillis()
+                    receivedString = message
 
-                if (!message.startsWith(BACKUP_PREFIX)) continue
+                    if (!message.startsWith(BACKUP_PREFIX)) continue
 
-                val address = message.removePrefix(BACKUP_PREFIX)
-                val parts = address.split(":")
-                if (parts.size != 2) continue
+                    val address = message.removePrefix(BACKUP_PREFIX)
+                    val parts = address.split(":")
+                    if (parts.size != 2) continue
 
-                val ip = parts[0]
-                val port = parts[1].toIntOrNull() ?: continue
+                    val ip = parts[0]
+                    val port = parts[1].toIntOrNull() ?: continue
 
-                try {
-                    val client = Socket(ip, port)
-                    withContext(Dispatchers.Main) { onConnected?.invoke() }
-                    client.getInputStream().use { input ->
-                        outputFile.outputStream().use { fos ->
-                            input.copyTo(fos)
+                    try {
+                        val client = Socket(ip, port)
+                        withContext(Dispatchers.Main) { onConnected?.invoke() }
+                        client.getInputStream().use { input ->
+                            outputFile.outputStream().use { fos ->
+                                input.copyTo(fos)
+                            }
                         }
-                    }
-                    client.close()
+                        client.close()
 
-                    withContext(Dispatchers.Main) {
-                        receivedAction(outputFile)
+                        withContext(Dispatchers.Main) {
+                            receivedAction(outputFile)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                    break
                 }
-                break
+                stopBroadcast()
             }
-            stopBroadcast()
-        }
     }
 
     private fun getLocalIpAddress(): String? {
@@ -237,7 +252,8 @@ object ShareUtil : KoinComponent {
                     }
                 }
             }
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
         return null
     }
 }

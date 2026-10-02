@@ -15,8 +15,8 @@ interface SearchSuggestionsRepository {
 
 data class SearchSuggestion(
     override val url: String,
-    override val title: String
-): WebPage(url, title)
+    override val title: String,
+) : WebPage(url, title)
 
 /**
  * A data type that represents a page that can be loaded.
@@ -26,7 +26,7 @@ data class SearchSuggestion(
  */
 sealed class WebPage(
     open val url: String,
-    open val title: String
+    open val title: String,
 )
 
 const val UTF8 = "UTF-8"

@@ -14,8 +14,8 @@ import info.plateaukao.einkbro.view.dialog.TranslationLanguageDialog
 import info.plateaukao.einkbro.view.dialog.compose.FontBrowserDialogFragment
 import info.plateaukao.einkbro.view.dialog.compose.ReaderFontDialogFragment
 import info.plateaukao.einkbro.view.dialog.compose.ReaderSettingsDialogFragment
-import kotlinx.coroutines.launch
 import info.plateaukao.einkbro.view.dialog.compose.ThemeColorDialogFragment
+import kotlinx.coroutines.launch
 
 fun buildUiSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> {
     val config = deps.config
@@ -48,7 +48,7 @@ fun buildUiSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> {
                 R.string.dark_mode_follow_system,
                 R.string.dark_mode_force_on,
                 R.string.dark_mode_disabled,
-            )
+            ),
         ),
         BooleanSettingItem(
             R.string.hide_statusbar,
@@ -91,7 +91,7 @@ fun buildUiSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> {
             R.string.setting_title_page_left_value,
             0,
             R.string.setting_summary_page_left_value,
-            config.touch::pageReservedOffsetInString
+            config.touch::pageReservedOffsetInString,
         ),
         ActionSettingItem(
             R.string.reader_settings,
@@ -126,7 +126,7 @@ fun buildUiSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> {
                 R.string.setting_summary_nav_pos_center,
                 R.string.setting_summary_nav_pos_not_show,
                 R.string.setting_summary_nav_pos_custom,
-            )
+            ),
         ),
         ListSettingWithEnumItem(
             R.string.setting_title_plus_behavior,
@@ -138,7 +138,7 @@ fun buildUiSettingItems(deps: SettingScreenDeps): List<SettingItemInterface> {
                 R.string.plus_show_homepage,
                 R.string.plus_show_bookmarks,
                 R.string.plus_show_start_page,
-            )
+            ),
         ),
         ActionSettingItem(
             R.string.setting_clear_recent_bookmarks,

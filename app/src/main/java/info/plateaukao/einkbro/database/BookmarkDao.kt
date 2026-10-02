@@ -32,7 +32,6 @@ import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
-
 @Database(
     entities = [
         Bookmark::class,
@@ -53,22 +52,35 @@ import java.util.concurrent.TimeUnit
         ChatSession::class,
     ],
     version = 14,
-    exportSchema = true
+    exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bookmarkDao(): BookmarkDao
+
     abstract fun faviconDao(): FaviconDao
+
     abstract fun highlightDao(): HighlightDao
+
     abstract fun articleDao(): ArticleDao
+
     abstract fun chatGptQueryDao(): ChatGptQueryDao
+
     abstract fun domainConfigurationDao(): DomainConfigurationDao
+
     abstract fun translationCacheDao(): TranslationCacheDao
+
     abstract fun savedPageDao(): SavedPageDao
+
     abstract fun historyDao(): HistoryDao
+
     abstract fun domainListDao(): DomainListDao
+
     abstract fun userScriptDao(): UserScriptDao
+
     abstract fun userScriptValueDao(): UserScriptValueDao
+
     abstract fun videoTranscriptDao(): VideoTranscriptDao
+
     abstract fun chatSessionDao(): ChatSessionDao
 }
 
@@ -98,7 +110,6 @@ interface ArticleDao {
         return getArticleById(id.toInt())!!
     }
 
-
     @Delete
     suspend fun delete(article: Article)
 
@@ -120,11 +131,9 @@ interface HighlightDao {
     @Query("SELECT * FROM highlights WHERE articleId = :articleId")
     suspend fun getHighlightsForArticleIdAsync(articleId: Int): List<Highlight>
 
-    fun getHighlightsForArticle(article: Article): Flow<List<Highlight>> =
-        getHighlightsForArticle(article.id)
+    fun getHighlightsForArticle(article: Article): Flow<List<Highlight>> = getHighlightsForArticle(article.id)
 
-    suspend fun getHighlightsForArticleAsync(articleId: Int): List<Highlight> =
-        getHighlightsForArticleIdAsync(articleId)
+    suspend fun getHighlightsForArticleAsync(articleId: Int): List<Highlight> = getHighlightsForArticleIdAsync(articleId)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(highlight: Highlight)
@@ -208,120 +217,162 @@ interface BookmarkDao {
     }
 }
 
-class BookmarkManager(private val context: Context) : KoinComponent {
+class BookmarkManager(
+    private val context: Context,
+) : KoinComponent {
     val config: ConfigManager by inject()
     private val coroutineScope: CoroutineScope by inject()
 
-    private val migration1To2: Migration = object : Migration(1, 2) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `favicons` (`domain` TEXT NOT NULL, `icon` BLOB, PRIMARY KEY(`domain`))")
+    private val migration1To2: Migration =
+        object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `favicons` (`domain` TEXT NOT NULL, `icon` BLOB, PRIMARY KEY(`domain`))")
+            }
         }
-    }
 
-    private val migration2To3: Migration = object : Migration(2, 3) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `highlights` (`articleId` INTEGER NOT NULL, `content` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`articleId`) REFERENCES `articles`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
-            database.execSQL("CREATE TABLE IF NOT EXISTS `articles` (`title` TEXT NOT NULL, `url` TEXT NOT NULL, `date` INTEGER NOT NULL, `tags` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
-            database.execSQL("CREATE INDEX IF NOT EXISTS `index_highlights_articleId` ON `highlights` (`articleId`)")
+    private val migration2To3: Migration =
+        object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `highlights` (`articleId` INTEGER NOT NULL, `content` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`articleId`) REFERENCES `articles`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+                )
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `articles` (`title` TEXT NOT NULL, `url` TEXT NOT NULL, `date` INTEGER NOT NULL, `tags` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+                )
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_highlights_articleId` ON `highlights` (`articleId`)")
+            }
         }
-    }
 
-    private val migration3To4: Migration = object : Migration(3, 4) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `chat_gpt_query` (`date` INTEGER NOT NULL, `url` TEXT NOT NULL, `model` TEXT NOT NULL, `selectedText` TEXT NOT NULL, `result` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+    private val migration3To4: Migration =
+        object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `chat_gpt_query` (`date` INTEGER NOT NULL, `url` TEXT NOT NULL, `model` TEXT NOT NULL, `selectedText` TEXT NOT NULL, `result` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+                )
+            }
         }
-    }
 
-    private val migration4To5: Migration = object : Migration(4, 5) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `domain_configuration` (`domain` TEXT NOT NULL, `configuration` TEXT NOT NULL, PRIMARY KEY(`domain`))")
+    private val migration4To5: Migration =
+        object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `domain_configuration` (`domain` TEXT NOT NULL, `configuration` TEXT NOT NULL, PRIMARY KEY(`domain`))",
+                )
+            }
         }
-    }
 
-    private val migration5To6: Migration = object : Migration(5, 6) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("ALTER TABLE `bookmarks` ADD COLUMN `order` INTEGER DEFAULT 0 NOT NULL")
+    private val migration5To6: Migration =
+        object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `bookmarks` ADD COLUMN `order` INTEGER DEFAULT 0 NOT NULL")
+            }
         }
-    }
 
-    private val migration6To7: Migration = object : Migration(6, 7) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `translation_cache` (`originalText` TEXT NOT NULL, `targetLanguage` TEXT NOT NULL, `translatedText` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`originalText`, `targetLanguage`))")
+    private val migration6To7: Migration =
+        object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `translation_cache` (`originalText` TEXT NOT NULL, `targetLanguage` TEXT NOT NULL, `translatedText` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`originalText`, `targetLanguage`))",
+                )
+            }
         }
-    }
 
-    private val migration7To8: Migration = object : Migration(7, 8) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `saved_pages` (`title` TEXT NOT NULL, `url` TEXT NOT NULL, `filePath` TEXT NOT NULL, `savedAt` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+    private val migration7To8: Migration =
+        object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `saved_pages` (`title` TEXT NOT NULL, `url` TEXT NOT NULL, `filePath` TEXT NOT NULL, `savedAt` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+                )
+            }
         }
-    }
 
-    private val migration8To9: Migration = object : Migration(8, 9) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `HISTORY` (`TITLE` TEXT NOT NULL, `URL` TEXT NOT NULL, `TIME` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
-            database.execSQL("CREATE TABLE IF NOT EXISTS `WHITELIST` (`DOMAIN` TEXT NOT NULL, PRIMARY KEY(`DOMAIN`))")
-            database.execSQL("CREATE TABLE IF NOT EXISTS `JAVASCRIPT` (`DOMAIN` TEXT NOT NULL, PRIMARY KEY(`DOMAIN`))")
-            database.execSQL("CREATE TABLE IF NOT EXISTS `COOKIE` (`DOMAIN` TEXT NOT NULL, PRIMARY KEY(`DOMAIN`))")
+    private val migration8To9: Migration =
+        object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `HISTORY` (`TITLE` TEXT NOT NULL, `URL` TEXT NOT NULL, `TIME` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+                )
+                database.execSQL("CREATE TABLE IF NOT EXISTS `WHITELIST` (`DOMAIN` TEXT NOT NULL, PRIMARY KEY(`DOMAIN`))")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `JAVASCRIPT` (`DOMAIN` TEXT NOT NULL, PRIMARY KEY(`DOMAIN`))")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `COOKIE` (`DOMAIN` TEXT NOT NULL, PRIMARY KEY(`DOMAIN`))")
+            }
         }
-    }
 
-    private val migration9To10: Migration = object : Migration(9, 10) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `user_scripts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `code` TEXT NOT NULL, `sourceUrl` TEXT, `order` INTEGER NOT NULL)")
-            database.execSQL("CREATE TABLE IF NOT EXISTS `user_script_values` (`scriptId` INTEGER NOT NULL, `key` TEXT NOT NULL, `value` TEXT NOT NULL, PRIMARY KEY(`scriptId`, `key`))")
+    private val migration9To10: Migration =
+        object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `user_scripts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `code` TEXT NOT NULL, `sourceUrl` TEXT, `order` INTEGER NOT NULL)",
+                )
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `user_script_values` (`scriptId` INTEGER NOT NULL, `key` TEXT NOT NULL, `value` TEXT NOT NULL, PRIMARY KEY(`scriptId`, `key`))",
+                )
+            }
         }
-    }
 
     // Rekeys translation_cache by text hash + provider; old rows are disposable
     // cache data, so drop and recreate instead of converting.
-    private val migration10To11: Migration = object : Migration(10, 11) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("DROP TABLE IF EXISTS `translation_cache`")
-            database.execSQL("CREATE TABLE IF NOT EXISTS `translation_cache` (`textHash` TEXT NOT NULL, `targetLanguage` TEXT NOT NULL, `translateApi` TEXT NOT NULL, `translatedText` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`textHash`, `targetLanguage`, `translateApi`))")
+    private val migration10To11: Migration =
+        object : Migration(10, 11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP TABLE IF EXISTS `translation_cache`")
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `translation_cache` (`textHash` TEXT NOT NULL, `targetLanguage` TEXT NOT NULL, `translateApi` TEXT NOT NULL, `translatedText` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`textHash`, `targetLanguage`, `translateApi`))",
+                )
+            }
         }
-    }
 
-    private val migration11To12: Migration = object : Migration(11, 12) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `video_transcripts` (`videoId` TEXT NOT NULL, `transcript` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`videoId`))")
+    private val migration11To12: Migration =
+        object : Migration(11, 12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `video_transcripts` (`videoId` TEXT NOT NULL, `transcript` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`videoId`))",
+                )
+            }
         }
-    }
 
-    private val migration12To13: Migration = object : Migration(12, 13) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `chat_sessions` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `webTitle` TEXT NOT NULL, `webUrl` TEXT NOT NULL, `messages` TEXT NOT NULL, PRIMARY KEY(`id`))")
+    private val migration12To13: Migration =
+        object : Migration(12, 13) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `chat_sessions` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `webTitle` TEXT NOT NULL, `webUrl` TEXT NOT NULL, `messages` TEXT NOT NULL, PRIMARY KEY(`id`))",
+                )
+            }
         }
-    }
 
     // Per-session page text so restoring a saved chat also restores the web
     // content the LLM sees (not the hosting tab's).
-    private val migration13To14: Migration = object : Migration(13, 14) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("ALTER TABLE `chat_sessions` ADD COLUMN `webContent` TEXT NOT NULL DEFAULT ''")
+    private val migration13To14: Migration =
+        object : Migration(13, 14) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `chat_sessions` ADD COLUMN `webContent` TEXT NOT NULL DEFAULT ''")
+            }
         }
-    }
 
-    val database = Room.databaseBuilder(context, AppDatabase::class.java, "einkbro_db")
-        .addMigrations(migration1To2)
-        .addMigrations(migration2To3)
-        .addMigrations(migration3To4)
-        .addMigrations(migration4To5)
-        .addMigrations(migration5To6)
-        .addMigrations(migration6To7)
-        .addMigrations(migration7To8)
-        .addMigrations(migration8To9)
-        .addMigrations(migration9To10)
-        .addMigrations(migration10To11)
-        .addMigrations(migration11To12)
-        .addMigrations(migration12To13)
-        .addMigrations(migration13To14)
-        .build()
+    val database =
+        Room
+            .databaseBuilder(context, AppDatabase::class.java, "einkbro_db")
+            .addMigrations(migration1To2)
+            .addMigrations(migration2To3)
+            .addMigrations(migration3To4)
+            .addMigrations(migration4To5)
+            .addMigrations(migration5To6)
+            .addMigrations(migration6To7)
+            .addMigrations(migration7To8)
+            .addMigrations(migration8To9)
+            .addMigrations(migration9To10)
+            .addMigrations(migration10To11)
+            .addMigrations(migration11To12)
+            .addMigrations(migration12To13)
+            .addMigrations(migration13To14)
+            .build()
 
     val bookmarkDao = database.bookmarkDao()
     val userScriptDao = database.userScriptDao()
     val userScriptValueDao = database.userScriptValueDao()
 
     private val faviconDao = database.faviconDao()
+
     // Only the domain keys stay resident; icon blobs are read from Room one row
     // at a time on first use and live in the bounded bitmap cache below, instead
     // of every stored PNG sitting on the heap for the process lifetime.
@@ -359,9 +410,12 @@ class BookmarkManager(private val context: Context) : KoinComponent {
         if (!oldDbFile.exists()) return
 
         try {
-            val oldDb = android.database.sqlite.SQLiteDatabase.openDatabase(
-                oldDbFile.absolutePath, null, android.database.sqlite.SQLiteDatabase.OPEN_READONLY
-            )
+            val oldDb =
+                android.database.sqlite.SQLiteDatabase.openDatabase(
+                    oldDbFile.absolutePath,
+                    null,
+                    android.database.sqlite.SQLiteDatabase.OPEN_READONLY,
+                )
 
             // Migrate history
             oldDb.rawQuery("SELECT TITLE, URL, TIME FROM HISTORY", null)?.use { cursor ->
@@ -370,7 +424,7 @@ class BookmarkManager(private val context: Context) : KoinComponent {
                     val url = cursor.getString(1) ?: continue
                     val time = cursor.getLong(2)
                     database.historyDao().insertSync(
-                        HistoryRecord(TITLE = title.trim(), URL = url.trim(), TIME = time)
+                        HistoryRecord(TITLE = title.trim(), URL = url.trim(), TIME = time),
                     )
                 }
             }
@@ -429,27 +483,26 @@ class BookmarkManager(private val context: Context) : KoinComponent {
     }
 
     suspend fun insertArticle(article: Article): Article = articleDao.insertAndGetArticle(article)
+
     suspend fun insertHighlight(highlight: Highlight) = highlightDao.insert(highlight)
 
     suspend fun deleteArticle(articleId: Int) = articleDao.deleteArticleById(articleId)
+
     suspend fun deleteArticle(article: Article) = articleDao.delete(article)
 
-    suspend fun deleteHighlight(highlight: Highlight) =
-        highlightDao.delete(highlight)
+    suspend fun deleteHighlight(highlight: Highlight) = highlightDao.delete(highlight)
 
     fun getAllArticles(): Flow<List<Article>> = articleDao.getAllArticles()
+
     suspend fun getAllArticlesAsync(): List<Article> = articleDao.getAllArticlesAsync()
 
     suspend fun getArticle(articleId: Int): Article? = articleDao.getArticleById(articleId)
 
-    fun getHighlightsForArticle(article: Article): Flow<List<Highlight>> =
-        highlightDao.getHighlightsForArticle(article)
+    fun getHighlightsForArticle(article: Article): Flow<List<Highlight>> = highlightDao.getHighlightsForArticle(article)
 
-    suspend fun getHighlightsForArticleAsync(articleId: Int): List<Highlight> =
-        highlightDao.getHighlightsForArticleAsync(articleId)
+    suspend fun getHighlightsForArticleAsync(articleId: Int): List<Highlight> = highlightDao.getHighlightsForArticleAsync(articleId)
 
-    fun getHighlightsForArticle(articleId: Int): Flow<List<Highlight>> =
-        highlightDao.getHighlightsForArticle(articleId)
+    fun getHighlightsForArticle(articleId: Int): Flow<List<Highlight>> = highlightDao.getHighlightsForArticle(articleId)
 
     suspend fun getArticleByUrl(url: String): Article? = articleDao.getArticleByUrl(url)
 
@@ -504,8 +557,7 @@ class BookmarkManager(private val context: Context) : KoinComponent {
 
     suspend fun getAllBookmarksOnly(): List<Bookmark> = bookmarkDao.getAllBookmarksOnly()
 
-    suspend fun getBookmarks(parentId: Int = 0): List<Bookmark> =
-        bookmarkDao.getBookmarksByParent(parentId)
+    suspend fun getBookmarks(parentId: Int = 0): List<Bookmark> = bookmarkDao.getBookmarksByParent(parentId)
 
     suspend fun getBookmarksByParent(parent: Int) = bookmarkDao.getBookmarksByParent(parent)
 
@@ -513,7 +565,10 @@ class BookmarkManager(private val context: Context) : KoinComponent {
 
     suspend fun insert(bookmark: Bookmark): Long = bookmarkDao.insert(bookmark)
 
-    suspend fun insert(title: String, url: String) {
+    suspend fun insert(
+        title: String,
+        url: String,
+    ) {
         if (existsUrl(url)) return
 
         bookmarkDao.insert(Bookmark(title, url))
@@ -533,26 +588,27 @@ class BookmarkManager(private val context: Context) : KoinComponent {
         if (bookmarks.isNotEmpty()) bookmarkDao.overwrite(bookmarks)
     }
 
-    suspend fun getAllChatGptQueriesAsync(): List<ChatGptQuery> =
-        chatGptQueryDao.getAllChatGptQueriesAsync()
+    suspend fun getAllChatGptQueriesAsync(): List<ChatGptQuery> = chatGptQueryDao.getAllChatGptQueriesAsync()
 
     fun getAllChatGptQueries(): Flow<List<ChatGptQuery>> = chatGptQueryDao.getAllChatGptQueries()
-    suspend fun addChatGptQuery(chatGptQuery: ChatGptQuery) =
-        chatGptQueryDao.addChatGptQuery(chatGptQuery)
+
+    suspend fun addChatGptQuery(chatGptQuery: ChatGptQuery) = chatGptQueryDao.addChatGptQuery(chatGptQuery)
 
     suspend fun getChatGptQueryById(id: Int): ChatGptQuery = chatGptQueryDao.getChatGptQueryById(id)
-    suspend fun deleteChatGptQuery(chatGptQuery: ChatGptQuery) =
-        chatGptQueryDao.deleteChatGptQuery(chatGptQuery)
+
+    suspend fun deleteChatGptQuery(chatGptQuery: ChatGptQuery) = chatGptQueryDao.deleteChatGptQuery(chatGptQuery)
 
     private suspend fun getDomainConfiguration(domain: String): DomainConfigurationData =
         domainConfigurationDao.getDomainConfiguration(domain)?.let {
             json.decodeFromString<DomainConfigurationData>(it.configuration)
         } ?: DomainConfigurationData(domain)
 
-    val json = Json {
-        encodeDefaults = true
-        ignoreUnknownKeys = true
-    }
+    val json =
+        Json {
+            encodeDefaults = true
+            ignoreUnknownKeys = true
+        }
+
     private suspend fun getAllDomainConfigurations(): Map<String, DomainConfigurationData> =
         mutableMapOf<String, DomainConfigurationData>().apply {
             domainConfigurationDao.getAllDomainConfigurations().forEach {
@@ -586,7 +642,7 @@ class BookmarkManager(private val context: Context) : KoinComponent {
     fun addDomainConfiguration(domainConfigurationData: DomainConfigurationData) =
         coroutineScope.launch(Dispatchers.IO) {
             domainConfigurationDao.addDomainConfiguration(
-                encodeDomainConfiguration(domainConfigurationData)
+                encodeDomainConfiguration(domainConfigurationData),
             )
         }
 
@@ -594,28 +650,21 @@ class BookmarkManager(private val context: Context) : KoinComponent {
         textHash: String,
         targetLanguage: String,
         translateApi: String,
-    ): TranslationCache? =
-        translationCacheDao.getTranslation(textHash, targetLanguage, translateApi)
+    ): TranslationCache? = translationCacheDao.getTranslation(textHash, targetLanguage, translateApi)
 
-    suspend fun insertTranslationCache(translationCache: TranslationCache) =
-        translationCacheDao.insert(translationCache)
+    suspend fun insertTranslationCache(translationCache: TranslationCache) = translationCacheDao.insert(translationCache)
 
-    suspend fun getVideoTranscript(videoId: String): VideoTranscript? =
-        database.videoTranscriptDao().getTranscript(videoId)
+    suspend fun getVideoTranscript(videoId: String): VideoTranscript? = database.videoTranscriptDao().getTranscript(videoId)
 
-    suspend fun insertVideoTranscript(videoTranscript: VideoTranscript) =
-        database.videoTranscriptDao().insert(videoTranscript)
+    suspend fun insertVideoTranscript(videoTranscript: VideoTranscript) = database.videoTranscriptDao().insert(videoTranscript)
 
     // -- Chat sessions (AI chat-with-web-content) --
 
-    suspend fun getAllChatSessions(): List<ChatSession> =
-        database.chatSessionDao().getAllSessions()
+    suspend fun getAllChatSessions(): List<ChatSession> = database.chatSessionDao().getAllSessions()
 
-    suspend fun getChatSessionById(id: String): ChatSession? =
-        database.chatSessionDao().getSessionById(id)
+    suspend fun getChatSessionById(id: String): ChatSession? = database.chatSessionDao().getSessionById(id)
 
-    suspend fun upsertChatSession(chatSession: ChatSession) =
-        database.chatSessionDao().upsert(chatSession)
+    suspend fun upsertChatSession(chatSession: ChatSession) = database.chatSessionDao().upsert(chatSession)
 
     suspend fun deleteChatSession(id: String) = database.chatSessionDao().deleteById(id)
 
@@ -630,7 +679,7 @@ class BookmarkManager(private val context: Context) : KoinComponent {
 
     suspend fun cleanupTranslationCache() {
         translationCacheDao.deleteOldCache(
-            System.currentTimeMillis() - TimeUnit.DAYS.toMillis(TRANSLATION_CACHE_EXPIRATION_DAYS)
+            System.currentTimeMillis() - TimeUnit.DAYS.toMillis(TRANSLATION_CACHE_EXPIRATION_DAYS),
         )
         translationCacheDao.trimToMaxEntries(TRANSLATION_CACHE_MAX_ENTRIES)
     }

@@ -8,7 +8,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ThinkTagFilterTest {
-
     @Test
     fun `plain text passes through untouched`() {
         val filter = ThinkTagFilter()
@@ -57,20 +56,22 @@ class ThinkTagFilterTest {
 
     @Test
     fun `delta parses reasoning_content`() {
-        val delta = json.decodeFromString(
-            ChatDelta.serializer(),
-            """{"content":null,"reasoning_content":"let me think"}"""
-        )
+        val delta =
+            json.decodeFromString(
+                ChatDelta.serializer(),
+                """{"content":null,"reasoning_content":"let me think"}""",
+            )
         assertEquals("let me think", delta.reasoningContent)
         assertNull(delta.content)
     }
 
     @Test
     fun `delta parses the alternative reasoning key`() {
-        val delta = json.decodeFromString(
-            ChatDelta.serializer(),
-            """{"reasoning":"hmm"}"""
-        )
+        val delta =
+            json.decodeFromString(
+                ChatDelta.serializer(),
+                """{"reasoning":"hmm"}""",
+            )
         assertEquals("hmm", delta.reasoningContent)
     }
 

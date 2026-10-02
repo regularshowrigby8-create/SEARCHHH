@@ -4,19 +4,19 @@ import android.view.View
 import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import info.plateaukao.einkbro.data.remote.ApiResult
+import info.plateaukao.einkbro.data.remote.ChatMessage
+import info.plateaukao.einkbro.data.remote.ChatRole
+import info.plateaukao.einkbro.data.remote.ImageTranslateResult
+import info.plateaukao.einkbro.data.remote.OpenAiRepository
+import info.plateaukao.einkbro.data.remote.TranslateRepository
 import info.plateaukao.einkbro.database.BookmarkManager
 import info.plateaukao.einkbro.database.ChatGptQuery
 import info.plateaukao.einkbro.preference.ChatGPTActionInfo
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.GptActionScope
 import info.plateaukao.einkbro.preference.GptActionType
-import info.plateaukao.einkbro.data.remote.ApiResult
-import info.plateaukao.einkbro.data.remote.ChatMessage
-import info.plateaukao.einkbro.data.remote.ChatRole
-import info.plateaukao.einkbro.data.remote.OpenAiRepository
 import info.plateaukao.einkbro.task.TaskProgress
-import info.plateaukao.einkbro.data.remote.ImageTranslateResult
-import info.plateaukao.einkbro.data.remote.TranslateRepository
 import info.plateaukao.einkbro.unit.HelperUnit
 import info.plateaukao.einkbro.unit.ViewUnit
 import info.plateaukao.einkbro.util.TranslationLanguage
@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
+
 class TranslationViewModel(
     private val config: ConfigManager,
     private val bookmarkManager: BookmarkManager,
@@ -37,8 +38,9 @@ class TranslationViewModel(
     private val translateRepository = TranslateRepository()
 
     private lateinit var openAiRepository: OpenAiRepository
-    var gptActionInfo = config.ai.gptActionForExternalSearch ?: config.ai.gptActionList.firstOrNull()
-    ?: ChatGPTActionInfo()
+    var gptActionInfo =
+        config.ai.gptActionForExternalSearch ?: config.ai.gptActionList.firstOrNull()
+            ?: ChatGPTActionInfo()
 
     private val _responseMessage = MutableStateFlow(AnnotatedString(""))
     val responseMessage: StateFlow<AnnotatedString> = _responseMessage.asStateFlow()
@@ -145,9 +147,7 @@ class TranslationViewModel(
         }
     }
 
-    fun getGptActionList(): List<ChatGPTActionInfo> {
-        return config.ai.gptActionList
-    }
+    fun getGptActionList(): List<ChatGPTActionInfo> = config.ai.gptActionList
 
     fun cancel() {
         if (this::openAiRepository.isInitialized) {
@@ -185,6 +185,7 @@ class TranslationViewModel(
      * display it without new components.
      */
     private var taskStreamJob: kotlinx.coroutines.Job? = null
+
     fun setupTaskStream(progressFlow: StateFlow<TaskProgress?>) {
         isTaskMode = true
         updateTranslateMethod(TRANSLATE_API.LLM)
@@ -192,33 +193,36 @@ class TranslationViewModel(
         _responseMessage.value = AnnotatedString("…")
         _responseMarkdown.value = ""
         taskStreamJob?.cancel()
-        taskStreamJob = viewModelScope.launch {
-            progressFlow.collect { progress ->
-                if (progress == null) return@collect
-                val progressMarkdown = renderProgress(progress)
-                _responseMarkdown.value = progressMarkdown
-                _responseMessage.value = HelperUnit.parseMarkdown(progressMarkdown)
+        taskStreamJob =
+            viewModelScope.launch {
+                progressFlow.collect { progress ->
+                    if (progress == null) return@collect
+                    val progressMarkdown = renderProgress(progress)
+                    _responseMarkdown.value = progressMarkdown
+                    _responseMessage.value = HelperUnit.parseMarkdown(progressMarkdown)
+                }
             }
-        }
     }
 
     private fun renderProgress(progress: TaskProgress): String {
         val sb = StringBuilder()
         sb.append("**").append(progress.taskName).append("** — ")
-        sb.append(
-            when (progress.status) {
-                TaskProgress.Status.Running -> "running…"
-                TaskProgress.Status.Done -> "done"
-                TaskProgress.Status.Cancelled -> "cancelled"
-                TaskProgress.Status.Failed -> "failed"
-            }
-        ).append("\n\n")
+        sb
+            .append(
+                when (progress.status) {
+                    TaskProgress.Status.Running -> "running…"
+                    TaskProgress.Status.Done -> "done"
+                    TaskProgress.Status.Cancelled -> "cancelled"
+                    TaskProgress.Status.Failed -> "failed"
+                },
+            ).append("\n\n")
         progress.steps.forEach { step ->
-            val marker = when (step.kind) {
-                TaskProgress.StepLine.Kind.Info -> "- "
-                TaskProgress.StepLine.Kind.Tool -> "- [tool] "
-                TaskProgress.StepLine.Kind.Error -> "- [error] "
-            }
+            val marker =
+                when (step.kind) {
+                    TaskProgress.StepLine.Kind.Info -> "- "
+                    TaskProgress.StepLine.Kind.Tool -> "- [tool] "
+                    TaskProgress.StepLine.Kind.Error -> "- [error] "
+                }
             sb.append(marker).append(step.text).append("\n")
         }
         progress.finalMarkdown?.let {
@@ -236,7 +240,7 @@ class TranslationViewModel(
                 systemMessage = config.ai.gptUserPromptForWebPage,
                 actionType = config.ai.gptForSummary,
                 model = config.ai.getGptTypeModelMap()[config.ai.gptForSummary] ?: config.ai.gptModel,
-            )
+            ),
         )
 
         return true
@@ -245,10 +249,11 @@ class TranslationViewModel(
     private fun callGoogleTranslate() {
         val message = _inputMessage.value
         viewModelScope.launch(Dispatchers.IO) {
-            val result = translateRepository.gTranslateWithApi(
-                message,
-                targetLanguage = config.translation.translationLanguage.value,
-            )
+            val result =
+                translateRepository.gTranslateWithApi(
+                    message,
+                    targetLanguage = config.translation.translationLanguage.value,
+                )
             if (result.isNullOrEmpty()) {
                 emitTranslationError("Google")
             } else {
@@ -260,10 +265,11 @@ class TranslationViewModel(
     private fun callDeepLTranslate() {
         val message = _inputMessage.value
         viewModelScope.launch(Dispatchers.IO) {
-            val result = translateRepository.deepLTranslate(
-                message,
-                targetLanguage = config.translation.translationLanguage,
-            )
+            val result =
+                translateRepository.deepLTranslate(
+                    message,
+                    targetLanguage = config.translation.translationLanguage,
+                )
             if (result.isNullOrEmpty()) {
                 emitTranslationError("DeepL")
             } else {
@@ -284,12 +290,13 @@ class TranslationViewModel(
         targetLanguage: TranslationLanguage,
     ): String? {
         val bitmap = ViewUnit.captureDrawingCache(view)
-        val result = translateRepository.translateBitmap(
-            bitmap,
-            sourceLanguage.value,
-            targetLanguage.value,
-            true,
-        )
+        val result =
+            translateRepository.translateBitmap(
+                bitmap,
+                sourceLanguage.value,
+                targetLanguage.value,
+                true,
+            )
         return result?.renderedImage
     }
 
@@ -298,15 +305,14 @@ class TranslationViewModel(
         url: String,
         sourceLanguage: TranslationLanguage,
         targetLanguage: TranslationLanguage,
-    ): ImageTranslateResult? {
-        return translateRepository.translateImageFromUrl(
+    ): ImageTranslateResult? =
+        translateRepository.translateImageFromUrl(
             referer,
             url,
             sourceLanguage.value,
             targetLanguage.value,
             true,
         )
-    }
 
     fun showEditGptActionDialog(gptActionInfoIndex: Int) {
         _showEditDialogWithIndex.value = gptActionInfoIndex
@@ -326,18 +332,19 @@ class TranslationViewModel(
                     model = _translateMethod.value.name,
                     selectedText = _inputMessage.value,
                     result = _responseMessage.value.text,
-                )
+                ),
             )
         } else {
             val (_, selectedText) = getSelectedTextAndPromptPrefix()
-            val model = gptActionInfo.model.ifEmpty {
-                when (gptActionInfo.actionType) {
-                    GptActionType.OpenAi -> config.ai.gptModel
-                    GptActionType.Gemini -> config.ai.geminiModel
-                    GptActionType.SelfHosted -> config.ai.alternativeModel
-                    GptActionType.Default -> config.ai.getDefaultActionModel()
+            val model =
+                gptActionInfo.model.ifEmpty {
+                    when (gptActionInfo.actionType) {
+                        GptActionType.OpenAi -> config.ai.gptModel
+                        GptActionType.Gemini -> config.ai.geminiModel
+                        GptActionType.SelfHosted -> config.ai.alternativeModel
+                        GptActionType.Default -> config.ai.getDefaultActionModel()
+                    }
                 }
-            }
             bookmarkManager.addChatGptQuery(
                 ChatGptQuery(
                     date = System.currentTimeMillis(),
@@ -345,13 +352,12 @@ class TranslationViewModel(
                     model = "${gptActionInfo.name} $model",
                     selectedText = if (isWholePage) pageTitle else selectedText,
                     result = toBeSavedResponseString,
-                )
+                ),
             )
         }
         toBeSavedResponseString = ""
         _responseMarkdown.value = ""
     }
-
 
     private fun queryLlm() {
         if (!this::openAiRepository.isInitialized) {
@@ -382,11 +388,16 @@ class TranslationViewModel(
                 model = config.ai.getDefaultActionModel(),
                 name = gptActionInfo.name,
                 userMessage = gptActionInfo.userMessage,
-                systemMessage = gptActionInfo.systemMessage
+                systemMessage = gptActionInfo.systemMessage,
             )
-        } else gptActionInfo
+        } else {
+            gptActionInfo
+        }
 
-    suspend fun queryLlm(messages: MutableList<ChatMessage>, gptActionInfo: ChatGPTActionInfo) {
+    suspend fun queryLlm(
+        messages: MutableList<ChatMessage>,
+        gptActionInfo: ChatGPTActionInfo,
+    ) {
         if (config.ai.enableOpenAiStream) {
             queryWithStream(messages, gptActionInfo)
             return
@@ -402,18 +413,25 @@ class TranslationViewModel(
             _responseMessage.value = AnnotatedString("Something went wrong.")
             return
         } else {
-            val responseContent = chatCompletion.choices
-                .firstOrNull { it.message.role == ChatRole.Assistant }?.message?.content
-                ?: "Something went wrong."
+            val responseContent =
+                chatCompletion.choices
+                    .firstOrNull { it.message.role == ChatRole.Assistant }
+                    ?.message
+                    ?.content
+                    ?: "Something went wrong."
             // to remove think content from qwen3-style responses
             toBeSavedResponseString = responseContent
-            _responseMarkdown.value = responseContent
-                .replace(Regex("""<think>[\s\S]*?</think>\s*"""), "")
+            _responseMarkdown.value =
+                responseContent
+                    .replace(Regex("""<think>[\s\S]*?</think>\s*"""), "")
             _responseMessage.value = AnnotatedString(toBeSavedResponseString)
         }
     }
 
-    private suspend fun queryGemini(messages: MutableList<ChatMessage>, gptActionInfo: ChatGPTActionInfo) {
+    private suspend fun queryGemini(
+        messages: MutableList<ChatMessage>,
+        gptActionInfo: ChatGPTActionInfo,
+    ) {
         when (val result = openAiRepository.queryGemini(messages, gptActionInfo)) {
             is ApiResult.Success -> {
                 toBeSavedResponseString = result.value
@@ -424,7 +442,10 @@ class TranslationViewModel(
         }
     }
 
-    private fun queryWithStream(messages: MutableList<ChatMessage>, gptActionInfo: ChatGPTActionInfo) {
+    private fun queryWithStream(
+        messages: MutableList<ChatMessage>,
+        gptActionInfo: ChatGPTActionInfo,
+    ) {
         var responseString = ""
         openAiRepository.chatStream(
             messages,
@@ -452,15 +473,17 @@ class TranslationViewModel(
     }
 
     private fun emitFailure(failure: ApiResult.Failure) {
-        val text = when (failure.kind) {
-            ApiResult.Kind.MissingKey -> failure.message
-            ApiResult.Kind.RateLimited -> failure.retryAfterSeconds
-                ?.let { "Rate limited — retry after ${it}s" }
-                ?: "Rate limited — try again in a moment"
-            ApiResult.Kind.Network -> "Network error — check connection"
-            ApiResult.Kind.ServerError, ApiResult.Kind.Parse, ApiResult.Kind.Unknown ->
-                "AI request failed: ${failure.message}"
-        }
+        val text =
+            when (failure.kind) {
+                ApiResult.Kind.MissingKey -> failure.message
+                ApiResult.Kind.RateLimited ->
+                    failure.retryAfterSeconds
+                        ?.let { "Rate limited — retry after ${it}s" }
+                        ?: "Rate limited — try again in a moment"
+                ApiResult.Kind.Network -> "Network error — check connection"
+                ApiResult.Kind.ServerError, ApiResult.Kind.Parse, ApiResult.Kind.Unknown ->
+                    "AI request failed: ${failure.message}"
+            }
         toBeSavedResponseString = text
         _responseMarkdown.value = text
         _responseMessage.value = AnnotatedString(text)
@@ -472,15 +495,16 @@ class TranslationViewModel(
 
     private fun getSelectedTextAndPromptPrefix(): Pair<String, String> {
         val promptPrefix = gptActionInfo.userMessage
-        val selectedText = if (promptPrefix.contains("<<") &&
-            promptPrefix.contains(">>") &&
-            _messageWithContext.value.contains("<<") &&
-            _messageWithContext.value.contains(">>")
-        ) {
-            _messageWithContext.value
-        } else {
-            _inputMessage.value
-        }
+        val selectedText =
+            if (promptPrefix.contains("<<") &&
+                promptPrefix.contains(">>") &&
+                _messageWithContext.value.contains("<<") &&
+                _messageWithContext.value.contains(">>")
+            ) {
+                _messageWithContext.value
+            } else {
+                _inputMessage.value
+            }
         return Pair(promptPrefix, selectedText)
     }
 
@@ -504,15 +528,17 @@ class TranslationViewModel(
         return parentElement?.hasUnwantedParent() ?: false
     }
 
-    fun String.toUserMessage() = ChatMessage(
-        role = ChatRole.User,
-        content = this
-    )
+    fun String.toUserMessage() =
+        ChatMessage(
+            role = ChatRole.User,
+            content = this,
+        )
 
-    fun String.toSystemMessage() = ChatMessage(
-        role = ChatRole.System,
-        content = this
-    )
+    fun String.toSystemMessage() =
+        ChatMessage(
+            role = ChatRole.System,
+            content = this,
+        )
 
     fun emitScrollEvent(isUp: Boolean) {
         viewModelScope.launch {
@@ -522,15 +548,20 @@ class TranslationViewModel(
 }
 
 enum class TRANSLATE_API {
-    GOOGLE, LLM, DEEPL, OPENAI, GEMINI,
+    GOOGLE,
+    LLM,
+    DEEPL,
+    OPENAI,
+    GEMINI,
 }
 
 // Status text shown while the model is reasoning, before any answer arrives.
 // Hardcoded English like the other status strings in this ViewModel.
 internal const val THINKING_STATUS = "Thinking…"
 
-fun String.unescape(): String {
-    return this.replace("\\\\n", "\n")
+fun String.unescape(): String =
+    this
+        .replace("\\\\n", "\n")
         .replace("\\n", "\n")
         .replace("\\t", "\t")
         .replace("\\\"", "\"")
@@ -538,4 +569,3 @@ fun String.unescape(): String {
         .replace("\\\\", "\\")
         .replace("\\u003c", "<")
         .replace("\\u003e", ">")
-}

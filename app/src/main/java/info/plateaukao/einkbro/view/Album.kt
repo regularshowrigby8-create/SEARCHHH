@@ -9,7 +9,7 @@ import info.plateaukao.einkbro.browser.AlbumController
 
 data class Album(
     private var albumController: AlbumController,
-    private var albumCallback: AlbumCallback?
+    private var albumCallback: AlbumCallback?,
 ) {
     /**
      * Retargets this album to a new controller while keeping its identity in

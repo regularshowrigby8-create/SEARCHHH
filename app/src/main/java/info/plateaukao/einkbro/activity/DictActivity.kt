@@ -8,8 +8,8 @@ import android.os.Bundle
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
-import androidx.activity.viewModels
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.util.Constants.Companion.ACTION_DICT
@@ -20,6 +20,7 @@ import org.koin.android.ext.android.inject
 class DictActivity : FragmentActivity() {
     private val config: ConfigManager by inject()
     private val translationViewModel: TranslationViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {}
@@ -56,33 +57,38 @@ class DictActivity : FragmentActivity() {
 
     private fun searchWithPopup(text: String) {
         translationViewModel.updateInputMessage(text)
-        val fragment = TranslateDialogFragment(
-            translationViewModel,
-            Point(50, 50),
-        ) {
-            finish()
+        val fragment =
+            TranslateDialogFragment(
+                translationViewModel,
+                Point(50, 50),
+            ) {
+                finish()
 //            supportFragmentManager.popBackStack()
 //            moveTaskToBack(true)
-        }
-        supportFragmentManager.beginTransaction().add(fragment, "contextMenu").addToBackStack(null)
+            }
+        supportFragmentManager
+            .beginTransaction()
+            .add(fragment, "contextMenu")
+            .addToBackStack(null)
             .commit()
-
     }
 
     private fun forwardDictIntentAndFinish() {
-        val newIntent = Intent(this, BrowserActivity::class.java).apply {
-            action = ACTION_DICT
-            putExtra("EXTRA_QUERY", intent.getStringExtra("EXTRA_QUERY"))
-        }
+        val newIntent =
+            Intent(this, BrowserActivity::class.java).apply {
+                action = ACTION_DICT
+                putExtra("EXTRA_QUERY", intent.getStringExtra("EXTRA_QUERY"))
+            }
         startActivity(newIntent)
         finish()
     }
 
     private fun forwardProcessTextIntentAndFinish() {
-        val newIntent = Intent(this, BrowserActivity::class.java).apply {
-            action = Intent.ACTION_PROCESS_TEXT
-            putExtra(Intent.EXTRA_PROCESS_TEXT, intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT))
-        }
+        val newIntent =
+            Intent(this, BrowserActivity::class.java).apply {
+                action = Intent.ACTION_PROCESS_TEXT
+                putExtra(Intent.EXTRA_PROCESS_TEXT, intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT))
+            }
         startActivity(newIntent)
         finish()
     }

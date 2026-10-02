@@ -37,7 +37,10 @@ interface UserScriptDao {
 @Dao
 interface UserScriptValueDao {
     @Query("SELECT value FROM user_script_values WHERE scriptId = :scriptId AND key = :key")
-    fun getValue(scriptId: Long, key: String): String?
+    fun getValue(
+        scriptId: Long,
+        key: String,
+    ): String?
 
     @Query("SELECT key FROM user_script_values WHERE scriptId = :scriptId")
     fun listKeys(scriptId: Long): List<String>
@@ -49,7 +52,10 @@ interface UserScriptValueDao {
     fun setValue(value: UserScriptValue)
 
     @Query("DELETE FROM user_script_values WHERE scriptId = :scriptId AND key = :key")
-    fun deleteValue(scriptId: Long, key: String)
+    fun deleteValue(
+        scriptId: Long,
+        key: String,
+    )
 
     @Query("DELETE FROM user_script_values WHERE scriptId = :scriptId")
     fun deleteAllForScript(scriptId: Long)

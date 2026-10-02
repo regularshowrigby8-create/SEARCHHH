@@ -10,7 +10,6 @@ import org.junit.Before
 import org.junit.Test
 
 class SiteRuleKeyTest {
-
     @Test
     fun `host and path are split from a key`() {
         assertEquals("example.com", SiteRuleKey.hostOf("example.com/docs/api"))
@@ -69,7 +68,6 @@ class SiteRuleKeyTest {
 }
 
 class DomainConfigManagerTest {
-
     private lateinit var display: DisplayConfig
     private lateinit var browser: BrowserConfig
     private lateinit var translation: TranslationConfig
@@ -89,11 +87,15 @@ class DomainConfigManagerTest {
         touch = TouchConfig(sp)
         persisted.clear()
         removed.clear()
-        manager = DomainConfigManager(
-            display, browser, translation, touch,
-            persist = { persisted += it },
-            remove = { removed += it },
-        )
+        manager =
+            DomainConfigManager(
+                display,
+                browser,
+                translation,
+                touch,
+                persist = { persisted += it },
+                remove = { removed += it },
+            )
     }
 
     private fun put(rule: DomainConfigurationData) {
@@ -320,9 +322,12 @@ class DomainConfigManagerTest {
         put(DomainConfigurationData("example.com", customCss = "a{}", postLoadJavascript = "x()"))
         put(
             DomainConfigurationData(
-                "example.com/docs", customCss = "b{}", postLoadJavascript = "y()",
-                customCssEnabled = false, postLoadJavascriptEnabled = false,
-            )
+                "example.com/docs",
+                customCss = "b{}",
+                postLoadJavascript = "y()",
+                customCssEnabled = false,
+                postLoadJavascriptEnabled = false,
+            ),
         )
 
         // the path rule keeps its code but the host rule's scripts apply
@@ -341,8 +346,10 @@ class DomainConfigManagerTest {
     @Test
     fun `saving new code switches a disabled script back on`() {
         put(DomainConfigurationData("example.com", customCss = "a{}", customCssEnabled = false))
-        put(DomainConfigurationData("example.com", postLoadJavascript = "x()", postLoadJavascriptEnabled = false)
-            .let { it.copy(customCss = "a{}", customCssEnabled = false) })
+        put(
+            DomainConfigurationData("example.com", postLoadJavascript = "x()", postLoadJavascriptEnabled = false)
+                .let { it.copy(customCss = "a{}", customCssEnabled = false) },
+        )
 
         manager.setCustomCss(page, "b{}")
         manager.setPostLoadJavascript(page, "y()")
@@ -357,10 +364,11 @@ class DomainConfigManagerTest {
     @Test
     fun `rows written before the switches existed decode as enabled`() {
         val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
-        val old = json.decodeFromString(
-            DomainConfigurationData.serializer(),
-            """{"domain":"example.com","customCss":"a{}","postLoadJavascript":"x()"}""",
-        )
+        val old =
+            json.decodeFromString(
+                DomainConfigurationData.serializer(),
+                """{"domain":"example.com","customCss":"a{}","postLoadJavascript":"x()"}""",
+            )
         assertTrue(old.customCssEnabled)
         assertTrue(old.postLoadJavascriptEnabled)
         assertEquals("a{}", old.activeCustomCss)
@@ -370,9 +378,13 @@ class DomainConfigManagerTest {
     @Test
     fun `mergedWith carries the switch with whichever side supplied the script`() {
         val local = DomainConfigurationData("example.com", customCss = "a{}", customCssEnabled = false)
-        val backup = DomainConfigurationData(
-            "example.com", customCss = "b{}", postLoadJavascript = "x()", postLoadJavascriptEnabled = false,
-        )
+        val backup =
+            DomainConfigurationData(
+                "example.com",
+                customCss = "b{}",
+                postLoadJavascript = "x()",
+                postLoadJavascriptEnabled = false,
+            )
         val merged = local.mergedWith(backup)
         assertEquals("a{}", merged.customCss)
         assertFalse(merged.customCssEnabled)
@@ -383,10 +395,14 @@ class DomainConfigManagerTest {
     @Test
     fun `mergedWith keeps local values and fills gaps from the backup`() {
         val local = DomainConfigurationData("example.com", fontSize = 150, customCss = " ")
-        val backup = DomainConfigurationData(
-            "example.com", fontSize = 170, desktopMode = true, customCss = "a{}",
-            shouldUseWhiteBackground = true,
-        )
+        val backup =
+            DomainConfigurationData(
+                "example.com",
+                fontSize = 170,
+                desktopMode = true,
+                customCss = "a{}",
+                shouldUseWhiteBackground = true,
+            )
         val merged = local.mergedWith(backup)
         assertEquals(150, merged.fontSize)
         assertEquals(true, merged.desktopMode)
@@ -394,26 +410,31 @@ class DomainConfigManagerTest {
         assertEquals(true, merged.shouldUseWhiteBackground)
 
         // an empty leftover row takes everything from the backup
-        val leftover = DomainConfigurationData("example.com", shouldInvertColor = false)
-            .normalizedLegacyFlags()
+        val leftover =
+            DomainConfigurationData("example.com", shouldInvertColor = false)
+                .normalizedLegacyFlags()
         assertEquals(backup.copy(), leftover.mergedWith(backup))
     }
 
     @Test
     fun `legacy host rows normalise false flags to unset`() {
-        val legacy = DomainConfigurationData(
-            "example.com",
-            shouldFixScroll = false, shouldTranslateSite = true,
-            shouldUseWhiteBackground = false, shouldInvertColor = false,
-            fontSize = 120,
-        ).normalizedLegacyFlags()
+        val legacy =
+            DomainConfigurationData(
+                "example.com",
+                shouldFixScroll = false,
+                shouldTranslateSite = true,
+                shouldUseWhiteBackground = false,
+                shouldInvertColor = false,
+                fontSize = 120,
+            ).normalizedLegacyFlags()
         assertNull(legacy.shouldFixScroll)
         assertEquals(true, legacy.shouldTranslateSite)
         assertNull(legacy.shouldUseWhiteBackground)
         assertEquals(2, legacy.overrideCount)
 
-        val pathRule = DomainConfigurationData("example.com/docs", shouldInvertColor = false)
-            .normalizedLegacyFlags()
+        val pathRule =
+            DomainConfigurationData("example.com/docs", shouldInvertColor = false)
+                .normalizedLegacyFlags()
         assertEquals(false, pathRule.shouldInvertColor)
     }
 }

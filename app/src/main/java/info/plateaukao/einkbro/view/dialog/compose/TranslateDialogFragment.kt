@@ -74,14 +74,12 @@ import info.plateaukao.einkbro.viewmodel.TranslationViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 class TranslateDialogFragment(
     private val translationViewModel: TranslationViewModel,
     private val anchorPoint: Point? = null,
     private val isWholePageMode: Boolean = false,
     private val closeAction: (() -> Unit)? = null,
 ) : DraggableComposeDialogFragment() {
-
     @Composable
     override fun Content() {
         TranslateResponse(
@@ -105,7 +103,7 @@ class TranslateDialogFragment(
         if (ViewUnit.isWideLayout(context)) {
             dialog?.window?.setLayout(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                ViewGroup.LayoutParams.WRAP_CONTENT,
             )
         } else {
             dialog?.window?.apply {
@@ -185,7 +183,7 @@ private fun TranslateResponse(
             val scrollAmount = if (isUp) -viewportHeight else viewportHeight
             if (scrollAmount != 0) {
                 scrollState.scrollTo(
-                    (scrollState.value + scrollAmount).coerceIn(0, scrollState.maxValue)
+                    (scrollState.value + scrollAmount).coerceIn(0, scrollState.maxValue),
                 )
             }
         }
@@ -198,24 +196,26 @@ private fun TranslateResponse(
     val maxHeight = (configuration.screenHeightDp * 0.8).dp
 
     Column(
-        modifier = Modifier
-            .padding(top = 6.dp, start = 6.dp, end = 6.dp)
-            .run {
-                if (rotateScreen) {
-                    width(400.dp)
-                        .height(400.dp)
-                        .rotate(-90f)
-                } else {
-                    wrapContentWidth()
-                        .heightIn(max = maxHeight)
-                }
-            }
+        modifier =
+            Modifier
+                .padding(top = 6.dp, start = 6.dp, end = 6.dp)
+                .run {
+                    if (rotateScreen) {
+                        width(400.dp)
+                            .height(400.dp)
+                            .rotate(-90f)
+                    } else {
+                        wrapContentWidth()
+                            .heightIn(max = maxHeight)
+                    }
+                },
     ) {
         Row(
-            modifier = Modifier
-                .align(Alignment.End)
-                .wrapContentHeight()
-                .wrapContentWidth(),
+            modifier =
+                Modifier
+                    .align(Alignment.End)
+                    .wrapContentHeight()
+                    .wrapContentWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CopyButton(iconSize, iconPadding, responseMessage)
@@ -241,26 +241,27 @@ private fun TranslateResponse(
             )
         }
         Column(
-            modifier = Modifier
-                .defaultMinSize(minWidth = 300.dp)
-                .wrapContentHeight()
-                .width(IntrinsicSize.Max)
-                .weight(1f, fill = false)
-                .align(Alignment.Start)
-                .onGloballyPositioned { coordinates ->
-                    viewportHeight = coordinates.size.height
-                }
-                .verticalScroll(scrollState),
-            horizontalAlignment = Alignment.End
+            modifier =
+                Modifier
+                    .defaultMinSize(minWidth = 300.dp)
+                    .wrapContentHeight()
+                    .width(IntrinsicSize.Max)
+                    .weight(1f, fill = false)
+                    .align(Alignment.Start)
+                    .onGloballyPositioned { coordinates ->
+                        viewportHeight = coordinates.size.height
+                    }.verticalScroll(scrollState),
+            horizontalAlignment = Alignment.End,
         ) {
             if (showRequest.value) {
                 Text(
                     text = requestMessage,
                     color = MaterialTheme.colors.onBackground,
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Start
+                    modifier =
+                        Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(),
+                    textAlign = TextAlign.Start,
                 )
                 HorizontalSeparator()
             }
@@ -272,10 +273,11 @@ private fun TranslateResponse(
                 Text(
                     text = responseMessage,
                     color = MaterialTheme.colors.onBackground,
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Start
+                    modifier =
+                        Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(),
+                    textAlign = TextAlign.Start,
                 )
             }
         }
@@ -293,10 +295,11 @@ private fun CloseButton(
         imageVector = Icons.Default.Close,
         contentDescription = "Close Icon",
         tint = MaterialTheme.colors.onBackground,
-        modifier = Modifier
-            .size(iconSize)
-            .padding(iconPadding)
-            .clickable { closeClick() }
+        modifier =
+            Modifier
+                .size(iconSize)
+                .padding(iconPadding)
+                .clickable { closeClick() },
     )
 }
 
@@ -309,12 +312,13 @@ private fun InfoButton(
         imageVector = if (showRequest.value) Icons.Default.KeyboardArrowUp else Icons.Outlined.Info,
         contentDescription = "Info Icon",
         tint = MaterialTheme.colors.onBackground,
-        modifier = Modifier
-            .size(iconSize)
-            .padding(10.dp)
-            .clickable {
-                showRequest.value = !showRequest.value
-            }
+        modifier =
+            Modifier
+                .size(iconSize)
+                .padding(10.dp)
+                .clickable {
+                    showRequest.value = !showRequest.value
+                },
     )
 }
 
@@ -330,13 +334,14 @@ private fun GoogleButton(
         imageVector = ImageVector.vectorResource(id = R.drawable.ic_translate_google),
         contentDescription = "Google Translate",
         tint = MaterialTheme.colors.onBackground,
-        modifier = Modifier
-            .size(iconSize)
-            .padding(iconPadding)
-            .combinedClickable(
-                onClick = translateGoogle,
-                onLongClick = onTargetLanguageClick
-            )
+        modifier =
+            Modifier
+                .size(iconSize)
+                .padding(iconPadding)
+                .combinedClickable(
+                    onClick = translateGoogle,
+                    onLongClick = onTargetLanguageClick,
+                ),
     )
 }
 
@@ -352,13 +357,14 @@ private fun DeepLButton(
         imageVector = Icons.Default.Translate,
         contentDescription = "Deepl Translate",
         tint = MaterialTheme.colors.onBackground,
-        modifier = Modifier
-            .size(iconSize)
-            .padding(iconPadding)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onTargetLanguageClick
-            )
+        modifier =
+            Modifier
+                .size(iconSize)
+                .padding(iconPadding)
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onTargetLanguageClick,
+                ),
     )
 }
 
@@ -375,17 +381,18 @@ private fun SaveButton(
         imageVector = currentIcon,
         contentDescription = "Save",
         tint = MaterialTheme.colors.onBackground,
-        modifier = Modifier
-            .size(iconSize)
-            .padding(iconPadding)
-            .clickable {
-                coroutineScope.launch {
-                    viewModel.saveTranslationResult()
-                    currentIcon = Icons.Filled.Done
-                    delay(1000)
-                    currentIcon = saveIcon
-                }
-            }
+        modifier =
+            Modifier
+                .size(iconSize)
+                .padding(iconPadding)
+                .clickable {
+                    coroutineScope.launch {
+                        viewModel.saveTranslationResult()
+                        currentIcon = Icons.Filled.Done
+                        delay(1000)
+                        currentIcon = saveIcon
+                    }
+                },
     )
 }
 
@@ -400,10 +407,11 @@ private fun CopyButton(
         imageVector = Icons.Default.ContentCopy,
         contentDescription = "Copy text",
         tint = MaterialTheme.colors.onBackground,
-        modifier = Modifier
-            .size(iconSize)
-            .padding(iconPadding)
-            .clickable { ShareUtil.copyToClipboard(context, responseMessage.text) }
+        modifier =
+            Modifier
+                .size(iconSize)
+                .padding(iconPadding)
+                .clickable { ShareUtil.copyToClipboard(context, responseMessage.text) },
     )
 }
 
@@ -422,7 +430,6 @@ private fun GptRow(
         val saveIcon = Icons.Default.Save
         var currentIcon by remember { mutableStateOf(saveIcon) }
 
-
         ActionMenuItem(
             "",
             iconDrawable = null,
@@ -434,25 +441,27 @@ private fun GptRow(
                     delay(1000) // Wait for 0.5 seconds
                     currentIcon = saveIcon
                 }
-            }
+            },
         )
-        translationViewModel.getGptActionList()
+        translationViewModel
+            .getGptActionList()
             .mapIndexed { index, gptActionInfo -> index to gptActionInfo }
             .filter { it.second.scope == GptActionScope.TextSelection }
             .forEach { (index, gptActionInfo) ->
-                val gptClicked = remember {
-                    {
-                        translationViewModel.gptActionInfo = gptActionInfo
-                        translationViewModel.translate(TRANSLATE_API.LLM)
+                val gptClicked =
+                    remember {
+                        {
+                            translationViewModel.gptActionInfo = gptActionInfo
+                            translationViewModel.translate(TRANSLATE_API.LLM)
+                        }
                     }
-                }
                 val gptLongClicked =
                     remember { { translationViewModel.showEditGptActionDialog(index) } }
                 ActionMenuItem(
                     gptActionInfo.name,
                     null,
                     onClicked = gptClicked,
-                    onLongClicked = gptLongClicked
+                    onLongClicked = gptLongClicked,
                 )
             }
     }
@@ -461,19 +470,21 @@ private fun GptRow(
 @Composable
 fun RoundedDragBar(width: Dp = 100.dp) {
     Box(
-        modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth()
+        modifier =
+            Modifier
+                .padding(10.dp)
+                .fillMaxWidth(),
     ) {
         Box(
-            modifier = Modifier
-                .width(width)
-                .height(4.dp)
-                .align(Alignment.Center)
-                .background(
-                    color = Color.Gray,
-                    shape = RoundedCornerShape(50) // Use a high value to ensure fully rounded corners
-                )
+            modifier =
+                Modifier
+                    .width(width)
+                    .height(4.dp)
+                    .align(Alignment.Center)
+                    .background(
+                        color = Color.Gray,
+                        shape = RoundedCornerShape(50), // Use a high value to ensure fully rounded corners
+                    ),
         )
     }
 }
@@ -484,9 +495,9 @@ fun PreviewRoundedDragBar() {
     RoundedDragBar()
 }
 
-//@Preview
-//@Composable
-//fun PreviewTranslateResponse() {
+// @Preview
+// @Composable
+// fun PreviewTranslateResponse() {
 //    val context = LocalContext.current
 //    MyTheme {
 //        TranslateResponse(
@@ -496,4 +507,4 @@ fun PreviewRoundedDragBar() {
 //            closeClick = { Unit },
 //        )
 //    }
-//}
+// }

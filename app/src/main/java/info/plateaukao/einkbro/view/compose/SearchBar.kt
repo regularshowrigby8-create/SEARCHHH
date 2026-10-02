@@ -22,36 +22,40 @@ import info.plateaukao.einkbro.R
 @Composable
 fun ComposedSearchBar(
     focusRequester: FocusRequester,
-    onTextChanged:(String)->Unit,
-    onCloseClick: ()->Unit,
-    onUpClick: (String)->Unit,
-    onDownClick: (String)->Unit,
+    onTextChanged: (String) -> Unit,
+    onCloseClick: () -> Unit,
+    onUpClick: (String) -> Unit,
+    onDownClick: (String) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .height(50.dp)
-            .fillMaxWidth()
-            .background(MaterialTheme.colors.background),
+        modifier =
+            Modifier
+                .height(50.dp)
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.background),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End
+        horizontalArrangement = Arrangement.End,
     ) {
         val text = remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
 
         SearchInput(
-            modifier = Modifier
-                .weight(1f)
-                .onFocusChanged { focusState ->
-                    if (focusState.hasFocus) keyboardController?.show()
-                }
-                .focusRequester(focusRequester),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.hasFocus) keyboardController?.show()
+                    }.focusRequester(focusRequester),
             text = text,
             onValueChanged = onTextChanged,
         )
 
         SearchBarIcon(iconResId = R.drawable.icon_arrow_down_gest, onClick = { onDownClick(text.value) })
         SearchBarIcon(iconResId = R.drawable.icon_arrow_up_gest, onClick = { onUpClick(text.value) })
-        SearchBarIcon(iconResId = R.drawable.icon_close, onClick = { text.value = "" ; onCloseClick() })
+        SearchBarIcon(iconResId = R.drawable.icon_close, onClick = {
+            text.value = ""
+            onCloseClick()
+        })
     }
 }
 
@@ -59,15 +63,16 @@ fun ComposedSearchBar(
 fun SearchInput(
     modifier: Modifier,
     text: MutableState<String>,
-    onValueChanged: (String)->Unit,
+    onValueChanged: (String) -> Unit,
 ) {
     TextField(
         value = text.value,
         modifier = modifier.padding(horizontal = 5.dp),
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = MaterialTheme.colors.onBackground,
-            backgroundColor = MaterialTheme.colors.background,
-        ),
+        colors =
+            TextFieldDefaults.textFieldColors(
+                textColor = MaterialTheme.colors.onBackground,
+                backgroundColor = MaterialTheme.colors.background,
+            ),
         placeholder = {
             Text(stringResource(R.string.search_hint), color = MaterialTheme.colors.onBackground)
         },
@@ -81,20 +86,20 @@ fun SearchInput(
 @Composable
 fun SearchBarIcon(
     iconResId: Int,
-    onClick: ()->Unit,
+    onClick: () -> Unit,
 ) {
     Icon(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(40.dp)
-            .clickable { onClick() }
-            .padding(8.dp),
+        modifier =
+            Modifier
+                .fillMaxHeight()
+                .width(40.dp)
+                .clickable { onClick() }
+                .padding(8.dp),
         imageVector = ImageVector.vectorResource(id = iconResId),
         contentDescription = null,
-        tint = MaterialTheme.colors.onBackground
+        tint = MaterialTheme.colors.onBackground,
     )
 }
-
 
 @Preview
 @Composable

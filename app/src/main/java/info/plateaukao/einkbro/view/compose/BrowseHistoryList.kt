@@ -79,28 +79,26 @@ fun BrowseHistoryList(
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(if (shouldShowTwoColumns) 2 else 1),
-        reverseLayout = shouldReverse
+        reverseLayout = shouldReverse,
     ) {
-
         itemsIndexed(records) { index, record ->
             var boxPosition = remember { mutableStateOf(Offset.Zero) }
 
             RecordItem(
                 record = record,
                 bitmap = remember(record.url) { bookmarkManager?.findFaviconBitmapBy(record.url) },
-                modifier = Modifier
-                    .pointerInput(record) {
-                        detectTapGestures(
-                            onTap = { _ -> onClick(record) },
-                            onLongPress = { it ->
-                                onLongClick(record, it.toScreenPoint(boxPosition.value))
-                            }
-                        )
-                    }
-                    .onGloballyPositioned { boxPosition.value = it.positionOnScreen() },
+                modifier =
+                    Modifier
+                        .pointerInput(record) {
+                            detectTapGestures(
+                                onTap = { _ -> onClick(record) },
+                                onLongPress = { it ->
+                                    onLongClick(record, it.toScreenPoint(boxPosition.value))
+                                },
+                            )
+                        }.onGloballyPositioned { boxPosition.value = it.positionOnScreen() },
                 onAppendClick = onAppendClick,
-
-                )
+            )
         }
     }
 }
@@ -125,16 +123,16 @@ private fun ThumbnailHistoryGrid(
             ThumbnailHistoryItem(
                 record = record,
                 bitmap = remember(record.url) { bookmarkManager?.findFaviconBitmapBy(record.url) },
-                modifier = Modifier
-                    .pointerInput(record) {
-                        detectTapGestures(
-                            onTap = { onClick(record) },
-                            onLongPress = { offset ->
-                                onLongClick(record, offset.toScreenPoint(boxPosition.value))
-                            }
-                        )
-                    }
-                    .onGloballyPositioned { boxPosition.value = it.positionOnScreen() },
+                modifier =
+                    Modifier
+                        .pointerInput(record) {
+                            detectTapGestures(
+                                onTap = { onClick(record) },
+                                onLongPress = { offset ->
+                                    onLongClick(record, offset.toScreenPoint(boxPosition.value))
+                                },
+                            )
+                        }.onGloballyPositioned { boxPosition.value = it.positionOnScreen() },
             )
         }
     }
@@ -175,57 +173,65 @@ private fun RecordItem(
     onAppendClick: (String) -> Unit = { Unit },
 ) {
     val timeString =
-        if (record.type == RecordType.History) SimpleDateFormat(
-            "MM/dd",
-            Locale.getDefault()
-        ).format(record.time)
-        else ""
+        if (record.type == RecordType.History) {
+            SimpleDateFormat(
+                "MM/dd",
+                Locale.getDefault(),
+            ).format(record.time)
+        } else {
+            ""
+        }
 
     val isTypeSuggestion = record.type == RecordType.Suggestion
 
     Row(
-        modifier = modifier
-            .padding(2.dp),
-        horizontalArrangement = Arrangement.Center
+        modifier =
+            modifier
+                .padding(2.dp),
+        horizontalArrangement = Arrangement.Center,
     ) {
         when {
             record.type == RecordType.Bookmark -> {
                 Icon(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .size(30.dp)
-                        .padding(end = 5.dp),
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterVertically)
+                            .size(30.dp)
+                            .padding(end = 5.dp),
                     imageVector = ImageVector.vectorResource(id = R.drawable.icon_bookmark),
                     contentDescription = null,
-                    tint = MaterialTheme.colors.onBackground
+                    tint = MaterialTheme.colors.onBackground,
                 )
             }
 
             isTypeSuggestion -> {
                 IconButton(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .wrapContentHeight()
-                        .padding(0.dp),
-                    onClick = { onAppendClick(record.title.orEmpty()) }
+                    modifier =
+                        Modifier
+                            .wrapContentWidth()
+                            .wrapContentHeight()
+                            .padding(0.dp),
+                    onClick = { onAppendClick(record.title.orEmpty()) },
                 ) {
                     Icon(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .size(20.dp),
+                        modifier =
+                            Modifier
+                                .align(Alignment.CenterVertically)
+                                .size(20.dp),
                         imageVector = Icons.Outlined.ArrowDownward,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.onBackground
+                        tint = MaterialTheme.colors.onBackground,
                     )
                 }
             }
 
             bitmap != null -> {
                 Image(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .size(30.dp)
-                        .padding(end = 5.dp),
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterVertically)
+                            .size(30.dp)
+                            .padding(end = 5.dp),
                     bitmap = bitmap.asImageBitmap(),
                     contentDescription = null,
                 )
@@ -233,26 +239,28 @@ private fun RecordItem(
 
             else -> {
                 Icon(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .size(30.dp)
-                        .padding(end = 5.dp),
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterVertically)
+                            .size(30.dp)
+                            .padding(end = 5.dp),
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_history),
                     contentDescription = null,
-                    tint = MaterialTheme.colors.onBackground
+                    tint = MaterialTheme.colors.onBackground,
                 )
             }
         }
         Column(
             Modifier
                 .weight(1F)
-                .align(Alignment.CenterVertically)
+                .align(Alignment.CenterVertically),
         ) {
             AndroidView(
-                modifier = Modifier
-                    .conditional(isTypeSuggestion) {
-                        height(35.dp).padding(end = 5.dp)
-                    },
+                modifier =
+                    Modifier
+                        .conditional(isTypeSuggestion) {
+                            height(35.dp).padding(end = 5.dp)
+                        },
                 factory = { context ->
                     TextView(context).apply {
                         textSize = if (isTypeSuggestion) 18.sp.value else 16.sp.value
@@ -260,7 +268,7 @@ private fun RecordItem(
                         ellipsize = TextUtils.TruncateAt.MIDDLE
                     }
                 },
-                update = { it.text = record.title ?: "Unknown" }
+                update = { it.text = record.title ?: "Unknown" },
             )
             if (!isTypeSuggestion) {
                 Spacer(modifier = Modifier.height(1.dp))
@@ -268,9 +276,10 @@ private fun RecordItem(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     AndroidView(
-                        modifier = Modifier
-                            .weight(1F)
-                            .align(Alignment.Top),
+                        modifier =
+                            Modifier
+                                .weight(1F)
+                                .align(Alignment.Top),
                         factory = { context ->
                             TextView(context).apply {
                                 textSize = 12.sp.value.toFloat()
@@ -279,13 +288,14 @@ private fun RecordItem(
                                 ellipsize = TextUtils.TruncateAt.MIDDLE
                             }
                         },
-                        update = { it.text = record.url }
+                        update = { it.text = record.url },
                     )
                     // alight to end of row
                     Text(
-                        modifier = Modifier
-                            .padding(horizontal = 3.dp)
-                            .align(Alignment.Top),
+                        modifier =
+                            Modifier
+                                .padding(horizontal = 3.dp)
+                                .align(Alignment.Top),
                         text = timeString,
                         textAlign = TextAlign.End,
                         fontSize = 10.sp,
@@ -303,32 +313,33 @@ private fun previewItem() {
     MyTheme {
         RecordItem(
             modifier = Modifier,
-            record = Record(
-                title = "Hello",
-                url = "123ddddddddddddddddddddddddd",
-                time = System.currentTimeMillis()
-            )
+            record =
+                Record(
+                    title = "Hello",
+                    url = "123ddddddddddddddddddddddddd",
+                    time = System.currentTimeMillis(),
+                ),
         )
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun previewHistoryList() {
-    val list = listOf(
-        Record(
-            title = "Hello aaa aaa aaa aa aa aaa aa a aa a a a aa a a a a a a a a a aa a a ",
-            url = "123",
-            time = System.currentTimeMillis()
-        ),
-        Record(
-            title = "Hello 2",
-            url = "123 dddddddddddddddddddddddddddddddddddddddd",
-            time = System.currentTimeMillis()
-        ),
-        Record(title = "Hello 3", url = "123", time = System.currentTimeMillis()),
-    )
+    val list =
+        listOf(
+            Record(
+                title = "Hello aaa aaa aaa aa aa aaa aa a aa a a a aa a a a a a a a a a aa a a ",
+                url = "123",
+                time = System.currentTimeMillis(),
+            ),
+            Record(
+                title = "Hello 2",
+                url = "123 dddddddddddddddddddddddddddddddddddddddd",
+                time = System.currentTimeMillis(),
+            ),
+            Record(title = "Hello 3", url = "123", time = System.currentTimeMillis()),
+        )
     MyTheme {
         BrowseHistoryList(
             modifier = Modifier,
@@ -336,6 +347,7 @@ private fun previewHistoryList() {
             shouldReverse = true,
             shouldShowTwoColumns = true,
             onClick = { Unit },
-            onLongClick = { _, _ -> })
+            onLongClick = { _, _ -> },
+        )
     }
 }

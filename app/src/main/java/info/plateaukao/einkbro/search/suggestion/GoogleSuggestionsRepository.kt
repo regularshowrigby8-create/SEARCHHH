@@ -9,14 +9,19 @@ class GoogleSuggestionsRepository : SearchSuggestionsRepository {
     private val okHttpClient: okhttp3.OkHttpClient by lazy { okhttp3.OkHttpClient() }
 
     // https://suggestqueries.google.com/complete/search?output=toolbar&hl={language}&q={query}
-    private fun createQueryUrl(query: String, language: String): HttpUrl = HttpUrl.Builder()
-        .scheme("https")
-        .host("suggestqueries.google.com")
-        .encodedPath("/complete/search")
-        .addQueryParameter("output", "toolbar")
-        .addQueryParameter("hl", language)
-        .addEncodedQueryParameter("q", query)
-        .build()
+    private fun createQueryUrl(
+        query: String,
+        language: String,
+    ): HttpUrl =
+        HttpUrl
+            .Builder()
+            .scheme("https")
+            .host("suggestqueries.google.com")
+            .encodedPath("/complete/search")
+            .addQueryParameter("output", "toolbar")
+            .addQueryParameter("hl", language)
+            .addEncodedQueryParameter("q", query)
+            .build()
 
     @Throws(Exception::class)
     private fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
@@ -37,10 +42,12 @@ class GoogleSuggestionsRepository : SearchSuggestionsRepository {
 
     override suspend fun searchSuggestionResults(query: String): List<SearchSuggestion> {
         val url = createQueryUrl(query, "null")
-        val request = okhttp3.Request.Builder()
-            .url(url)
-            .get()
-            .build()
+        val request =
+            okhttp3.Request
+                .Builder()
+                .url(url)
+                .get()
+                .build()
 
         okHttpClient.newCall(request).execute().use { response ->
             if (!response.isSuccessful) {
@@ -56,9 +63,11 @@ class GoogleSuggestionsRepository : SearchSuggestionsRepository {
         // Converting to a lambda results in pulling the newInstance call out of the lazy.
         @Suppress("ConvertLambdaToReference")
         private val parser by lazy {
-            XmlPullParserFactory.newInstance().apply {
-                isNamespaceAware = true
-            }.newPullParser()
+            XmlPullParserFactory
+                .newInstance()
+                .apply {
+                    isNamespaceAware = true
+                }.newPullParser()
         }
     }
 }

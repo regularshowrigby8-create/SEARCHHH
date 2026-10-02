@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Test
 
 class TouchConfigTest {
-
     private lateinit var sp: FakeSharedPreferences
     private lateinit var config: TouchConfig
 

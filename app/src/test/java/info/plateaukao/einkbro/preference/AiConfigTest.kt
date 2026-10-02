@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Test
 
 class AiConfigTest {
-
     private lateinit var sp: FakeSharedPreferences
     private lateinit var config: AiConfig
 
@@ -36,19 +35,20 @@ class AiConfigTest {
 
     @Test
     fun `gptActionList round trips`() {
-        val actions = listOf(
-            ChatGPTActionInfo(
-                name = "Summarize",
-                systemMessage = "You summarize.",
-                userMessage = "Summarize:",
-                actionType = GptActionType.Gemini,
-                model = "gemini-2.5-flash",
-                display = GptActionDisplay.NewTab,
-                scope = GptActionScope.WholePage,
-                id = "fixed-id-1",
-            ),
-            ChatGPTActionInfo(name = "Translate", id = "fixed-id-2"),
-        )
+        val actions =
+            listOf(
+                ChatGPTActionInfo(
+                    name = "Summarize",
+                    systemMessage = "You summarize.",
+                    userMessage = "Summarize:",
+                    actionType = GptActionType.Gemini,
+                    model = "gemini-2.5-flash",
+                    display = GptActionDisplay.NewTab,
+                    scope = GptActionScope.WholePage,
+                    id = "fixed-id-1",
+                ),
+                ChatGPTActionInfo(name = "Translate", id = "fixed-id-2"),
+            )
         config.gptActionList = actions
         assertEquals(actions, config.gptActionList)
     }

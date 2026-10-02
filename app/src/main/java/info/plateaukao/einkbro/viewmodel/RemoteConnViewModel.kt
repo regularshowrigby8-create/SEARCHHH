@@ -7,10 +7,10 @@ import info.plateaukao.einkbro.unit.ShareUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+
 class RemoteConnViewModel(
     private val config: ConfigManager,
 ) : ViewModel() {
-
     var isSendingTextSearch: Boolean = false
     var isReceivingLink: Boolean = false
 

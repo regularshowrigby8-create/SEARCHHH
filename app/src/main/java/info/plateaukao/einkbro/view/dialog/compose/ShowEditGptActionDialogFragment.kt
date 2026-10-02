@@ -16,24 +16,27 @@ class ShowEditGptActionDialogFragment(
             if (editActionIndex >= 0) actionList[editActionIndex] else createDefaultGptAction(),
             config.ai.getGptTypeModelMap(),
             okAction = { modifiedAction ->
-                actionList = actionList.toMutableList().apply {
-                    if (editActionIndex >= 0) set(editActionIndex, modifiedAction)
-                    else add(modifiedAction)
-                }
+                actionList =
+                    actionList.toMutableList().apply {
+                        if (editActionIndex >= 0) {
+                            set(editActionIndex, modifiedAction)
+                        } else {
+                            add(modifiedAction)
+                        }
+                    }
                 config.ai.gptActionList = actionList
                 dismiss()
             },
-            dismissAction = { dismiss() }
+            dismissAction = { dismiss() },
         )
     }
 
-    private fun createDefaultGptAction(): ChatGPTActionInfo {
-        return ChatGPTActionInfo(
+    private fun createDefaultGptAction(): ChatGPTActionInfo =
+        ChatGPTActionInfo(
             "",
             "",
             "",
             GptActionType.Default,
-            config.ai.getDefaultActionModel()
+            config.ai.getDefaultActionModel(),
         )
-    }
 }

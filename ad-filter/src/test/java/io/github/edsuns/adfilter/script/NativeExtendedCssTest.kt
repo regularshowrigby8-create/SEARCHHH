@@ -6,7 +6,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class NativeExtendedCssTest {
-
     @Test
     fun hasSelectorsAreNative() {
         assertTrue(NativeExtendedCss.isNativeExpressible("div:has(> a[href^=\"https://ads\"])"))
@@ -36,14 +35,15 @@ class NativeExtendedCssTest {
     @Test
     fun buildRules_emitsOneStandaloneRulePerSelector() {
         val hiding = "{display: none !important;}"
-        val rules = NativeExtendedCss.buildRules(
-            listOf(
-                "div:has(> .ad)",
-                "span:contains(sponsored)", // dropped
-                ".banner:has(a)",
-            ),
-            hiding,
-        )
+        val rules =
+            NativeExtendedCss.buildRules(
+                listOf(
+                    "div:has(> .ad)",
+                    "span:contains(sponsored)", // dropped
+                    ".banner:has(a)",
+                ),
+                hiding,
+            )
         assertEquals(
             "div:has(> .ad){display: none !important;}\n" +
                 ".banner:has(a){display: none !important;}\n",

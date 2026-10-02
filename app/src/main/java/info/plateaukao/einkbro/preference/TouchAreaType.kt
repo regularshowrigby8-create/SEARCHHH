@@ -1,5 +1,11 @@
 package info.plateaukao.einkbro.preference
 
 enum class TouchAreaType {
-    BottomLeftRight, Left, Right, LongLeftRight, MiddleLeftRight, Long, Ebook,
+    BottomLeftRight,
+    Left,
+    Right,
+    LongLeftRight,
+    MiddleLeftRight,
+    Long,
+    Ebook,
 }

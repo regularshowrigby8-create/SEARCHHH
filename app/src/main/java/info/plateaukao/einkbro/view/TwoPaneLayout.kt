@@ -14,13 +14,12 @@ import androidx.core.view.doOnLayout
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.unit.ViewUnit.dp
 
-
 class TwoPaneLayout : FrameLayout {
     @JvmOverloads
     constructor(
-            context: Context,
-            attrs: AttributeSet? = null,
-            defStyleAttr: Int = 0
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
     ) : super(context, attrs, defStyleAttr) {
         initAttributes(attrs)
 
@@ -34,28 +33,32 @@ class TwoPaneLayout : FrameLayout {
         return tv.data
     }
 
-    private val separator: View = View(context).apply {
-        layoutParams = LayoutParams(1, LayoutParams.MATCH_PARENT)
-        setBackgroundColor(resolveColorControlNormal())
-        this@TwoPaneLayout.addView(this)
-    }
-    private val floatingLine: View = View(context).apply {
-        layoutParams = LayoutParams(2.dp(context), LayoutParams.MATCH_PARENT)
-        visibility = GONE
-        setBackgroundColor(resolveColorControlNormal())
-        this@TwoPaneLayout.addView(this)
-    }
-    private val dragHandle: View = View(context).apply {
-        layoutParams = LayoutParams(16.dp(context), 44.dp(context))
-        visibility = GONE
-        alpha = 0.5f
-        background = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadius = 8.dp(context).toFloat()
-            setColor(resolveColorControlNormal())
+    private val separator: View =
+        View(context).apply {
+            layoutParams = LayoutParams(1, LayoutParams.MATCH_PARENT)
+            setBackgroundColor(resolveColorControlNormal())
+            this@TwoPaneLayout.addView(this)
         }
-        this@TwoPaneLayout.addView(this)
-    }
+    private val floatingLine: View =
+        View(context).apply {
+            layoutParams = LayoutParams(2.dp(context), LayoutParams.MATCH_PARENT)
+            visibility = GONE
+            setBackgroundColor(resolveColorControlNormal())
+            this@TwoPaneLayout.addView(this)
+        }
+    private val dragHandle: View =
+        View(context).apply {
+            layoutParams = LayoutParams(16.dp(context), 44.dp(context))
+            visibility = GONE
+            alpha = 0.5f
+            background =
+                GradientDrawable().apply {
+                    shape = GradientDrawable.RECTANGLE
+                    cornerRadius = 8.dp(context).toFloat()
+                    setColor(resolveColorControlNormal())
+                }
+            this@TwoPaneLayout.addView(this)
+        }
 
     private var panel1: View? = null
     private var panel2: View? = null
@@ -92,7 +95,10 @@ class TwoPaneLayout : FrameLayout {
 
     fun getOrientation(): Orientation = orientation
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
         val oldMeasuredWidth = measuredWidth
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
@@ -144,15 +150,19 @@ class TwoPaneLayout : FrameLayout {
             }
         } else {
             if (finalY > measuredHeight) {
-                finalY = (measuredHeight/ 2).toFloat()
+                finalY = (measuredHeight / 2).toFloat()
             }
         }
     }
 
     private fun initViews() {
-        val userAddedViews = children.iterator().asSequence().filter {
-            !listOf(separator, floatingLine, dragHandle).contains(it)
-        }.toList()
+        val userAddedViews =
+            children
+                .iterator()
+                .asSequence()
+                .filter {
+                    !listOf(separator, floatingLine, dragHandle).contains(it)
+                }.toList()
 
         if (userAddedViews.size < 2) return
 
@@ -230,7 +240,7 @@ class TwoPaneLayout : FrameLayout {
     private fun hideSubPanel() {
         subPanel?.visibility = GONE
 
-        val mainPanel = if (subPanel == panel1) panel2  else panel1
+        val mainPanel = if (subPanel == panel1) panel2 else panel1
 
         if (isHorizontal()) {
             val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -246,10 +256,11 @@ class TwoPaneLayout : FrameLayout {
         separator.visibility = GONE
     }
 
-    private var  dX: Float = 0f
+    private var dX: Float = 0f
     private var finalX: Float = 0f
-    private var  dY: Float = 0f
+    private var dY: Float = 0f
     private var finalY: Float = 0f
+
     @SuppressLint("ClickableViewAccessibility")
     private fun initDragHandle() {
         if (isHorizontal()) {
@@ -274,12 +285,14 @@ class TwoPaneLayout : FrameLayout {
                         dX = view.x - event.rawX
                     }
                     MotionEvent.ACTION_MOVE -> {
-                        view.animate()
+                        view
+                            .animate()
                             .x(event.rawX + dX)
                             .setDuration(0)
                             .start()
                         finalX = event.rawX + dX + view.width / 2
-                        floatingLine.animate()
+                        floatingLine
+                            .animate()
                             .x(event.rawX + dX + view.width / 2)
                             .setDuration(0)
                             .start()
@@ -315,12 +328,14 @@ class TwoPaneLayout : FrameLayout {
                         dY = view.y - event.rawY
                     }
                     MotionEvent.ACTION_MOVE -> {
-                        view.animate()
+                        view
+                            .animate()
                             .y(event.rawY + dY)
                             .setDuration(0)
                             .start()
                         finalY = event.rawY + dY + view.height / 2
-                        floatingLine.animate()
+                        floatingLine
+                            .animate()
                             .y(event.rawY + dY + view.height / 2)
                             .setDuration(0)
                             .start()
@@ -335,7 +350,6 @@ class TwoPaneLayout : FrameLayout {
                 true
             }
         }
-
     }
 
     private fun adjustPaneSize(position: Int) {

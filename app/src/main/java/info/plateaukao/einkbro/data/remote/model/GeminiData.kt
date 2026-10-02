@@ -11,16 +11,26 @@ data class ContentPart(
 )
 
 @Serializable
-data class Content(val parts: List<ContentPart> = emptyList())
+data class Content(
+    val parts: List<ContentPart> = emptyList(),
+)
 
 @Serializable
-data class SafetySetting(val category: String, val threshold: String)
+data class SafetySetting(
+    val category: String,
+    val threshold: String,
+)
 
 @Serializable
-data class ThinkingConfig(val thinkingBudget: Int, val includeThoughts: Boolean = false)
+data class ThinkingConfig(
+    val thinkingBudget: Int,
+    val includeThoughts: Boolean = false,
+)
 
 @Serializable
-data class GenerationConfig(val thinkingConfig: ThinkingConfig)
+data class GenerationConfig(
+    val thinkingConfig: ThinkingConfig,
+)
 
 @Serializable
 data class RequestData(
@@ -31,7 +41,9 @@ data class RequestData(
 )
 
 @Serializable
-data class ResponseData(val candidates: List<Candidate> = emptyList())
+data class ResponseData(
+    val candidates: List<Candidate> = emptyList(),
+)
 
 @Serializable
 data class Candidate(

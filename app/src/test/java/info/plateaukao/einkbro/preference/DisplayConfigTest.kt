@@ -7,7 +7,6 @@ import org.junit.Before
 import org.junit.Test
 
 class DisplayConfigTest {
-
     private lateinit var sp: FakeSharedPreferences
     private lateinit var config: DisplayConfig
 

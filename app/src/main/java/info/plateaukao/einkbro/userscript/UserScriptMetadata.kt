@@ -30,7 +30,12 @@ data class UserScriptMetadata(
         private val LINE_REGEX = Regex("""//\s*@([\w-]+)\s+(.*)""")
 
         fun parse(code: String): UserScriptMetadata {
-            val block = BLOCK_REGEX.find(code)?.groupValues?.get(1).orEmpty()
+            val block =
+                BLOCK_REGEX
+                    .find(code)
+                    ?.groupValues
+                    ?.get(1)
+                    .orEmpty()
             val tags = mutableMapOf<String, MutableList<String>>()
             block.lineSequence().forEach { line ->
                 val m = LINE_REGEX.find(line) ?: return@forEach
@@ -39,18 +44,17 @@ data class UserScriptMetadata(
                 if (value.isNotEmpty()) tags.getOrPut(key) { mutableListOf() }.add(value)
             }
 
-            fun first(vararg keys: String): String =
-                keys.firstNotNullOfOrNull { tags[it]?.firstOrNull() }.orEmpty()
+            fun first(vararg keys: String): String = keys.firstNotNullOfOrNull { tags[it]?.firstOrNull() }.orEmpty()
 
-            fun all(vararg keys: String): List<String> =
-                keys.flatMap { tags[it].orEmpty() }
+            fun all(vararg keys: String): List<String> = keys.flatMap { tags[it].orEmpty() }
 
-            val runAt = when (first("run-at").lowercase()) {
-                "document-start" -> RunAt.DOCUMENT_START
-                "document-body" -> RunAt.DOCUMENT_START
-                "document-idle" -> RunAt.DOCUMENT_END
-                else -> RunAt.DOCUMENT_END // document-end is the Tampermonkey default
-            }
+            val runAt =
+                when (first("run-at").lowercase()) {
+                    "document-start" -> RunAt.DOCUMENT_START
+                    "document-body" -> RunAt.DOCUMENT_START
+                    "document-idle" -> RunAt.DOCUMENT_END
+                    else -> RunAt.DOCUMENT_END // document-end is the Tampermonkey default
+                }
 
             return UserScriptMetadata(
                 name = first("name").ifEmpty { DEFAULT_NAME },
@@ -77,13 +81,19 @@ data class UserScriptMetadata(
          * "-beta" sorts before the plain release. An empty [installed] makes any non-empty
          * [remote] newer; an empty [remote] is never newer (no version means nothing to update to).
          */
-        fun isNewer(remote: String, installed: String): Boolean {
+        fun isNewer(
+            remote: String,
+            installed: String,
+        ): Boolean {
             if (remote.isBlank()) return false
             if (installed.isBlank()) return true
             return compareVersions(remote, installed) > 0
         }
 
-        private fun compareVersions(a: String, b: String): Int {
+        private fun compareVersions(
+            a: String,
+            b: String,
+        ): Int {
             val pa = a.trim().split('.')
             val pb = b.trim().split('.')
             for (i in 0 until maxOf(pa.size, pb.size)) {

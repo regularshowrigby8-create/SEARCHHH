@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import info.plateaukao.einkbro.R
-import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.CustomFontInfo
 import info.plateaukao.einkbro.preference.FontType
 import kotlinx.coroutines.Dispatchers
@@ -60,19 +59,19 @@ data class FontItem(
 class FontBrowserDialogFragment(
     private val isReaderMode: Boolean,
 ) : ComposeDialogFragment() {
-
     private val folderUri = mutableStateOf<String?>(null)
 
-    private val folderPickerLauncher = registerForActivityResult(
-        ActivityResultContracts.OpenDocumentTree()
-    ) { uri ->
-        if (uri != null) {
-            val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            requireContext().contentResolver.takePersistableUriPermission(uri, takeFlags)
-            config.display.fontFolderUri = uri.toString()
-            folderUri.value = uri.toString()
+    private val folderPickerLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.OpenDocumentTree(),
+        ) { uri ->
+            if (uri != null) {
+                val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                requireContext().contentResolver.takePersistableUriPermission(uri, takeFlags)
+                config.display.fontFolderUri = uri.toString()
+                folderUri.value = uri.toString()
+            }
         }
-    }
 
     override fun beforeComposing() {
         shouldShowInCenter = true
@@ -101,19 +100,25 @@ class FontBrowserDialogFragment(
 
 private val fontExtensions = setOf("ttf", "otf", "woff", "woff2")
 
-private fun listFontsFromFolder(context: Context, folderUri: String): List<FontItem> {
+private fun listFontsFromFolder(
+    context: Context,
+    folderUri: String,
+): List<FontItem> {
     val treeUri = folderUri.toUri()
     val folder = DocumentFile.fromTreeUri(context, treeUri) ?: return emptyList()
-    return folder.listFiles()
+    return folder
+        .listFiles()
         .filter { file ->
             val ext = file.name?.substringAfterLast('.', "")?.lowercase()
             ext in fontExtensions
-        }
-        .sortedBy { it.name?.lowercase() }
+        }.sortedBy { it.name?.lowercase() }
         .map { file -> FontItem(name = file.name ?: "Unknown", uri = file.uri) }
 }
 
-private fun loadTypeface(context: Context, uri: Uri): Typeface? {
+private fun loadTypeface(
+    context: Context,
+    uri: Uri,
+): Typeface? {
     // Typeface.Builder needs API 26; older devices fall back to the default font.
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return null
     return try {
@@ -137,24 +142,30 @@ fun FontBrowserScreen(
     var fontItems by remember { mutableStateOf<List<FontItem>>(emptyList()) }
 
     LaunchedEffect(folderUri) {
-        fontItems = if (folderUri.isNullOrBlank()) {
-            emptyList()
-        } else {
-            withContext(Dispatchers.IO) {
-                listFontsFromFolder(context, folderUri)
+        fontItems =
+            if (folderUri.isNullOrBlank()) {
+                emptyList()
+            } else {
+                withContext(Dispatchers.IO) {
+                    listFontsFromFolder(context, folderUri)
+                }
+            }
+    }
+
+    val filteredFonts =
+        remember(fontItems, searchQuery) {
+            if (searchQuery.isBlank()) {
+                fontItems
+            } else {
+                fontItems.filter { it.name.contains(searchQuery, ignoreCase = true) }
             }
         }
-    }
-
-    val filteredFonts = remember(fontItems, searchQuery) {
-        if (searchQuery.isBlank()) fontItems
-        else fontItems.filter { it.name.contains(searchQuery, ignoreCase = true) }
-    }
 
     Column(
-        modifier = Modifier
-            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
-            .width(320.dp)
+        modifier =
+            Modifier
+                .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                .width(320.dp),
     ) {
         // Header
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -180,8 +191,11 @@ fun FontBrowserScreen(
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(
-                    if (folderUri.isNullOrBlank()) stringResource(R.string.select_font_folder)
-                    else stringResource(R.string.change_folder),
+                    if (folderUri.isNullOrBlank()) {
+                        stringResource(R.string.select_font_folder)
+                    } else {
+                        stringResource(R.string.change_folder)
+                    },
                     color = MaterialTheme.colors.onBackground,
                 )
             }
@@ -199,15 +213,17 @@ fun FontBrowserScreen(
                     )
                 },
                 singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = MaterialTheme.colors.onBackground,
-                    backgroundColor = MaterialTheme.colors.background,
-                    cursorColor = MaterialTheme.colors.onBackground,
-                    focusedIndicatorColor = MaterialTheme.colors.onBackground,
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                colors =
+                    TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onBackground,
+                        backgroundColor = MaterialTheme.colors.background,
+                        cursorColor = MaterialTheme.colors.onBackground,
+                        focusedIndicatorColor = MaterialTheme.colors.onBackground,
+                    ),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
             )
 
             HorizontalSeparator()
@@ -227,7 +243,7 @@ fun FontBrowserScreen(
                             fontItem = fontItem,
                             onClick = {
                                 onFontSelected(
-                                    CustomFontInfo(fontItem.name, fontItem.uri.toString())
+                                    CustomFontInfo(fontItem.name, fontItem.uri.toString()),
                                 )
                             },
                         )
@@ -240,9 +256,10 @@ fun FontBrowserScreen(
             Text(
                 stringResource(R.string.select_font_folder),
                 color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f),
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.CenterHorizontally),
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally),
             )
             Spacer(Modifier.height(24.dp))
         }
@@ -257,23 +274,25 @@ private fun FontItemRow(
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    val typeface = remember(fontItem.uri) {
-        loadTypeface(context, fontItem.uri)
-    }
-    val fontFamily = remember(typeface) {
-        typeface?.let { FontFamily(it) }
-    }
+    val typeface =
+        remember(fontItem.uri) {
+            loadTypeface(context, fontItem.uri)
+        }
+    val fontFamily =
+        remember(typeface) {
+            typeface?.let { FontFamily(it) }
+        }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .border(
-                width = (-1).dp,
-                color = MaterialTheme.colors.primary,
-                shape = RoundedCornerShape(4.dp),
-            )
-            .padding(horizontal = 8.dp, vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .border(
+                    width = (-1).dp,
+                    color = MaterialTheme.colors.primary,
+                    shape = RoundedCornerShape(4.dp),
+                ).padding(horizontal = 8.dp, vertical = 8.dp),
     ) {
         Text(
             text = fontItem.name,

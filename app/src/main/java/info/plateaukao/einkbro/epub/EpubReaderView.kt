@@ -1,15 +1,16 @@
 package info.plateaukao.einkbro.epub
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.util.Log
 import android.util.TypedValue
-import android.app.AlertDialog
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.browser.WebViewCallback
 import info.plateaukao.einkbro.view.EBWebView
+import info.plateaukao.einkbro.view.withThemedFrame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -18,7 +19,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.math.min
 import kotlin.math.roundToInt
-import info.plateaukao.einkbro.view.withThemedFrame
 
 /**
  * Created by Avinash on 25-05-2017.
@@ -49,7 +49,7 @@ for (var i = 0; i < elements.length; i++) {
  if(elements[i].tagName!="SPAN")
   elements[i].style.backgroundColor='white';
  elements[i].style.color='black';
-}"""
+}""",
                 )
             } else {
                 processJavascript(
@@ -58,7 +58,7 @@ for (var i = 0; i < elements.length; i++) {
  if(elements[i].tagName!="SPAN")
   elements[i].style.backgroundColor='black';
 elements[i].style.color='white';
-}"""
+}""",
                 )
             }
         }
@@ -67,7 +67,11 @@ elements[i].style.color='white';
         this.listener = listener
     }
 
-    inner class Chapter(val name: String, val content: String, val href: String)
+    inner class Chapter(
+        val name: String,
+        val content: String,
+        val href: String,
+    )
 
     init {
         with(settings) {
@@ -93,15 +97,20 @@ elements[i].style.color='white';
             val epubTempExtractionLocation = context.cacheDir.toString() + "/tempfiles"
             val dirOEBPS = File(epubTempExtractionLocation + File.separator + "OEBPS")
             val relativeFolder =
-                epub.chapters.firstOrNull()?.absPath?.substringBeforeLast("/")?.substringAfter(epub.rootPath) ?: ""
+                epub.chapters
+                    .firstOrNull()
+                    ?.absPath
+                    ?.substringBeforeLast("/")
+                    ?.substringAfter(epub.rootPath) ?: ""
             val dirRelativePath = File(epubTempExtractionLocation + relativeFolder + File.separator)
-            resourceLocation = if (dirOEBPS.exists() && dirOEBPS.isDirectory) {
-                "file://" + epubTempExtractionLocation + File.separator + "OEBPS" + File.separator
-            } else if (dirRelativePath.exists() && dirRelativePath.isDirectory && relativeFolder.isNotEmpty()) {
-                "file://" + epubTempExtractionLocation + relativeFolder + File.separator
-            } else {
-                "file://" + epubTempExtractionLocation + File.separator
-            }
+            resourceLocation =
+                if (dirOEBPS.exists() && dirOEBPS.isDirectory) {
+                    "file://" + epubTempExtractionLocation + File.separator + "OEBPS" + File.separator
+                } else if (dirRelativePath.exists() && dirRelativePath.isDirectory && relativeFolder.isNotEmpty()) {
+                    "file://" + epubTempExtractionLocation + relativeFolder + File.separator
+                } else {
+                    "file://" + epubTempExtractionLocation + File.separator
+                }
         }
     }
 
@@ -123,14 +132,17 @@ elements[i].style.color='white';
         chapterPartPosition = 0
     }
 
-    fun gotoChapter(chapter: EpubBook.Chapter, partNumber: Int = 0) {
+    fun gotoChapter(
+        chapter: EpubBook.Chapter,
+        partNumber: Int = 0,
+    ) {
         chapterPartPosition = partNumber
         loadDataWithBaseURL(
             resourceLocation,
             chapter.parts[partNumber].body,
             "text/html",
             "utf-8",
-            null
+            null,
         )
         postDelayed({
             if (isVerticalRead) {
@@ -148,20 +160,21 @@ elements[i].style.color='white';
     fun showTocDialog() {
         try {
             val items = epub.chapters.map { it.title }.toTypedArray()
-            AlertDialog.Builder(context, R.style.TouchAreaDialog)
+            AlertDialog
+                .Builder(context, R.style.TouchAreaDialog)
                 .setTitle(context.getString(R.string.dialog_toc_title))
                 .setItems(items) { _, item ->
                     gotoChapter(epub.chapters.first { it.title == items[item] })
                     listener.onChapterChangeListener(item)
-                }.create().apply {
+                }.create()
+                .apply {
                     with(listView) {
                         divider = ColorDrawable(Color.GRAY)
                         dividerHeight = 1
                         setFooterDividersEnabled(false)
                         overscrollFooter = ColorDrawable(Color.TRANSPARENT)
                     }
-                }
-                .withThemedFrame()
+                }.withThemedFrame()
                 .show()
         } catch (e: Exception) {
             Log.e("EpubReaderView", e.toString())
@@ -269,9 +282,7 @@ elements[i].style.color='white';
         loading = false
     }
 
-
-    private fun getTotalContentHeight(): Int =
-        (this.contentHeight * resources.displayMetrics.density).toInt()
+    private fun getTotalContentHeight(): Int = (this.contentHeight * resources.displayMetrics.density).toInt()
 
     fun getPageHeight(): Int = height - 50
 
@@ -286,11 +297,13 @@ elements[i].style.color='white';
         }
     }
 
-    private fun dpToPixel(dp: Int): Int = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        dp.toFloat(),
-        context.resources.displayMetrics
-    ).roundToInt()
+    private fun dpToPixel(dp: Int): Int =
+        TypedValue
+            .applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp.toFloat(),
+                context.resources.displayMetrics,
+            ).roundToInt()
 
     companion object {
         const val METHOD_HIGHLIGHT = 1

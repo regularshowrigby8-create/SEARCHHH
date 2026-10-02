@@ -1,8 +1,8 @@
 package info.plateaukao.einkbro.preference
 
+import info.plateaukao.einkbro.database.DomainConfigurationData
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import info.plateaukao.einkbro.database.DomainConfigurationData
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -13,33 +13,34 @@ import org.junit.Test
  * on upgrade, so the wire format is asserted explicitly where it matters.
  */
 class SerializableDataTest {
-
     private val lenientJson = Json { ignoreUnknownKeys = true }
 
     // ── ChatGPTActionInfo (kotlinx.serialization) ────────────────────────────
 
     @Test
     fun `ChatGPTActionInfo round trips through Json`() {
-        val action = ChatGPTActionInfo(
-            name = "Summarize",
-            systemMessage = "system",
-            userMessage = "user",
-            actionType = GptActionType.SelfHosted,
-            model = "llama3",
-            display = GptActionDisplay.SplitScreen,
-            scope = GptActionScope.WholePage,
-            id = "stable-id",
-        )
+        val action =
+            ChatGPTActionInfo(
+                name = "Summarize",
+                systemMessage = "system",
+                userMessage = "user",
+                actionType = GptActionType.SelfHosted,
+                model = "llama3",
+                display = GptActionDisplay.SplitScreen,
+                scope = GptActionScope.WholePage,
+                id = "stable-id",
+            )
         val decoded = Json.decodeFromString<ChatGPTActionInfo>(Json.encodeToString(action))
         assertEquals(action, decoded)
     }
 
     @Test
     fun `ChatGPTActionInfo list round trips through Json`() {
-        val actions = listOf(
-            ChatGPTActionInfo(name = "A", id = "1"),
-            ChatGPTActionInfo(name = "B", actionType = GptActionType.Gemini, id = "2"),
-        )
+        val actions =
+            listOf(
+                ChatGPTActionInfo(name = "A", id = "1"),
+                ChatGPTActionInfo(name = "B", actionType = GptActionType.Gemini, id = "2"),
+            )
         val decoded = Json.decodeFromString<List<ChatGPTActionInfo>>(Json.encodeToString(actions))
         assertEquals(actions, decoded)
     }
@@ -47,9 +48,10 @@ class SerializableDataTest {
     @Test
     fun `ChatGPTActionInfo decodes legacy JSON missing newer fields`() {
         // Simulates data written by an older app version before new fields existed.
-        val decoded = lenientJson.decodeFromString<ChatGPTActionInfo>(
-            """{"name":"Old","systemMessage":"s","userMessage":"u"}"""
-        )
+        val decoded =
+            lenientJson.decodeFromString<ChatGPTActionInfo>(
+                """{"name":"Old","systemMessage":"s","userMessage":"u"}""",
+            )
         assertEquals("Old", decoded.name)
         assertEquals(GptActionType.Default, decoded.actionType)
         assertEquals(GptActionDisplay.Popup, decoded.display)
@@ -58,19 +60,21 @@ class SerializableDataTest {
 
     @Test
     fun `ChatGPTActionInfo decoding ignores unknown future fields`() {
-        val decoded = lenientJson.decodeFromString<ChatGPTActionInfo>(
-            """{"name":"New","someFutureField":true}"""
-        )
+        val decoded =
+            lenientJson.decodeFromString<ChatGPTActionInfo>(
+                """{"name":"New","someFutureField":true}""",
+            )
         assertEquals("New", decoded.name)
     }
 
     @Test
     fun `DomainConfigurationData round trips through Json with webview dark mode`() {
-        val rule = DomainConfigurationData(
-            domain = "example.com",
-            webViewDarkMode = true,
-            pageReservedOffset = "50%",
-        )
+        val rule =
+            DomainConfigurationData(
+                domain = "example.com",
+                webViewDarkMode = true,
+                pageReservedOffset = "50%",
+            )
         assertEquals(rule, Json.decodeFromString<DomainConfigurationData>(Json.encodeToString(rule)))
     }
 
@@ -122,7 +126,7 @@ class SerializableDataTest {
         val info = AlbumInfo("EinkBro - E-ink Browser", "https://github.com/plateaukao/einkbro")
         assertEquals(
             info,
-            "EinkBro - E-ink Browser::https://github.com/plateaukao/einkbro".toAlbumInfo()
+            "EinkBro - E-ink Browser::https://github.com/plateaukao/einkbro".toAlbumInfo(),
         )
     }
 

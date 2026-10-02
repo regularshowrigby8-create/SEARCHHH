@@ -13,7 +13,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
  * dispatchTouchEvent (which is always called, even after interception) and re-routes
  * events to the child so MultitouchListener can handle them.
  */
-class MultiTouchSwipeRefreshLayout(context: Context) : SwipeRefreshLayout(context) {
+class MultiTouchSwipeRefreshLayout(
+    context: Context,
+) : SwipeRefreshLayout(context) {
     private var multiTouchDetected = false
     private var hasIntercepted = false
 
@@ -33,9 +35,10 @@ class MultiTouchSwipeRefreshLayout(context: Context) : SwipeRefreshLayout(contex
                         isEnabled = true
                         // Re-establish touch sequence on the child with a synthetic ACTION_DOWN
                         // so that the FrameLayout creates a touch target for subsequent events.
-                        val downEvent = MotionEvent.obtain(ev).apply {
-                            action = MotionEvent.ACTION_DOWN
-                        }
+                        val downEvent =
+                            MotionEvent.obtain(ev).apply {
+                                action = MotionEvent.ACTION_DOWN
+                            }
                         getChildAt(0)?.dispatchTouchEvent(downEvent)
                         downEvent.recycle()
                     }

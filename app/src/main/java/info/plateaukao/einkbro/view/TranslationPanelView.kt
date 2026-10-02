@@ -15,8 +15,9 @@ import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.unit.ViewUnit.dp
 import info.plateaukao.einkbro.view.ThemedBorders
 
-class TranslationPanelView(context: Context) : RelativeLayout(context) {
-
+class TranslationPanelView(
+    context: Context,
+) : RelativeLayout(context) {
     val expandedButton: ImageButton
     val controlsContainer: LinearLayout
     val translationOrientation: ImageButton
@@ -38,54 +39,60 @@ class TranslationPanelView(context: Context) : RelativeLayout(context) {
         val btnSize = 40.dp(context)
         val margin = 1 // 0.5dp ~= 1px
 
-        fun createButton(iconRes: Int): ImageButton {
-            return ImageButton(context).apply {
-                layoutParams = LinearLayout.LayoutParams(btnSize, btnSize).apply {
-                    setMargins(margin, margin, margin, margin)
-                }
+        fun createButton(iconRes: Int): ImageButton =
+            ImageButton(context).apply {
+                layoutParams =
+                    LinearLayout.LayoutParams(btnSize, btnSize).apply {
+                        setMargins(margin, margin, margin, margin)
+                    }
                 background = ThemedBorders.panel(context)
                 setImageResource(iconRes)
                 ImageViewCompat.setImageTintList(this, tint)
             }
-        }
 
         // Expanded button (initially invisible)
-        expandedButton = ImageButton(context).apply {
-            val lp = LayoutParams(btnSize, btnSize).apply {
-                addRule(ALIGN_PARENT_END)
-                addRule(ALIGN_PARENT_BOTTOM)
+        expandedButton =
+            ImageButton(context).apply {
+                val lp =
+                    LayoutParams(btnSize, btnSize).apply {
+                        addRule(ALIGN_PARENT_END)
+                        addRule(ALIGN_PARENT_BOTTOM)
+                    }
+                layoutParams = lp
+                background = ThemedBorders.panel(context)
+                setImageResource(R.drawable.icon_info)
+                ImageViewCompat.setImageTintList(this, tint)
+                visibility = View.INVISIBLE
             }
-            layoutParams = lp
-            background = ThemedBorders.panel(context)
-            setImageResource(R.drawable.icon_info)
-            ImageViewCompat.setImageTintList(this, tint)
-            visibility = View.INVISIBLE
-        }
         addView(expandedButton)
 
         // Controls container
-        controlsContainer = LinearLayout(context).apply {
-            val lp = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
-                addRule(ALIGN_PARENT_END)
-                addRule(ALIGN_PARENT_BOTTOM)
+        controlsContainer =
+            LinearLayout(context).apply {
+                val lp =
+                    LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                        addRule(ALIGN_PARENT_END)
+                        addRule(ALIGN_PARENT_BOTTOM)
+                    }
+                layoutParams = lp
+                orientation = LinearLayout.VERTICAL
             }
-            layoutParams = lp
-            orientation = LinearLayout.VERTICAL
-        }
 
         translationOrientation = createButton(R.drawable.ic_rotate)
         linkHere = createButton(R.drawable.ic_link_here)
         syncScroll = createButton(R.drawable.ic_sync_scroll)
 
-        translationLanguage = TextView(context).apply {
-            layoutParams = LinearLayout.LayoutParams(btnSize, btnSize).apply {
-                setMargins(margin, margin, margin, margin)
+        translationLanguage =
+            TextView(context).apply {
+                layoutParams =
+                    LinearLayout.LayoutParams(btnSize, btnSize).apply {
+                        setMargins(margin, margin, margin, margin)
+                    }
+                background = ThemedBorders.panel(context)
+                gravity = Gravity.CENTER
+                textAlignment = TEXT_ALIGNMENT_CENTER
+                textSize = 16f
             }
-            background = ThemedBorders.panel(context)
-            gravity = Gravity.CENTER
-            textAlignment = TEXT_ALIGNMENT_CENTER
-            textSize = 16f
-        }
 
         translationFontPlus = createButton(R.drawable.ic_font_increase)
         translationFontMinus = createButton(R.drawable.ic_font_decrease)

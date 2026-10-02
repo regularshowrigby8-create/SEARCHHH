@@ -8,12 +8,12 @@ import android.graphics.Point
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -27,23 +27,21 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,18 +61,15 @@ fun HistoryAndTabs(
     isHistoryOpen: Boolean = false,
     shouldShowTwoColumns: Boolean = false,
     shouldReverseHistory: Boolean = false,
-
     albumList: MutableState<List<Album>>,
     albumFocusIndex: MutableState<Int>,
     onTabIconClick: () -> Unit,
     onTabClick: (Album) -> Unit,
     onTabLongClick: (Album) -> Unit,
-
     records: List<Record>,
     onHistoryIconClick: () -> Unit,
     onHistoryItemClick: (Record) -> Unit,
     onHistoryItemLongClick: (Record, Point) -> Unit,
-
     addIncognitoTab: () -> Unit,
     addTab: () -> Unit,
     closePanel: () -> Unit,
@@ -89,7 +84,7 @@ fun HistoryAndTabs(
             .fillMaxHeight()
             .clickable(
                 interactionSource = interactionSource,
-                indication = null
+                indication = null,
             ) { closePanel() },
         verticalArrangement = if (isBarOnTop) Arrangement.Top else Arrangement.Bottom,
     ) {
@@ -108,14 +103,15 @@ fun HistoryAndTabs(
             HorizontalSeparator()
         }
         MainContent(
-            modifier = Modifier.Companion
-                .weight(1f, false)
-                .background(MaterialTheme.colors.background)
-                .horizontalBorder(
-                    drawTop = !isBarOnTop,
-                    drawBottom = isBarOnTop,
-                    MaterialTheme.colors.primary
-                ),
+            modifier =
+                Modifier.Companion
+                    .weight(1f, false)
+                    .background(MaterialTheme.colors.background)
+                    .horizontalBorder(
+                        drawTop = !isBarOnTop,
+                        drawBottom = isBarOnTop,
+                        MaterialTheme.colors.primary,
+                    ),
             isHistoryOpen,
             shouldShowTwoColumns,
             shouldReverseHistory,
@@ -126,7 +122,7 @@ fun HistoryAndTabs(
             bookmarkManager,
             records,
             onHistoryItemClick,
-            onHistoryItemLongClick
+            onHistoryItemLongClick,
         )
         if (!isBarOnTop) {
             HorizontalSeparator()
@@ -169,7 +165,7 @@ private fun MainContent(
             onClick = onTabClick,
             closeAction = {
                 onTabLongClick.invoke(it)
-            }
+            },
         )
     }
     if (isHistoryOpen) {
@@ -184,7 +180,6 @@ private fun MainContent(
         )
     }
 }
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -204,11 +199,14 @@ fun PreviewTabs(
         BoxWithConstraints(modifier = modifier) {
             val barWidth = maxWidth.value.toInt() - 50 // 50 is the plus button width
             val itemWidth =
-                if (albumList.size * 200 > barWidth) max(
-                    barWidth / albumList.size,
-                    80
-                )
-                else maxItemWidth
+                if (albumList.size * 200 > barWidth) {
+                    max(
+                        barWidth / albumList.size,
+                        80,
+                    )
+                } else {
+                    maxItemWidth
+                }
 
             val listState = rememberLazyListState()
             LazyRow(state = listState) {
@@ -221,17 +219,17 @@ fun PreviewTabs(
                         derivedStateOf { index == albumFocusIndex.value }
                     }
                     TabItem(
-                        modifier = Modifier
-                            .combinedClickable(
-                                interactionSource = interactionSource,
-                                indication = null,
-                                onClick = { onClick(album) },
-                                onLongClick = { closeAction(album) }
-                            )
-                            .width(itemWidth.dp),
+                        modifier =
+                            Modifier
+                                .combinedClickable(
+                                    interactionSource = interactionSource,
+                                    indication = null,
+                                    onClick = { onClick(album) },
+                                    onLongClick = { closeAction(album) },
+                                ).width(itemWidth.dp),
                         showCloseButton = false,
                         isFocused = isFocused,
-                        album = album
+                        album = album,
                     ) { closeAction(album) }
                 }
             }
@@ -256,17 +254,18 @@ fun PreviewTabs(
                     derivedStateOf { index == albumFocusIndex.value }
                 }
                 TabItem(
-                    modifier = Modifier
-                        .combinedClickable(
-                            interactionSource = interactionSource,
-                            indication = null,
-                            onClick = { onClick(album) },
-                            onLongClick = {
-                                closeAction(album)
-                            }
-                        ),
+                    modifier =
+                        Modifier
+                            .combinedClickable(
+                                interactionSource = interactionSource,
+                                indication = null,
+                                onClick = { onClick(album) },
+                                onLongClick = {
+                                    closeAction(album)
+                                },
+                            ),
                     isFocused = isFocused,
-                    album = album
+                    album = album,
                 ) {
                     closeAction(album)
                 }
@@ -287,46 +286,51 @@ private fun TabItem(
     val borderWidth = if (isFocused) 1.dp else -1.dp
 
     Row(
-        modifier = modifier
-            .height(54.dp)
-            .padding(4.dp)
-            .ebItemFrame(borderWidth)
-            .padding(4.dp),
-        horizontalArrangement = Arrangement.Center
+        modifier =
+            modifier
+                .height(54.dp)
+                .padding(4.dp)
+                .ebItemFrame(borderWidth)
+                .padding(4.dp),
+        horizontalArrangement = Arrangement.Center,
     ) {
         if (tabInfo.isTranslatePage) {
             Icon(
-                modifier = Modifier
-                    .size(36.dp)
-                    .padding(end = 5.dp),
+                modifier =
+                    Modifier
+                        .size(36.dp)
+                        .padding(end = 5.dp),
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_translate),
                 contentDescription = null,
-                tint = MaterialTheme.colors.onBackground
+                tint = MaterialTheme.colors.onBackground,
             )
         } else if (tabInfo.favicon != null) {
             Image(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(36.dp)
-                    .padding(start = 2.dp, end = 5.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterVertically)
+                        .size(36.dp)
+                        .padding(start = 2.dp, end = 5.dp),
                 bitmap = tabInfo.favicon.asImageBitmap(),
                 contentDescription = null,
             )
         } else {
             Icon(
-                modifier = Modifier
-                    .size(36.dp)
-                    .padding(end = 5.dp),
+                modifier =
+                    Modifier
+                        .size(36.dp)
+                        .padding(end = 5.dp),
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_earth),
                 contentDescription = null,
-                tint = MaterialTheme.colors.onBackground
+                tint = MaterialTheme.colors.onBackground,
             )
         }
 
         Text(
-            modifier = Modifier
-                .weight(1F)
-                .align(Alignment.CenterVertically),
+            modifier =
+                Modifier
+                    .weight(1F)
+                    .align(Alignment.CenterVertically),
             text = tabInfo.title,
             fontSize = 18.sp,
             maxLines = 1,
@@ -364,17 +368,19 @@ fun ButtonBarLayout(
     launchNewBrowserAction: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .background(MaterialTheme.colors.background)
-            .horizontalScroll(
-                rememberScrollState(),
-                reverseScrolling = true
-            ) // default on right side
-            .clickable(enabled = false) {}, // these two lines prevent row having click action
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(MaterialTheme.colors.background)
+                .horizontalScroll(
+                    rememberScrollState(),
+                    reverseScrolling = true,
+                ) // default on right side
+                .clickable(enabled = false) {},
+        // these two lines prevent row having click action
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End
+        horizontalArrangement = Arrangement.End,
     ) {
         val historyResId =
             if (isHistoryOpen) R.drawable.ic_history_activated else R.drawable.ic_history
@@ -392,10 +398,9 @@ fun ButtonBarLayout(
         ButtonIcon(
             iconResId = R.drawable.icon_plus,
             onClick = addTab,
-            onLongClick = launchNewBrowserAction
+            onLongClick = launchNewBrowserAction,
         )
         ButtonIcon(iconResId = R.drawable.icon_arrow_down_gest, onClick = closePanel)
-
     }
 }
 
@@ -407,17 +412,17 @@ fun ButtonIcon(
     onLongClick: (() -> Unit)? = null,
 ) {
     Icon(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(46.dp)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
-            .padding(12.dp),
+        modifier =
+            Modifier
+                .fillMaxHeight()
+                .width(46.dp)
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick,
+                ).padding(12.dp),
         imageVector = ImageVector.vectorResource(id = iconResId),
         contentDescription = null,
-        tint = MaterialTheme.colors.onBackground
+        tint = MaterialTheme.colors.onBackground,
     )
 }
 
@@ -425,15 +430,16 @@ fun ButtonIcon(
 @Preview
 @Composable
 fun PreviewHistoryAndTabs() {
-    val recordList = listOf(
-        Record(
-            title = "Hello aaa aaa aaa aa aa aaa aa a aa a a a aa a a a a a a a a a aa a a ",
-            url = "123",
-            time = System.currentTimeMillis()
-        ),
-        Record(title = "Hello 2", url = "123", time = System.currentTimeMillis()),
-        Record(title = "Hello 3", url = "123", time = System.currentTimeMillis()),
-    )
+    val recordList =
+        listOf(
+            Record(
+                title = "Hello aaa aaa aaa aa aa aaa aa a aa a a a aa a a a a a a a a a aa a a ",
+                url = "123",
+                time = System.currentTimeMillis(),
+            ),
+            Record(title = "Hello 2", url = "123", time = System.currentTimeMillis()),
+            Record(title = "Hello 3", url = "123", time = System.currentTimeMillis()),
+        )
 
     val albumList = mutableStateOf(listOf<Album>())
 
@@ -450,7 +456,6 @@ fun PreviewHistoryAndTabs() {
         onHistoryIconClick = { Unit },
         onHistoryItemClick = { Unit },
         onHistoryItemLongClick = { _, _ -> },
-
         addIncognitoTab = { Unit },
         addTab = { Unit },
         closePanel = { Unit },
@@ -465,6 +470,5 @@ private fun Album.toTabInfo(): TabInfo =
         title = this.albumTitle,
         url = this.getUrl(),
         favicon = this.bitmap,
-        isTranslatePage = this.isTranslatePage
+        isTranslatePage = this.isTranslatePage,
     )
-

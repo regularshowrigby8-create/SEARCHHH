@@ -23,11 +23,8 @@ import info.plateaukao.einkbro.preference.ToolbarPosition
 import info.plateaukao.einkbro.search.suggestion.SearchSuggestionViewModel
 import info.plateaukao.einkbro.unit.UrlHelper
 import info.plateaukao.einkbro.unit.ViewUnit
-import info.plateaukao.einkbro.view.EBWebView
-import info.plateaukao.einkbro.view.MainActivityLayout
 import info.plateaukao.einkbro.view.compose.AutoCompleteTextField
 import info.plateaukao.einkbro.view.compose.MyTheme
-import info.plateaukao.einkbro.view.viewControllers.ComposeToolbarViewController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -80,15 +77,19 @@ class InputBarDelegate(
                         onTextChange = { query ->
                             inputHasTyped = true
                             searchJob?.cancel()
-                            searchJob = activity.lifecycleScope.launch {
-                                kotlinx.coroutines.delay(300)
-                                withContext(Dispatchers.IO) {
-                                    searchSuggestionViewModel.updateSuggestions(query)
+                            searchJob =
+                                activity.lifecycleScope.launch {
+                                    kotlinx.coroutines.delay(300)
+                                    withContext(Dispatchers.IO) {
+                                        searchSuggestionViewModel.updateSuggestions(query)
+                                    }
+                                    inputRecordList.value = searchSuggestionViewModel.suggestions.value
                                 }
-                                inputRecordList.value = searchSuggestionViewModel.suggestions.value
-                            }
                         },
-                        onPasteClick = { updateAlbum(getClipboardText()); showToolbar() },
+                        onPasteClick = {
+                            updateAlbum(getClipboardText())
+                            showToolbar()
+                        },
                         closeAction = {
                             showToolbar()
                             if (shouldRestoreFullscreen) {
@@ -116,7 +117,8 @@ class InputBarDelegate(
             shouldRestoreFullscreen = true
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                androidx.core.view.WindowCompat.setDecorFitsSystemWindows(activity.window, true)
+                androidx.core.view.WindowCompat
+                    .setDecorFitsSystemWindows(activity.window, true)
             } else {
                 @Suppress("DEPRECATION")
                 activity.window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -127,15 +129,16 @@ class InputBarDelegate(
         val url = ebWebView.url.orEmpty()
         // in-app pages (start page, recent bookmarks) report a data: uri,
         // about:blank, or the einkbro:// sentinel — start with an empty input
-        val textOrUrl = if (
-            url.startsWith("data:") || url == "about:blank" || url.startsWith("einkbro://")
-        ) {
-            TextFieldValue("")
-        } else {
-            // for search result pages, present the plain search query for easy editing
-            val text = UrlHelper.getQueryFromSearchUrl(url) ?: url
-            TextFieldValue(text, selection = TextRange(0, text.length))
-        }
+        val textOrUrl =
+            if (
+                url.startsWith("data:") || url == "about:blank" || url.startsWith("einkbro://")
+            ) {
+                TextFieldValue("")
+            } else {
+                // for search result pages, present the plain search query for easy editing
+                val text = UrlHelper.getQueryFromSearchUrl(url) ?: url
+                TextFieldValue(text, selection = TextRange(0, text.length))
+            }
 
         inputTextOrUrl.value = textOrUrl
         inputIsWideLayout = ViewUnit.isWideLayout(activity)
@@ -166,7 +169,8 @@ class InputBarDelegate(
                 } catch (e: IllegalStateException) {
                     e.printStackTrace()
                 }
-            }, 200
+            },
+            200,
         )
     }
 
@@ -179,34 +183,79 @@ class InputBarDelegate(
         // clash: they hide the whole app bar, tab strip included.
         val clearsTabBar = config.tab.shouldShowTabBar
         val tabBarOnTop = config.tab.sideTabBarOnTop
-        val constraintSet = androidx.constraintlayout.widget.ConstraintSet().apply {
-            clone(binding.root)
-            clear(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.TOP)
-            clear(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.BOTTOM)
-            if (clearsTabBar && tabBarOnTop) {
-                connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.TOP, binding.sideTabBar.id, androidx.constraintlayout.widget.ConstraintSet.BOTTOM)
-            } else {
-                connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.TOP, androidx.constraintlayout.widget.ConstraintSet.PARENT_ID, androidx.constraintlayout.widget.ConstraintSet.TOP)
+        val constraintSet =
+            androidx.constraintlayout.widget.ConstraintSet().apply {
+                clone(binding.root)
+                clear(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.TOP)
+                clear(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.BOTTOM)
+                if (clearsTabBar && tabBarOnTop) {
+                    connect(
+                        binding.inputUrl.id,
+                        androidx.constraintlayout.widget.ConstraintSet.TOP,
+                        binding.sideTabBar.id,
+                        androidx.constraintlayout.widget.ConstraintSet.BOTTOM,
+                    )
+                } else {
+                    connect(
+                        binding.inputUrl.id,
+                        androidx.constraintlayout.widget.ConstraintSet.TOP,
+                        androidx.constraintlayout.widget.ConstraintSet.PARENT_ID,
+                        androidx.constraintlayout.widget.ConstraintSet.TOP,
+                    )
+                }
+                if (clearsTabBar && !tabBarOnTop) {
+                    connect(
+                        binding.inputUrl.id,
+                        androidx.constraintlayout.widget.ConstraintSet.BOTTOM,
+                        binding.sideTabBar.id,
+                        androidx.constraintlayout.widget.ConstraintSet.TOP,
+                    )
+                } else {
+                    connect(
+                        binding.inputUrl.id,
+                        androidx.constraintlayout.widget.ConstraintSet.BOTTOM,
+                        androidx.constraintlayout.widget.ConstraintSet.PARENT_ID,
+                        androidx.constraintlayout.widget.ConstraintSet.BOTTOM,
+                    )
+                }
+                if (config.ui.toolbarPosition == ToolbarPosition.Left) {
+                    connect(
+                        binding.inputUrl.id,
+                        androidx.constraintlayout.widget.ConstraintSet.START,
+                        binding.appBar.id,
+                        androidx.constraintlayout.widget.ConstraintSet.END,
+                    )
+                    connect(
+                        binding.inputUrl.id,
+                        androidx.constraintlayout.widget.ConstraintSet.END,
+                        androidx.constraintlayout.widget.ConstraintSet.PARENT_ID,
+                        androidx.constraintlayout.widget.ConstraintSet.END,
+                    )
+                } else {
+                    connect(
+                        binding.inputUrl.id,
+                        androidx.constraintlayout.widget.ConstraintSet.START,
+                        androidx.constraintlayout.widget.ConstraintSet.PARENT_ID,
+                        androidx.constraintlayout.widget.ConstraintSet.START,
+                    )
+                    connect(
+                        binding.inputUrl.id,
+                        androidx.constraintlayout.widget.ConstraintSet.END,
+                        binding.appBar.id,
+                        androidx.constraintlayout.widget.ConstraintSet.START,
+                    )
+                }
             }
-            if (clearsTabBar && !tabBarOnTop) {
-                connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.BOTTOM, binding.sideTabBar.id, androidx.constraintlayout.widget.ConstraintSet.TOP)
-            } else {
-                connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.BOTTOM, androidx.constraintlayout.widget.ConstraintSet.PARENT_ID, androidx.constraintlayout.widget.ConstraintSet.BOTTOM)
-            }
-            if (config.ui.toolbarPosition == ToolbarPosition.Left) {
-                connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.START, binding.appBar.id, androidx.constraintlayout.widget.ConstraintSet.END)
-                connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.END, androidx.constraintlayout.widget.ConstraintSet.PARENT_ID, androidx.constraintlayout.widget.ConstraintSet.END)
-            } else {
-                connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.START, androidx.constraintlayout.widget.ConstraintSet.PARENT_ID, androidx.constraintlayout.widget.ConstraintSet.START)
-                connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.END, binding.appBar.id, androidx.constraintlayout.widget.ConstraintSet.START)
-            }
-        }
         constraintSet.applyTo(binding.root)
     }
 
     fun getClipboardText(): String =
         (activity.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager)
-            .primaryClip?.getItemAt(0)?.text?.toString().orEmpty()
+            .primaryClip
+            ?.getItemAt(0)
+            ?.text
+            ?.toString()
+            .orEmpty()
 
     fun isKeyboardDisplaying(): Boolean {
         val binding = state.binding

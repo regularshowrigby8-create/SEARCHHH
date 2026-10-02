@@ -8,18 +8,21 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.Locale
 
-class TranslationLanguageDialog(val context: Context) : KoinComponent {
+class TranslationLanguageDialog(
+    val context: Context,
+) : KoinComponent {
     private val config: ConfigManager by inject()
 
     suspend fun show(): TranslationLanguage? {
         val languages = TranslationLanguage.entries.map { it.language }
 
-        val selectedIndex = ListSettingWithNameDialog(
-            context,
-            R.string.translation_language,
-            languages,
-            config.translation.translationLanguage.ordinal
-        ).show() ?: return null
+        val selectedIndex =
+            ListSettingWithNameDialog(
+                context,
+                R.string.translation_language,
+                languages,
+                config.translation.translationLanguage.ordinal,
+            ).show() ?: return null
 
         config.translation.translationLanguage = TranslationLanguage.entries.toTypedArray()[selectedIndex]
         return config.translation.translationLanguage
@@ -27,15 +30,19 @@ class TranslationLanguageDialog(val context: Context) : KoinComponent {
 
     suspend fun showDualCaptionLocale() {
         // add support for "None" option
-        val languages = TranslationLanguage.entries.map { it.language }
-            .toMutableList().apply { add(0, "None") }
+        val languages =
+            TranslationLanguage.entries
+                .map { it.language }
+                .toMutableList()
+                .apply { add(0, "None") }
 
-        val selectedIndex = ListSettingWithNameDialog(
-            context,
-            R.string.setting_dual_caption,
-            languages,
-            getDualCaptionIndex(config.tts.dualCaptionLocale)
-        ).show() ?: return
+        val selectedIndex =
+            ListSettingWithNameDialog(
+                context,
+                R.string.setting_dual_caption,
+                languages,
+                getDualCaptionIndex(config.tts.dualCaptionLocale),
+            ).show() ?: return
 
         if (selectedIndex == 0) {
             config.tts.dualCaptionLocale = ""
@@ -45,25 +52,55 @@ class TranslationLanguageDialog(val context: Context) : KoinComponent {
     }
 
     suspend fun showAppLocale() {
-        val languages = listOf(
-            "af", "ar", "ca", "cs", "da", "de", "el", "en", "es", "fi", "fr",
-            "he", "hu", "in", "it", "ja", "ko", "nl", "no", "pl", "pt",
-            "ro", "ru", "sat", "sr", "tr", "uk", "vi", "zh-Hant",
-            "zh-Hans"
-        )
+        val languages =
+            listOf(
+                "af",
+                "ar",
+                "ca",
+                "cs",
+                "da",
+                "de",
+                "el",
+                "en",
+                "es",
+                "fi",
+                "fr",
+                "he",
+                "hu",
+                "in",
+                "it",
+                "ja",
+                "ko",
+                "nl",
+                "no",
+                "pl",
+                "pt",
+                "ro",
+                "ru",
+                "sat",
+                "sr",
+                "tr",
+                "uk",
+                "vi",
+                "zh-Hant",
+                "zh-Hans",
+            )
 
-        val selectedIndex = ListSettingWithNameDialog(
-            context,
-            R.string.setting_app_locale,
-            languages.map(Locale::forLanguageTag).map(Locale::getDisplayName),
-            languages.indexOf(config.uiLocaleLanguage)
-        ).show() ?: return
+        val selectedIndex =
+            ListSettingWithNameDialog(
+                context,
+                R.string.setting_app_locale,
+                languages.map(Locale::forLanguageTag).map(Locale::getDisplayName),
+                languages.indexOf(config.uiLocaleLanguage),
+            ).show() ?: return
 
         config.uiLocaleLanguage = languages[selectedIndex]
     }
 
     private fun getDualCaptionIndex(locale: String): Int =
-        if (locale.isEmpty()) 0
-        else TranslationLanguage.values().indexOfFirst { it.value == locale } + 1
-
+        if (locale.isEmpty()) {
+            0
+        } else {
+            TranslationLanguage.values().indexOfFirst { it.value == locale } + 1
+        }
 }

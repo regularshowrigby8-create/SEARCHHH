@@ -59,7 +59,10 @@ class DomainConfigManager(
     /** Keys of [matchingRules]; cheap identity for "did the rule chain change". */
     fun matchingKeys(url: String): List<String> = matchingRules(url).map { it.domain }
 
-    private inline fun <T> resolve(url: String, field: (DomainConfigurationData) -> T?): T? {
+    private inline fun <T> resolve(
+        url: String,
+        field: (DomainConfigurationData) -> T?,
+    ): T? {
         for (rule in matchingRules(url)) {
             field(rule)?.let { return it }
         }
@@ -85,10 +88,15 @@ class DomainConfigManager(
      * What [url] would resolve to if the rule [excludingKey] did not exist —
      * the "inherited" value the editor shows as the fallback for that rule.
      */
-    fun getInheritedConfig(url: String, excludingKey: String): DomainConfigurationData =
-        merge(url, matchingRules(url).filter { it.domain != excludingKey })
+    fun getInheritedConfig(
+        url: String,
+        excludingKey: String,
+    ): DomainConfigurationData = merge(url, matchingRules(url).filter { it.domain != excludingKey })
 
-    private fun merge(url: String, chain: List<DomainConfigurationData>): DomainConfigurationData {
+    private fun merge(
+        url: String,
+        chain: List<DomainConfigurationData>,
+    ): DomainConfigurationData {
         val host = SiteRuleKey.hostOfUrl(url) ?: return DomainConfigurationData("")
         if (chain.isEmpty()) return DomainConfigurationData(host)
         return DomainConfigurationData(
@@ -122,8 +130,7 @@ class DomainConfigManager(
 
     fun getRule(key: String): DomainConfigurationData? = domainConfigurationMap[key]
 
-    fun getRuleOrNew(key: String): DomainConfigurationData =
-        domainConfigurationMap[key] ?: DomainConfigurationData(key)
+    fun getRuleOrNew(key: String): DomainConfigurationData = domainConfigurationMap[key] ?: DomainConfigurationData(key)
 
     /** All rules whose host is [host] (the host rule and its path rules), host first. */
     fun rulesForHost(host: String): List<DomainConfigurationData> =
@@ -215,21 +222,30 @@ class DomainConfigManager(
         return hasInvertedColor(url)
     }
 
-    fun setTranslationMode(url: String, mode: TranslationMode) {
+    fun setTranslationMode(
+        url: String,
+        mode: TranslationMode,
+    ) {
         val target = writeTargetFor(url) { it.translationMode } ?: return
         target.translationMode = mode
         save(target)
     }
 
     /** Writing new code switches the script back on: a fresh save is meant to take effect. */
-    fun setPostLoadJavascript(url: String, code: String?) {
+    fun setPostLoadJavascript(
+        url: String,
+        code: String?,
+    ) {
         val target = writeTargetFor(url) { it.postLoadJavascript } ?: return
         target.postLoadJavascript = code?.ifBlank { null }
         target.postLoadJavascriptEnabled = true
         save(target)
     }
 
-    fun setCustomCss(url: String, code: String?) {
+    fun setCustomCss(
+        url: String,
+        code: String?,
+    ) {
         val target = writeTargetFor(url) { it.customCss } ?: return
         target.customCss = code?.ifBlank { null }
         target.customCssEnabled = true
@@ -244,11 +260,9 @@ class DomainConfigManager(
 
     fun getFontType(url: String): FontType = resolve(url) { it.fontType } ?: display.fontType
 
-    fun getBoldFontStyle(url: String): Boolean =
-        resolve(url) { it.boldFontStyle } ?: display.boldFontStyle
+    fun getBoldFontStyle(url: String): Boolean = resolve(url) { it.boldFontStyle } ?: display.boldFontStyle
 
-    fun getBlackFontStyle(url: String): Boolean =
-        resolve(url) { it.blackFontStyle } ?: display.blackFontStyle
+    fun getBlackFontStyle(url: String): Boolean = resolve(url) { it.blackFontStyle } ?: display.blackFontStyle
 
     fun getFontBoldness(url: String): Int = resolve(url) { it.fontBoldness } ?: display.fontBoldness
 
@@ -256,14 +270,11 @@ class DomainConfigManager(
 
     fun getDesktopViewportWidth(url: String): Int? = resolve(url) { it.desktopViewportWidth }
 
-    fun getEnableJavascript(url: String): Boolean =
-        resolve(url) { it.enableJavascript } ?: browser.enableJavascript
+    fun getEnableJavascript(url: String): Boolean = resolve(url) { it.enableJavascript } ?: browser.enableJavascript
 
-    fun getEnableImages(url: String): Boolean =
-        resolve(url) { it.enableImages } ?: browser.enableImages
+    fun getEnableImages(url: String): Boolean = resolve(url) { it.enableImages } ?: browser.enableImages
 
-    fun getTranslationMode(url: String): TranslationMode =
-        resolve(url) { it.translationMode } ?: translation.translationMode
+    fun getTranslationMode(url: String): TranslationMode = resolve(url) { it.translationMode } ?: translation.translationMode
 
     fun getPageReservedOffset(url: String): String =
         resolve(url) { it.pageReservedOffset?.takeIf { value -> value.isNotBlank() } }

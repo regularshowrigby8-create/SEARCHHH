@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class BrowserActionCatalogTest {
-
     @Test
     fun `migrateLegacyId returns empty for null so default can apply`() {
         assertEquals("", BrowserActionCatalog.migrateLegacyId(null))

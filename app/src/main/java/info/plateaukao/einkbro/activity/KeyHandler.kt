@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 class KeyHandler(
     private val keyCallback: KeyHandlerCallback,
     private var ebWebView: EBWebView,
-    private val config: ConfigManager
+    private val config: ConfigManager,
 ) {
     private var previousKeyEvent: KeyEvent? = null
 
@@ -28,7 +28,10 @@ class KeyHandler(
         ebWebView = webView
     }
 
-    fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+    fun onKeyDown(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean {
         when (keyCode) {
             // Consume only when the feature is on, so external keyboards keep
             // normal focus navigation otherwise.
@@ -147,16 +150,17 @@ class KeyHandler(
                     return true
                 }
                 KeyEvent.KEYCODE_G -> {
-                    previousKeyEvent = when {
-                        previousKeyEvent == null -> event
-                        previousKeyEvent?.keyCode == KeyEvent.KEYCODE_G -> {
-                            // gg
-                            keyCallback.jumpToTop()
-                            null
-                        }
+                    previousKeyEvent =
+                        when {
+                            previousKeyEvent == null -> event
+                            previousKeyEvent?.keyCode == KeyEvent.KEYCODE_G -> {
+                                // gg
+                                keyCallback.jumpToTop()
+                                null
+                            }
 
-                        else -> null
-                    }
+                            else -> null
+                        }
                     return true
                 }
 
@@ -198,12 +202,13 @@ class KeyHandler(
 
     private fun scheduleReenableVolumePageTurn() {
         reenableJob?.cancel()
-        reenableJob = scope.launch {
-            delay(5000)
-            isVolumeTemporarilyDisabled = false
-            val context = keyCallback as? Context ?: return@launch
-            EBToast.show(context, R.string.volume_page_turn_resumed)
-        }
+        reenableJob =
+            scope.launch {
+                delay(5000)
+                isVolumeTemporarilyDisabled = false
+                val context = keyCallback as? Context ?: return@launch
+                EBToast.show(context, R.string.volume_page_turn_resumed)
+            }
     }
 
     fun dispose() {
@@ -225,11 +230,12 @@ class KeyHandler(
 
     private fun scheduleDeferredPageTurn(keyCode: Int) {
         pendingPageTurnJobs.remove(keyCode)?.cancel()
-        pendingPageTurnJobs[keyCode] = scope.launch {
-            delay(DOUBLE_CLICK_WINDOW_MS)
-            performVolumePageTurn(keyCode)
-            pendingPageTurnJobs.remove(keyCode)
-        }
+        pendingPageTurnJobs[keyCode] =
+            scope.launch {
+                delay(DOUBLE_CLICK_WINDOW_MS)
+                performVolumePageTurn(keyCode)
+                pendingPageTurnJobs.remove(keyCode)
+            }
     }
 
     private fun cancelPendingPageTurns() {
@@ -238,14 +244,18 @@ class KeyHandler(
     }
 
     private fun performVolumePageTurn(keyCode: Int) {
-        val pageUp = when (keyCode) {
-            KeyEvent.KEYCODE_VOLUME_DOWN -> ebWebView.isVerticalRead
-            else -> !ebWebView.isVerticalRead
-        }
+        val pageUp =
+            when (keyCode) {
+                KeyEvent.KEYCODE_VOLUME_DOWN -> ebWebView.isVerticalRead
+                else -> !ebWebView.isVerticalRead
+            }
         if (pageUp) ebWebView.pageUpWithNoAnimation() else ebWebView.pageDownWithNoAnimation()
     }
 
-    fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
+    fun onKeyLongPress(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             if (config.touch.volumePageTurn) {
                 // Page turning is pausing: drop any page turn still pending
@@ -263,7 +273,10 @@ class KeyHandler(
         return false
     }
 
-    fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+    fun onKeyUp(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             if (config.touch.volumePageTurn) {
                 val wasBackHandled = backHandledKeyCode == keyCode
@@ -299,7 +312,10 @@ class KeyHandler(
         private const val DOUBLE_CLICK_WINDOW_MS = 250L
     }
 
-    private fun handleVolumeKey(keyCode: Int, event: KeyEvent): Boolean {
+    private fun handleVolumeKey(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean {
         if (!config.touch.volumePageTurn) return false
         if (isVolumeTemporarilyDisabled) {
             if (event.repeatCount == 0) extendVolumeDisablePeriod()

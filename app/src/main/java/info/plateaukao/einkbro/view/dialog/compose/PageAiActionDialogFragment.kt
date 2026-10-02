@@ -1,8 +1,8 @@
 package info.plateaukao.einkbro.view.dialog.compose
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -40,7 +40,6 @@ class PageAiActionDialogFragment(
     private val onChatWithWebLongClicked: (() -> Unit)? = null,
     private val onTaskRunnerClicked: (() -> Unit)? = null,
 ) : ComposeDialogFragment() {
-
     init {
         shouldShowInCenter = false
     }
@@ -49,113 +48,115 @@ class PageAiActionDialogFragment(
     @Composable
     override fun Content() {
         Column(
-            modifier = Modifier
-                .width(IntrinsicSize.Max)
-                .verticalScroll(rememberScrollState())
-                .padding(12.dp)
+            modifier =
+                Modifier
+                    .width(IntrinsicSize.Max)
+                    .verticalScroll(rememberScrollState())
+                    .padding(12.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
                     text = stringResource(R.string.page_ai_action_title),
                     style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.onBackground
+                    color = MaterialTheme.colors.onBackground,
                 )
                 Icon(
                     imageVector = Icons.Outlined.Settings,
                     contentDescription = stringResource(R.string.settings),
                     tint = MaterialTheme.colors.onBackground,
-                    modifier = Modifier.clickable {
-                        context?.let { GptActionsActivity.start(it) }
-                        dismiss()
-                    }
+                    modifier =
+                        Modifier.clickable {
+                            context?.let { GptActionsActivity.start(it) }
+                            dismiss()
+                        },
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
             onChatWithWebClicked?.let { handler ->
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                            onClick = {
-                                handler()
-                                composeView.post { dismiss() }
-                            },
-                            onLongClick = {
-                                onChatWithWebLongClicked?.invoke()
-                                composeView.post { dismiss() }
-                            }
-                        )
-                        .padding(vertical = 10.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .combinedClickable(
+                                onClick = {
+                                    handler()
+                                    composeView.post { dismiss() }
+                                },
+                                onLongClick = {
+                                    onChatWithWebLongClicked?.invoke()
+                                    composeView.post { dismiss() }
+                                },
+                            ).padding(vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.Chat,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.onBackground
+                        tint = MaterialTheme.colors.onBackground,
                     )
                     Text(
                         text = stringResource(R.string.chat_with_web),
                         style = MaterialTheme.typography.subtitle1,
-                        color = MaterialTheme.colors.onBackground
+                        color = MaterialTheme.colors.onBackground,
                     )
                 }
             }
             onTaskRunnerClicked?.let { handler ->
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            handler()
-                            composeView.post { dismiss() }
-                        }
-                        .padding(vertical = 10.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                handler()
+                                composeView.post { dismiss() }
+                            }.padding(vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.PlayArrow,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.onBackground
+                        tint = MaterialTheme.colors.onBackground,
                     )
                     Text(
                         text = stringResource(R.string.task_menu_title),
                         style = MaterialTheme.typography.subtitle1,
-                        color = MaterialTheme.colors.onBackground
+                        color = MaterialTheme.colors.onBackground,
                     )
                 }
             }
             actions.forEach { action ->
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                            onClick = {
-                                onActionClicked(action)
-                                composeView.post { dismiss() }
-                            },
-                            onLongClick = {
-                                onActionLongClicked?.invoke(action)
-                                composeView.post { dismiss() }
-                            }
-                        )
-                        .padding(vertical = 10.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .combinedClickable(
+                                onClick = {
+                                    onActionClicked(action)
+                                    composeView.post { dismiss() }
+                                },
+                                onLongClick = {
+                                    onActionLongClicked?.invoke(action)
+                                    composeView.post { dismiss() }
+                                },
+                            ).padding(vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
                         painter = painterResource(id = actionIconRes(action)),
                         contentDescription = null,
-                        tint = MaterialTheme.colors.onBackground
+                        tint = MaterialTheme.colors.onBackground,
                     )
                     Text(
                         text = action.name,
                         style = MaterialTheme.typography.subtitle1,
-                        color = MaterialTheme.colors.onBackground
+                        color = MaterialTheme.colors.onBackground,
                     )
                 }
             }
@@ -163,8 +164,9 @@ class PageAiActionDialogFragment(
     }
 
     private fun actionIconRes(action: ChatGPTActionInfo): Int {
-        val actionType = action.actionType.takeIf { it != GptActionType.Default }
-            ?: GptActionType.OpenAi
+        val actionType =
+            action.actionType.takeIf { it != GptActionType.Default }
+                ?: GptActionType.OpenAi
         return when (actionType) {
             GptActionType.OpenAi -> R.drawable.ic_chat_gpt
             GptActionType.SelfHosted -> R.drawable.ic_ollama

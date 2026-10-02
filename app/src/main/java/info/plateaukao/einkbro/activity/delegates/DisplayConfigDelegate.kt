@@ -125,8 +125,11 @@ class DisplayConfigDelegate(
     }
 
     private fun changeFontSize(size: Int) {
-        if (state.ebWebView.shouldUseReaderFont()) config.display.readerFontSize = size
-        else config.display.fontSize = size
+        if (state.ebWebView.shouldUseReaderFont()) {
+            config.display.readerFontSize = size
+        } else {
+            config.display.fontSize = size
+        }
     }
 
     private fun applyLocaleInPlace() {

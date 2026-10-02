@@ -22,8 +22,7 @@ class WebViewTranslationHelper(
         isTranslateByParagraph = true
     }
 
-    fun addGoogleTranslation() =
-        webView.jsBridge.addGoogleTranslation(config.translation.preferredTranslateLanguageString)
+    fun addGoogleTranslation() = webView.jsBridge.addGoogleTranslation(config.translation.preferredTranslateLanguageString)
 
     fun hideTranslateContext() = webView.jsBridge.hideTranslateContext(config.translation.translationMode)
 }

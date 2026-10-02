@@ -33,7 +33,6 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-
 class OverviewDialogController(
     private val context: Context,
     private val albumList: MutableState<List<Album>>,
@@ -78,22 +77,35 @@ class OverviewDialogController(
                     albumList = albumList,
                     albumFocusIndex = albumFocusIndex,
                     onTabIconClick = this@OverviewDialogController::openHomePage,
-                    onTabClick = { hide(); it.showOrJumpToTop() },
+                    onTabClick = {
+                        hide()
+                        it.showOrJumpToTop()
+                    },
                     onTabLongClick = { it.remove() },
                     records = recordList,
                     onHistoryIconClick = { openHistoryPage() },
                     onHistoryItemClick = this@OverviewDialogController::clickHistoryItem,
                     onHistoryItemLongClick = this@OverviewDialogController::showHistoryContextMenu,
                     addIncognitoTab = addIncognitoTabAction,
-                    addTab = { hide(); addEmptyTabAction() },
+                    addTab = {
+                        hide()
+                        addEmptyTabAction()
+                    },
                     closePanel = { hide() },
-                    onDeleteAction = { hide(); deleteAllItems() },
-                    onCloseAllTabs = { hide(); closeAllTabsAction() },
+                    onDeleteAction = {
+                        hide()
+                        deleteAllItems()
+                    },
+                    onCloseAllTabs = {
+                        hide()
+                        closeAllTabsAction()
+                    },
                     launchNewBrowserAction = {
-                        hide(); IntentUnit.launchNewBrowser(
-                        context as Activity,
-                        config.favoriteUrl
-                    )
+                        hide()
+                        IntentUnit.launchNewBrowser(
+                            context as Activity,
+                            config.favoriteUrl,
+                        )
                     },
                 )
             }
@@ -121,8 +133,9 @@ class OverviewDialogController(
             config.addRecentBookmark(
                 Bookmark(
                     record.title
-                        ?: "no title", record.url
-                )
+                        ?: "no title",
+                    record.url,
+                ),
             )
         }
         hide()
@@ -149,18 +162,19 @@ class OverviewDialogController(
         }
     }
 
-    private suspend fun getLatestRecords(amount: Int, shouldReverse: Boolean): List<Record> {
+    private suspend fun getLatestRecords(
+        amount: Int,
+        shouldReverse: Boolean,
+    ): List<Record> {
         val originalList = recordDb.listEntries(false, amount)
         return if (!shouldReverse) originalList.reversed() else originalList
     }
 
-    private fun isWideLayout(): Boolean =
-        ViewUnit.isLandscape(context) || ViewUnit.isTablet(context)
+    private fun isWideLayout(): Boolean = ViewUnit.isLandscape(context) || ViewUnit.isTablet(context)
 
     private fun openHomePage() {
         updateState(showHistory = false)
     }
-
 
     private fun deleteAllItems() {
         dialogManager.showOkCancelDialog(
@@ -170,10 +184,14 @@ class OverviewDialogController(
                     BrowserUnit.clearHistory(context)
                 }
                 hide()
-            })
+            },
+        )
     }
 
-    private fun showHistoryContextMenu(record: Record, position: Point) {
+    private fun showHistoryContextMenu(
+        record: Record,
+        position: Point,
+    ) {
         val parentFragmentManager = (context as FragmentActivity).supportFragmentManager
         BookmarkContextMenuDlgFragment(
             Bookmark(record.title ?: "no title", record.url),

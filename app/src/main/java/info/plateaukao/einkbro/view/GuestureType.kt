@@ -2,7 +2,10 @@ package info.plateaukao.einkbro.view
 
 import info.plateaukao.einkbro.R
 
-enum class GestureType(val value: String, val resId: Int) {
+enum class GestureType(
+    val value: String,
+    val resId: Int,
+) {
     NothingHappen("01", R.string.nothing),
     Forward("02", R.string.forward_in_history),
     Backward("03", R.string.back_in_history),
@@ -29,8 +32,6 @@ enum class GestureType(val value: String, val resId: Int) {
     ;
 
     companion object {
-        fun from(value: String): GestureType =
-            values().firstOrNull { it.value == value } ?: NothingHappen
+        fun from(value: String): GestureType = values().firstOrNull { it.value == value } ?: NothingHappen
     }
-
 }

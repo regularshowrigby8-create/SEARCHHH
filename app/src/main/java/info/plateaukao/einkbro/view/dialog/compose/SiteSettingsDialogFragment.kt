@@ -2,12 +2,11 @@ package info.plateaukao.einkbro.view.dialog.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,6 +54,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
@@ -66,9 +66,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import info.plateaukao.einkbro.R
-import info.plateaukao.einkbro.view.compose.ebItemFrame
-import info.plateaukao.einkbro.view.compose.themedButtonBorder
-import info.plateaukao.einkbro.view.compose.themedItemShape
 import info.plateaukao.einkbro.browser.AdBlock
 import info.plateaukao.einkbro.browser.Cookie
 import info.plateaukao.einkbro.browser.Javascript
@@ -77,6 +74,9 @@ import info.plateaukao.einkbro.database.SiteRuleKey
 import info.plateaukao.einkbro.preference.DomainConfigManager
 import info.plateaukao.einkbro.preference.FontType
 import info.plateaukao.einkbro.preference.TranslationMode
+import info.plateaukao.einkbro.view.compose.ebItemFrame
+import info.plateaukao.einkbro.view.compose.themedButtonBorder
+import info.plateaukao.einkbro.view.compose.themedItemShape
 import org.koin.core.component.inject
 
 const val DEFAULT_DESKTOP_VIEWPORT_WIDTH = 1280
@@ -97,10 +97,11 @@ class SiteSettingsDialogFragment(
     override fun Content() {
         val maxDialogHeight = (LocalConfiguration.current.screenHeightDp * 0.85f).dp
         SiteSettingsContent(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .widthIn(min = 300.dp, max = 420.dp)
-                .heightIn(max = maxDialogHeight),
+            modifier =
+                Modifier
+                    .fillMaxWidth(0.9f)
+                    .widthIn(min = 300.dp, max = 420.dp)
+                    .heightIn(max = maxDialogHeight),
             url = url,
             domainConfigs = config.domain,
             globalFontSize = config.display.fontSize,
@@ -172,9 +173,10 @@ fun SiteSettingsContent(
     val host = SiteRuleKey.hostOfUrl(url).orEmpty()
     val candidateKeys = remember(url) { SiteRuleKey.candidateKeysFor(url) }
     // Open on the rule that is actually in effect for this page.
-    val initialKey = remember(url) {
-        domainConfigs.matchingKeys(url).firstOrNull() ?: candidateKeys.firstOrNull() ?: host
-    }
+    val initialKey =
+        remember(url) {
+            domainConfigs.matchingKeys(url).firstOrNull() ?: candidateKeys.firstOrNull() ?: host
+        }
     var selectedKey by remember(url) { mutableStateOf(initialKey) }
 
     val rule = remember(selectedKey) { domainConfigs.getRuleOrNew(selectedKey) }
@@ -182,12 +184,14 @@ fun SiteSettingsContent(
     val isHostRule = SiteRuleKey.pathOf(selectedKey).isEmpty()
     // What this rule inherits: the chain for the rule's own scope, minus itself.
     val scopeUrl = "https://$selectedKey"
-    val parentRules = remember(selectedKey) {
-        domainConfigs.matchingRules(scopeUrl).filter { it.domain != selectedKey }
-    }
+    val parentRules =
+        remember(selectedKey) {
+            domainConfigs.matchingRules(scopeUrl).filter { it.domain != selectedKey }
+        }
     val inherited = remember(selectedKey) { domainConfigs.getInheritedConfig(scopeUrl, selectedKey) }
 
     val defaultHint = stringResource(R.string.default_value_hint)
+
     @Composable
     fun hintFor(field: (DomainConfigurationData) -> Any?): String {
         val source = parentRules.firstOrNull { field(it) != null } ?: return defaultHint
@@ -234,29 +238,30 @@ fun SiteSettingsContent(
     var postLoadJs by remember(selectedKey) { mutableStateOf(rule.postLoadJavascript.orEmpty()) }
     var postLoadJsEnabled by remember(selectedKey) { mutableStateOf(rule.postLoadJavascriptEnabled) }
 
-    fun buildRule() = rule.copy(
-        fontSize = fontSize,
-        fontType = fontType,
-        boldFontStyle = boldFont,
-        blackFontStyle = blackFont,
-        fontBoldness = fontBoldness,
-        shouldUseWhiteBackground = whiteBackground,
-        shouldInvertColor = invertColor,
-        webViewDarkMode = webViewDarkMode,
-        desktopMode = desktopMode,
-        desktopViewportWidth = viewportWidth,
-        enableJavascript = javascript,
-        enableAdBlock = adBlock,
-        enableCookies = cookies,
-        enableImages = images,
-        shouldTranslateSite = translateSite,
-        translationMode = translationMode,
-        pageReservedOffset = pageReservedOffset?.ifBlank { null },
-        customCss = customCss.ifBlank { null },
-        postLoadJavascript = postLoadJs.ifBlank { null },
-        customCssEnabled = customCssEnabled,
-        postLoadJavascriptEnabled = postLoadJsEnabled,
-    )
+    fun buildRule() =
+        rule.copy(
+            fontSize = fontSize,
+            fontType = fontType,
+            boldFontStyle = boldFont,
+            blackFontStyle = blackFont,
+            fontBoldness = fontBoldness,
+            shouldUseWhiteBackground = whiteBackground,
+            shouldInvertColor = invertColor,
+            webViewDarkMode = webViewDarkMode,
+            desktopMode = desktopMode,
+            desktopViewportWidth = viewportWidth,
+            enableJavascript = javascript,
+            enableAdBlock = adBlock,
+            enableCookies = cookies,
+            enableImages = images,
+            shouldTranslateSite = translateSite,
+            translationMode = translationMode,
+            pageReservedOffset = pageReservedOffset?.ifBlank { null },
+            customCss = customCss.ifBlank { null },
+            postLoadJavascript = postLoadJs.ifBlank { null },
+            customCssEnabled = customCssEnabled,
+            postLoadJavascriptEnabled = postLoadJsEnabled,
+        )
 
     val overrideCount = buildRule().overrideCount
 
@@ -297,9 +302,10 @@ fun SiteSettingsContent(
         HorizontalSeparator()
 
         Column(
-            modifier = Modifier
-                .weight(1f, fill = false)
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .weight(1f, fill = false)
+                    .verticalScroll(rememberScrollState()),
         ) {
             SectionHeader(stringResource(R.string.setting_section_typography))
 
@@ -311,7 +317,7 @@ fun SiteSettingsContent(
                 min = 50,
                 max = 250,
                 step = 10,
-                displayValue = { "${it}%" },
+                displayValue = { "$it%" },
                 fallbackHint = hintFontSize,
                 onValueChange = { fontSize = it },
             )
@@ -424,8 +430,12 @@ fun SiteSettingsContent(
                 enabled = (desktopMode ?: fbDesktopMode),
                 onValueChange = { viewportWidth = it },
                 label = stringResource(R.string.site_force_viewport_width),
-                hint = if (inherited.desktopViewportWidth != null) hintViewportWidth
-                    else stringResource(R.string.site_force_viewport_width_hint),
+                hint =
+                    if (inherited.desktopViewportWidth != null) {
+                        hintViewportWidth
+                    } else {
+                        stringResource(R.string.site_force_viewport_width_hint)
+                    },
             )
 
             NullableTextRow(
@@ -548,37 +558,53 @@ fun SiteSettingsContent(
             if (!isHostRule && ruleExists) {
                 // A path rule with nothing set is pointless, so "reset" removes it.
                 OutlinedButton(
-                border = themedButtonBorder(),
-                shape = themedItemShape(),
+                    border = themedButtonBorder(),
+                    shape = themedItemShape(),
                     onClick = { onDeleteRule(selectedKey) },
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colors.onBackground,
-                    ),
+                    colors =
+                        ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colors.onBackground,
+                        ),
                 ) {
                     Text(stringResource(R.string.site_settings_remove_rule), fontSize = 13.sp)
                 }
             } else {
                 OutlinedButton(
-                border = themedButtonBorder(),
-                shape = themedItemShape(),
+                    border = themedButtonBorder(),
+                    shape = themedItemShape(),
                     onClick = {
-                        fontSize = null; fontType = null; boldFont = null; blackFont = null
-                        fontBoldness = null; desktopMode = null; viewportWidth = null; javascript = null
-                        adBlock = null; cookies = null
-                        whiteBackground = null; invertColor = null
-                        translateSite = null; translationMode = null
+                        fontSize = null
+                        fontType = null
+                        boldFont = null
+                        blackFont = null
+                        fontBoldness = null
+                        desktopMode = null
+                        viewportWidth = null
+                        javascript = null
+                        adBlock = null
+                        cookies = null
+                        whiteBackground = null
+                        invertColor = null
+                        translateSite = null
+                        translationMode = null
                         pageReservedOffset = null
-                        customCss = ""; postLoadJs = ""
-                        customCssEnabled = true; postLoadJsEnabled = true
+                        customCss = ""
+                        postLoadJs = ""
+                        customCssEnabled = true
+                        postLoadJsEnabled = true
                     },
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colors.onBackground,
-                    ),
+                    colors =
+                        ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colors.onBackground,
+                        ),
                 ) {
                     Text(
                         stringResource(
-                            if (isHostRule) R.string.reset_to_global
-                            else R.string.site_settings_reset_to_inherited
+                            if (isHostRule) {
+                                R.string.reset_to_global
+                            } else {
+                                R.string.site_settings_reset_to_inherited
+                            },
                         ),
                         fontSize = 13.sp,
                     )
@@ -595,10 +621,11 @@ fun SiteSettingsContent(
                         onSave(updated)
                     }
                 },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.onBackground,
-                    contentColor = MaterialTheme.colors.background,
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colors.onBackground,
+                        contentColor = MaterialTheme.colors.background,
+                    ),
             ) {
                 Text(stringResource(android.R.string.ok), fontSize = 13.sp)
             }
@@ -607,7 +634,10 @@ fun SiteSettingsContent(
 }
 
 @Composable
-private fun DialogTitle(host: String, overrideCount: Int) {
+private fun DialogTitle(
+    host: String,
+    overrideCount: Int,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -653,8 +683,8 @@ private fun ScopePicker(
         )
         Spacer(Modifier.width(8.dp))
         OutlinedButton(
-                border = themedButtonBorder(),
-                shape = themedItemShape(),
+            border = themedButtonBorder(),
+            shape = themedItemShape(),
             onClick = { expanded = true },
             modifier = Modifier.weight(1f),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = color),
@@ -683,7 +713,10 @@ private fun ScopePicker(
                         key = key,
                         overrideCount = existingByKey[key]?.overrideCount ?: 0,
                         selected = key == selectedKey,
-                        onClick = { onSelect(key); expanded = false },
+                        onClick = {
+                            onSelect(key)
+                            expanded = false
+                        },
                     )
                 }
                 if (otherRules.isNotEmpty()) {
@@ -699,7 +732,10 @@ private fun ScopePicker(
                             key = other.domain,
                             overrideCount = other.overrideCount,
                             selected = other.domain == selectedKey,
-                            onClick = { onSelect(other.domain); expanded = false },
+                            onClick = {
+                                onSelect(other.domain)
+                                expanded = false
+                            },
                         )
                     }
                 }
@@ -739,18 +775,19 @@ private fun ScopeMenuItem(
 
 @Composable
 private fun OverrideBadge(count: Int) {
-    val text = if (count == 1) {
-        stringResource(R.string.site_settings_overrides_count, count)
-    } else {
-        stringResource(R.string.site_settings_overrides_count_plural, count)
-    }
+    val text =
+        if (count == 1) {
+            stringResource(R.string.site_settings_overrides_count, count)
+        } else {
+            stringResource(R.string.site_settings_overrides_count_plural, count)
+        }
     Box(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.12f),
-                shape = CircleShape,
-            )
-            .padding(horizontal = 10.dp, vertical = 4.dp),
+        modifier =
+            Modifier
+                .background(
+                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.12f),
+                    shape = CircleShape,
+                ).padding(horizontal = 10.dp, vertical = 4.dp),
     ) {
         Text(
             text = text,
@@ -792,14 +829,19 @@ private fun NullableBooleanRow(
 ) {
     val hasOverride = value != null
     val effectiveValue = value ?: globalValue
-    val color = if (hasOverride) MaterialTheme.colors.onBackground
-        else MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+    val color =
+        if (hasOverride) {
+            MaterialTheme.colors.onBackground
+        } else {
+            MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+        }
     val defaultHint = fallbackHint
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ThemedCheckbox(
@@ -810,16 +852,19 @@ private fun NullableBooleanRow(
         )
         StateIcon(
             isOn = effectiveValue,
-            onIcon = onIcon, offIcon = offIcon,
-            onIconRes = onIconRes, offIconRes = offIconRes,
+            onIcon = onIcon,
+            offIcon = offIcon,
+            onIconRes = onIconRes,
+            offIconRes = offIconRes,
             tint = color,
-            modifier = Modifier.noRippleClickable {
-                if (hasOverride) {
-                    onValueChange(!effectiveValue)
-                } else {
-                    onValueChange(!effectiveValue)
-                }
-            },
+            modifier =
+                Modifier.noRippleClickable {
+                    if (hasOverride) {
+                        onValueChange(!effectiveValue)
+                    } else {
+                        onValueChange(!effectiveValue)
+                    }
+                },
         )
         Spacer(Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1f)) {
@@ -852,16 +897,19 @@ private fun BooleanRow(
     val color = MaterialTheme.colors.onBackground
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .noRippleClickable { onValueChange(!value) },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+                .noRippleClickable { onValueChange(!value) },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         StateIcon(
             isOn = value,
-            onIcon = onIcon, offIcon = offIcon,
-            onIconRes = onIconRes, offIconRes = offIconRes,
+            onIcon = onIcon,
+            offIcon = offIcon,
+            onIconRes = onIconRes,
+            offIconRes = offIconRes,
             tint = color,
         )
         Spacer(Modifier.width(8.dp))
@@ -919,8 +967,12 @@ private fun <T> NestedNullableDropdown(
     val hasOverride = value != null
     val effectiveValue = value ?: globalValue
     var expanded by remember { mutableStateOf(false) }
-    val color = if (enabled && hasOverride) MaterialTheme.colors.onBackground
-        else MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+    val color =
+        if (enabled && hasOverride) {
+            MaterialTheme.colors.onBackground
+        } else {
+            MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+        }
 
     NestedRail(enabled = enabled) {
         Row(
@@ -976,7 +1028,10 @@ private fun <T> NestedNullableDropdown(
 }
 
 @Composable
-private fun Modifier.noRippleClickable(enabled: Boolean = true, onClick: () -> Unit): Modifier =
+private fun Modifier.noRippleClickable(
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+): Modifier =
     this.clickable(
         interactionSource = remember { MutableInteractionSource() },
         indication = null,
@@ -1002,14 +1057,19 @@ private fun NullableIntStepperRow(
 ) {
     val hasOverride = value != null
     val effectiveValue = value ?: globalValue
-    val color = if (hasOverride) MaterialTheme.colors.onBackground
-        else MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+    val color =
+        if (hasOverride) {
+            MaterialTheme.colors.onBackground
+        } else {
+            MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+        }
     val defaultHint = fallbackHint
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ThemedCheckbox(
@@ -1058,8 +1118,12 @@ private fun NestedNullableIntStepper(
 ) {
     val hasOverride = value != null
     val effectiveValue = value ?: globalValue
-    val color = if (enabled && hasOverride) MaterialTheme.colors.onBackground
-        else MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+    val color =
+        if (enabled && hasOverride) {
+            MaterialTheme.colors.onBackground
+        } else {
+            MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+        }
 
     NestedRail(enabled = enabled) {
         Row(
@@ -1110,8 +1174,12 @@ private fun Stepper(
     displayValue: (Int) -> String,
     onValueChange: (Int) -> Unit,
 ) {
-    val tint = if (enabled) MaterialTheme.colors.onBackground
-        else MaterialTheme.colors.onBackground.copy(alpha = 0.3f)
+    val tint =
+        if (enabled) {
+            MaterialTheme.colors.onBackground
+        } else {
+            MaterialTheme.colors.onBackground.copy(alpha = 0.3f)
+        }
     Row(verticalAlignment = Alignment.CenterVertically) {
         StepperButton(
             icon = Icons.Outlined.Remove,
@@ -1147,9 +1215,10 @@ private fun StepperButton(
     onClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .size(32.dp)
-            .clickable(enabled = enabled, onClick = onClick),
+        modifier =
+            Modifier
+                .size(32.dp)
+                .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -1177,14 +1246,19 @@ private fun <T> NullableDropdownRow(
     val hasOverride = value != null
     val effectiveValue = value ?: globalValue
     var expanded by remember { mutableStateOf(false) }
-    val color = if (hasOverride) MaterialTheme.colors.onBackground
-        else MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+    val color =
+        if (hasOverride) {
+            MaterialTheme.colors.onBackground
+        } else {
+            MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+        }
     val defaultHint = fallbackHint
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ThemedCheckbox(
@@ -1204,13 +1278,14 @@ private fun <T> NullableDropdownRow(
             }
         }
         OutlinedButton(
-                border = themedButtonBorder(),
-                shape = themedItemShape(),
+            border = themedButtonBorder(),
+            shape = themedItemShape(),
             onClick = { if (hasOverride) expanded = true },
             enabled = hasOverride,
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colors.onBackground,
-            ),
+            colors =
+                ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colors.onBackground,
+                ),
         ) {
             Text(optionLabel(effectiveValue), fontSize = 12.sp)
             DropdownMenu(
@@ -1245,13 +1320,18 @@ private fun NullableTextRow(
 ) {
     val hasOverride = !value.isNullOrBlank()
     val effectiveValue = value?.takeIf { it.isNotBlank() } ?: globalValue
-    val color = if (hasOverride) MaterialTheme.colors.onBackground
-        else MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+    val color =
+        if (hasOverride) {
+            MaterialTheme.colors.onBackground
+        } else {
+            MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+        }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ThemedCheckbox(
@@ -1302,12 +1382,17 @@ private fun EditTextButtonRow(
 ) {
     // Dim when there is nothing to apply, or the saved script is switched off.
     val active = hasContent && enabled
-    val color = if (active) MaterialTheme.colors.onBackground
-        else MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+    val color =
+        if (active) {
+            MaterialTheme.colors.onBackground
+        } else {
+            MaterialTheme.colors.onBackground.copy(alpha = 0.55f)
+        }
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Temporarily disable the script without deleting it. Always shown so
@@ -1316,14 +1401,15 @@ private fun EditTextButtonRow(
             checked = active,
             enabled = hasContent,
             onCheckedChange = onEnabledChange,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colors.onBackground,
-                checkedTrackColor = MaterialTheme.colors.onBackground,
-                uncheckedThumbColor = Color.Gray,
-                uncheckedTrackColor = Color.Gray,
-                disabledUncheckedThumbColor = Color.LightGray,
-                disabledUncheckedTrackColor = Color.LightGray,
-            ),
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colors.onBackground,
+                    checkedTrackColor = MaterialTheme.colors.onBackground,
+                    uncheckedThumbColor = Color.Gray,
+                    uncheckedTrackColor = Color.Gray,
+                    disabledUncheckedThumbColor = Color.LightGray,
+                    disabledUncheckedTrackColor = Color.LightGray,
+                ),
         )
         Spacer(Modifier.width(8.dp))
         Text(
@@ -1333,8 +1419,8 @@ private fun EditTextButtonRow(
             color = color,
         )
         OutlinedButton(
-                border = themedButtonBorder(),
-                shape = themedItemShape(),
+            border = themedButtonBorder(),
+            shape = themedItemShape(),
             onClick = onClick,
             colors = ButtonDefaults.outlinedButtonColors(contentColor = color),
         ) {
@@ -1352,22 +1438,33 @@ private fun EditTextButtonRow(
  * children to their min intrinsic width inside verticalScroll.
  */
 @Composable
-private fun NestedRail(enabled: Boolean, content: @Composable () -> Unit) {
-    val railColor = if (enabled) MaterialTheme.colors.onBackground.copy(alpha = 0.35f)
-        else MaterialTheme.colors.onBackground.copy(alpha = 0.15f)
+private fun NestedRail(
+    enabled: Boolean,
+    content: @Composable () -> Unit,
+) {
+    val railColor =
+        if (enabled) {
+            MaterialTheme.colors.onBackground.copy(alpha = 0.35f)
+        } else {
+            MaterialTheme.colors.onBackground.copy(alpha = 0.15f)
+        }
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .drawBehind {
-                val railX = 20.dp.toPx()
-                val railW = 2.dp.toPx()
-                drawRect(
-                    color = railColor,
-                    topLeft = androidx.compose.ui.geometry.Offset(railX, 0f),
-                    size = androidx.compose.ui.geometry.Size(railW, size.height),
-                )
-            }
-            .padding(start = 38.dp, end = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .drawBehind {
+                    val railX = 20.dp.toPx()
+                    val railW = 2.dp.toPx()
+                    drawRect(
+                        color = railColor,
+                        topLeft =
+                            androidx.compose.ui.geometry
+                                .Offset(railX, 0f),
+                        size =
+                            androidx.compose.ui.geometry
+                                .Size(railW, size.height),
+                    )
+                }.padding(start = 38.dp, end = 4.dp),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             content()

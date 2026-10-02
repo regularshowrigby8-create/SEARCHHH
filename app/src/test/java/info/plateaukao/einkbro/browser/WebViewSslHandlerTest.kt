@@ -25,10 +25,11 @@ class WebViewSslHandlerTest {
                 val error = mockk<SslError>()
                 every { error.primaryError } returns reason
                 val messages = mutableListOf<String>()
-                val subject = WebViewSslHandler(mockk<Context>()) { _, message ->
-                    verify(exactly = 1) { handler.cancel() }
-                    messages.add(message)
-                }
+                val subject =
+                    WebViewSslHandler(mockk<Context>()) { _, message ->
+                        verify(exactly = 1) { handler.cancel() }
+                        messages.add(message)
+                    }
                 subject.onReceivedSslError(mockk<WebView>(), handler, error)
                 verify(exactly = 1) { handler.cancel() }
                 verify(exactly = 0) { handler.proceed() }

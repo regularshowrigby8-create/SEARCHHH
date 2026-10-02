@@ -19,8 +19,9 @@ import java.util.WeakHashMap
 /**
  * Created by Edsuns@qq.com on 2021/7/29.
  */
-internal class AdFilterImpl(appContext: Context) : AdFilter {
-
+internal class AdFilterImpl(
+    appContext: Context,
+) : AdFilter {
     init {
         // Injected-JS sources live in module assets; wire up the loader before
         // anything can touch ElementHiding/Scriptlet/ScriptInjection.
@@ -84,8 +85,9 @@ internal class AdFilterImpl(appContext: Context) : AdFilter {
             return FilterResult(null, url, null)
         }
 
-        val documentUrl = mainFrameUrls[webView]
-            ?: return FilterResult(null, url, null)
+        val documentUrl =
+            mainFrameUrls[webView]
+                ?: return FilterResult(null, url, null)
 
         val resourceType = ResourceType.from(request)
 
@@ -120,7 +122,10 @@ internal class AdFilterImpl(appContext: Context) : AdFilter {
         webView.addJavascriptInterface(scriptlet, ScriptInjection.bridgeNameFor(scriptlet))
     }
 
-    override fun performScript(webView: WebView?, url: String?) {
+    override fun performScript(
+        webView: WebView?,
+        url: String?,
+    ) {
         if (webView != null && !url.isNullOrEmpty()) {
             mainFrameUrls[webView] = url
         }

@@ -15,7 +15,7 @@ class SplitSearchViewModel : ViewModel() {
         if (stringFormat.contains("=")) {
             val url = stringFormat.format(text, "UTF-8")
             return url.split("=")[0] + "=" +
-                    URLEncoder.encode(url.split("=")[1], "UTF-8")
+                URLEncoder.encode(url.split("=")[1], "UTF-8")
         } else {
             return state?.stringFormat?.format(URLEncoder.encode(text, "UTF-8")).orEmpty()
         }

@@ -11,6 +11,6 @@ data class Bookmark(
     var parent: Int = 0,
     var order: Int = 0,
 ) {
-    @PrimaryKey (autoGenerate = true)
+    @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 }

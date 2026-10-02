@@ -4,7 +4,10 @@ import android.print.PrintAttributes
 import androidx.compose.ui.graphics.Color
 import info.plateaukao.einkbro.R
 
-enum class PaperSize(val sizeString: String, val mediaSize: PrintAttributes.MediaSize) {
+enum class PaperSize(
+    val sizeString: String,
+    val mediaSize: PrintAttributes.MediaSize,
+) {
     ISO_13("A4 (13\")", PrintAttributes.MediaSize.ISO_A4),
     SIZE_10("A5 (10\")", PrintAttributes.MediaSize.ISO_A5),
     ISO_67("Hisense A7 (6.7\")", PrintAttributes.MediaSize.PRC_5),
@@ -12,11 +15,17 @@ enum class PaperSize(val sizeString: String, val mediaSize: PrintAttributes.Medi
 }
 
 enum class FabPosition {
-    Right, Left, Center, NotShow, Custom
+    Right,
+    Left,
+    Center,
+    NotShow,
+    Custom,
 }
 
 @kotlinx.serialization.Serializable
-enum class TranslationMode(val labelResId: Int) {
+enum class TranslationMode(
+    val labelResId: Int,
+) {
     GOOGLE_URL(R.string.google_full_page),
     GOOGLE_IN_PLACE(R.string.google_in_place),
     TRANSLATE_BY_PARAGRAPH(R.string.translate_by_paragraph),
@@ -29,26 +38,35 @@ enum class TranslationMode(val labelResId: Int) {
 }
 
 @kotlinx.serialization.Serializable
-enum class FontType(val resId: Int) {
+enum class FontType(
+    val resId: Int,
+) {
     SYSTEM_DEFAULT(R.string.system_default),
     SERIF(R.string.serif),
     GOOGLE_SERIF(R.string.googleserif),
     CUSTOM(R.string.custom_font),
     TC_IANSUI(R.string.iansui_tc),
     JA_MINCHO(R.string.mincho_ja),
-    KO_GAMJA(R.string.gamja_flower_ko)
+    KO_GAMJA(R.string.gamja_flower_ko),
 }
 
 enum class DarkMode {
-    SYSTEM, FORCE_ON, DISABLED
+    SYSTEM,
+    FORCE_ON,
+    DISABLED,
 }
 
 // Persisted by ordinal; only append new entries.
 enum class NewTabBehavior {
-    START_INPUT, SHOW_HOME, SHOW_RECENT_BOOKMARKS, SHOW_START_PAGE
+    START_INPUT,
+    SHOW_HOME,
+    SHOW_RECENT_BOOKMARKS,
+    SHOW_START_PAGE,
 }
 
-enum class ShareLongPressAction(val labelResId: Int) {
+enum class ShareLongPressAction(
+    val labelResId: Int,
+) {
     COPY_LINK(R.string.share_long_press_copy_link),
     LAST_SHARE_TARGET(R.string.share_long_press_last_target),
 }
@@ -96,10 +114,15 @@ enum class TranslationTextStyle(
 }
 
 enum class SaveHistoryMode {
-    SAVE_WHEN_OPEN, SAVE_WHEN_CLOSE, DISABLED
+    SAVE_WHEN_OPEN,
+    SAVE_WHEN_CLOSE,
+    DISABLED,
 }
 
-enum class EinkImageAdjustment(val strength: Int, val labelResId: Int) {
+enum class EinkImageAdjustment(
+    val strength: Int,
+    val labelResId: Int,
+) {
     OFF(0, R.string.eink_image_off),
     LEVEL_10(10, R.string.eink_image_10),
     LEVEL_30(30, R.string.eink_image_30),
@@ -111,13 +134,18 @@ enum class EinkImageAdjustment(val strength: Int, val labelResId: Int) {
 // DEEP re-encodes images at the network layer (full pipeline incl. dithering);
 // FAST injects a CSS filter instead: no CPU/re-encode cost, and it also covers
 // data:/blob: URIs and JS-generated images, but can't dither.
-enum class EinkImageMode(val labelResId: Int) {
+enum class EinkImageMode(
+    val labelResId: Int,
+) {
     DEEP(R.string.eink_image_mode_deep),
     FAST(R.string.eink_image_mode_fast),
 }
 
 enum class ToolbarPosition {
-    Bottom, Top, Left, Right
+    Bottom,
+    Top,
+    Left,
+    Right,
 }
 
 // UI accent color themes. Persisted by ordinal; only append new entries.
@@ -133,28 +161,46 @@ enum class UiTheme(
 ) {
     CLASSIC(Color.Black, Color(0xFFAAAAAA)),
     LIGHT_BLUE(
-        Color(0xFF4A90D9), Color(0xFF8FBCE8),
-        Color(0xFFF3F7FC), Color(0xFF1B3A5C), Color(0xFF9FB6CC),
+        Color(0xFF4A90D9),
+        Color(0xFF8FBCE8),
+        Color(0xFFF3F7FC),
+        Color(0xFF1B3A5C),
+        Color(0xFF9FB6CC),
     ),
     DARK_BLUE(
-        Color(0xFF16437E), Color(0xFF7A9CC6),
-        Color(0xFFF2F5FA), Color(0xFF122F58), Color(0xFF97A8C0),
+        Color(0xFF16437E),
+        Color(0xFF7A9CC6),
+        Color(0xFFF2F5FA),
+        Color(0xFF122F58),
+        Color(0xFF97A8C0),
     ),
     GREEN(
-        Color(0xFF2E7D32), Color(0xFF81C784),
-        Color(0xFFF2F8F2), Color(0xFF1B421D), Color(0xFF9DB89E),
+        Color(0xFF2E7D32),
+        Color(0xFF81C784),
+        Color(0xFFF2F8F2),
+        Color(0xFF1B421D),
+        Color(0xFF9DB89E),
     ),
     SEPIA(
-        Color(0xFF795548), Color(0xFFBCAAA4),
-        Color(0xFFF7F1E3), Color(0xFF3E2C23), Color(0xFFB3A79B),
+        Color(0xFF795548),
+        Color(0xFFBCAAA4),
+        Color(0xFFF7F1E3),
+        Color(0xFF3E2C23),
+        Color(0xFFB3A79B),
     ),
     PURPLE(
-        Color(0xFF673AB7), Color(0xFFB39DDB),
-        Color(0xFFF6F3FB), Color(0xFF32205C), Color(0xFFA99BC4),
+        Color(0xFF673AB7),
+        Color(0xFFB39DDB),
+        Color(0xFFF6F3FB),
+        Color(0xFF32205C),
+        Color(0xFFA99BC4),
     ),
     RED(
-        Color(0xFFC62828), Color(0xFFE57373),
-        Color(0xFFFBF3F2), Color(0xFF571A17), Color(0xFFC09A98),
+        Color(0xFFC62828),
+        Color(0xFFE57373),
+        Color(0xFFFBF3F2),
+        Color(0xFF571A17),
+        Color(0xFFC09A98),
     ),
 
     // Colors ignored: the palette is derived from DisplayConfig.customThemeColor.
@@ -172,8 +218,11 @@ data class ThemePalette(
 )
 
 fun UiTheme.palette(customColor: Color): ThemePalette =
-    if (this == UiTheme.CUSTOM) deriveThemePalette(customColor)
-    else ThemePalette(accent, accentDark, background, onBackground, onBackgroundDark)
+    if (this == UiTheme.CUSTOM) {
+        deriveThemePalette(customColor)
+    } else {
+        ThemePalette(accent, accentDark, background, onBackground, onBackgroundDark)
+    }
 
 /**
  * Derives a readable palette from an arbitrary base color: the accent is
@@ -195,10 +244,15 @@ fun deriveThemePalette(base: Color): ThemePalette {
     val h = hsv[0]
     val s = hsv[1]
     val isGrayish = s < 0.08f
-    fun make(hue: Float, sat: Float, value: Float) = Color(
+
+    fun make(
+        hue: Float,
+        sat: Float,
+        value: Float,
+    ) = Color(
         android.graphics.Color.HSVToColor(
-            floatArrayOf(hue, sat.coerceIn(0f, 1f), value.coerceIn(0f, 1f))
-        )
+            floatArrayOf(hue, sat.coerceIn(0f, 1f), value.coerceIn(0f, 1f)),
+        ),
     )
     return ThemePalette(
         // visible on white: keep it saturated and not too bright
@@ -227,21 +281,29 @@ enum class UiBorder(
     val itemRadiusDp: Float,
 ) {
     NONE(0f, 16f, 12f),
+
     // the original 1dp look
     CLASSIC(1f, 5f, 7f),
+
     // pill / very round
     ROUND(1f, 16f, 14f),
+
     // sharp corners with a bold stroke
     SHARP(2f, 0f, 0f),
+
     // print-like double frame
     PAPER(1f, 10f, 8f),
     DASHED(1.5f, 6f, 6f),
+
     // postage-stamp scalloped edge
     STAMP(1f, 0f, 0f),
+
     // wobbly hand-drawn line
     SKETCH(1.5f, 4f, 4f),
+
     // thick outer frame with a hairline inner frame
     CERTIFICATE(3f, 0f, 0f),
+
     // rounded frame with a solid offset shadow
     STICKER(1.5f, 14f, 12f),
 }
@@ -252,16 +314,24 @@ enum class UiBorder(
  * uses the adjustable angle/level. Persisted by ordinal; only append.
  */
 enum class UiFill {
-    NONE, TONAL, GRADIENT,
+    NONE,
+    TONAL,
+    GRADIENT,
+
     // repeating patterns drawn in a soft accent blend
-    STRIPES, DOTS, GRAPH, RULED, CROSSHATCH,
+    STRIPES,
+    DOTS,
+    GRAPH,
+    RULED,
+    CROSSHATCH,
 }
 
 /** True for the repeating-pattern fills. */
-fun UiFill.isPattern(): Boolean = when (this) {
-    UiFill.STRIPES, UiFill.DOTS, UiFill.GRAPH, UiFill.RULED, UiFill.CROSSHATCH -> true
-    else -> false
-}
+fun UiFill.isPattern(): Boolean =
+    when (this) {
+        UiFill.STRIPES, UiFill.DOTS, UiFill.GRAPH, UiFill.RULED, UiFill.CROSSHATCH -> true
+        else -> false
+    }
 
 // baseline accent-blend fractions of the gradient fill (the user's gradient
 // level scales them)

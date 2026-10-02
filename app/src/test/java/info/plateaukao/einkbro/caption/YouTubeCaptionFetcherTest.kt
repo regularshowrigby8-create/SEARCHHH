@@ -7,7 +7,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class YouTubeCaptionFetcherTest {
-
     private companion object {
         val captionJson = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
     }
@@ -16,15 +15,15 @@ class YouTubeCaptionFetcherTest {
     fun `extractVideoId handles watch urls`() {
         assertEquals(
             "dQw4w9WgXcQ",
-            YouTubeCaptionFetcher.extractVideoId("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+            YouTubeCaptionFetcher.extractVideoId("https://www.youtube.com/watch?v=dQw4w9WgXcQ"),
         )
         assertEquals(
             "dQw4w9WgXcQ",
-            YouTubeCaptionFetcher.extractVideoId("https://m.youtube.com/watch?v=dQw4w9WgXcQ&t=42s")
+            YouTubeCaptionFetcher.extractVideoId("https://m.youtube.com/watch?v=dQw4w9WgXcQ&t=42s"),
         )
         assertEquals(
             "abc-_123XYZ",
-            YouTubeCaptionFetcher.extractVideoId("https://youtube.com/watch?list=PL1&v=abc-_123XYZ")
+            YouTubeCaptionFetcher.extractVideoId("https://youtube.com/watch?list=PL1&v=abc-_123XYZ"),
         )
     }
 
@@ -32,15 +31,15 @@ class YouTubeCaptionFetcherTest {
     fun `extractVideoId handles short and live urls`() {
         assertEquals(
             "dQw4w9WgXcQ",
-            YouTubeCaptionFetcher.extractVideoId("https://youtu.be/dQw4w9WgXcQ?t=10")
+            YouTubeCaptionFetcher.extractVideoId("https://youtu.be/dQw4w9WgXcQ?t=10"),
         )
         assertEquals(
             "shortId12345",
-            YouTubeCaptionFetcher.extractVideoId("https://www.youtube.com/shorts/shortId12345")
+            YouTubeCaptionFetcher.extractVideoId("https://www.youtube.com/shorts/shortId12345"),
         )
         assertEquals(
             "liveId678901",
-            YouTubeCaptionFetcher.extractVideoId("https://www.youtube.com/live/liveId678901?feature=share")
+            YouTubeCaptionFetcher.extractVideoId("https://www.youtube.com/live/liveId678901?feature=share"),
         )
     }
 
@@ -65,17 +64,17 @@ class YouTubeCaptionFetcherTest {
 
         assertEquals(
             manualEnUs,
-            YouTubeCaptionFetcher.pickTrack(listOf(asrEn, manualJa, manualEnUs), "en")
+            YouTubeCaptionFetcher.pickTrack(listOf(asrEn, manualJa, manualEnUs), "en"),
         )
         // No manual track in the preferred language: any manual track beats ASR.
         assertEquals(
             manualJa,
-            YouTubeCaptionFetcher.pickTrack(listOf(asrEn, manualJa), "zh")
+            YouTubeCaptionFetcher.pickTrack(listOf(asrEn, manualJa), "zh"),
         )
         // Only ASR available: preferred language wins, then first.
         assertEquals(
             asrEn,
-            YouTubeCaptionFetcher.pickTrack(listOf(YouTubeCaptionTrack("url", "ja", "asr"), asrEn), "en")
+            YouTubeCaptionFetcher.pickTrack(listOf(YouTubeCaptionTrack("url", "ja", "asr"), asrEn), "en"),
         )
         assertNull(YouTubeCaptionFetcher.pickTrack(emptyList(), "en"))
     }
@@ -94,15 +93,15 @@ class YouTubeCaptionFetcherTest {
     fun `captionUrl forces json3 format and resolves relative urls`() {
         assertEquals(
             "https://www.youtube.com/api/timedtext?v=abc&lang=en&fmt=json3",
-            YouTubeCaptionFetcher.captionUrl("https://www.youtube.com/api/timedtext?v=abc&lang=en")
+            YouTubeCaptionFetcher.captionUrl("https://www.youtube.com/api/timedtext?v=abc&lang=en"),
         )
         assertEquals(
             "https://www.youtube.com/api/timedtext?v=abc&fmt=json3&lang=en",
-            YouTubeCaptionFetcher.captionUrl("https://www.youtube.com/api/timedtext?v=abc&fmt=srv3&lang=en")
+            YouTubeCaptionFetcher.captionUrl("https://www.youtube.com/api/timedtext?v=abc&fmt=srv3&lang=en"),
         )
         assertEquals(
             "https://www.youtube.com/api/timedtext?v=abc&fmt=json3",
-            YouTubeCaptionFetcher.captionUrl("/api/timedtext?v=abc")
+            YouTubeCaptionFetcher.captionUrl("/api/timedtext?v=abc"),
         )
     }
 }

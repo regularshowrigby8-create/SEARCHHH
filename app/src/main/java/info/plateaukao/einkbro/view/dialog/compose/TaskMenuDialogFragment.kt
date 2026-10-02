@@ -24,7 +24,6 @@ class TaskMenuDialogFragment(
     private val onTemplateClicked: (TaskDescriptor) -> Unit,
     private val onCustomClicked: () -> Unit,
 ) : ComposeDialogFragment() {
-
     init {
         shouldShowInCenter = false
     }
@@ -32,10 +31,11 @@ class TaskMenuDialogFragment(
     @Composable
     override fun Content() {
         Column(
-            modifier = Modifier
-                .width(IntrinsicSize.Max)
-                .verticalScroll(rememberScrollState())
-                .padding(12.dp)
+            modifier =
+                Modifier
+                    .width(IntrinsicSize.Max)
+                    .verticalScroll(rememberScrollState())
+                    .padding(12.dp),
         ) {
             Text(
                 text = stringResource(R.string.task_menu_title),
@@ -45,13 +45,13 @@ class TaskMenuDialogFragment(
             Spacer(Modifier.height(8.dp))
             descriptors.forEach { descriptor ->
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            onTemplateClicked(descriptor)
-                            composeView.post { dismiss() }
-                        }
-                        .padding(vertical = 10.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onTemplateClicked(descriptor)
+                                composeView.post { dismiss() }
+                            }.padding(vertical = 10.dp),
                 ) {
                     Text(
                         text = stringResource(descriptor.displayNameResId),
@@ -67,13 +67,13 @@ class TaskMenuDialogFragment(
             }
             HorizontalSeparator()
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onCustomClicked()
-                        composeView.post { dismiss() }
-                    }
-                    .padding(vertical = 10.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onCustomClicked()
+                            composeView.post { dismiss() }
+                        }.padding(vertical = 10.dp),
             ) {
                 Text(
                     text = stringResource(R.string.task_custom),

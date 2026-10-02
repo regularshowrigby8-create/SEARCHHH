@@ -31,11 +31,12 @@ class HighlightStyleDialogFragment(
     private val anchorPoint: Point? = null,
     val okAction: (HighlightStyle) -> Unit,
     val onDismissAction: () -> Unit = { Unit },
-) : DraggableComposeDialogFragment(), KoinComponent {
+) : DraggableComposeDialogFragment(),
+    KoinComponent {
     @Composable
     override fun Content() {
         HighlightStyleContent(
-            config.display.highlightStyle
+            config.display.highlightStyle,
         ) { highlightStyle ->
             okAction(highlightStyle)
             dismiss()
@@ -50,7 +51,7 @@ class HighlightStyleDialogFragment(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         anchorPoint?.let {
@@ -69,21 +70,21 @@ private fun HighlightStyleContent(
     Row(modifier = Modifier.horizontalScroll(scrollState)) {
         HighlightStyle.values().map { highlightStyle ->
             IconButton(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(40.dp)
-                    .border(
-                        1.dp,
-                        if (style == highlightStyle) MaterialTheme.colors.primary else Color.Transparent
-                    )
-                    .background(MaterialTheme.colors.background),
-                onClick = { onOk(highlightStyle) }
+                modifier =
+                    Modifier
+                        .padding(8.dp)
+                        .size(40.dp)
+                        .border(
+                            1.dp,
+                            if (style == highlightStyle) MaterialTheme.colors.primary else Color.Transparent,
+                        ).background(MaterialTheme.colors.background),
+                onClick = { onOk(highlightStyle) },
             ) {
                 Icon(
                     modifier = Modifier.size(30.dp),
                     imageVector = ImageVector.vectorResource(id = highlightStyle.iconResId),
                     contentDescription = null,
-                    tint = highlightStyle.color ?: MaterialTheme.colors.onBackground
+                    tint = highlightStyle.color ?: MaterialTheme.colors.onBackground,
                 )
             }
         }

@@ -116,7 +116,6 @@ class ValueSettingItem<T>(
     val showValue: Boolean = false,
 ) : SettingItemInterface
 
-
 enum class LinkSettingItem(
     override val titleResId: Int,
     override val iconId: Int = 0,
@@ -135,7 +134,7 @@ enum class LinkSettingItem(
     Contributors(
         R.string.contributors,
         R.drawable.icon_copyright,
-        "https://github.com/plateaukao/einkbro/blob/main/CONTRIBUTORS.md"
+        "https://github.com/plateaukao/einkbro/blob/main/CONTRIBUTORS.md",
     ),
-    Manual(R.string.manual, R.drawable.ic_reader, "https://plateaukao.github.io/einkbro/guide.html#overview")
+    Manual(R.string.manual, R.drawable.ic_reader, "https://plateaukao.github.io/einkbro/guide.html#overview"),
 }

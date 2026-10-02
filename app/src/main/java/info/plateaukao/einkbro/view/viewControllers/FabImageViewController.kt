@@ -4,13 +4,13 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.graphics.Point
+import android.transition.TransitionManager
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import android.transition.TransitionManager
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.FabPosition
@@ -154,7 +154,10 @@ class FabImageViewController(
         }
     }
 
-    private fun customOnTouch(view: View, event: MotionEvent): Boolean {
+    private fun customOnTouch(
+        view: View,
+        event: MotionEvent,
+    ): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_MOVE -> {
                 // need to consider whether top part height is occupied by toolbar
@@ -176,7 +179,10 @@ class FabImageViewController(
         return true
     }
 
-    private fun saveFabCustomPosition(x: Int, y: Int) {
+    private fun saveFabCustomPosition(
+        x: Int,
+        y: Int,
+    ) {
         if (orientation == ORIENTATION_PORTRAIT) {
             config.ui.fabCustomPosition = Point(x, y)
         } else {
@@ -191,10 +197,12 @@ class FabImageViewController(
         val maxHeight = (textView.parent as View).height
 
         if (orientation == ORIENTATION_PORTRAIT &&
-            (config.ui.fabCustomPosition.x > maxWidth || config.ui.fabCustomPosition.y > maxHeight)){
+            (config.ui.fabCustomPosition.x > maxWidth || config.ui.fabCustomPosition.y > maxHeight)
+        ) {
             config.ui.fabCustomPosition = Point(0, 0)
         } else if (orientation == ORIENTATION_LANDSCAPE &&
-            (config.ui.fabCustomPositionLandscape.x > maxWidth || config.ui.fabCustomPositionLandscape.y > maxHeight)){
+            (config.ui.fabCustomPositionLandscape.x > maxWidth || config.ui.fabCustomPositionLandscape.y > maxHeight)
+        ) {
             config.ui.fabCustomPositionLandscape = Point(0, 0)
         }
     }

@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -23,12 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.database.Bookmark
@@ -43,7 +42,6 @@ class BookmarkEditDialog(
     private val okAction: () -> Unit,
     private val cancelAction: () -> Unit,
 ) : ComposeDialogFragment() {
-
     init {
         shouldShowInCenter = true
     }
@@ -60,7 +58,7 @@ class BookmarkEditDialog(
             dismissAction = {
                 cancelAction()
                 dismiss()
-            }
+            },
         )
     }
 }
@@ -79,12 +77,17 @@ fun BookmarkEditContent(
     val dropdownExpanded = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        val folders = bookmarkViewModel.getBookmarkFolders().toMutableList()
-            .apply { add(0, Bookmark("Top", "", true)) }
+        val folders =
+            bookmarkViewModel
+                .getBookmarkFolders()
+                .toMutableList()
+                .apply { add(0, Bookmark("Top", "", true)) }
         if (bookmark.isDirectory) folders.remove(bookmark)
         foldersState.value = folders
-        selectedFolderIndex.value = folders.indexOfFirst { it.id == bookmark.parent }
-            .coerceAtLeast(0)
+        selectedFolderIndex.value =
+            folders
+                .indexOfFirst { it.id == bookmark.parent }
+                .coerceAtLeast(0)
     }
 
     val context = LocalContext.current
@@ -102,82 +105,90 @@ fun BookmarkEditContent(
             color = MaterialTheme.colors.onBackground,
         )
         Column(
-            modifier = Modifier
-                .weight(1f, fill = false)
-                .verticalScroll(rememberScrollState())
-                .padding(top = 8.dp),
+            modifier =
+                Modifier
+                    .weight(1f, fill = false)
+                    .verticalScroll(rememberScrollState())
+                    .padding(top = 8.dp),
         ) {
-                OutlinedTextField(
-                    value = titleState.value,
-                    onValueChange = { titleState.value = it },
-                    label = { Text(stringResource(R.string.dialog_title_hint)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+            OutlinedTextField(
+                value = titleState.value,
+                onValueChange = { titleState.value = it },
+                label = { Text(stringResource(R.string.dialog_title_hint)) },
+                modifier = Modifier.fillMaxWidth(),
+                colors =
+                    TextFieldDefaults.outlinedTextFieldColors(
                         textColor = MaterialTheme.colors.onBackground,
                     ),
-                )
-                if (!bookmark.isDirectory) {
-                    OutlinedTextField(
-                        value = urlState.value,
-                        onValueChange = { urlState.value = it },
-                        label = { Text(stringResource(R.string.dialog_url_hint)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
+            )
+            if (!bookmark.isDirectory) {
+                OutlinedTextField(
+                    value = urlState.value,
+                    onValueChange = { urlState.value = it },
+                    label = { Text(stringResource(R.string.dialog_url_hint)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors =
+                        TextFieldDefaults.outlinedTextFieldColors(
                             textColor = MaterialTheme.colors.onBackground,
                         ),
-                    )
-                }
-                val folders = foldersState.value
-                Row(
-                    modifier = Modifier
+                )
+            }
+            val folders = foldersState.value
+            Row(
+                modifier =
+                    Modifier
                         .fillMaxWidth()
                         .padding(vertical = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Folder:",
-                        color = MaterialTheme.colors.onBackground,
-                        modifier = Modifier.padding(end = 8.dp),
-                    )
-                    if (folders.isNotEmpty()) {
-                        val selectedName =
-                            folders.getOrNull(selectedFolderIndex.value)?.title ?: ""
-                        OutlinedTextField(
-                            value = selectedName,
-                            onValueChange = { Unit },
-                            readOnly = true,
-                            modifier = Modifier
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Folder:",
+                    color = MaterialTheme.colors.onBackground,
+                    modifier = Modifier.padding(end = 8.dp),
+                )
+                if (folders.isNotEmpty()) {
+                    val selectedName =
+                        folders.getOrNull(selectedFolderIndex.value)?.title ?: ""
+                    OutlinedTextField(
+                        value = selectedName,
+                        onValueChange = { Unit },
+                        readOnly = true,
+                        modifier =
+                            Modifier
                                 .weight(1f)
                                 .clickable { dropdownExpanded.value = true },
-                            enabled = false,
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                        enabled = false,
+                        colors =
+                            TextFieldDefaults.outlinedTextFieldColors(
                                 disabledTextColor = MaterialTheme.colors.onBackground,
-                                disabledBorderColor = MaterialTheme.colors.onBackground.copy(
-                                    alpha = 0.5f
-                                ),
+                                disabledBorderColor =
+                                    MaterialTheme.colors.onBackground.copy(
+                                        alpha = 0.5f,
+                                    ),
                             ),
-                        )
-                        DropdownMenu(
-                            modifier = Modifier.ebItemFrame(paintBackground = true),
-                            expanded = dropdownExpanded.value,
-                            onDismissRequest = { dropdownExpanded.value = false },
-                        ) {
-                            folders.forEachIndexed { index, folder ->
-                                DropdownMenuItem(onClick = {
-                                    selectedFolderIndex.value = index
-                                    bookmark.parent = folder.id
-                                    dropdownExpanded.value = false
-                                }) {
-                                    Text(folder.title)
-                                }
+                    )
+                    DropdownMenu(
+                        modifier = Modifier.ebItemFrame(paintBackground = true),
+                        expanded = dropdownExpanded.value,
+                        onDismissRequest = { dropdownExpanded.value = false },
+                    ) {
+                        folders.forEachIndexed { index, folder ->
+                            DropdownMenuItem(onClick = {
+                                selectedFolderIndex.value = index
+                                bookmark.parent = folder.id
+                                dropdownExpanded.value = false
+                            }) {
+                                Text(folder.title)
                             }
                         }
                     }
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_add_folder),
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.onBackground,
-                        modifier = Modifier
+                }
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_add_folder),
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.onBackground,
+                    modifier =
+                        Modifier
                             .size(46.dp)
                             .padding(8.dp)
                             .clickable {
@@ -187,7 +198,8 @@ fun BookmarkEditContent(
                                             ?: return@launch
                                     bookmarkViewModel.insertDirectory(folderName)
                                     val updatedFolders =
-                                        bookmarkViewModel.getBookmarkFolders()
+                                        bookmarkViewModel
+                                            .getBookmarkFolders()
                                             .toMutableList()
                                             .apply {
                                                 add(0, Bookmark("Top", "", true))
@@ -195,13 +207,14 @@ fun BookmarkEditContent(
                                     if (bookmark.isDirectory) updatedFolders.remove(bookmark)
                                     foldersState.value = updatedFolders
                                     selectedFolderIndex.value =
-                                        updatedFolders.indexOfFirst { it.title == folderName }
+                                        updatedFolders
+                                            .indexOfFirst { it.title == folderName }
                                             .coerceAtLeast(0)
                                 }
-                            }
-                    )
-                }
+                            },
+                )
             }
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
@@ -209,21 +222,23 @@ fun BookmarkEditContent(
             TextButton(onClick = { dismissAction() }) {
                 Text(
                     stringResource(id = android.R.string.cancel),
-                    color = MaterialTheme.colors.onBackground
+                    color = MaterialTheme.colors.onBackground,
                 )
             }
             TextButton(
                 onClick = {
-                    val newBookmark = bookmark.copy(
-                        title = titleState.value.trim(),
-                        url = urlState.value.trim()
-                    ).apply { id = bookmark.id }
+                    val newBookmark =
+                        bookmark
+                            .copy(
+                                title = titleState.value.trim(),
+                                url = urlState.value.trim(),
+                            ).apply { id = bookmark.id }
                     bookmarkViewModel.insertBookmark(newBookmark) { okAction() }
-                }
+                },
             ) {
                 Text(
                     stringResource(id = android.R.string.ok),
-                    color = MaterialTheme.colors.onBackground
+                    color = MaterialTheme.colors.onBackground,
                 )
             }
         }

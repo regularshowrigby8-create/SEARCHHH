@@ -11,9 +11,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MarkdownParserTest {
-
-    private fun spanFor(result: AnnotatedString, text: String): SpanStyle =
-        result.spanStyles.first { result.text.substring(it.start, it.end) == text }.item
+    private fun spanFor(
+        result: AnnotatedString,
+        text: String,
+    ): SpanStyle = result.spanStyles.first { result.text.substring(it.start, it.end) == text }.item
 
     // --- edge cases ---
 
@@ -52,13 +53,14 @@ class MarkdownParserTest {
 
     @Test
     fun `heading levels two to six map to decreasing font sizes`() {
-        val cases = mapOf(
-            "## " to 21,
-            "### " to 20,
-            "#### " to 20,
-            "##### " to 19,
-            "###### " to 19,
-        )
+        val cases =
+            mapOf(
+                "## " to 21,
+                "### " to 20,
+                "#### " to 20,
+                "##### " to 19,
+                "###### " to 19,
+            )
         cases.forEach { (prefix, size) ->
             val result = MarkdownParser.parseMarkdown("${prefix}Title")
             assertEquals("level '$prefix'", "Title", result.text)

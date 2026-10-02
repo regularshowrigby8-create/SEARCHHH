@@ -13,7 +13,7 @@ import info.plateaukao.einkbro.view.dialog.compose.TocDialogFragment
 import info.plateaukao.einkbro.view.dialog.compose.TocItem
 import kotlinx.coroutines.launch
 
-class EpubReaderActivity: BrowserActivity() {
+class EpubReaderActivity : BrowserActivity() {
     override var shouldRunClearService: Boolean = false
     private lateinit var epubReader: EpubReaderView
 
@@ -44,9 +44,10 @@ class EpubReaderActivity: BrowserActivity() {
 
     private fun showEditableTocDialog() {
         val chapters = epubReader.epubChapters
-        val tocItems = chapters.mapIndexed { index, chapter ->
-            TocItem(title = chapter.title, originalIndex = index)
-        }
+        val tocItems =
+            chapters.mapIndexed { index, chapter ->
+                TocItem(title = chapter.title, originalIndex = index)
+            }
         TocDialogFragment(
             chapters = tocItems,
             isEditable = true,
@@ -56,6 +57,7 @@ class EpubReaderActivity: BrowserActivity() {
             },
         ).show(supportFragmentManager, "TocDialog")
     }
+
     override fun dispatchIntent(intent: Intent) {
         when (intent.action) {
             Intent.ACTION_VIEW -> {
@@ -64,7 +66,7 @@ class EpubReaderActivity: BrowserActivity() {
 
                 addAlbum(
                     url = BrowserUnit.URL_ABOUT_BLANK,
-                    enablePreloadWebView = false
+                    enablePreloadWebView = false,
                 ) // so that it won't miss the preload webview
                 lifecycleScope.launch {
                     try {
@@ -97,7 +99,10 @@ class EpubReaderActivity: BrowserActivity() {
         }
     }
 
-    override fun addHistory(title: String, url: String) {
+    override fun addHistory(
+        title: String,
+        url: String,
+    ) {
         // don't need it, since it's not normal web page
     }
 
@@ -105,8 +110,9 @@ class EpubReaderActivity: BrowserActivity() {
         epubReader = EpubReaderView(this, this)
         ebWebView = epubReader
 
-        epubReader.setEpubReaderListener(object : EpubReaderListener {
-            override fun onTextSelectionModeChangeListener(mode: Boolean?) {
+        epubReader.setEpubReaderListener(
+            object : EpubReaderListener {
+                override fun onTextSelectionModeChangeListener(mode: Boolean?) {
                 /*
                 if (mode!!) {
                     bottom_contextual_bar.setVisibility(View.VISIBLE)
@@ -114,36 +120,42 @@ class EpubReaderActivity: BrowserActivity() {
                     bottom_contextual_bar.setVisibility(View.GONE)
                 }
                  */
-            }
+                }
 
-            override fun onPageChangeListener(ChapterNumber: Int, PageNumber: Int, ProgressStart: Float, ProgressEnd: Float) {
-                Log.d("EpubReader", "PageChange: Chapter:$ChapterNumber PageNumber:$PageNumber")
-            }
+                override fun onPageChangeListener(
+                    ChapterNumber: Int,
+                    PageNumber: Int,
+                    ProgressStart: Float,
+                    ProgressEnd: Float,
+                ) {
+                    Log.d("EpubReader", "PageChange: Chapter:$ChapterNumber PageNumber:$PageNumber")
+                }
 
-            override fun onChapterChangeListener(ChapterNumber: Int) {
-                Log.d("EpubReader", "ChapterChange$ChapterNumber ")
-            }
+                override fun onChapterChangeListener(ChapterNumber: Int) {
+                    Log.d("EpubReader", "ChapterChange$ChapterNumber ")
+                }
 
-            override fun onLinkClicked(url: String?) {
-                Log.d("EpubReader", "LinkClicked:$url ")
-            }
+                override fun onLinkClicked(url: String?) {
+                    Log.d("EpubReader", "LinkClicked:$url ")
+                }
 
-            override fun onBookStartReached() {
-                //Use this method to go to previous book
-                //When user slides previous when opened the first page of the book
-                Log.d("EpubReader", "StartReached")
-            }
+                override fun onBookStartReached() {
+                    // Use this method to go to previous book
+                    // When user slides previous when opened the first page of the book
+                    Log.d("EpubReader", "StartReached")
+                }
 
-            override fun onBookEndReached() {
-                //Use this method to go to next book
-                //When user slides next when opened the last page of the book
-                Log.d("EpubReader", "EndReached")
-            }
+                override fun onBookEndReached() {
+                    // Use this method to go to next book
+                    // When user slides next when opened the last page of the book
+                    Log.d("EpubReader", "EndReached")
+                }
 
-            override fun onSingleTap() {
-                Log.d("EpubReader", "PageTapped")
-            }
-        })
+                override fun onSingleTap() {
+                    Log.d("EpubReader", "PageTapped")
+                }
+            },
+        )
 
         return epubReader
     }

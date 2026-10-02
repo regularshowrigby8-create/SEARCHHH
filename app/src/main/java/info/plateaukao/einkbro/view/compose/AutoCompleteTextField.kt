@@ -1,10 +1,6 @@
 package info.plateaukao.einkbro.view.compose
 
 import android.annotation.SuppressLint
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.type
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,7 +36,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -79,7 +79,7 @@ fun AutoCompleteTextField(
         Modifier
             .background(Color.Transparent)
             .clickable { closeAction() },
-        verticalArrangement = if (shouldReverse) Arrangement.Bottom else Arrangement.Top
+        verticalArrangement = if (shouldReverse) Arrangement.Bottom else Arrangement.Top,
     ) {
         if (!shouldReverse) {
             TextInputBar(requester, text, onTextSubmit, onTextChange, hasCopiedText, onPasteClick, closeAction)
@@ -87,9 +87,10 @@ fun AutoCompleteTextField(
 
         HorizontalSeparator()
         BrowseHistoryList(
-            modifier = Modifier
-                .weight(1F, fill = false)
-                .background(MaterialTheme.colors.background),
+            modifier =
+                Modifier
+                    .weight(1F, fill = false)
+                    .background(MaterialTheme.colors.background),
             records = recordList.value,
             bookmarkManager = bookmarkManager,
             shouldReverse = shouldReverse,
@@ -121,12 +122,13 @@ private fun TextInputBar(
     onDownClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .height(50.dp)
-            .fillMaxWidth()
-            .background(MaterialTheme.colors.background),
+        modifier =
+            Modifier
+                .height(50.dp)
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.background),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End
+        horizontalArrangement = Arrangement.End,
     ) {
         TextInput(
             modifier = Modifier.weight(1F),
@@ -138,7 +140,8 @@ private fun TextInputBar(
 
         TextBarIcon(
             iconResId = R.drawable.icon_close,
-            onClick = { text.value = TextFieldValue("") })
+            onClick = { text.value = TextFieldValue("") },
+        )
         if (hasCopiedText) {
             TextBarIcon(iconResId = R.drawable.ic_paste, onClick = onPasteClick)
         }
@@ -165,45 +168,49 @@ fun TextInput(
         BasicTextField(
             value = state.value,
             singleLine = true,
-            modifier = modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester)
-                .horizontalScroll(scrollState)
-                .onKeyEvent {
-                    // Consume both down and up so the IME onSearch action can't
-                    // fire a second submit for the same hardware Enter press.
-                    if (it.key == Key.Enter) {
-                        if (it.type == KeyEventType.KeyUp) {
-                            onValueSubmit(state.value.text)
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester)
+                    .horizontalScroll(scrollState)
+                    .onKeyEvent {
+                        // Consume both down and up so the IME onSearch action can't
+                        // fire a second submit for the same hardware Enter press.
+                        if (it.key == Key.Enter) {
+                            if (it.type == KeyEventType.KeyUp) {
+                                onValueSubmit(state.value.text)
+                            }
+                            true
+                        } else {
+                            false
                         }
-                        true
-                    } else {
-                        false
-                    }
-                }
-                .onFocusChanged { focusState ->
-                    isFocused = focusState.isFocused
-                    if (focusState.isFocused) {
-                        val text = state.value.text
-                        state.value = state.value.copy(
-                            selection = TextRange(0, text.length)
-                        )
-                        coroutineScope.launch {
-                            scrollState.scrollTo(scrollState.maxValue)
+                    }.onFocusChanged { focusState ->
+                        isFocused = focusState.isFocused
+                        if (focusState.isFocused) {
+                            val text = state.value.text
+                            state.value =
+                                state.value.copy(
+                                    selection = TextRange(0, text.length),
+                                )
+                            coroutineScope.launch {
+                                scrollState.scrollTo(scrollState.maxValue)
+                            }
                         }
-                    }
-                },
+                    },
             textStyle = TextStyle.Default.copy(color = MaterialTheme.colors.onBackground),
             cursorBrush = SolidColor(Color.Transparent), // Hide default cursor
-            onValueChange = { state.value = it; onValueChange(it.text) },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Search,
-                autoCorrectEnabled = false,
-            ),
+            onValueChange = {
+                state.value = it
+                onValueChange(it.text)
+            },
+            keyboardOptions =
+                KeyboardOptions(
+                    imeAction = ImeAction.Search,
+                    autoCorrectEnabled = false,
+                ),
             keyboardActions = KeyboardActions(onSearch = { onValueSubmit(state.value.text) }),
             onTextLayout = { textLayoutResult = it },
-
-            )
+        )
 
         // Custom static cursor - draws a non-blinking cursor line
         if (isFocused && textLayoutResult != null) {
@@ -220,7 +227,7 @@ fun TextInput(
                         color = cursorColor,
                         start = Offset(x = 0f, y = 0f),
                         end = Offset(x = 0f, y = size.height),
-                        strokeWidth = with(density) { 2.dp.toPx() }
+                        strokeWidth = with(density) { 2.dp.toPx() },
                     )
                 }
             } else if (safeCursorPosition <= textLength) {
@@ -228,15 +235,17 @@ fun TextInput(
                 Canvas(modifier = Modifier.matchParentSize()) {
                     drawLine(
                         color = cursorColor,
-                        start = Offset(
-                            x = cursorOffset.left - scrollState.value.toFloat() + 2F,
-                            y = cursorOffset.top
-                        ),
-                        end = Offset(
-                            x = cursorOffset.left - scrollState.value.toFloat() + 2F,
-                            y = cursorOffset.bottom
-                        ),
-                        strokeWidth = with(density) { 2.dp.toPx() }
+                        start =
+                            Offset(
+                                x = cursorOffset.left - scrollState.value.toFloat() + 2F,
+                                y = cursorOffset.top,
+                            ),
+                        end =
+                            Offset(
+                                x = cursorOffset.left - scrollState.value.toFloat() + 2F,
+                                y = cursorOffset.bottom,
+                            ),
+                        strokeWidth = with(density) { 2.dp.toPx() },
                     )
                 }
             }
@@ -245,7 +254,7 @@ fun TextInput(
         if (state.value.text.isEmpty()) {
             Text(
                 stringResource(R.string.main_omnibox_input_hint),
-                color = MaterialTheme.colors.onBackground
+                color = MaterialTheme.colors.onBackground,
             )
         }
     }
@@ -257,14 +266,15 @@ fun TextBarIcon(
     onClick: () -> Unit,
 ) {
     Icon(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(40.dp)
-            .clickable { onClick() }
-            .padding(8.dp),
+        modifier =
+            Modifier
+                .fillMaxHeight()
+                .width(40.dp)
+                .clickable { onClick() }
+                .padding(8.dp),
         imageVector = ImageVector.vectorResource(id = iconResId),
         contentDescription = null,
-        tint = MaterialTheme.colors.onBackground
+        tint = MaterialTheme.colors.onBackground,
     )
 }
 

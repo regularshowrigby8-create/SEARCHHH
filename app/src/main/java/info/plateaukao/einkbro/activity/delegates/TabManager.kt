@@ -17,15 +17,13 @@ import info.plateaukao.einkbro.database.BookmarkManager
 import info.plateaukao.einkbro.preference.AlbumInfo
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.unit.BrowserUnit
-import info.plateaukao.einkbro.util.Constants
 import info.plateaukao.einkbro.unit.ViewUnit
-import info.plateaukao.einkbro.view.EBWebView
+import info.plateaukao.einkbro.util.Constants
 import info.plateaukao.einkbro.view.EBToast
+import info.plateaukao.einkbro.view.EBWebView
 import info.plateaukao.einkbro.view.dialog.DialogManager
 import info.plateaukao.einkbro.viewmodel.AlbumViewModel
 import info.plateaukao.einkbro.viewmodel.ExternalSearchViewModel
-import info.plateaukao.einkbro.view.viewControllers.ComposeToolbarViewController
-import info.plateaukao.einkbro.view.viewControllers.FabImageViewController
 import io.github.edsuns.adfilter.AdFilter
 import kotlin.math.max
 import kotlin.math.min
@@ -91,8 +89,7 @@ class TabManager(
 
     fun addNewTab(url: String) = addAlbum(url = url)
 
-    fun isCurrentAlbum(albumController: AlbumController): Boolean =
-        state.currentAlbumController == albumController
+    fun isCurrentAlbum(albumController: AlbumController): Boolean = state.currentAlbumController == albumController
 
     @SuppressLint("ClickableViewAccessibility")
     fun addAlbum(
@@ -105,12 +102,15 @@ class TabManager(
     ) {
         // the preloaded webview snapshots settings at creation time; desktop
         // mode may have been toggled since, so refresh the user agent
-        val newWebView = (preloadedWebView?.also { it.updateUserAgentString() }
-            ?: createWebView()).apply {
-            this.albumTitle = title
-            this.incognito = incognito
-            setOnTouchListener(createTouchListener(this))
-        }
+        val newWebView =
+            (
+                preloadedWebView?.also { it.updateUserAgentString() }
+                    ?: createWebView()
+            ).apply {
+                this.albumTitle = title
+                this.incognito = incognito
+                setOnTouchListener(createTouchListener(this))
+            }
 
         maybeCreateNewPreloadWebView(enablePreloadWebView, newWebView)
 
@@ -140,7 +140,10 @@ class TabManager(
         }
     }
 
-    private fun updateTabPreview(newWebView: EBWebView, url: String) {
+    private fun updateTabPreview(
+        newWebView: EBWebView,
+        url: String,
+    ) {
         bookmarkManager.findFaviconBitmapBy(url)?.let {
             newWebView.setAlbumCover(it)
         }
@@ -184,7 +187,10 @@ class TabManager(
      * title/url shows in the tab list, and the real EBWebView is built on
      * first activation (see [materializeIfNeeded]).
      */
-    fun addRestoredTab(title: String, url: String) {
+    fun addRestoredTab(
+        title: String,
+        url: String,
+    ) {
         val controller = LazyAlbumController(title, url, activity as? AlbumCallback)
         browserContainer.add(controller)
         albumViewModel.addAlbum(controller.album, browserContainer.size() - 1)
@@ -197,10 +203,13 @@ class TabManager(
     /** Swaps a [LazyAlbumController] for a real EBWebView, keeping its Album. */
     private fun materializeIfNeeded(controller: AlbumController): AlbumController {
         val lazy = controller as? LazyAlbumController ?: return controller
-        val webView = (preloadedWebView?.also { it.updateUserAgentString() }
-            ?: createWebView()).apply {
-            setOnTouchListener(createTouchListener(this))
-        }
+        val webView =
+            (
+                preloadedWebView?.also { it.updateUserAgentString() }
+                    ?: createWebView()
+            ).apply {
+                setOnTouchListener(createTouchListener(this))
+            }
         maybeCreateNewPreloadWebView(true, webView)
 
         lazy.album.attachController(webView)
@@ -246,8 +255,8 @@ class TabManager(
                 controllerView,
                 FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
-                )
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                ),
             )
         }
         controllerView.visibility = View.VISIBLE
@@ -278,7 +287,10 @@ class TabManager(
         updateLanguageLabel()
     }
 
-    fun removeAlbum(albumController: AlbumController, showHome: Boolean) {
+    fun removeAlbum(
+        albumController: AlbumController,
+        showHome: Boolean,
+    ) {
         closeTabConfirmation {
             if (config.tab.isSaveHistoryWhenClose() && !albumController.isAIPage) {
                 addHistoryAction(albumController.albumTitle, albumController.albumUrl)
@@ -333,16 +345,22 @@ class TabManager(
         val album = crashed.album
         val now = System.currentTimeMillis()
         val lastRecovery = crashRecoveryTimes[album.id] ?: 0L
-        val reloadUrl = if (now - lastRecovery > CRASH_LOOP_WINDOW_MS) {
-            crashed.albumUrl.ifBlank { crashed.initAlbumUrl }
-        } else ""
+        val reloadUrl =
+            if (now - lastRecovery > CRASH_LOOP_WINDOW_MS) {
+                crashed.albumUrl.ifBlank { crashed.initAlbumUrl }
+            } else {
+                ""
+            }
         crashRecoveryTimes[album.id] = now
         val wasCurrent = state.currentAlbumController === crashed
-        val replacement = (preloadedWebView?.also { it.updateUserAgentString() }
-            ?: createWebView()).apply {
-            incognito = crashed.incognito
-            setOnTouchListener(createTouchListener(this))
-        }
+        val replacement =
+            (
+                preloadedWebView?.also { it.updateUserAgentString() }
+                    ?: createWebView()
+            ).apply {
+                incognito = crashed.incognito
+                setOnTouchListener(createTouchListener(this))
+            }
         maybeCreateNewPreloadWebView(true, replacement)
 
         album.attachController(replacement)
@@ -405,21 +423,22 @@ class TabManager(
         // mid-load doesn't replace a resolved title with the "..." placeholder
         val previousTitles = config.tab.savedAlbumInfoList.associate { it.url to it.title }
         val albumControllers = browserContainer.list()
-        val albumInfoList = albumControllers
-            .filter { !it.isTranslatePage }
-            .filter { !it.isAIPage }
-            .filter { !it.albumUrl.startsWith("data") }
-            .filter {
-                (it.albumUrl.isNotBlank() && it.albumUrl != BrowserUnit.URL_ABOUT_BLANK) ||
+        val albumInfoList =
+            albumControllers
+                .filter { !it.isTranslatePage }
+                .filter { !it.isAIPage }
+                .filter { !it.albumUrl.startsWith("data") }
+                .filter {
+                    (it.albumUrl.isNotBlank() && it.albumUrl != BrowserUnit.URL_ABOUT_BLANK) ||
                         it.initAlbumUrl.isNotBlank()
-            }
-            .map { controller ->
-                val url = controller.albumUrl.ifBlank { controller.initAlbumUrl }
-                val title = controller.albumTitle
-                    .takeUnless { it.isBlank() || it == EBWebView.LOADING_TITLE }
-                    ?: previousTitles[url].orEmpty()
-                AlbumInfo(title, url)
-            }
+                }.map { controller ->
+                    val url = controller.albumUrl.ifBlank { controller.initAlbumUrl }
+                    val title =
+                        controller.albumTitle
+                            .takeUnless { it.isBlank() || it == EBWebView.LOADING_TITLE }
+                            ?: previousTitles[url].orEmpty()
+                    AlbumInfo(title, url)
+                }
         config.tab.savedAlbumInfoList = albumInfoList
         config.tab.currentAlbumIndex = browserContainer.indexOf(state.currentAlbumController)
         if (albumInfoList.isNotEmpty() && config.tab.currentAlbumIndex >= albumInfoList.size) {
@@ -462,15 +481,19 @@ class TabManager(
     }
 
     fun getUrlMatchedBrowser(url: String): EBWebView? {
-        val matched = browserContainer.list().firstOrNull {
-            it.albumUrl == url || (it.albumUrl.isBlank() && it.initAlbumUrl == url)
-        } ?: return null
+        val matched =
+            browserContainer.list().firstOrNull {
+                it.albumUrl == url || (it.albumUrl.isBlank() && it.initAlbumUrl == url)
+            } ?: return null
         return materializeIfNeeded(matched) as EBWebView
     }
 
     private fun getNextAlbumIndexAfterRemoval(removeIndex: Int): Int =
-        if (config.tab.shouldShowNextAfterRemoveTab) min(browserContainer.size() - 1, removeIndex)
-        else max(0, removeIndex - 1)
+        if (config.tab.shouldShowNextAfterRemoveTab) {
+            min(browserContainer.size() - 1, removeIndex)
+        } else {
+            max(0, removeIndex - 1)
+        }
 
     private fun nextAlbumController(next: Boolean): AlbumController? {
         if (browserContainer.size() <= 1) {

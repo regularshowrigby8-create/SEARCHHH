@@ -3,7 +3,6 @@ package info.plateaukao.einkbro.tts
 import android.media.MediaPlayer
 
 class CustomMediaPlayer : MediaPlayer() {
-
     private var onResetListener: () -> Unit = { Unit }
 
     fun setOnResetListener(listener: () -> Unit) {

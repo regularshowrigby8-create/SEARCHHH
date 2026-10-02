@@ -9,12 +9,15 @@ import java.io.OutputStream
  * document's pages (with a TOC entry for the first appended page).
  */
 internal object PdfTocEditor {
-
     /**
      * Copies [source] to [out], appending an outline entry titled [tocTitle]
      * that points at the first page. A blank title degrades to a plain copy.
      */
-    fun writeWithToc(source: File, out: OutputStream, tocTitle: String?): Boolean {
+    fun writeWithToc(
+        source: File,
+        out: OutputStream,
+        tocTitle: String?,
+    ): Boolean {
         val doc = PdfFile.open(source)
         if (doc.isEncrypted) return false
         val update = PdfIncrementalUpdate(doc)
@@ -35,7 +38,12 @@ internal object PdfTocEditor {
      * tree and an outline entry titled [tocTitle] pointing at the first
      * appended page.
      */
-    fun appendWithToc(existing: File, newPages: File, out: OutputStream, tocTitle: String?): Boolean {
+    fun appendWithToc(
+        existing: File,
+        newPages: File,
+        out: OutputStream,
+        tocTitle: String?,
+    ): Boolean {
         val dest = PdfFile.open(existing)
         if (dest.isEncrypted) return false
         val src = PdfFile.open(newPages)
@@ -86,7 +94,11 @@ internal object PdfTocEditor {
         val root = doc.resolveDict(doc.trailer["Root"]) ?: return emptyList()
         val pagesRef = root["Pages"] as? CosRef ?: return emptyList()
         val result = ArrayList<Pair<CosRef, CosDict>>()
-        fun walk(ref: CosRef, inherited: CosDict) {
+
+        fun walk(
+            ref: CosRef,
+            inherited: CosDict,
+        ) {
             val node = doc.resolveDict(ref) ?: return
             if ((node["Type"] as? CosName)?.name == "Page") {
                 result.add(ref to inherited)
@@ -116,28 +128,33 @@ internal object PdfTocEditor {
     ): List<CosRef> {
         val memo = HashMap<Int, CosRef>()
 
-        fun copyValue(obj: CosObject): CosObject = when (obj) {
-            is CosRef -> memo[obj.num] ?: run {
-                val newRef = update.allocate()
-                memo[obj.num] = newRef
-                update.put(newRef, copyValue(src.getObject(obj.num)))
-                newRef
+        fun copyValue(obj: CosObject): CosObject =
+            when (obj) {
+                is CosRef ->
+                    memo[obj.num] ?: run {
+                        val newRef = update.allocate()
+                        memo[obj.num] = newRef
+                        update.put(newRef, copyValue(src.getObject(obj.num)))
+                        newRef
+                    }
+
+                is CosArray -> CosArray(obj.items.mapTo(mutableListOf()) { copyValue(it) })
+                is CosDict ->
+                    CosDict(
+                        obj.entries.entries.associateTo(LinkedHashMap()) { it.key to copyValue(it.value) },
+                    )
+
+                is CosStream ->
+                    CosStream(
+                        CosDict(
+                            obj.dict.entries.entries
+                                .associateTo(LinkedHashMap()) { it.key to copyValue(it.value) },
+                        ),
+                        obj.raw,
+                    )
+
+                else -> obj
             }
-
-            is CosArray -> CosArray(obj.items.mapTo(mutableListOf()) { copyValue(it) })
-            is CosDict -> CosDict(
-                obj.entries.entries.associateTo(LinkedHashMap()) { it.key to copyValue(it.value) }
-            )
-
-            is CosStream -> CosStream(
-                CosDict(
-                    obj.dict.entries.entries.associateTo(LinkedHashMap()) { it.key to copyValue(it.value) }
-                ),
-                obj.raw,
-            )
-
-            else -> obj
-        }
 
         return collectPages(src).map { (pageRef, inherited) ->
             val page = src.resolveDict(pageRef) ?: throw PdfParseException("page ${pageRef.num} missing")

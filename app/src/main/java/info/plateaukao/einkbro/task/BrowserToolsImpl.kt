@@ -28,7 +28,6 @@ import info.plateaukao.einkbro.unit.BrowserUnit
 import info.plateaukao.einkbro.util.Constants
 import info.plateaukao.einkbro.view.EBWebView
 import info.plateaukao.einkbro.viewmodel.TtsViewModel
-import kotlin.coroutines.resume
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -42,6 +41,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.resume
 
 /**
  * Default [BrowserTools] implementation backed by an off-screen [EBWebView] and the
@@ -58,8 +58,8 @@ class BrowserToolsImpl(
     private val progressSink: (TaskProgress.StepLine) -> Unit,
     private val finishSink: (String) -> Unit,
     private val initialSnapshot: InitialPageSnapshot? = null,
-) : BrowserTools, KoinComponent {
-
+) : BrowserTools,
+    KoinComponent {
     private var bgWebView: EBWebView? = null
     private var currentLoadDeferred: CompletableDeferred<Boolean>? = null
 
@@ -80,7 +80,10 @@ class BrowserToolsImpl(
     }
 
     /** Null when [webView] has already been destroyed (e.g. the user closed that tab). */
-    private suspend fun evaluateJs(webView: EBWebView, code: String): String? =
+    private suspend fun evaluateJs(
+        webView: EBWebView,
+        code: String,
+    ): String? =
         withContext(Dispatchers.Main) {
             if (webView.isWebViewDestroyed) return@withContext null
             withTimeoutOrNull(JS_EVAL_TIMEOUT_MS) {
@@ -144,15 +147,20 @@ class BrowserToolsImpl(
     // ── Originating page snapshot ──────────────────────────────────────
 
     override fun initialPageUrl(): String = initialSnapshot?.url.orEmpty()
+
     override fun initialPageTitle(): String = initialSnapshot?.title.orEmpty()
+
     override fun initialPageText(): String = initialSnapshot?.text.orEmpty()
+
     override fun initialPageLinks(): List<BrowserTools.Link> = initialSnapshot?.links.orEmpty()
+
     override fun initialPageRawHtml(): String = initialSnapshot?.rawHtml.orEmpty()
 
     // ── Page source (network-level) ─────────────────────────────────────
 
     private val sourceClient: OkHttpClient by lazy {
-        OkHttpClient.Builder()
+        OkHttpClient
+            .Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .build()
@@ -164,18 +172,19 @@ class BrowserToolsImpl(
     override suspend fun fetchPageSource(url: String): String? {
         pageSourceCache?.let { if (it.first == url) return it.second }
         if (!url.startsWith("http://") && !url.startsWith("https://")) return null
-        val request = try {
-            Request.Builder()
-                .url(url)
-                .header("User-Agent", browserUserAgent())
-                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                .apply {
-                    CookieManager.getInstance().getCookie(url)?.let { header("Cookie", it) }
-                }
-                .build()
-        } catch (e: Exception) {
-            return null
-        }
+        val request =
+            try {
+                Request
+                    .Builder()
+                    .url(url)
+                    .header("User-Agent", browserUserAgent())
+                    .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .apply {
+                        CookieManager.getInstance().getCookie(url)?.let { header("Cookie", it) }
+                    }.build()
+            } catch (e: Exception) {
+                return null
+            }
         return withContext(Dispatchers.IO) {
             try {
                 sourceClient.newCall(request).execute().use { resp ->
@@ -204,8 +213,7 @@ class BrowserToolsImpl(
 
     // ── Domain config ───────────────────────────────────────────────────
 
-    private fun initialUrl(): String? =
-        initialSnapshot?.url?.takeIf { Uri.parse(it)?.host?.isNotBlank() == true }
+    private fun initialUrl(): String? = initialSnapshot?.url?.takeIf { Uri.parse(it)?.host?.isNotBlank() == true }
 
     override fun getInitialDomainJavascript(): String {
         val url = initialUrl() ?: return ""
@@ -230,7 +238,8 @@ class BrowserToolsImpl(
     private fun parseLinks(raw: String): List<BrowserTools.Link> {
         if (raw.isBlank() || raw == "null") return emptyList()
         return try {
-            json.decodeFromString(kotlinx.serialization.builtins.ListSerializer(RawLink.serializer()), raw)
+            json
+                .decodeFromString(kotlinx.serialization.builtins.ListSerializer(RawLink.serializer()), raw)
                 .map { BrowserTools.Link(it.text, it.href) }
         } catch (e: Exception) {
             android.util.Log.e("BrowserToolsImpl", "Failed to parse links JSON: $raw", e)
@@ -239,12 +248,14 @@ class BrowserToolsImpl(
     }
 
     @Serializable
-    private data class RawLink(val text: String, val href: String)
+    private data class RawLink(
+        val text: String,
+        val href: String,
+    )
 
     // ── Bookmarks ───────────────────────────────────────────────────────
 
-    override suspend fun bookmarkFolderNames(): List<String> =
-        bookmarkManager.getBookmarkFolders().map { it.title }
+    override suspend fun bookmarkFolderNames(): List<String> = bookmarkManager.getBookmarkFolders().map { it.title }
 
     override suspend fun ensureBookmarkFolder(name: String): Boolean {
         if (resolveFolder(name) != null) return false
@@ -252,24 +263,36 @@ class BrowserToolsImpl(
         return true
     }
 
-    override suspend fun addBookmark(title: String, url: String, folderName: String): Boolean {
+    override suspend fun addBookmark(
+        title: String,
+        url: String,
+        folderName: String,
+    ): Boolean {
         if (bookmarkManager.findBy(url).isNotEmpty()) return false
-        val parentId = if (folderName.isBlank()) 0
-        else resolveFolder(folderName)?.id ?: run {
-            bookmarkManager.insert(Bookmark(folderName.trim(), "", isDirectory = true))
-            resolveFolder(folderName)?.id ?: 0
-        }
+        val parentId =
+            if (folderName.isBlank()) {
+                0
+            } else {
+                resolveFolder(folderName)?.id ?: run {
+                    bookmarkManager.insert(Bookmark(folderName.trim(), "", isDirectory = true))
+                    resolveFolder(folderName)?.id ?: 0
+                }
+            }
         bookmarkManager.insert(Bookmark(title, url, parent = parentId))
         return true
     }
 
     private suspend fun resolveFolder(name: String): Bookmark? =
-        bookmarkManager.getBookmarkFolders()
+        bookmarkManager
+            .getBookmarkFolders()
             .firstOrNull { it.title.equals(name.trim(), ignoreCase = true) }
 
     // ── LLM ─────────────────────────────────────────────────────────────
 
-    override suspend fun askLlm(system: String, user: String): String? {
+    override suspend fun askLlm(
+        system: String,
+        user: String,
+    ): String? {
         val action = summarizeActionInfo()
         val messages = mutableListOf<ChatMessage>()
         if (system.isNotBlank()) messages += ChatMessage(content = system, role = ChatRole.System)
@@ -280,30 +303,40 @@ class BrowserToolsImpl(
                 openAiRepository.queryGemini(messages, action).valueOrNull()?.takeIf { it.isNotBlank() }
             } else {
                 val completion = openAiRepository.chatCompletion(messages, action)
-                completion?.choices
+                completion
+                    ?.choices
                     ?.firstOrNull { it.message.role == ChatRole.Assistant }
-                    ?.message?.content
+                    ?.message
+                    ?.content
             }
         }
     }
 
-    override fun summarizeActionInfo(): ChatGPTActionInfo = ChatGPTActionInfo(
-        name = "task",
-        systemMessage = "You are a helpful assistant that follows instructions precisely.",
-        userMessage = "",
-        actionType = config.ai.getDefaultActionType(),
-        model = config.ai.getDefaultActionModel(),
-    )
+    override fun summarizeActionInfo(): ChatGPTActionInfo =
+        ChatGPTActionInfo(
+            name = "task",
+            systemMessage = "You are a helpful assistant that follows instructions precisely.",
+            userMessage = "",
+            actionType = config.ai.getDefaultActionType(),
+            model = config.ai.getDefaultActionModel(),
+        )
 
     override fun defaultLanguageName(): String {
         val tag = config.uiLocaleLanguage.ifBlank { null }
-        val locale = if (tag != null) java.util.Locale.forLanguageTag(tag)
-        else java.util.Locale.getDefault()
+        val locale =
+            if (tag != null) {
+                java.util.Locale.forLanguageTag(tag)
+            } else {
+                java.util.Locale.getDefault()
+            }
         val name = locale.getDisplayName(java.util.Locale.ENGLISH)
         return if (name.isBlank()) "the user's language" else name
     }
 
-    override fun speak(text: String, title: String) {
+    override fun speak(
+        text: String,
+        title: String,
+    ) {
         if (text.isBlank()) return
         ttsViewModel.readArticle(text, title)
     }
@@ -323,10 +356,11 @@ class BrowserToolsImpl(
         chapters.forEachIndexed { index, spec ->
             if (!openUrlInBg(spec.url)) return@forEachIndexed
             val wv = bgWebView ?: return@forEachIndexed
-            val loaded = withContext(Dispatchers.Main) {
-                withTimeoutOrNull(READER_EXTRACT_TIMEOUT_MS) { wv.getRawReaderHtml() }
-                    ?.let { it to wv.title.orEmpty() }
-            } ?: return@forEachIndexed
+            val loaded =
+                withContext(Dispatchers.Main) {
+                    withTimeoutOrNull(READER_EXTRACT_TIMEOUT_MS) { wv.getRawReaderHtml() }
+                        ?.let { it to wv.title.orEmpty() }
+                } ?: return@forEachIndexed
             val (html, pageTitle) = loaded
             if (html.isBlank()) return@forEachIndexed
             val title = spec.title.ifBlank { pageTitle.ifBlank { spec.url } }
@@ -357,50 +391,56 @@ class BrowserToolsImpl(
      *  MediaStore Downloads on Q+; on older devices the public Downloads folder when
      *  the legacy storage permission is granted, else app-private storage (the book is
      *  still registered in EinkBro's saved-EPUB list, so the user can open it there). */
-    private fun createEpubDownloadUri(fileName: String): Pair<Uri, String>? = try {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, "$fileName.epub")
-                put(MediaStore.MediaColumns.MIME_TYPE, Constants.MIME_TYPE_EPUB)
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
-            }
-            context.contentResolver
-                .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
-                ?.let { it to "${Environment.DIRECTORY_DOWNLOADS}/$fileName.epub" }
-        } else {
-            val canWritePublic = ContextCompat.checkSelfPermission(
-                context, Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-            val dir = if (canWritePublic) {
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+    private fun createEpubDownloadUri(fileName: String): Pair<Uri, String>? =
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues =
+                    ContentValues().apply {
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, "$fileName.epub")
+                        put(MediaStore.MediaColumns.MIME_TYPE, Constants.MIME_TYPE_EPUB)
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                    }
+                context.contentResolver
+                    .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+                    ?.let { it to "${Environment.DIRECTORY_DOWNLOADS}/$fileName.epub" }
             } else {
-                context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.filesDir
+                val canWritePublic =
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    ) == PackageManager.PERMISSION_GRANTED
+                val dir =
+                    if (canWritePublic) {
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    } else {
+                        context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.filesDir
+                    }
+                if (!dir.exists()) dir.mkdirs()
+                var file = File(dir, "$fileName.epub")
+                var suffix = 1
+                while (file.exists()) {
+                    file = File(dir, "$fileName (${suffix++}).epub")
+                }
+                val location =
+                    if (canWritePublic) {
+                        "${Environment.DIRECTORY_DOWNLOADS}/${file.name}"
+                    } else {
+                        "EinkBro's saved EPUB list (${file.name})"
+                    }
+                Uri.fromFile(file) to location
             }
-            if (!dir.exists()) dir.mkdirs()
-            var file = File(dir, "$fileName.epub")
-            var suffix = 1
-            while (file.exists()) {
-                file = File(dir, "$fileName (${suffix++}).epub")
-            }
-            val location = if (canWritePublic) "${Environment.DIRECTORY_DOWNLOADS}/${file.name}"
-            else "EinkBro's saved EPUB list (${file.name})"
-            Uri.fromFile(file) to location
+        } catch (e: Exception) {
+            android.util.Log.e("BrowserToolsImpl", "createEpubDownloadUri failed", e)
+            null
         }
-    } catch (e: Exception) {
-        android.util.Log.e("BrowserToolsImpl", "createEpubDownloadUri failed", e)
-        null
-    }
 
     // ── Progress reporting ──────────────────────────────────────────────
 
-    override fun info(text: String) =
-        progressSink(TaskProgress.StepLine(TaskProgress.StepLine.Kind.Info, text))
+    override fun info(text: String) = progressSink(TaskProgress.StepLine(TaskProgress.StepLine.Kind.Info, text))
 
-    override fun tool(text: String) =
-        progressSink(TaskProgress.StepLine(TaskProgress.StepLine.Kind.Tool, text))
+    override fun tool(text: String) = progressSink(TaskProgress.StepLine(TaskProgress.StepLine.Kind.Tool, text))
 
-    override fun error(text: String) =
-        progressSink(TaskProgress.StepLine(TaskProgress.StepLine.Kind.Error, text))
+    override fun error(text: String) = progressSink(TaskProgress.StepLine(TaskProgress.StepLine.Kind.Error, text))
 
     override fun finish(markdown: String) = finishSink(markdown)
 
@@ -408,11 +448,12 @@ class BrowserToolsImpl(
 
     private fun ensureBgWebView(): EBWebView {
         bgWebView?.let { return it }
-        val wv = EBWebView(context, webViewCallback).apply {
-            setOnPageFinishedAction {
-                currentLoadDeferred?.complete(true)
+        val wv =
+            EBWebView(context, webViewCallback).apply {
+                setOnPageFinishedAction {
+                    currentLoadDeferred?.complete(true)
+                }
             }
-        }
         bgWebView = wv
         return wv
     }
@@ -442,9 +483,15 @@ class BrowserToolsImpl(
         private const val MAX_SOURCE_CHARS = 2_000_000
 
         // Content types that would decode to garbage if treated as page source.
-        private val BINARY_TYPE_PREFIXES = listOf(
-            "image/", "video/", "audio/", "font/",
-            "application/octet-stream", "application/pdf", "application/zip",
-        )
+        private val BINARY_TYPE_PREFIXES =
+            listOf(
+                "image/",
+                "video/",
+                "audio/",
+                "font/",
+                "application/octet-stream",
+                "application/pdf",
+                "application/zip",
+            )
     }
 }

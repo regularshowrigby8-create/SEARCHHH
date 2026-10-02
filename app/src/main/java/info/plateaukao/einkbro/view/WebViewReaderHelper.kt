@@ -30,11 +30,11 @@ class WebViewReaderHelper(
                 verticalActivatedReaderMode = false
                 webView.jsBridge.updateCssSlot(
                     WebViewJsBridge.CSS_SLOT_READER,
-                    loadAssetFile("verticalReaderview.css")
+                    loadAssetFile("verticalReaderview.css"),
                 )
                 webView.jsBridge.updateCssSlot(
                     WebViewJsBridge.CSS_SLOT_VERTICAL,
-                    loadAssetFile("vertical_layout.css")
+                    loadAssetFile("vertical_layout.css"),
                 )
                 // applyVerticalTextProcessing() re-applies the reader-settings
                 // slot (vertical variant, no two-column) and resets the viewport.
@@ -129,7 +129,9 @@ class WebViewReaderHelper(
      * viewport-height columns extending horizontally, so page turns scroll
      * sideways by one viewport width (see WebViewNavigationHelper).
      */
-    fun isTwoColumnActive(): Boolean = isReaderModeOn && !isVerticalRead &&
+    fun isTwoColumnActive(): Boolean =
+        isReaderModeOn &&
+            !isVerticalRead &&
             config.display.readerTwoColumnInLandscape &&
             webView.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -154,8 +156,8 @@ class WebViewReaderHelper(
         css.append("body.mozac-readerview-body { padding: ${padding}px !important; }\n")
         css.append(
             ".mozac-readerview-body .mozac-readerview-content p, " +
-                    ".mozac-readerview-body .mozac-readerview-content li " +
-                    "{ line-height: $lineHeight !important; }\n"
+                ".mozac-readerview-body .mozac-readerview-content li " +
+                "{ line-height: $lineHeight !important; }\n",
         )
         if (twoColumn) {
             // margin 0 (killing the 8px UA default) + column-gap = 2 * padding
@@ -175,13 +177,16 @@ class WebViewReaderHelper(
                     column-fill: auto;
                   }
                 }
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
         webView.jsBridge.updateCssSlot(WebViewJsBridge.CSS_SLOT_READER_SETTINGS, css.toString())
         webView.jsBridge.setViewportContent(
-            if (twoColumn) WebViewJsBridge.VIEWPORT_FIXED_SCALE
-            else WebViewJsBridge.VIEWPORT_DEFAULT
+            if (twoColumn) {
+                WebViewJsBridge.VIEWPORT_FIXED_SCALE
+            } else {
+                WebViewJsBridge.VIEWPORT_DEFAULT
+            },
         )
         // Line spacing changes the vertical line advance, so page-turn snapping
         // must be re-measured against the new layout.
@@ -198,22 +203,29 @@ class WebViewReaderHelper(
         // The font CSS must come first: its @import rules are only valid before
         // any other rule, so placing e.g. the black-font CSS ahead of it would
         // make the browser silently drop the web font imports.
-        val fontCss = when (fontType) {
-            FontType.SYSTEM_DEFAULT -> ""
-            FontType.SERIF -> WebViewJsBridge.SERIF_FONT_CSS
-            FontType.GOOGLE_SERIF -> WebViewJsBridge.NOTO_SANS_SERIF_FONT_CSS
-            FontType.CUSTOM -> getCustomFontCss()
-            FontType.TC_IANSUI -> WebViewJsBridge.IANSUI_FONT_CSS
-            FontType.JA_MINCHO -> WebViewJsBridge.JA_MINCHO_FONT_CSS
-            FontType.KO_GAMJA -> WebViewJsBridge.KO_GAMJA_FONT_CSS
-        }
+        val fontCss =
+            when (fontType) {
+                FontType.SYSTEM_DEFAULT -> ""
+                FontType.SERIF -> WebViewJsBridge.SERIF_FONT_CSS
+                FontType.GOOGLE_SERIF -> WebViewJsBridge.NOTO_SANS_SERIF_FONT_CSS
+                FontType.CUSTOM -> getCustomFontCss()
+                FontType.TC_IANSUI -> WebViewJsBridge.IANSUI_FONT_CSS
+                FontType.JA_MINCHO -> WebViewJsBridge.JA_MINCHO_FONT_CSS
+                FontType.KO_GAMJA -> WebViewJsBridge.KO_GAMJA_FONT_CSS
+            }
         val forceWhiteBackground = config.whiteBackground(url) || config.getWebViewDarkMode(url) == false
 
-        val cssStyle = fontCss +
+        val cssStyle =
+            fontCss +
                 (if (isBlackFont) WebViewJsBridge.MAKE_TEXT_BLACK_CSS else "") +
                 (if (forceWhiteBackground) WebViewJsBridge.WHITE_BACKGROUND_CSS else "") +
-                (if (isBoldFont)
-                    WebViewJsBridge.BOLD_FONT_CSS.replace("value", "$boldness") else "") +
+                (
+                    if (isBoldFont) {
+                        WebViewJsBridge.BOLD_FONT_CSS.replace("value", "$boldness")
+                    } else {
+                        ""
+                    }
+                ) +
                 (if (isEpubReaderMode) loadAssetFile("readerview.css") else "") +
                 einkImageFilterCss() +
                 config.getCustomCss(url).orEmpty()
@@ -240,11 +252,12 @@ class WebViewReaderHelper(
     }
 
     private fun getCustomFontCss(): String {
-        val info = if (shouldUseReaderFont()) {
-            config.display.readerCustomFontInfo
-        } else {
-            config.display.customFontInfo
-        }
+        val info =
+            if (shouldUseReaderFont()) {
+                config.display.readerCustomFontInfo
+            } else {
+                config.display.customFontInfo
+            }
         val fontUrl = info?.url ?: return ""
         // Version the synthetic font URL by the configured font so switching to
         // a different font file forces a refetch, while repeated style updates

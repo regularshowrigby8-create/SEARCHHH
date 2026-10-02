@@ -11,7 +11,6 @@ import org.junit.rules.TemporaryFolder
 import java.io.File
 
 class BinaryDataStoreTest {
-
     @get:Rule
     val tmp = TemporaryFolder()
 

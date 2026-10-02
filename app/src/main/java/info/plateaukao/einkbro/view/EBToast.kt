@@ -5,22 +5,34 @@ import android.widget.Toast
 
 object EBToast {
     @JvmStatic
-    fun show(context: Context?, stringResId: Int) {
+    fun show(
+        context: Context?,
+        stringResId: Int,
+    ) {
         Toast.makeText(context, stringResId, Toast.LENGTH_SHORT).show()
     }
 
     @JvmStatic
-    fun show(context: Context?, text: String?) {
+    fun show(
+        context: Context?,
+        text: String?,
+    ) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
     @JvmStatic
-    fun showShort(context: Context?, stringResId: Int) {
+    fun showShort(
+        context: Context?,
+        stringResId: Int,
+    ) {
         Toast.makeText(context, stringResId, Toast.LENGTH_SHORT).show()
     }
 
     @JvmStatic
-    fun showShort(context: Context?, text: String?) {
+    fun showShort(
+        context: Context?,
+        text: String?,
+    ) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 }

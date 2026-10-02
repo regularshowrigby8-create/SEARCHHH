@@ -14,17 +14,18 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.activity.BrowserState
+import info.plateaukao.einkbro.database.Article
+import info.plateaukao.einkbro.database.BookmarkManager
+import info.plateaukao.einkbro.database.Highlight
 import info.plateaukao.einkbro.preference.ChatGPTActionInfo
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.GptActionDisplay
-import info.plateaukao.einkbro.preference.GptActionScope
 import info.plateaukao.einkbro.preference.HighlightStyle
 import info.plateaukao.einkbro.unit.HelperUnit
 import info.plateaukao.einkbro.unit.IntentUnit
 import info.plateaukao.einkbro.unit.ViewUnit
 import info.plateaukao.einkbro.view.EBToast
 import info.plateaukao.einkbro.view.EBWebView
-import info.plateaukao.einkbro.view.MainActivityLayout
 import info.plateaukao.einkbro.view.compose.MyTheme
 import info.plateaukao.einkbro.view.dialog.compose.ActionModeMenu
 import info.plateaukao.einkbro.viewmodel.ActionModeMenuState
@@ -34,9 +35,6 @@ import info.plateaukao.einkbro.viewmodel.SplitSearchViewModel
 import info.plateaukao.einkbro.viewmodel.TRANSLATE_API
 import info.plateaukao.einkbro.viewmodel.TranslationViewModel
 import info.plateaukao.einkbro.viewmodel.TtsViewModel
-import info.plateaukao.einkbro.database.Article
-import info.plateaukao.einkbro.database.BookmarkManager
-import info.plateaukao.einkbro.database.Highlight
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
@@ -62,11 +60,12 @@ class ActionModeDelegate(
     /** Top edge of the current text selection, px in the root layout. */
     private var selectionTopPx = 0
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-        encodeDefaults = false
-        isLenient = true
-    }
+    private val json =
+        Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = false
+            isLenient = true
+        }
 
     fun initActionModeViewModel() {
         activity.lifecycleScope.launch {
@@ -81,9 +80,13 @@ class ActionModeDelegate(
 
                     GoogleTranslate, DeeplTranslate -> {
                         val api =
-                            if (GoogleTranslate == state) TRANSLATE_API.GOOGLE
-                            else if (DeeplTranslate == state) TRANSLATE_API.DEEPL
-                            else TRANSLATE_API.GOOGLE
+                            if (GoogleTranslate == state) {
+                                TRANSLATE_API.GOOGLE
+                            } else if (DeeplTranslate == state) {
+                                TRANSLATE_API.DEEPL
+                            } else {
+                                TRANSLATE_API.GOOGLE
+                            }
                         translationViewModel.updateTranslateMethod(api)
 
                         activity.lifecycleScope.launch {
@@ -250,8 +253,7 @@ class ActionModeDelegate(
         }
     }
 
-    private fun isInSplitSearchMode(): Boolean =
-        splitSearchViewModel.state != null && isTwoPaneSecondPaneDisplayed()
+    private fun isInSplitSearchMode(): Boolean = splitSearchViewModel.state != null && isTwoPaneSecondPaneDisplayed()
 
     private var isTwoPaneSecondPaneDisplayed: () -> Boolean = { false }
 
@@ -265,31 +267,35 @@ class ActionModeDelegate(
     ) {
         actionModeMenuViewModel.updateMenuInfos(activity, translationViewModel)
         if (actionModeView == null) {
-            actionModeView = ComposeView(activity).apply {
-                id = View.generateViewId()
-                setContent {
-                    val text by actionModeMenuViewModel.selectedText.collectAsState()
-                    MyTheme {
-                        ActionModeMenu(
-                            actionModeMenuViewModel.menuInfos,
-                            actionModeMenuViewModel.showIcons,
-                        ) { intent ->
-                            if (intent != null) {
-                                context.startActivity(intent.apply {
-                                    putExtra(Intent.EXTRA_PROCESS_TEXT, text)
-                                    putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
-                                })
+            actionModeView =
+                ComposeView(activity).apply {
+                    id = View.generateViewId()
+                    setContent {
+                        val text by actionModeMenuViewModel.selectedText.collectAsState()
+                        MyTheme {
+                            ActionModeMenu(
+                                actionModeMenuViewModel.menuInfos,
+                                actionModeMenuViewModel.showIcons,
+                            ) { intent ->
+                                if (intent != null) {
+                                    context.startActivity(
+                                        intent.apply {
+                                            putExtra(Intent.EXTRA_PROCESS_TEXT, text)
+                                            putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
+                                        },
+                                    )
+                                }
+                                clearSelectionAction()
+                                actionModeMenuViewModel.updateActionMode(null)
                             }
-                            clearSelectionAction()
-                            actionModeMenuViewModel.updateActionMode(null)
                         }
                     }
                 }
-            }
-            actionModeView?.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+            actionModeView?.layoutParams =
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                )
             actionModeView?.visibility = INVISIBLE
             browserState.binding.root.addView(actionModeView)
         }
@@ -302,21 +308,31 @@ class ActionModeDelegate(
      * the selection handles is not in the way; [belowPoint] (under the
      * selection) is the fallback when there is no room above.
      */
-    private fun placeActionModeView(view: View, belowPoint: Point) {
+    private fun placeActionModeView(
+        view: View,
+        belowPoint: Point,
+    ) {
         // updateViewPosition offsets the view by 10dp, so subtract it here to
         // end up SELECTION_GAP_DP above the selection, mirroring the gap below.
-        val aboveY = selectionTopPx - view.height -
-            ViewUnit.dpToPixel(SELECTION_GAP_DP + 10).toInt()
+        val aboveY =
+            selectionTopPx - view.height -
+                ViewUnit.dpToPixel(SELECTION_GAP_DP + 10).toInt()
         val point = if (view.height > 0 && aboveY >= 0) Point(belowPoint.x, aboveY) else belowPoint
         ViewUnit.updateViewPosition(view, point)
     }
 
-    fun updateSelectionRect(left: Float, top: Float, right: Float, bottom: Float) {
+    fun updateSelectionRect(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ) {
         selectionTopPx = ViewUnit.dpToPixel(top.toInt()).toInt()
-        val newPoint = Point(
-            ViewUnit.dpToPixel(right.toInt()).toInt(),
-            ViewUnit.dpToPixel(bottom.toInt() + SELECTION_GAP_DP).toInt()
-        )
+        val newPoint =
+            Point(
+                ViewUnit.dpToPixel(right.toInt()).toInt(),
+                ViewUnit.dpToPixel(bottom.toInt() + SELECTION_GAP_DP).toInt(),
+            )
         if (kotlin.math.abs(newPoint.x - actionModeMenuViewModel.clickedPoint.value.x) > ViewUnit.dpToPixel(15) ||
             kotlin.math.abs(newPoint.y - actionModeMenuViewModel.clickedPoint.value.y) > ViewUnit.dpToPixel(15)
         ) {
@@ -324,10 +340,11 @@ class ActionModeDelegate(
         }
         actionModeMenuViewModel.updateClickedPoint(newPoint)
 
-        browserState.longPressPoint = Point(
-            ViewUnit.dpToPixel(left.toInt() - 1).toInt(),
-            ViewUnit.dpToPixel(top.toInt() + 1).toInt()
-        )
+        browserState.longPressPoint =
+            Point(
+                ViewUnit.dpToPixel(left.toInt() - 1).toInt(),
+                ViewUnit.dpToPixel(top.toInt() + 1).toInt(),
+            )
     }
 
     fun onActionModeFinished(mode: ActionMode?) {

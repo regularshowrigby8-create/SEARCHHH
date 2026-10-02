@@ -59,6 +59,13 @@ fun FontBoldnessContent(
     }
 }
 
-private fun findClosestIndex(target: Int, values: List<Float>): Float {
-    return values.indexOf(values.minByOrNull { kotlin.math.abs(it - target) }!!).toFloat()
-}
+private fun findClosestIndex(
+    target: Int,
+    values: List<Float>,
+): Float =
+    values
+        .indexOf(
+            values.minByOrNull {
+                kotlin.math.abs(it - target)
+            }!!,
+        ).toFloat()

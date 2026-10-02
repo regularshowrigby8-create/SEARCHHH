@@ -21,13 +21,6 @@ import info.plateaukao.einkbro.unit.pruneWebTitle
 import info.plateaukao.einkbro.util.Constants
 import info.plateaukao.einkbro.view.EBWebView
 import info.plateaukao.einkbro.view.dialog.TextInputDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import io.documentnode.epub4j.domain.Author
 import io.documentnode.epub4j.domain.Book
 import io.documentnode.epub4j.domain.Identifier
@@ -35,6 +28,13 @@ import io.documentnode.epub4j.domain.MediaTypes
 import io.documentnode.epub4j.domain.Resource
 import io.documentnode.epub4j.epub.EpubReader
 import io.documentnode.epub4j.epub.EpubWriter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -45,8 +45,9 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.Executors
 
-
-class EpubManager(private val context: Context) : KoinComponent {
+class EpubManager(
+    private val context: Context,
+) : KoinComponent {
     private val config: ConfigManager by inject()
 
     fun saveEpub(
@@ -64,9 +65,10 @@ class EpubManager(private val context: Context) : KoinComponent {
             val chapterName = getChapterName(ebWebView.title?.pruneWebTitle())
 
             if (bookName != null && chapterName != null) {
-                val rawHtml = ebWebView.dualCaption?.let {
-                    DualCaptionProcessor().convertToHtml(it)
-                } ?: ebWebView.getRawReaderHtml()
+                val rawHtml =
+                    ebWebView.dualCaption?.let {
+                        DualCaptionProcessor().convertToHtml(it)
+                    } ?: ebWebView.getRawReaderHtml()
                 onProgressChanged(5)
 
                 internalSaveEpub(
@@ -101,30 +103,32 @@ class EpubManager(private val context: Context) : KoinComponent {
         fileUri: Uri,
         bookName: String,
         chapters: List<EpubChapterContent>,
-    ): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val domain = Uri.parse(chapters.firstOrNull()?.url.orEmpty()).host ?: "EinkBro"
-            val book = createBook(domain, bookName)
-            chapters.forEachIndexed { index, chapter ->
-                val chapterIndex = index + 1
-                val webUri = Uri.parse(chapter.url)
-                val (processedHtml, imageMap) = processHtmlString(
-                    chapter.html,
-                    chapterIndex,
-                    "${webUri.scheme}://${webUri.host}/"
-                )
-                book.addSection(
-                    chapter.title,
-                    Resource(processedHtml.byteInputStream(), "chapter$chapterIndex.html")
-                )
-                saveImageResources(book, imageMap) {}
+    ): Boolean =
+        withContext(Dispatchers.IO) {
+            try {
+                val domain = Uri.parse(chapters.firstOrNull()?.url.orEmpty()).host ?: "EinkBro"
+                val book = createBook(domain, bookName)
+                chapters.forEachIndexed { index, chapter ->
+                    val chapterIndex = index + 1
+                    val webUri = Uri.parse(chapter.url)
+                    val (processedHtml, imageMap) =
+                        processHtmlString(
+                            chapter.html,
+                            chapterIndex,
+                            "${webUri.scheme}://${webUri.host}/",
+                        )
+                    book.addSection(
+                        chapter.title,
+                        Resource(processedHtml.byteInputStream(), "chapter$chapterIndex.html"),
+                    )
+                    saveImageResources(book, imageMap) {}
+                }
+                saveBook(book, fileUri)
+            } catch (e: Exception) {
+                Log.e(TAG, "saveEpubDirectly failed", e)
+                false
             }
-            saveBook(book, fileUri)
-        } catch (e: Exception) {
-            Log.e(TAG, "saveEpubDirectly failed", e)
-            false
         }
-    }
 
     private suspend fun getChapterName(defaultTitle: String?): String? {
         val chapterName = defaultTitle ?: "no title"
@@ -132,18 +136,17 @@ class EpubManager(private val context: Context) : KoinComponent {
             context,
             context.getString(R.string.title),
             context.getString(R.string.title_in_toc),
-            chapterName
+            chapterName,
         ).show()
     }
 
-    private suspend fun getBookName(defaultBookName: String?): String? {
-        return TextInputDialog(
+    private suspend fun getBookName(defaultBookName: String?): String? =
+        TextInputDialog(
             context,
             context.getString(R.string.book_name),
             context.getString(R.string.book_name_description),
-            defaultBookName ?: "einkbro book"
+            defaultBookName ?: "einkbro book",
         ).show()
-    }
 
     fun showWriteEpubFilePicker(
         activityResultLauncher: ActivityResultLauncher<Intent>,
@@ -168,20 +171,21 @@ class EpubManager(private val context: Context) : KoinComponent {
     }
 
     fun showOpenEpubFilePicker(activityResultLauncher: ActivityResultLauncher<Intent>) {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = Constants.MIME_TYPE_EPUB
-            addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-                HelperUnit.isSupernoteDocumentInstalled(context)
-            ) {
-                putExtra(
-                    DocumentsContract.EXTRA_INITIAL_URI,
-                    HelperUnit.supernoteDocumentInitialUri(),
-                )
+        val intent =
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = Constants.MIME_TYPE_EPUB
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                    HelperUnit.isSupernoteDocumentInstalled(context)
+                ) {
+                    putExtra(
+                        DocumentsContract.EXTRA_INITIAL_URI,
+                        HelperUnit.supernoteDocumentInitialUri(),
+                    )
+                }
             }
-        }
         activityResultLauncher.launch(intent)
     }
 
@@ -203,19 +207,19 @@ class EpubManager(private val context: Context) : KoinComponent {
         withContext(Dispatchers.IO) {
             val book = if (isNew) createBook(domain, bookName) else openBook(fileUri)
             if (book != null) {
-
                 val chapterIndex = book.tableOfContents.allUniqueResources.size + 1
                 val chapterFileName = "chapter$chapterIndex.html"
 
-                val (processedHtml, imageMap) = processHtmlString(
-                    html,
-                    chapterIndex,
-                    "${webUri.scheme}://${webUri.host}/"
-                )
+                val (processedHtml, imageMap) =
+                    processHtmlString(
+                        html,
+                        chapterIndex,
+                        "${webUri.scheme}://${webUri.host}/",
+                    )
                 Log.i(TAG, "Adding chapter $chapterIndex: $chapterName")
                 book.addSection(
                     chapterName,
-                    Resource(processedHtml.byteInputStream(), chapterFileName)
+                    Resource(processedHtml.byteInputStream(), chapterFileName),
                 )
 
                 onProgressChanged(10)
@@ -223,7 +227,7 @@ class EpubManager(private val context: Context) : KoinComponent {
                 Log.i(TAG, "Downloading " + imageMap.size + " images")
                 saveImageResources(
                     book,
-                    imageMap
+                    imageMap,
                 ) {
                     onProgressChanged(10 + (it * 80).toInt())
                 }
@@ -245,17 +249,22 @@ class EpubManager(private val context: Context) : KoinComponent {
     }
 
     fun showEpubReader(uri: Uri) {
-        val intent = Intent(context, EpubReaderActivity::class.java).apply {
-            data = uri
-        }
+        val intent =
+            Intent(context, EpubReaderActivity::class.java).apply {
+                data = uri
+            }
         context.startActivity(intent)
     }
 
-    private fun createBook(domain: String, bookName: String): Book = Book().apply {
-        metadata.addTitle(bookName)
-        metadata.addAuthor(Author(domain, "EinkBro App"))
-        metadata.identifiers.add(Identifier(EINKBRO_IDENTIFIER_SCHEME, EINKBRO_IDENTIFIER_VALUE))
-    }
+    private fun createBook(
+        domain: String,
+        bookName: String,
+    ): Book =
+        Book().apply {
+            metadata.addTitle(bookName)
+            metadata.addAuthor(Author(domain, "EinkBro App"))
+            metadata.identifiers.add(Identifier(EINKBRO_IDENTIFIER_SCHEME, EINKBRO_IDENTIFIER_VALUE))
+        }
 
     private fun openBook(uri: Uri): Book? {
         try {
@@ -263,8 +272,9 @@ class EpubManager(private val context: Context) : KoinComponent {
                 (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             context.contentResolver.takePersistableUriPermission(uri, takeFlags)
 
-            val epubInputStream: InputStream = context.contentResolver.openInputStream(uri)
-                ?: return createBook("", "EinkBro")
+            val epubInputStream: InputStream =
+                context.contentResolver.openInputStream(uri)
+                    ?: return createBook("", "EinkBro")
 
             return EpubReader().readEpub(epubInputStream)
         } catch (e: IOException) {
@@ -274,7 +284,10 @@ class EpubManager(private val context: Context) : KoinComponent {
         }
     }
 
-    private fun saveBook(book: Book, uri: Uri): Boolean {
+    private fun saveBook(
+        book: Book,
+        uri: Uri,
+    ): Boolean {
         return try {
             val outputStream = context.contentResolver.openOutputStream(uri) ?: return false
             outputStream.use { EpubWriter().write(book, it) }
@@ -320,13 +333,12 @@ class EpubManager(private val context: Context) : KoinComponent {
         }
 
         // for generating html elements with end tag.
-        doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
-        doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
+        doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml)
+        doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml)
         return Pair(doc.toString(), imageKeyUrlMap)
     }
 
-    private fun Element.isDummyImage(): Boolean =
-        attr("height") == "1" && attr("width") == "1"
+    private fun Element.isDummyImage(): Boolean = attr("height") == "1" && attr("width") == "1"
 
     private suspend fun saveImageResources(
         book: Book,
@@ -340,21 +352,23 @@ class EpubManager(private val context: Context) : KoinComponent {
             map.entries.forEach { entry ->
                 launch(saveImageDispatcher) {
                     Log.i(TAG, "Loading ${entry.key}: ${entry.value}")
-                    val (resource, mimeType) = getResourceAndMimetypeFromUrl(
-                        entry.value,
-                        timeout = 5_000
-                    )
+                    val (resource, mimeType) =
+                        getResourceAndMimetypeFromUrl(
+                            entry.value,
+                            timeout = 5_000,
+                        )
                     val mediaType =
                         MediaTypes.getMediaTypeByName(mimeType) ?: MediaTypes.JPG
                     Log.d(TAG, "Got content type: $mimeType mediaType: $mediaType")
-                    mutex.withLock { // Synchronize access to ebook and counter
+                    mutex.withLock {
+                        // Synchronize access to ebook and counter
                         book.addResource(
                             Resource(
                                 null,
                                 resource,
                                 entry.key,
-                                mediaType
-                            )
+                                mediaType,
+                            ),
                         )
                         processedImageCount++
                         onProgressChanged(processedImageCount.toFloat() / map.size)
@@ -392,4 +406,8 @@ class EpubManager(private val context: Context) : KoinComponent {
 
 /** One resolved chapter for [EpubManager.saveEpubDirectly]: already-extracted reader
  *  [html] plus the source [url] (used for the base URI and image resolution). */
-data class EpubChapterContent(val title: String, val html: String, val url: String)
+data class EpubChapterContent(
+    val title: String,
+    val html: String,
+    val url: String,
+)

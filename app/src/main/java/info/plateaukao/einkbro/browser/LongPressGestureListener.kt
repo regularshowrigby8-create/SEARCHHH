@@ -4,13 +4,12 @@ import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import info.plateaukao.einkbro.view.EBWebView
 
-class LongPressGestureListener(private var webView: EBWebView) : SimpleOnGestureListener() {
+class LongPressGestureListener(
+    private var webView: EBWebView,
+) : SimpleOnGestureListener() {
     private var longPress = true
 
-
-    override fun onContextClick(e: MotionEvent): Boolean {
-        return super.onContextClick(e)
-    }
+    override fun onContextClick(e: MotionEvent): Boolean = super.onContextClick(e)
 
     override fun onLongPress(e: MotionEvent) {
         if (longPress) {

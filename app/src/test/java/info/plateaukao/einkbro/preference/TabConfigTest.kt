@@ -7,7 +7,6 @@ import org.junit.Before
 import org.junit.Test
 
 class TabConfigTest {
-
     private lateinit var sp: FakeSharedPreferences
     private lateinit var config: TabConfig
 
@@ -24,19 +23,21 @@ class TabConfigTest {
 
     @Test
     fun `savedAlbumInfoList round trips`() {
-        val albums = listOf(
-            AlbumInfo("EinkBro", "https://github.com/plateaukao/einkbro"),
-            AlbumInfo("Search", "https://www.google.com/search?q=a%20b"),
-        )
+        val albums =
+            listOf(
+                AlbumInfo("EinkBro", "https://github.com/plateaukao/einkbro"),
+                AlbumInfo("Search", "https://www.google.com/search?q=a%20b"),
+            )
         config.savedAlbumInfoList = albums
         assertEquals(albums, config.savedAlbumInfoList)
     }
 
     @Test
     fun `savedAlbumInfoList keeps titles containing double colons`() {
-        val albums = listOf(
-            AlbumInfo("std::vec::Vec - Rust", "https://doc.rust-lang.org/std/vec/struct.Vec.html"),
-        )
+        val albums =
+            listOf(
+                AlbumInfo("std::vec::Vec - Rust", "https://doc.rust-lang.org/std/vec/struct.Vec.html"),
+            )
         config.savedAlbumInfoList = albums
         assertEquals(albums, config.savedAlbumInfoList)
     }

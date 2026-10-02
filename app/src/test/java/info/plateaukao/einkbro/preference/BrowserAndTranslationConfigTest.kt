@@ -10,7 +10,6 @@ import org.junit.Before
 import org.junit.Test
 
 class BrowserConfigTest {
-
     private lateinit var sp: FakeSharedPreferences
     private lateinit var config: BrowserConfig
 
@@ -83,7 +82,6 @@ class BrowserConfigTest {
 }
 
 class TranslationConfigTest {
-
     private lateinit var sp: FakeSharedPreferences
     private lateinit var config: TranslationConfig
 

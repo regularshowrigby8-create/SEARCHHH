@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import info.plateaukao.einkbro.R
-import info.plateaukao.einkbro.preference.ConfigManager
-import info.plateaukao.einkbro.preference.toggle
 import info.plateaukao.einkbro.data.remote.OpenAiRepository
 import info.plateaukao.einkbro.data.remote.TranslateRepository
+import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.preference.toggle
 import info.plateaukao.einkbro.service.TtsManager
 import info.plateaukao.einkbro.service.TtsNotificationAction
 import info.plateaukao.einkbro.service.TtsNotificationManager
@@ -26,13 +26,11 @@ import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-
 class TtsViewModel(
     private val config: ConfigManager,
     private val ttsManager: TtsManager,
     private val ttsNotificationManager: TtsNotificationManager,
 ) : ViewModel() {
-
     private val eTts: ETts = ETts()
 
     private val mediaPlayer by lazy { CustomMediaPlayer() }
@@ -75,7 +73,10 @@ class TtsViewModel(
         }
     }
 
-    fun readArticle(text: String, title: String = "") {
+    fun readArticle(
+        text: String,
+        title: String = "",
+    ) {
         if (title.isNotEmpty()) {
             pageTitle = title
         }
@@ -98,7 +99,7 @@ class TtsViewModel(
                 when (type) {
                     TtsType.ETTS,
                     TtsType.GPT,
-                        -> readByEngine(type, article)
+                    -> readByEngine(type, article)
 
                     TtsType.SYSTEM -> {
                         updateReadProgress()
@@ -117,7 +118,6 @@ class TtsViewModel(
 //            IntentUnit.tts(context as Activity, text)
 //            return
 //        }
-
     }
 
     private suspend fun readBySystemTts(text: String) {
@@ -139,13 +139,14 @@ class TtsViewModel(
     ) {
         _readProgress.value = ReadProgress(index, total, articleLeftCount)
         text?.let {
-            //_currentReadingContent.value = it
+            // _currentReadingContent.value = it
             maybeInsertTranslationText(text)
         }
         updateNotification()
     }
 
     private val translationSeparator = "\n---\n"
+
     private fun maybeInsertTranslationText(text: String) {
         if (config.tts.ttsShowTextTranslation) {
             viewModelScope.launch {
@@ -161,31 +162,35 @@ class TtsViewModel(
         }
     }
 
-    private suspend fun readByEngine(ttsType: TtsType, text: String) {
+    private suspend fun readByEngine(
+        ttsType: TtsType,
+        text: String,
+    ) {
         byteArrayChannel?.cancel()
         byteArrayChannel = Channel(1)
         val chunks = processedTextToChunks(text)
 
-        val articleTtsFetchJob = viewModelScope.launch(Dispatchers.IO) {
-
-            chunks.forEachIndexed { index, chunk ->
-                if (byteArrayChannel == null) return@launch
-
-                fetchSemaphore.withPermit {
-                    Log.d("TtsViewModel", "tts sentence fetch: $chunk")
-                    val byteArray = if (ttsType == TtsType.ETTS) {
-                        eTts.tts(config.tts.ettsVoice, config.tts.ttsSpeedValue, chunk)
-                    } else {
-                        openaiRepository.tts(chunk)
-                    }
-
-                    Log.d("TtsViewModel", "tts sentence send ($index) : $chunk")
+        val articleTtsFetchJob =
+            viewModelScope.launch(Dispatchers.IO) {
+                chunks.forEachIndexed { index, chunk ->
                     if (byteArrayChannel == null) return@launch
-                    byteArrayChannel?.send(ChannelData(byteArray, chunk, index))
-                    Log.d("TtsViewModel", "tts sentence sent ($index) : $chunk")
+
+                    fetchSemaphore.withPermit {
+                        Log.d("TtsViewModel", "tts sentence fetch: $chunk")
+                        val byteArray =
+                            if (ttsType == TtsType.ETTS) {
+                                eTts.tts(config.tts.ettsVoice, config.tts.ttsSpeedValue, chunk)
+                            } else {
+                                openaiRepository.tts(chunk)
+                            }
+
+                        Log.d("TtsViewModel", "tts sentence send ($index) : $chunk")
+                        if (byteArrayChannel == null) return@launch
+                        byteArrayChannel?.send(ChannelData(byteArray, chunk, index))
+                        Log.d("TtsViewModel", "tts sentence sent ($index) : $chunk")
+                    }
                 }
             }
-        }
 
         var index = 0
         while (byteArrayChannel != null) {
@@ -293,64 +298,76 @@ class TtsViewModel(
 
     fun getAvailableLanguages(): List<Locale> = ttsManager.getAvailableLanguages()
 
-    private suspend fun playAudioByteArray(byteArray: ByteArray) = suspendCoroutine { cont ->
-        try {
-            mediaPlayer.setOnResetListener {
-                mediaPlayer.setOnResetListener { }
+    private suspend fun playAudioByteArray(byteArray: ByteArray) =
+        suspendCoroutine { cont ->
+            try {
+                mediaPlayer.setOnResetListener {
+                    mediaPlayer.setOnResetListener { }
+                    cont.resume(0)
+                }
+
+                mediaPlayer.setDataSource(ByteArrayMediaDataSource(byteArray))
+
+                mediaPlayer.setOnPreparedListener {
+                    mediaPlayer.start()
+                }
+                mediaPlayer.prepare()
+
+                mediaPlayer.setOnCompletionListener {
+                    mediaPlayer.reset()
+                }
+                mediaPlayer.setOnErrorListener { value1, value2, value3 ->
+                    Log.e("TtsViewModel", "playAudioArray: error $value1 $value2 $value3")
+                    mediaPlayer.reset()
+                    true
+                }
+            } catch (e: Exception) {
+                // mediaPlayer.reset()
+                Log.e("TtsViewModel", "playAudioArray exception: ${e.message}")
                 cont.resume(0)
             }
-
-            mediaPlayer.setDataSource(ByteArrayMediaDataSource(byteArray))
-
-            mediaPlayer.setOnPreparedListener {
-                mediaPlayer.start()
-            }
-            mediaPlayer.prepare()
-
-            mediaPlayer.setOnCompletionListener {
-                mediaPlayer.reset()
-            }
-            mediaPlayer.setOnErrorListener { value1, value2, value3 ->
-                Log.e("TtsViewModel", "playAudioArray: error $value1 $value2 $value3")
-                mediaPlayer.reset()
-                true
-            }
-
-        } catch (e: Exception) {
-            //mediaPlayer.reset()
-            Log.e("TtsViewModel", "playAudioArray exception: ${e.message}")
-            cont.resume(0)
         }
-    }
 }
 
 enum class TtsType {
-    SYSTEM, GPT, ETTS
+    SYSTEM,
+    GPT,
+    ETTS,
 }
 
 enum class TtsReadingState {
-    PREPARING, PLAYING, PAUSED, IDLE
+    PREPARING,
+    PLAYING,
+    PAUSED,
+    IDLE,
 }
 
-fun TtsType.toStringResId(): Int {
-    return when (this) {
+fun TtsType.toStringResId(): Int =
+    when (this) {
         TtsType.GPT -> R.string.tts_type_gpt
         TtsType.ETTS -> R.string.tts_type_etts
         TtsType.SYSTEM -> R.string.tts_type_system
     }
-}
 
-data class ReadProgress(val index: Int, val total: Int, val articleLeftCount: Int) {
+data class ReadProgress(
+    val index: Int,
+    val total: Int,
+    val articleLeftCount: Int,
+) {
     override fun toString(): String {
         if (total == 0) return "($articleLeftCount)"
 
         return "$index/$total " +
-                if (articleLeftCount > 0) {
-                    "($articleLeftCount)"
-                } else {
-                    ""
-                }
+            if (articleLeftCount > 0) {
+                "($articleLeftCount)"
+            } else {
+                ""
+            }
     }
 }
 
-class ChannelData(val byteArray: ByteArray?, val text: String, val chunkIndex: Int)
+class ChannelData(
+    val byteArray: ByteArray?,
+    val text: String,
+    val chunkIndex: Int,
+)

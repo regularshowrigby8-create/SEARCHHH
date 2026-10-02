@@ -12,13 +12,13 @@ fun buildUserAgentSettingItems(deps: SettingScreenDeps): List<SettingItemInterfa
             R.string.setting_title_userAgent_toggle,
             0,
             R.string.setting_summary_userAgent_toggle,
-            config.browser::enableCustomUserAgent
+            config.browser::enableCustomUserAgent,
         ),
         ValueSettingItem(
             R.string.setting_title_userAgent,
             0,
             R.string.setting_summary_userAgent,
-            config.browser::customUserAgent
+            config.browser::customUserAgent,
         ),
     )
 }

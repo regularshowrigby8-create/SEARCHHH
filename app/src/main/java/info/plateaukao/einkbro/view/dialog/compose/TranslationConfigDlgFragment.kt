@@ -29,8 +29,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import info.plateaukao.einkbro.R
-import info.plateaukao.einkbro.view.compose.ebItemFrame
 import info.plateaukao.einkbro.preference.TranslationMode
+import info.plateaukao.einkbro.view.compose.ebItemFrame
 
 class TranslationConfigDlgFragment(
     private val url: String,
@@ -51,12 +51,15 @@ class TranslationConfigDlgFragment(
                     dismiss()
                 }
             },
-            onSiteSettingsClicked = if (onShowSiteSettings != null) {
-                {
-                    dismiss()
-                    onShowSiteSettings.invoke()
-                }
-            } else null,
+            onSiteSettingsClicked =
+                if (onShowSiteSettings != null) {
+                    {
+                        dismiss()
+                        onShowSiteSettings.invoke()
+                    }
+                } else {
+                    null
+                },
         )
     }
 }
@@ -76,15 +79,16 @@ fun TranslationConfigScreen(
             Text(
                 modifier = Modifier.padding(10.dp),
                 text = textLabel,
-                color = MaterialTheme.colors.onBackground
+                color = MaterialTheme.colors.onBackground,
             )
         }
         DropdownMenu(
-            modifier = Modifier
-                .ebItemFrame(paintBackground = true)
-                .padding(8.dp),
+            modifier =
+                Modifier
+                    .ebItemFrame(paintBackground = true)
+                    .padding(8.dp),
             expanded = actionExpanded,
-            onDismissRequest = { actionExpanded = false }
+            onDismissRequest = { actionExpanded = false },
         ) {
             TranslationMode.entries.forEach { type ->
                 val text = context.getString(type.labelResId)
@@ -98,10 +102,11 @@ fun TranslationConfigScreen(
         }
         if (onSiteSettingsClicked != null) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onSiteSettingsClicked() }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { onSiteSettingsClicked() }
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(

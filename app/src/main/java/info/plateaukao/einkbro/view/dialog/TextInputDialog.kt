@@ -2,26 +2,27 @@ package info.plateaukao.einkbro.view.dialog
 
 import android.app.AlertDialog
 import android.content.Context
-
 import android.widget.EditText
 import info.plateaukao.einkbro.R
+import info.plateaukao.einkbro.view.withThemedFrame
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import info.plateaukao.einkbro.view.withThemedFrame
-
 
 class TextInputDialog(
-   private val context: Context,
-   private val title: String,
-   private val message: String,
-   private val defaultText: String = "",
+    private val context: Context,
+    private val title: String,
+    private val message: String,
+    private val defaultText: String = "",
 ) {
-    suspend fun show() = suspendCoroutine<String?> { continuation ->
-        val editText = EditText(context).apply {
-            setText(defaultText)
-        }
+    suspend fun show() =
+        suspendCoroutine<String?> { continuation ->
+            val editText =
+                EditText(context).apply {
+                    setText(defaultText)
+                }
 
-        AlertDialog.Builder(context, R.style.TouchAreaDialog)
+            AlertDialog
+                .Builder(context, R.style.TouchAreaDialog)
                 .setTitle(title)
                 .setMessage(message)
                 .setView(editText)
@@ -30,10 +31,10 @@ class TextInputDialog(
                     dialog.dismiss()
                     val text = editText.text.toString()
                     continuation.resume(text)
-                }
-                .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                }.setNegativeButton(android.R.string.cancel) { dialog, _ ->
                     dialog.dismiss()
                     continuation.resume(null)
-                }.show().withThemedFrame()
-    }
+                }.show()
+                .withThemedFrame()
+        }
 }

@@ -6,11 +6,11 @@ import android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -26,8 +26,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -37,11 +35,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -72,8 +72,8 @@ import info.plateaukao.einkbro.data.remote.GoogleDriveRepository
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.setting.DividerSettingItem
 import info.plateaukao.einkbro.setting.GesturePickerScreen
-import info.plateaukao.einkbro.setting.SettingItemInterface
 import info.plateaukao.einkbro.setting.SearchSettingScreen
+import info.plateaukao.einkbro.setting.SettingItemInterface
 import info.plateaukao.einkbro.setting.SettingScreen
 import info.plateaukao.einkbro.setting.screens.BackupOps
 import info.plateaukao.einkbro.setting.screens.SettingScreenDeps
@@ -81,11 +81,11 @@ import info.plateaukao.einkbro.setting.screens.buildAboutSettingItems
 import info.plateaukao.einkbro.setting.screens.buildBackupSettingItems
 import info.plateaukao.einkbro.setting.screens.buildBehaviorSettingItems
 import info.plateaukao.einkbro.setting.screens.buildChatGptSettingItems
+import info.plateaukao.einkbro.setting.screens.buildClearDataSettingItems
+import info.plateaukao.einkbro.setting.screens.buildGestureSettingItems
 import info.plateaukao.einkbro.setting.screens.buildGptGeminiSettingItems
 import info.plateaukao.einkbro.setting.screens.buildGptOpenAiSettingItems
 import info.plateaukao.einkbro.setting.screens.buildGptSelfHostedSettingItems
-import info.plateaukao.einkbro.setting.screens.buildClearDataSettingItems
-import info.plateaukao.einkbro.setting.screens.buildGestureSettingItems
 import info.plateaukao.einkbro.setting.screens.buildMainSettingItems
 import info.plateaukao.einkbro.setting.screens.buildMiscSettingItems
 import info.plateaukao.einkbro.setting.screens.buildSearchSettingItems
@@ -95,12 +95,13 @@ import info.plateaukao.einkbro.setting.screens.buildUiSettingItems
 import info.plateaukao.einkbro.setting.screens.buildUserAgentSettingItems
 import info.plateaukao.einkbro.unit.BackupCategory
 import info.plateaukao.einkbro.unit.BackupUnit
-import info.plateaukao.einkbro.unit.disablePendingTransitions
 import info.plateaukao.einkbro.unit.LocaleManager
 import info.plateaukao.einkbro.unit.ShareUtil
+import info.plateaukao.einkbro.unit.disablePendingTransitions
 import info.plateaukao.einkbro.view.EBToast
 import info.plateaukao.einkbro.view.compose.MyTheme
 import info.plateaukao.einkbro.view.compose.SystemBarIconsForBlackTopBar
+import info.plateaukao.einkbro.view.compose.onTopBar
 import info.plateaukao.einkbro.view.compose.scaffoldEdgeToEdgePadding
 import info.plateaukao.einkbro.view.dialog.DialogManager
 import kotlinx.coroutines.Dispatchers
@@ -110,9 +111,10 @@ import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
-import info.plateaukao.einkbro.view.compose.onTopBar
 
-class SettingActivity : FragmentActivity(), BackupOps {
+class SettingActivity :
+    FragmentActivity(),
+    BackupOps {
     private val config: ConfigManager by inject()
     private val driveRepository: GoogleDriveRepository by inject()
     private val dialogManager: DialogManager by lazy { DialogManager(this) }
@@ -158,9 +160,10 @@ class SettingActivity : FragmentActivity(), BackupOps {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val uri: Uri = result.data?.data ?: return@registerForActivityResult
             lifecycleScope.launch {
-                val options = withContext(Dispatchers.IO) {
-                    backupUnit.getAvailableCategoryOptions(this@SettingActivity, uri)
-                }
+                val options =
+                    withContext(Dispatchers.IO) {
+                        backupUnit.getAvailableCategoryOptions(this@SettingActivity, uri)
+                    }
                 if (options == null) {
                     if (backupUnit.restoreLegacyBackupData(this@SettingActivity, uri)) {
                         dialogManager.showRestartConfirmDialog()
@@ -177,17 +180,14 @@ class SettingActivity : FragmentActivity(), BackupOps {
             }
         }
 
-
     @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         val routeName = intent.getStringExtra(KEY_ROUTE) ?: Main.name
         setContent {
             val navController: NavHostController = rememberNavController()
             MyTheme {
-
                 val backStackEntry = navController.currentBackStackEntryAsState()
                 val currentScreen = valueOf(backStackEntry.value?.destination?.route ?: Main.name)
                 var isSearching by rememberSaveable { mutableStateOf(false) }
@@ -195,30 +195,36 @@ class SettingActivity : FragmentActivity(), BackupOps {
 
                 SystemBarIconsForBlackTopBar()
                 Scaffold(
-                    modifier = Modifier
-                        .semantics {
-                            testTagsAsResourceId = true
-                        }
-                        .scaffoldEdgeToEdgePadding(),
+                    modifier =
+                        Modifier
+                            .semantics {
+                                testTagsAsResourceId = true
+                            }.scaffoldEdgeToEdgePadding(),
                     topBar = {
                         if (isSearching) {
                             SearchSettingBar(
                                 query = searchQuery,
                                 onQueryChange = { searchQuery = it },
-                                onClose = { isSearching = false; searchQuery = "" }
+                                onClose = {
+                                    isSearching = false
+                                    searchQuery = ""
+                                },
                             )
                         } else {
                             SettingBar(
                                 currentScreen = currentScreen,
                                 navigateUp = {
-                                    if (navController.previousBackStackEntry != null) navController.navigateUp()
-                                    else finish()
+                                    if (navController.previousBackStackEntry != null) {
+                                        navController.navigateUp()
+                                    } else {
+                                        finish()
+                                    }
                                 },
                                 close = { finish() },
-                                onSearch = { isSearching = true }
+                                onSearch = { isSearching = true },
                             )
                         }
-                    }
+                    },
                 ) { innerPadding ->
                     if (isSearching) {
                         SearchSettingScreen(
@@ -229,64 +235,66 @@ class SettingActivity : FragmentActivity(), BackupOps {
                             linkAction = this@SettingActivity::handleLink,
                             modifier = Modifier.padding(innerPadding),
                         )
-                    } else NavHost(
-                        navController = navController,
-                        startDestination = routeName,
-                        modifier = Modifier.padding(innerPadding),
-                        enterTransition = { fadeIn(animationSpec = tween(1)) },
-                        exitTransition = { fadeOut(animationSpec = tween(1)) },
-                    ) {
-                        val action = this@SettingActivity::handleLink
-                        composable(Main.name) {
-                            SettingScreen(navController, mainSettings, dialogManager, action, 2)
-                        }
-                        composable(Ui.name) {
-                            SettingScreen(navController, uiSettingItems, dialogManager, action, 1)
-                        }
-                        composable(Toolbar.name) {
-                            SettingScreen(navController, toolbarSettingItems, dialogManager, action, 1)
-                        }
-                        composable(Behavior.name) {
-                            SettingScreen(navController, behaviorSettingItems, dialogManager, action, 1)
-                        }
-                        composable(Gesture.name) {
-                            SettingScreen(navController, gestureSettingItems, dialogManager, action, 2)
-                        }
-                        composable(SettingRoute.GesturePicker.name) {
-                            GesturePickerScreen(navController)
-                        }
-                        composable(Backup.name) {
-                            SettingScreen(navController, dataSettingItems, dialogManager, action, 1)
-                        }
-                        composable(StartControl.name) {
-                            SettingScreen(navController, startSettingItems, dialogManager, action, 1)
-                        }
-                        composable(DataControl.name) {
-                            SettingScreen(navController, clearDataSettingItems, dialogManager, action, 1)
-                        }
-                        composable(UserAgent.name) {
-                            SettingScreen(navController, userAgentSettingItems, dialogManager, action, 1)
-                        }
-                        composable(Misc.name) {
-                            SettingScreen(navController, miscSettingItems, dialogManager, action, 1)
-                        }
-                        composable(ChatGPT.name) {
-                            SettingScreen(navController, chatGptSettingItems, dialogManager, action, 1)
-                        }
-                        composable(SettingRoute.GptOpenAi.name) {
-                            SettingScreen(navController, gptOpenAiSettingItems, dialogManager, action, 1)
-                        }
-                        composable(SettingRoute.GptSelfHosted.name) {
-                            SettingScreen(navController, gptSelfHostedSettingItems, dialogManager, action, 1)
-                        }
-                        composable(SettingRoute.GptGemini.name) {
-                            SettingScreen(navController, gptGeminiSettingItems, dialogManager, action, 1)
-                        }
-                        composable(Search.name) {
-                            SettingScreen(navController, searchSettingItems, dialogManager, action, 1)
-                        }
-                        composable(About.name) {
-                            SettingScreen(navController, buildAboutSettingItems(deps), dialogManager, action, 2)
+                    } else {
+                        NavHost(
+                            navController = navController,
+                            startDestination = routeName,
+                            modifier = Modifier.padding(innerPadding),
+                            enterTransition = { fadeIn(animationSpec = tween(1)) },
+                            exitTransition = { fadeOut(animationSpec = tween(1)) },
+                        ) {
+                            val action = this@SettingActivity::handleLink
+                            composable(Main.name) {
+                                SettingScreen(navController, mainSettings, dialogManager, action, 2)
+                            }
+                            composable(Ui.name) {
+                                SettingScreen(navController, uiSettingItems, dialogManager, action, 1)
+                            }
+                            composable(Toolbar.name) {
+                                SettingScreen(navController, toolbarSettingItems, dialogManager, action, 1)
+                            }
+                            composable(Behavior.name) {
+                                SettingScreen(navController, behaviorSettingItems, dialogManager, action, 1)
+                            }
+                            composable(Gesture.name) {
+                                SettingScreen(navController, gestureSettingItems, dialogManager, action, 2)
+                            }
+                            composable(SettingRoute.GesturePicker.name) {
+                                GesturePickerScreen(navController)
+                            }
+                            composable(Backup.name) {
+                                SettingScreen(navController, dataSettingItems, dialogManager, action, 1)
+                            }
+                            composable(StartControl.name) {
+                                SettingScreen(navController, startSettingItems, dialogManager, action, 1)
+                            }
+                            composable(DataControl.name) {
+                                SettingScreen(navController, clearDataSettingItems, dialogManager, action, 1)
+                            }
+                            composable(UserAgent.name) {
+                                SettingScreen(navController, userAgentSettingItems, dialogManager, action, 1)
+                            }
+                            composable(Misc.name) {
+                                SettingScreen(navController, miscSettingItems, dialogManager, action, 1)
+                            }
+                            composable(ChatGPT.name) {
+                                SettingScreen(navController, chatGptSettingItems, dialogManager, action, 1)
+                            }
+                            composable(SettingRoute.GptOpenAi.name) {
+                                SettingScreen(navController, gptOpenAiSettingItems, dialogManager, action, 1)
+                            }
+                            composable(SettingRoute.GptSelfHosted.name) {
+                                SettingScreen(navController, gptSelfHostedSettingItems, dialogManager, action, 1)
+                            }
+                            composable(SettingRoute.GptGemini.name) {
+                                SettingScreen(navController, gptGeminiSettingItems, dialogManager, action, 1)
+                            }
+                            composable(Search.name) {
+                                SettingScreen(navController, searchSettingItems, dialogManager, action, 1)
+                            }
+                            composable(About.name) {
+                                SettingScreen(navController, buildAboutSettingItems(deps), dialogManager, action, 2)
+                            }
                         }
                     }
                 }
@@ -306,7 +314,7 @@ class SettingActivity : FragmentActivity(), BackupOps {
     override fun attachBaseContext(newBase: Context) {
         if (config.uiLocaleLanguage.isNotEmpty()) {
             super.attachBaseContext(
-                LocaleManager.setLocale(newBase, config.uiLocaleLanguage)
+                LocaleManager.setLocale(newBase, config.uiLocaleLanguage),
             )
         } else {
             super.attachBaseContext(newBase)
@@ -358,7 +366,10 @@ class SettingActivity : FragmentActivity(), BackupOps {
                 dialogManager.showOkCancelDialog(
                     title = getString(R.string.setting_title_share_appData),
                     message = getString(R.string.share_broadcasting),
-                    okAction = { ShareUtil.stopBroadcast(); tempFile.delete() },
+                    okAction = {
+                        ShareUtil.stopBroadcast()
+                        tempFile.delete()
+                    },
                     showNegativeButton = false,
                 )
             }
@@ -367,12 +378,13 @@ class SettingActivity : FragmentActivity(), BackupOps {
 
     override fun receiveAppData() {
         val tempFile = java.io.File(cacheDir, "backup_receive.zip")
-        val dialog = dialogManager.showOkCancelDialog(
-            title = getString(R.string.setting_title_receive_appData),
-            message = getString(R.string.share_waiting),
-            okAction = { ShareUtil.stopBroadcast() },
-            showNegativeButton = false,
-        )
+        val dialog =
+            dialogManager.showOkCancelDialog(
+                title = getString(R.string.setting_title_receive_appData),
+                message = getString(R.string.share_waiting),
+                okAction = { ShareUtil.stopBroadcast() },
+                showNegativeButton = false,
+            )
 
         ShareUtil.startReceivingFile(lifecycleScope, tempFile, onConnected = {
             dialog.findViewById<android.widget.TextView>(android.R.id.message)?.text =
@@ -380,9 +392,10 @@ class SettingActivity : FragmentActivity(), BackupOps {
         }) { file ->
             dialog.dismiss()
             lifecycleScope.launch {
-                val options = withContext(Dispatchers.IO) {
-                    backupUnit.getAvailableCategoryOptions(file)
-                }
+                val options =
+                    withContext(Dispatchers.IO) {
+                        backupUnit.getAvailableCategoryOptions(file)
+                    }
                 if (options != null) {
                     dialogManager.showRestoreCategoryDialog(options) { selected ->
                         lifecycleScope.launch {
@@ -429,79 +442,90 @@ class SettingActivity : FragmentActivity(), BackupOps {
         }
     }
 
-    private fun showDriveSyncDialog() = launchDriveOp {
-        val remote = driveRepository.getRemoteBackup()
+    private fun showDriveSyncDialog() =
+        launchDriveOp {
+            val remote = driveRepository.getRemoteBackup()
 
-        val options = mutableListOf<Pair<String, () -> Unit>>(
-            getString(R.string.drive_upload_backup) to { uploadBackupToDrive(remote?.id) }
-        )
-        if (remote != null) {
-            options += getString(
-                R.string.drive_restore_backup, formatDriveTime(remote.modifiedTime)
-            ) to { restoreBackupFromDrive(remote.id) }
-        }
-        options += getString(R.string.drive_sign_out, driveRepository.email.orEmpty()) to {
-            driveRepository.signOut()
-        }
-
-        val selected = dialogManager.getSelectedOptionWithString(
-            R.string.setting_title_gdrive_sync, options.map { it.first }, -1
-        ) ?: return@launchDriveOp
-        options[selected].second()
-    }
-
-    private fun uploadBackupToDrive(existingId: String?) = launchDriveOp {
-        val tempFile = withContext(Dispatchers.IO) {
-            // Same category set the backup dialog offers, so empty optional
-            // categories (transcripts, chat sessions) aren't advertised in the
-            // manifest of a Drive backup either.
-            val categories = backupUnit.getBackupCategoryOptions().map { it.first }.toSet()
-            backupUnit.backupToTempFile(categories, "drive_upload.zip")
-        }
-        if (tempFile == null) {
-            EBToast.show(this@SettingActivity, R.string.toast_error)
-            return@launchDriveOp
-        }
-        try {
-            driveRepository.uploadBackup(tempFile, existingId)
-            EBToast.show(this@SettingActivity, R.string.toast_backup_successful)
-        } finally {
-            tempFile.delete()
-        }
-    }
-
-    private fun restoreBackupFromDrive(fileId: String) = launchDriveOp {
-        val tempFile = java.io.File(cacheDir, "drive_restore.zip")
-        try {
-            driveRepository.downloadBackup(fileId, tempFile)
-            val options = withContext(Dispatchers.IO) {
-                backupUnit.getAvailableCategoryOptions(tempFile)
+            val options =
+                mutableListOf<Pair<String, () -> Unit>>(
+                    getString(R.string.drive_upload_backup) to { uploadBackupToDrive(remote?.id) },
+                )
+            if (remote != null) {
+                options += getString(
+                    R.string.drive_restore_backup,
+                    formatDriveTime(remote.modifiedTime),
+                ) to { restoreBackupFromDrive(remote.id) }
             }
-            if (options.isNullOrEmpty()) {
+            options += getString(R.string.drive_sign_out, driveRepository.email.orEmpty()) to {
+                driveRepository.signOut()
+            }
+
+            val selected =
+                dialogManager.getSelectedOptionWithString(
+                    R.string.setting_title_gdrive_sync,
+                    options.map { it.first },
+                    -1,
+                ) ?: return@launchDriveOp
+            options[selected].second()
+        }
+
+    private fun uploadBackupToDrive(existingId: String?) =
+        launchDriveOp {
+            val tempFile =
+                withContext(Dispatchers.IO) {
+                    // Same category set the backup dialog offers, so empty optional
+                    // categories (transcripts, chat sessions) aren't advertised in the
+                    // manifest of a Drive backup either.
+                    val categories = backupUnit.getBackupCategoryOptions().map { it.first }.toSet()
+                    backupUnit.backupToTempFile(categories, "drive_upload.zip")
+                }
+            if (tempFile == null) {
                 EBToast.show(this@SettingActivity, R.string.toast_error)
-                tempFile.delete()
                 return@launchDriveOp
             }
-            dialogManager.showRestoreCategoryDialog(options) { selected ->
-                lifecycleScope.launch {
-                    if (backupUnit.restoreBackupData(tempFile, selected)) {
-                        dialogManager.showRestartConfirmDialog()
-                    }
-                    tempFile.delete()
-                }
+            try {
+                driveRepository.uploadBackup(tempFile, existingId)
+                EBToast.show(this@SettingActivity, R.string.toast_backup_successful)
+            } finally {
+                tempFile.delete()
             }
-        } catch (e: Exception) {
-            tempFile.delete()
-            throw e
         }
-    }
+
+    private fun restoreBackupFromDrive(fileId: String) =
+        launchDriveOp {
+            val tempFile = java.io.File(cacheDir, "drive_restore.zip")
+            try {
+                driveRepository.downloadBackup(fileId, tempFile)
+                val options =
+                    withContext(Dispatchers.IO) {
+                        backupUnit.getAvailableCategoryOptions(tempFile)
+                    }
+                if (options.isNullOrEmpty()) {
+                    EBToast.show(this@SettingActivity, R.string.toast_error)
+                    tempFile.delete()
+                    return@launchDriveOp
+                }
+                dialogManager.showRestoreCategoryDialog(options) { selected ->
+                    lifecycleScope.launch {
+                        if (backupUnit.restoreBackupData(tempFile, selected)) {
+                            dialogManager.showRestartConfirmDialog()
+                        }
+                        tempFile.delete()
+                    }
+                }
+            } catch (e: Exception) {
+                tempFile.delete()
+                throw e
+            }
+        }
 
     /** Drive's RFC3339 modifiedTime (UTC) as a local "yyyy-MM-dd HH:mm". */
     private fun formatDriveTime(modifiedTime: String?): String {
         modifiedTime ?: return ""
         return try {
-            val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-                .apply { timeZone = TimeZone.getTimeZone("UTC") }
+            val parser =
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+                    .apply { timeZone = TimeZone.getTimeZone("UTC") }
             val date = parser.parse(modifiedTime.substringBefore(".").removeSuffix("Z"))
             SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(date!!)
         } catch (e: Exception) {
@@ -514,7 +538,7 @@ class SettingActivity : FragmentActivity(), BackupOps {
             Intent(this, BrowserActivity::class.java).apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TEXT, url)
-            }
+            },
         )
         finish()
         disablePendingTransitions()
@@ -537,7 +561,8 @@ class SettingActivity : FragmentActivity(), BackupOps {
             SettingRoute.GptGemini.titleId to gptGeminiSettingItems,
             UserAgent.titleId to userAgentSettingItems,
         ).flatMap { (categoryResId, items) ->
-            items.filter { it !is DividerSettingItem }
+            items
+                .filter { it !is DividerSettingItem }
                 .map { categoryResId to it }
         }
     }
@@ -573,16 +598,20 @@ class SettingActivity : FragmentActivity(), BackupOps {
         private const val KEY_ROUTE = "route"
 
         // create an intent to navigate to desired setting screen route
-        fun createIntent(context: Context, route: SettingRoute): Intent {
-            return Intent(context, SettingActivity::class.java).apply {
+        fun createIntent(
+            context: Context,
+            route: SettingRoute,
+        ): Intent =
+            Intent(context, SettingActivity::class.java).apply {
                 addFlags(FLAG_ACTIVITY_NO_ANIMATION)
                 putExtra(KEY_ROUTE, route.name)
             }
-        }
     }
 }
 
-enum class SettingRoute(@StringRes val titleId: Int) {
+enum class SettingRoute(
+    @StringRes val titleId: Int,
+) {
     Main(R.string.settings),
     Ui(R.string.setting_title_ui),
     Toolbar(R.string.setting_title_toolbar),
@@ -599,7 +628,7 @@ enum class SettingRoute(@StringRes val titleId: Int) {
     GptSelfHosted(R.string.openai_compatible_server),
     GptGemini(R.string.google_gemini),
     Misc(R.string.misc),
-    GesturePicker(R.string.setting_gestures);
+    GesturePicker(R.string.setting_gestures),
 }
 
 @Composable
@@ -614,7 +643,7 @@ fun SettingBar(
         title = {
             Text(
                 stringResource(currentScreen.titleId),
-                color = MaterialTheme.colors.onTopBar
+                color = MaterialTheme.colors.onTopBar,
             )
         },
         navigationIcon = {
@@ -622,7 +651,7 @@ fun SettingBar(
                 Icon(
                     tint = MaterialTheme.colors.onTopBar,
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
+                    contentDescription = stringResource(R.string.back),
                 )
             }
         },
@@ -631,7 +660,7 @@ fun SettingBar(
                 Icon(
                     tint = MaterialTheme.colors.onTopBar,
                     imageVector = Icons.Filled.Search,
-                    contentDescription = stringResource(R.string.search_hint)
+                    contentDescription = stringResource(R.string.search_hint),
                 )
             }
             if (currentScreen != SettingRoute.Main) {
@@ -639,11 +668,11 @@ fun SettingBar(
                     Icon(
                         tint = MaterialTheme.colors.onTopBar,
                         imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(R.string.back)
+                        contentDescription = stringResource(R.string.back),
                     )
                 }
             }
-        }
+        },
     )
 }
 
@@ -663,20 +692,22 @@ fun SearchSettingBar(
                 placeholder = {
                     Text(
                         stringResource(R.string.search_settings_hint),
-                        color = MaterialTheme.colors.onTopBar.copy(alpha = 0.6f)
+                        color = MaterialTheme.colors.onTopBar.copy(alpha = 0.6f),
                     )
                 },
                 singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = MaterialTheme.colors.onTopBar,
-                    cursorColor = MaterialTheme.colors.onTopBar,
-                    backgroundColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
+                colors =
+                    TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onTopBar,
+                        cursorColor = MaterialTheme.colors.onTopBar,
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                    ),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
             )
             LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
@@ -687,7 +718,7 @@ fun SearchSettingBar(
                 Icon(
                     tint = MaterialTheme.colors.onTopBar,
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
+                    contentDescription = stringResource(R.string.back),
                 )
             }
         },

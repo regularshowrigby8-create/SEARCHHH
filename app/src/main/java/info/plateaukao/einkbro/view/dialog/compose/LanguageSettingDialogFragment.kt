@@ -27,7 +27,6 @@ class LanguageSettingDialogFragment(
     private val translationViewModel: TranslationViewModel,
     private val translate: () -> Unit,
 ) : ComposeDialogFragment() {
-
     init {
         shouldShowInCenter = true
     }
@@ -38,8 +37,7 @@ class LanguageSettingDialogFragment(
             translationViewModel,
             { changeTranslationLanguage() },
             { translate() },
-            { dismiss() }
-
+            { dismiss() },
         )
     }
 
@@ -50,7 +48,6 @@ class LanguageSettingDialogFragment(
             translationViewModel.updateTranslationLanguage(config.translation.translationLanguage)
         }
     }
-
 }
 
 @Composable
@@ -62,29 +59,32 @@ fun TranslationSetting(
 ) {
     val targetLanguage by translationViewModel.translationLanguage.collectAsState()
     Column(
-        modifier = Modifier
-            .wrapContentHeight()
-            .wrapContentWidth(),
-        horizontalAlignment = Alignment.End
+        modifier =
+            Modifier
+                .wrapContentHeight()
+                .wrapContentWidth(),
+        horizontalAlignment = Alignment.End,
     ) {
         Text(
             text = stringResource(R.string.translation_language),
             style = MaterialTheme.typography.h5.copy(color = MaterialTheme.colors.onBackground),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SelectableText(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(10.dp),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(10.dp),
                 selected = true,
                 text = targetLanguage.language,
                 textAlign = TextAlign.Center,
-                onClick = changeTranslationLanguage
+                onClick = changeTranslationLanguage,
             )
         }
         HorizontalSeparator()
@@ -94,7 +94,7 @@ fun TranslationSetting(
             okAction = {
                 translate()
                 dismiss()
-            }
+            },
         )
     }
 }

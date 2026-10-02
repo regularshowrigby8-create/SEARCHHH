@@ -57,59 +57,67 @@ class FastToggleDialogFragment(
 }
 
 @Composable
-fun FastToggleItemList(context: Context, config: ConfigManager, onClicked: ((Boolean) -> Unit)) {
+fun FastToggleItemList(
+    context: Context,
+    config: ConfigManager,
+    onClicked: ((Boolean) -> Unit),
+) {
     Column(modifier = Modifier.width(IntrinsicSize.Max)) {
         ToggleItem(
             state = config.isIncognitoMode,
             titleResId = R.string.setting_title_incognito,
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_incognito)
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_incognito),
         ) {
             config::isIncognitoMode.toggle()
             onClicked(true)
         }
         ToggleItem(
             state = config.browser.adBlock,
-            titleResId = R.string.setting_title_adblock, imageVector = Icons.Outlined.Block,
+            titleResId = R.string.setting_title_adblock,
+            imageVector = Icons.Outlined.Block,
             onEditAction = {
                 context.startActivity(
                     DataListActivity.createIntent(
                         context,
-                        WhiteListType.Adblock
-                    )
+                        WhiteListType.Adblock,
+                    ),
                 )
-            }
+            },
         ) {
             config.browser::adBlock.toggle()
             onClicked(true)
         }
         ToggleItem(
             state = config.browser.enableJavascript,
-            titleResId = R.string.setting_title_javascript, imageVector = Icons.Outlined.Terminal,
+            titleResId = R.string.setting_title_javascript,
+            imageVector = Icons.Outlined.Terminal,
             onEditAction = {
                 context.startActivity(
                     DataListActivity.createIntent(
                         context,
-                        WhiteListType.Javascript
-                    )
+                        WhiteListType.Javascript,
+                    ),
                 )
-            }
+            },
         ) {
             config.browser::enableJavascript.toggle()
             onClicked(true)
         }
         ToggleItem(
             state = config.browser.cookies,
-            titleResId = R.string.setting_title_cookie, imageVector = Icons.Outlined.Cookie,
+            titleResId = R.string.setting_title_cookie,
+            imageVector = Icons.Outlined.Cookie,
             onEditAction = {
                 context.startActivity(DataListActivity.createIntent(context, WhiteListType.Cookie))
-            }
+            },
         ) {
             config.browser::cookies.toggle()
             onClicked(true)
         }
         ToggleItem(
             state = config.tab.isSaveHistoryOn(),
-            titleResId = R.string.history, imageVector = Icons.Outlined.AccessTime
+            titleResId = R.string.history,
+            imageVector = Icons.Outlined.AccessTime,
         ) { on ->
             if (on) {
                 config.tab.saveHistoryMode = config.tab.toggledSaveHistoryMode
@@ -124,28 +132,32 @@ fun FastToggleItemList(context: Context, config: ConfigManager, onClicked: ((Boo
 
         ToggleItem(
             state = config.browser.shareLocation,
-            titleResId = R.string.location, imageVector = Icons.Outlined.LocationOn
+            titleResId = R.string.location,
+            imageVector = Icons.Outlined.LocationOn,
         ) {
             config.browser::shareLocation.toggle()
             onClicked(false)
         }
         ToggleItem(
             state = config.touch.volumePageTurn,
-            titleResId = R.string.volume_page_turn, imageVector = Icons.AutoMirrored.Outlined.VolumeUp
+            titleResId = R.string.volume_page_turn,
+            imageVector = Icons.AutoMirrored.Outlined.VolumeUp,
         ) {
             config.touch::volumePageTurn.toggle()
             onClicked(false)
         }
         ToggleItem(
             state = config.browser.continueMedia,
-            titleResId = R.string.media_continue, imageVector = Icons.Outlined.MusicNote
+            titleResId = R.string.media_continue,
+            imageVector = Icons.Outlined.MusicNote,
         ) {
             config.browser::continueMedia.toggle()
             onClicked(false)
         }
         ToggleItem(
             state = config.browser.desktop,
-            titleResId = R.string.desktop_mode, imageVector = Icons.Outlined.DesktopWindows
+            titleResId = R.string.desktop_mode,
+            imageVector = Icons.Outlined.DesktopWindows,
         ) {
             config.browser::desktop.toggle()
             onClicked(false)
@@ -165,16 +177,17 @@ fun ToggleItem(
     var currentState by remember { mutableStateOf(state) }
 
     Row(
-        modifier = Modifier
-            .width(IntrinsicSize.Max)
-            .height(46.dp)
-            .padding(4.dp)
-            .clickable {
-                if (isEnabled) {
-                    currentState = !currentState
-                    onClicked(currentState)
-                }
-            },
+        modifier =
+            Modifier
+                .width(IntrinsicSize.Max)
+                .height(46.dp)
+                .padding(4.dp)
+                .clickable {
+                    if (isEnabled) {
+                        currentState = !currentState
+                        onClicked(currentState)
+                    }
+                },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ThemedCheckbox(
@@ -185,36 +198,41 @@ fun ToggleItem(
                     currentState = !currentState
                     onClicked(currentState)
                 }
-            }
+            },
         )
         if (imageVector != null) {
             Icon(
-                imageVector = imageVector, contentDescription = null,
-                modifier = Modifier
-                    .padding(horizontal = 6.dp)
-                    .fillMaxHeight(),
-                tint = MaterialTheme.colors.onBackground
+                imageVector = imageVector,
+                contentDescription = null,
+                modifier =
+                    Modifier
+                        .padding(horizontal = 6.dp)
+                        .fillMaxHeight(),
+                tint = MaterialTheme.colors.onBackground,
             )
         }
         Spacer(
-            modifier = Modifier
-                .width(6.dp)
-                .fillMaxHeight()
+            modifier =
+                Modifier
+                    .width(6.dp)
+                    .fillMaxHeight(),
         )
         Text(
             modifier = Modifier.wrapContentWidth(),
             text = stringResource(id = titleResId),
             fontSize = 18.sp,
-            color = MaterialTheme.colors.onBackground
+            color = MaterialTheme.colors.onBackground,
         )
         if (onEditAction != null) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.icon_edit), contentDescription = null,
-                modifier = Modifier
-                    .padding(horizontal = 6.dp)
-                    .fillMaxHeight()
-                    .clickable { onEditAction() },
-                tint = MaterialTheme.colors.onBackground
+                imageVector = ImageVector.vectorResource(id = R.drawable.icon_edit),
+                contentDescription = null,
+                modifier =
+                    Modifier
+                        .padding(horizontal = 6.dp)
+                        .fillMaxHeight()
+                        .clickable { onEditAction() },
+                tint = MaterialTheme.colors.onBackground,
             )
         }
     }
@@ -232,6 +250,6 @@ private fun PreviewItem() {
 @Composable
 private fun PreviewItemList() {
     MyTheme {
-        //FastToggleItemList(config = ConfigManager(), onClicked = { Unit })
+        // FastToggleItemList(config = ConfigManager(), onClicked = { Unit })
     }
 }

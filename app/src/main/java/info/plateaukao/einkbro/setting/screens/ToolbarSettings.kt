@@ -67,7 +67,7 @@ fun buildToolbarSettingItems(deps: SettingScreenDeps): List<SettingItemInterface
             listOf(
                 R.string.statusbar_position_top,
                 R.string.statusbar_position_bottom,
-            )
+            ),
         ),
         ActionSettingItem(
             R.string.setting_title_statusbar_items,

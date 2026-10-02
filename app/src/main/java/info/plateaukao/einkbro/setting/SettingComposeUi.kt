@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -30,7 +29,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -75,13 +73,13 @@ import info.plateaukao.einkbro.preference.ToolbarPosition
 import info.plateaukao.einkbro.preference.toggle
 import info.plateaukao.einkbro.unit.EinkImageProcessor
 import info.plateaukao.einkbro.unit.ViewUnit
+import info.plateaukao.einkbro.view.compose.ThemedDialogWindowFrame
+import info.plateaukao.einkbro.view.compose.ebItemFrame
 import info.plateaukao.einkbro.view.dialog.DialogManager
 import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import info.plateaukao.einkbro.view.compose.ThemedDialogWindowFrame
-import info.plateaukao.einkbro.view.compose.ebItemFrame
 
 // Rows keep this as a minimum but can grow when a larger system font scale
 // makes the title/summary wrap (issue #623).
@@ -102,60 +100,72 @@ fun SettingItemUi(
     // bold border as transient press feedback. isChecked is retained for callers
     // but no longer thickens the border (see discussion #605).
     val borderWidth = if (pressed) 3.dp else 1.dp
-    var rowModifier = modifier
-        .fillMaxWidth()
-        .testTag(stringResource(setting.titleResId))
-        .heightIn(min = settingItemMinHeight)
-        .clickable(
-            indication = null,
-            interactionSource = interactionSource,
-        ) { onClick?.invoke() }
-    if (showBorder) rowModifier =
-        rowModifier.ebItemFrame(borderWidth)
+    var rowModifier =
+        modifier
+            .fillMaxWidth()
+            .testTag(stringResource(setting.titleResId))
+            .heightIn(min = settingItemMinHeight)
+            .clickable(
+                indication = null,
+                interactionSource = interactionSource,
+            ) { onClick?.invoke() }
+    if (showBorder) {
+        rowModifier =
+            rowModifier.ebItemFrame(borderWidth)
+    }
 
     Row(
-        modifier = rowModifier.then(
-            if (setting is BooleanSettingItem) Modifier.padding(
-                0.dp,
-                0.dp,
-                55.dp,
-                0.dp
-            ) else Modifier
-        ),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            rowModifier.then(
+                if (setting is BooleanSettingItem) {
+                    Modifier.padding(
+                        0.dp,
+                        0.dp,
+                        55.dp,
+                        0.dp,
+                    )
+                } else {
+                    Modifier
+                },
+            ),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (setting.iconId != 0) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = setting.iconId), contentDescription = null,
-                modifier = Modifier
-                    .padding(horizontal = 6.dp)
-                    .fillMaxHeight(),
-                tint = MaterialTheme.colors.onBackground
+                imageVector = ImageVector.vectorResource(id = setting.iconId),
+                contentDescription = null,
+                modifier =
+                    Modifier
+                        .padding(horizontal = 6.dp)
+                        .fillMaxHeight(),
+                tint = MaterialTheme.colors.onBackground,
             )
         }
         Spacer(
-            modifier = Modifier
-                .width(6.dp)
-                .fillMaxHeight()
+            modifier =
+                Modifier
+                    .width(6.dp)
+                    .fillMaxHeight(),
         )
         Column(modifier = Modifier.padding(vertical = 8.dp)) {
             Text(
                 modifier = Modifier.wrapContentWidth(),
                 text = stringResource(id = setting.titleResId) + extraTitlePostfix,
                 fontSize = 16.sp,
-                color = MaterialTheme.colors.onBackground
+                color = MaterialTheme.colors.onBackground,
             )
             if (setting.summaryResId != 0) {
                 Spacer(
-                    modifier = Modifier
-                        .height(5.dp)
-                        .fillMaxWidth()
+                    modifier =
+                        Modifier
+                            .height(5.dp)
+                            .fillMaxWidth(),
                 )
                 Text(
                     modifier = Modifier.wrapContentWidth(),
                     text = stringResource(id = setting.summaryResId),
                     fontSize = 12.sp,
-                    color = MaterialTheme.colors.onBackground
+                    color = MaterialTheme.colors.onBackground,
                 )
             }
         }
@@ -169,36 +179,40 @@ fun DividerSettingItemUi(
 ) {
     if (!supportTwoSpan) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(6.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(6.dp),
         ) {
             HorizontalSeparator()
             if (title != 0) {
                 Text(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(5.dp),
+                    modifier =
+                        Modifier
+                            .align(Alignment.Center)
+                            .padding(5.dp),
                     text = stringResource(title),
                     style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.onBackground
+                    color = MaterialTheme.colors.onBackground,
                 )
             }
         }
     } else {
         if (title != 0) {
             Text(
-                modifier = Modifier
-                    .padding(5.dp),
+                modifier =
+                    Modifier
+                        .padding(5.dp),
                 text = stringResource(title),
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.onBackground,
             )
         } else {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(16.dp),
             )
         }
     }
@@ -212,12 +226,14 @@ fun BooleanSettingItemUi(
 ) {
     val checked = remember(setting) { mutableStateOf(setting.config.get()) }
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
     ) {
         SettingItemUi(
-            setting = setting, checked.value,
+            setting = setting,
+            checked.value,
             showBorder = showBorder,
             modifier = Modifier.fillMaxHeight(),
         ) {
@@ -231,15 +247,17 @@ fun BooleanSettingItemUi(
                 checked.value = it
                 setting.config.set(it)
             },
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 3.dp),
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colors.primary,
-                uncheckedThumbColor = Color.Gray,
-                uncheckedTrackColor = Color.Gray,
-                checkedTrackColor = MaterialTheme.colors.primary,
-            )
+            modifier =
+                Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 3.dp),
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colors.primary,
+                    uncheckedThumbColor = Color.Gray,
+                    uncheckedTrackColor = Color.Gray,
+                    checkedTrackColor = MaterialTheme.colors.primary,
+                ),
         )
     }
 }
@@ -261,11 +279,12 @@ fun <T> ValueSettingItemUi(
         modifier = modifier,
     ) {
         coroutineScope.launch {
-            val value = dialogManager.getTextInput(
-                setting.titleResId,
-                setting.summaryResId,
-                setting.config.get()
-            ) ?: return@launch
+            val value =
+                dialogManager.getTextInput(
+                    setting.titleResId,
+                    setting.summaryResId,
+                    setting.config.get(),
+                ) ?: return@launch
             @Suppress("UNCHECKED_CAST")
             if (setting.config.get() is Int) {
                 val intValue = value.toIntOrNull() ?: return@launch
@@ -287,7 +306,9 @@ fun GestureActionSettingItemUi(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val entry = info.plateaukao.einkbro.browser.BrowserActionCatalog.entryOf(setting.config.get())
+    val entry =
+        info.plateaukao.einkbro.browser.BrowserActionCatalog
+            .entryOf(setting.config.get())
     val label = context.getString(entry.labelResId)
     SettingItemUi(
         setting = setting,
@@ -318,11 +339,12 @@ fun <T : Enum<T>> ListSettingItemUi(
         modifier = modifier,
     ) {
         coroutineScope.launch {
-            val selectedIndex = dialogManager.getSelectedOption(
-                setting.titleResId,
-                setting.options,
-                setting.config.get().ordinal
-            ) ?: return@launch
+            val selectedIndex =
+                dialogManager.getSelectedOption(
+                    setting.titleResId,
+                    setting.options,
+                    setting.config.get().ordinal,
+                ) ?: return@launch
             setting.config.get().javaClass.enumConstants?.let {
                 setting.config.set(it[selectedIndex])
             }
@@ -364,12 +386,13 @@ fun ToolbarPositionSettingItemUi(
     }
 }
 
-private fun toolbarPositionLabelResId(position: ToolbarPosition): Int = when (position) {
-    ToolbarPosition.Top -> info.plateaukao.einkbro.R.string.toolbar_position_top
-    ToolbarPosition.Bottom -> info.plateaukao.einkbro.R.string.toolbar_position_bottom
-    ToolbarPosition.Left -> info.plateaukao.einkbro.R.string.toolbar_position_left
-    ToolbarPosition.Right -> info.plateaukao.einkbro.R.string.toolbar_position_right
-}
+private fun toolbarPositionLabelResId(position: ToolbarPosition): Int =
+    when (position) {
+        ToolbarPosition.Top -> info.plateaukao.einkbro.R.string.toolbar_position_top
+        ToolbarPosition.Bottom -> info.plateaukao.einkbro.R.string.toolbar_position_bottom
+        ToolbarPosition.Left -> info.plateaukao.einkbro.R.string.toolbar_position_left
+        ToolbarPosition.Right -> info.plateaukao.einkbro.R.string.toolbar_position_right
+    }
 
 @Composable
 private fun ToolbarPositionDialog(
@@ -385,8 +408,9 @@ private fun ToolbarPositionDialog(
         backgroundColor = Color.Transparent,
         title = {
             Text(
-                text = stringResource(titleResId) + ": " +
-                    stringResource(toolbarPositionLabelResId(pending)),
+                text =
+                    stringResource(titleResId) + ": " +
+                        stringResource(toolbarPositionLabelResId(pending)),
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.onBackground,
             )
@@ -394,17 +418,19 @@ private fun ToolbarPositionDialog(
         text = {
             ThemedDialogWindowFrame()
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(280.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(280.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 ToolbarPositionDiagram(
                     selected = pending,
                     onSelect = { pending = it },
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .aspectRatio(0.75f),
+                    modifier =
+                        Modifier
+                            .fillMaxHeight()
+                            .aspectRatio(0.75f),
                 )
             }
         },
@@ -467,9 +493,16 @@ private fun ToolbarPositionDiagram(
             )
 
             // Inner gridlines: dashed thin by default, solid bold when selected.
-            fun line(start: Offset, end: Offset, isSelected: Boolean) {
-                if (isSelected) drawLine(color, start, end, bold)
-                else drawLine(color, start, end, thin, pathEffect = dash)
+            fun line(
+                start: Offset,
+                end: Offset,
+                isSelected: Boolean,
+            ) {
+                if (isSelected) {
+                    drawLine(color, start, end, bold)
+                } else {
+                    drawLine(color, start, end, thin, pathEffect = dash)
+                }
             }
             line(Offset(0f, edgeY), Offset(w, edgeY), selected == ToolbarPosition.Top)
             line(
@@ -486,32 +519,36 @@ private fun ToolbarPositionDiagram(
         }
 
         Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(edgeFraction)
-                .clickable { onSelect(ToolbarPosition.Top) },
+            modifier =
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth()
+                    .fillMaxHeight(edgeFraction)
+                    .clickable { onSelect(ToolbarPosition.Top) },
         )
         Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(edgeFraction)
-                .clickable { onSelect(ToolbarPosition.Bottom) },
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .fillMaxHeight(edgeFraction)
+                    .clickable { onSelect(ToolbarPosition.Bottom) },
         )
         Box(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .fillMaxHeight(1f - 2 * edgeFraction)
-                .fillMaxWidth(edgeFraction)
-                .clickable { onSelect(ToolbarPosition.Left) },
+            modifier =
+                Modifier
+                    .align(Alignment.CenterStart)
+                    .fillMaxHeight(1f - 2 * edgeFraction)
+                    .fillMaxWidth(edgeFraction)
+                    .clickable { onSelect(ToolbarPosition.Left) },
         )
         Box(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .fillMaxHeight(1f - 2 * edgeFraction)
-                .fillMaxWidth(edgeFraction)
-                .clickable { onSelect(ToolbarPosition.Right) },
+            modifier =
+                Modifier
+                    .align(Alignment.CenterEnd)
+                    .fillMaxHeight(1f - 2 * edgeFraction)
+                    .fillMaxWidth(edgeFraction)
+                    .clickable { onSelect(ToolbarPosition.Right) },
         )
     }
 }
@@ -566,12 +603,28 @@ private fun cssFilterColorMatrix(strength: Int): ColorMatrix {
     matrix.postConcat(
         android.graphics.ColorMatrix(
             floatArrayOf(
-                c, 0f, 0f, 0f, offset,
-                0f, c, 0f, 0f, offset,
-                0f, 0f, c, 0f, offset,
-                0f, 0f, 0f, 1f, 0f,
-            )
-        )
+                c,
+                0f,
+                0f,
+                0f,
+                offset,
+                0f,
+                c,
+                0f,
+                0f,
+                offset,
+                0f,
+                0f,
+                c,
+                0f,
+                offset,
+                0f,
+                0f,
+                0f,
+                1f,
+                0f,
+            ),
+        ),
     ) // contrast
     matrix.postConcat(android.graphics.ColorMatrix().apply { setSaturation(s) })
     return ColorMatrix(matrix.array)
@@ -589,11 +642,12 @@ private fun RowScope.EinkOptionChip(
         fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
         textAlign = TextAlign.Center,
         color = MaterialTheme.colors.onBackground,
-        modifier = Modifier
-            .weight(1f)
-            .ebItemFrame(if (selected) 2.dp else null)
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp),
+        modifier =
+            Modifier
+                .weight(1f)
+                .ebItemFrame(if (selected) 2.dp else null)
+                .clickable(onClick = onClick)
+                .padding(vertical = 8.dp),
     )
 }
 
@@ -608,21 +662,23 @@ private fun EinkImageAdjustmentDialog(
     var pending by remember { mutableStateOf(initial) }
     var pendingMode by remember { mutableStateOf(initialMode) }
     val context = LocalContext.current
-    val original = remember {
-        BitmapFactory.decodeResource(context.resources, R.drawable.eink_image_preview)
-    }
+    val original =
+        remember {
+            BitmapFactory.decodeResource(context.resources, R.drawable.eink_image_preview)
+        }
     var preview by remember { mutableStateOf(original.asImageBitmap()) }
     LaunchedEffect(pending, pendingMode) {
         // FAST mode is previewed with a ColorFilter on the original instead
-        preview = if (pending.strength <= 0 || pendingMode == EinkImageMode.FAST) {
-            original.asImageBitmap()
-        } else {
-            withContext(Dispatchers.Default) {
-                EinkImageProcessor
-                    .process(original.copy(Bitmap.Config.ARGB_8888, true), pending.strength)
-                    .asImageBitmap()
+        preview =
+            if (pending.strength <= 0 || pendingMode == EinkImageMode.FAST) {
+                original.asImageBitmap()
+            } else {
+                withContext(Dispatchers.Default) {
+                    EinkImageProcessor
+                        .process(original.copy(Bitmap.Config.ARGB_8888, true), pending.strength)
+                        .asImageBitmap()
+                }
             }
-        }
     }
 
     Dialog(onDismissRequest = onDismiss) {
@@ -640,16 +696,18 @@ private fun EinkImageAdjustmentDialog(
             Image(
                 bitmap = preview,
                 contentDescription = null,
-                modifier = Modifier
-                    .size(240.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .border(1.dp, MaterialTheme.colors.primary),
+                modifier =
+                    Modifier
+                        .size(240.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .border(1.dp, MaterialTheme.colors.primary),
                 contentScale = ContentScale.Fit,
-                colorFilter = if (pendingMode == EinkImageMode.FAST && pending.strength > 0) {
-                    ColorFilter.colorMatrix(cssFilterColorMatrix(pending.strength))
-                } else {
-                    null
-                },
+                colorFilter =
+                    if (pendingMode == EinkImageMode.FAST && pending.strength > 0) {
+                        ColorFilter.colorMatrix(cssFilterColorMatrix(pending.strength))
+                    } else {
+                        null
+                    },
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(
@@ -715,11 +773,12 @@ fun ListSettingWithStringItemUi(
         modifier = modifier,
     ) {
         coroutineScope.launch {
-            val selectedIndex = dialogManager.getSelectedOption(
-                setting.titleResId,
-                setting.options,
-                currentIndex
-            ) ?: return@launch
+            val selectedIndex =
+                dialogManager.getSelectedOption(
+                    setting.titleResId,
+                    setting.options,
+                    currentIndex,
+                ) ?: return@launch
             setting.config.set(selectedIndex.toString())
             currentValueString.value = context.getString(setting.options[selectedIndex])
         }
@@ -743,11 +802,12 @@ fun <T> ListSettingWithClassItemUi(
         modifier = modifier,
     ) {
         coroutineScope.launch {
-            val selectedIndex = dialogManager.getSelectedOptionWithString(
-                setting.titleResId,
-                setting.options,
-                setting.options.indexOf(configString)
-            ) ?: return@launch
+            val selectedIndex =
+                dialogManager.getSelectedOptionWithString(
+                    setting.titleResId,
+                    setting.options,
+                    setting.options.indexOf(configString),
+                ) ?: return@launch
             val selectedValue = setting.options[selectedIndex]
             setting.config.set(selectedValue)
             currentValueString.value = selectedValue
@@ -765,24 +825,31 @@ fun SearchSettingScreen(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val englishContext = remember {
-        val config = android.content.res.Configuration(context.resources.configuration)
-        config.setLocale(java.util.Locale.ENGLISH)
-        context.createConfigurationContext(config)
-    }
-    val filteredSettings = remember(query) {
-        if (query.isBlank()) emptyList()
-        else allSettings.filter { (_, setting) ->
-            val title = context.getString(setting.titleResId)
-            val summary =
-                if (setting.summaryResId != 0) context.getString(setting.summaryResId) else ""
-            val enTitle = englishContext.getString(setting.titleResId)
-            val enSummary =
-                if (setting.summaryResId != 0) englishContext.getString(setting.summaryResId) else ""
-            title.contains(query, ignoreCase = true) || summary.contains(query, ignoreCase = true) ||
-                enTitle.contains(query, ignoreCase = true) || enSummary.contains(query, ignoreCase = true)
+    val englishContext =
+        remember {
+            val config = android.content.res.Configuration(context.resources.configuration)
+            config.setLocale(java.util.Locale.ENGLISH)
+            context.createConfigurationContext(config)
         }
-    }
+    val filteredSettings =
+        remember(query) {
+            if (query.isBlank()) {
+                emptyList()
+            } else {
+                allSettings.filter { (_, setting) ->
+                    val title = context.getString(setting.titleResId)
+                    val summary =
+                        if (setting.summaryResId != 0) context.getString(setting.summaryResId) else ""
+                    val enTitle = englishContext.getString(setting.titleResId)
+                    val enSummary =
+                        if (setting.summaryResId != 0) englishContext.getString(setting.summaryResId) else ""
+                    title.contains(query, ignoreCase = true) ||
+                        summary.contains(query, ignoreCase = true) ||
+                        enTitle.contains(query, ignoreCase = true) ||
+                        enSummary.contains(query, ignoreCase = true)
+                }
+            }
+        }
 
     val columnCount = if (ViewUnit.isWideLayout(context)) 2 else 1
     val showBorder = columnCount == 2
@@ -790,19 +857,21 @@ fun SearchSettingScreen(
 
     // Group into consecutive category runs so items can be paired per category
     // in two-column mode while keeping the dividers between categories.
-    val categoryRuns = remember(filteredSettings) {
-        buildList<Pair<Int, MutableList<SettingItemInterface>>> {
-            filteredSettings.forEach { (categoryResId, setting) ->
-                if (isEmpty() || last().first != categoryResId) add(categoryResId to mutableListOf())
-                last().second.add(setting)
+    val categoryRuns =
+        remember(filteredSettings) {
+            buildList<Pair<Int, MutableList<SettingItemInterface>>> {
+                filteredSettings.forEach { (categoryResId, setting) ->
+                    if (isEmpty() || last().first != categoryResId) add(categoryResId to mutableListOf())
+                    last().second.add(setting)
+                }
             }
         }
-    }
 
     LazyVerticalGrid(
-        modifier = modifier
-            .wrapContentHeight()
-            .padding(10.dp),
+        modifier =
+            modifier
+                .wrapContentHeight()
+                .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp),
         horizontalArrangement = Arrangement.spacedBy(7.dp),
         columns = GridCells.Fixed(columnCount),
@@ -849,9 +918,10 @@ fun SettingScreen(
     val context = LocalContext.current
     val columnCount = if (ViewUnit.isWideLayout(context) || defaultGridSize == 2) 2 else 1
     LazyVerticalGrid(
-        modifier = Modifier
-            .wrapContentHeight()
-            .padding(10.dp),
+        modifier =
+            Modifier
+                .wrapContentHeight()
+                .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp),
         horizontalArrangement = Arrangement.spacedBy(7.dp),
         columns = GridCells.Fixed(columnCount),
@@ -923,10 +993,15 @@ private fun SettingLineUi(
     ) {
         line.forEach { setting ->
             SettingItemCell(
-                setting, navController, dialogManager, linkAction, showBorder,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
+                setting,
+                navController,
+                dialogManager,
+                linkAction,
+                showBorder,
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
             )
         }
         if (line.size == 1) Spacer(modifier = Modifier.weight(1f))
@@ -943,61 +1018,73 @@ private fun SettingItemCell(
     modifier: Modifier = Modifier,
 ) {
     when (setting) {
-        is NavigateSettingItem -> SettingItemUi(setting, showBorder = showBorder, modifier = modifier) {
-            navController.navigate(setting.destination.name)
-        }
+        is NavigateSettingItem ->
+            SettingItemUi(setting, showBorder = showBorder, modifier = modifier) {
+                navController.navigate(setting.destination.name)
+            }
 
-        is ActionSettingItem -> SettingItemUi(
-            setting,
-            showBorder = showBorder,
-            modifier = modifier,
-        ) { setting.action() }
+        is ActionSettingItem ->
+            SettingItemUi(
+                setting,
+                showBorder = showBorder,
+                modifier = modifier,
+            ) { setting.action() }
 
-        is GestureActionSettingItem -> GestureActionSettingItemUi(
-            setting, navController, showBorder, modifier
-        )
+        is GestureActionSettingItem ->
+            GestureActionSettingItemUi(
+                setting,
+                navController,
+                showBorder,
+                modifier,
+            )
 
         is BooleanSettingItem -> BooleanSettingItemUi(setting, showBorder, modifier)
-        is ValueSettingItem<*> -> ValueSettingItemUi(
-            setting,
-            dialogManager,
-            showBorder,
-            setting.showValue,
-            modifier,
-        )
+        is ValueSettingItem<*> ->
+            ValueSettingItemUi(
+                setting,
+                dialogManager,
+                showBorder,
+                setting.showValue,
+                modifier,
+            )
 
-        is ListSettingWithEnumItem<*> -> ListSettingItemUi(
-            setting,
-            dialogManager,
-            showBorder,
-            modifier,
-        )
+        is ListSettingWithEnumItem<*> ->
+            ListSettingItemUi(
+                setting,
+                dialogManager,
+                showBorder,
+                modifier,
+            )
 
-        is ToolbarPositionSettingItem -> ToolbarPositionSettingItemUi(
-            setting,
-            showBorder,
-            modifier,
-        )
+        is ToolbarPositionSettingItem ->
+            ToolbarPositionSettingItemUi(
+                setting,
+                showBorder,
+                modifier,
+            )
 
-        is EinkImageSettingItem -> EinkImageSettingItemUi(
-            setting,
-            showBorder,
-            modifier,
-        )
+        is EinkImageSettingItem ->
+            EinkImageSettingItemUi(
+                setting,
+                showBorder,
+                modifier,
+            )
 
-        is ListSettingWithStrResIdItem -> ListSettingWithStringItemUi(
-            setting,
-            dialogManager,
-            showBorder,
-            modifier,
-        )
+        is ListSettingWithStrResIdItem ->
+            ListSettingWithStringItemUi(
+                setting,
+                dialogManager,
+                showBorder,
+                modifier,
+            )
 
-        is ListSettingWithClassItem<*> -> ListSettingWithClassItemUi(
-            setting,
-            dialogManager,
-            showBorder,
-            modifier,
-        )
+        is ListSettingWithClassItem<*> ->
+            ListSettingWithClassItemUi(
+                setting,
+                dialogManager,
+                showBorder,
+                modifier,
+            )
 
         is LinkSettingItem -> {
             val url = if (setting.urlResId != 0) stringResource(setting.urlResId) else setting.url
@@ -1015,6 +1102,8 @@ private fun SettingItemCell(
             }
         }
 
-        else -> { Unit }
+        else -> {
+            Unit
+        }
     }
 }

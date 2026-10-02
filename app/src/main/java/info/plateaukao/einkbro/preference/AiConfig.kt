@@ -7,8 +7,9 @@ import info.plateaukao.einkbro.viewmodel.TRANSLATE_API
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class AiConfig(private val sp: SharedPreferences) {
-
+class AiConfig(
+    private val sp: SharedPreferences,
+) {
     var gptApiKey by StringPreference(sp, K_GPT_API_KEY, "")
 
     var geminiApiKey by StringPreference(sp, K_GEMINI_API_KEY, "")
@@ -16,17 +17,17 @@ class AiConfig(private val sp: SharedPreferences) {
     var gptSystemPrompt by StringPreference(
         sp,
         K_GPT_SYSTEM_PROMPT,
-        "You are a good interpreter."
+        "You are a good interpreter.",
     )
     var gptUserPromptPrefix by StringPreference(
         sp,
         K_GPT_USER_PROMPT_PREFIX,
-        "Translate following content to English:"
+        "Translate following content to English:",
     )
     var gptUserPromptForWebPage by StringPreference(
         sp,
         K_GPT_USER_PROMPT_WEB_PAGE,
-        "Summarize in 50 words:"
+        "Summarize in 50 words:",
     )
     var imageApiKey by StringPreference(sp, K_IMAGE_API_KEY, "")
     var imageTranslateIntervalSeconds by IntPreference(sp, "K_IMAGE_TRANSLATE_INTERVAL", 4)
@@ -41,7 +42,7 @@ class AiConfig(private val sp: SharedPreferences) {
     var geminiTranscribeModel by StringPreference(
         sp,
         K_GEMINI_TRANSCRIBE_MODEL,
-        DEFAULT_GEMINI_TRANSCRIBE_MODEL
+        DEFAULT_GEMINI_TRANSCRIBE_MODEL,
     )
     var gptVoiceOption: GptVoiceOption
         get() = GptVoiceOption.entries[sp.getInt("K_GPT_VOICE_OPTION", 0)]
@@ -56,24 +57,26 @@ class AiConfig(private val sp: SharedPreferences) {
     // Single-choice view over the two booleans above; keeps the underlying
     // preference keys unchanged so backup/restore and existing consumers work.
     var defaultGptEngine: DefaultGptEngine
-        get() = when {
-            useGeminiApi -> DefaultGptEngine.Gemini
-            useCustomGptUrl -> DefaultGptEngine.SelfHosted
-            else -> DefaultGptEngine.OpenAi
-        }
-        set(value) = when (value) {
-            DefaultGptEngine.OpenAi -> {
-                useGeminiApi = false
-                useCustomGptUrl = false
+        get() =
+            when {
+                useGeminiApi -> DefaultGptEngine.Gemini
+                useCustomGptUrl -> DefaultGptEngine.SelfHosted
+                else -> DefaultGptEngine.OpenAi
             }
+        set(value) =
+            when (value) {
+                DefaultGptEngine.OpenAi -> {
+                    useGeminiApi = false
+                    useCustomGptUrl = false
+                }
 
-            DefaultGptEngine.SelfHosted -> {
-                useGeminiApi = false
-                useCustomGptUrl = true
+                DefaultGptEngine.SelfHosted -> {
+                    useGeminiApi = false
+                    useCustomGptUrl = true
+                }
+
+                DefaultGptEngine.Gemini -> useGeminiApi = true
             }
-
-            DefaultGptEngine.Gemini -> useGeminiApi = true
-        }
 
     var enableOpenAiStream by BooleanPreference(sp, K_ENABLE_OPEN_AI_STREAM, true)
 
@@ -139,19 +142,21 @@ class AiConfig(private val sp: SharedPreferences) {
                     listOf(
                         ChatGPTActionInfo(
                             systemMessage = gptSystemPrompt,
-                            userMessage = gptUserPromptPrefix
-                        )
+                            userMessage = gptUserPromptPrefix,
+                        ),
                     )
                 } else {
                     emptyList()
                 }
-            } else str.convertToDataClass<List<ChatGPTActionInfo>>()
+            } else {
+                str.convertToDataClass<List<ChatGPTActionInfo>>()
+            }
         }
         set(value) {
             sp.edit {
                 putString(
                     K_GPT_ACTION_ITEMS,
-                    Json.encodeToString(value)
+                    Json.encodeToString(value),
                 )
             }
         }
@@ -170,14 +175,17 @@ class AiConfig(private val sp: SharedPreferences) {
     var gptActionForExternalSearch: ChatGPTActionInfo?
         get() {
             val str = sp.getString(K_GPT_ACTION_EXTERNAL, "").orEmpty()
-            return if (str.isBlank()) null
-            else str.convertToDataClass<ChatGPTActionInfo>()
+            return if (str.isBlank()) {
+                null
+            } else {
+                str.convertToDataClass<ChatGPTActionInfo>()
+            }
         }
         set(value) {
             sp.edit {
                 putString(
                     K_GPT_ACTION_EXTERNAL,
-                    Json.encodeToString(value)
+                    Json.encodeToString(value),
                 )
             }
         }
@@ -196,34 +204,37 @@ class AiConfig(private val sp: SharedPreferences) {
         gptActionList = emptyList()
     }
 
-    fun getDefaultActionModel(): String = if (useGeminiApi) {
-        geminiModel
-    } else if (useCustomGptUrl) {
-        alternativeModel
-    } else {
-        gptModel
-    }
+    fun getDefaultActionModel(): String =
+        if (useGeminiApi) {
+            geminiModel
+        } else if (useCustomGptUrl) {
+            alternativeModel
+        } else {
+            gptModel
+        }
 
-    fun getDefaultActionType(): GptActionType = if (useGeminiApi) {
-        GptActionType.Gemini
-    } else if (useCustomGptUrl) {
-        GptActionType.SelfHosted
-    } else {
-        GptActionType.OpenAi
-    }
+    fun getDefaultActionType(): GptActionType =
+        if (useGeminiApi) {
+            GptActionType.Gemini
+        } else if (useCustomGptUrl) {
+            GptActionType.SelfHosted
+        } else {
+            GptActionType.OpenAi
+        }
 
-    fun getGptTypeModelMap(): Map<GptActionType, String> = mapOf(
-        GptActionType.Default to getDefaultActionModel(),
-        GptActionType.OpenAi to gptModel,
-        GptActionType.SelfHosted to alternativeModel,
-        GptActionType.Gemini to geminiModel
-    )
+    fun getGptTypeModelMap(): Map<GptActionType, String> =
+        mapOf(
+            GptActionType.Default to getDefaultActionModel(),
+            GptActionType.OpenAi to gptModel,
+            GptActionType.SelfHosted to alternativeModel,
+            GptActionType.Gemini to geminiModel,
+        )
 
-    private inline fun <reified R : Any> String.convertToDataClass() =
-        actionJson.decodeFromString<R>(this)
+    private inline fun <reified R : Any> String.convertToDataClass() = actionJson.decodeFromString<R>(this)
 
     companion object {
         private val actionJson = Json { ignoreUnknownKeys = true }
+
         // 100 stored the removed Naver provider at ordinal 1. Bump the marker so
         // 100/101 migrate through the legacy branch while newer values stay aligned.
         private const val EXTERNAL_SEARCH_METHOD_VERSION = 101

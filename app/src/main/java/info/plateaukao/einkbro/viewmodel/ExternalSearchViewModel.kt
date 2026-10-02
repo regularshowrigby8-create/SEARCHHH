@@ -27,8 +27,10 @@ class ExternalSearchViewModel(
         splitSearchItemInfo: SplitSearchItemInfo = currentSearchAction,
     ): String {
         currentSearchText = searchText
-        return if (splitSearchItemInfo.stringPattern.contains("%s"))
+        return if (splitSearchItemInfo.stringPattern.contains("%s")) {
             splitSearchItemInfo.stringPattern.format(URLEncoder.encode(searchText, "UTF-8"))
-        else "${splitSearchItemInfo.stringPattern}$searchText"
+        } else {
+            "${splitSearchItemInfo.stringPattern}$searchText"
+        }
     }
 }

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import java.util.UUID
 
 @Serializable
-data class ChatGPTActionInfo (
+data class ChatGPTActionInfo(
     val name: String = "ChatGPT",
     val systemMessage: String = "",
     val userMessage: String = "",
@@ -21,7 +21,7 @@ enum class GptActionType {
     Default,
     OpenAi,
     SelfHosted,
-    Gemini
+    Gemini,
 }
 
 @Serializable

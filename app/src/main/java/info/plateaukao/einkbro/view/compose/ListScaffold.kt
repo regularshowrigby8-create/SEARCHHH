@@ -69,9 +69,10 @@ fun ListScaffold(
  * before Android 15, where the decor still consumes these insets.
  */
 @Composable
-fun Modifier.scaffoldEdgeToEdgePadding(): Modifier = windowInsetsPadding(
-    WindowInsets.systemBars.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
-)
+fun Modifier.scaffoldEdgeToEdgePadding(): Modifier =
+    windowInsetsPadding(
+        WindowInsets.systemBars.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
+    )
 
 /** Centered placeholder for empty lists (was copy-pasted in four activities). */
 @Composable

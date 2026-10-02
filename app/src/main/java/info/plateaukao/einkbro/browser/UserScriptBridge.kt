@@ -12,7 +12,6 @@ import info.plateaukao.einkbro.view.EBWebView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -44,19 +43,24 @@ class UserScriptBridge(
 ) : KoinComponent {
     private val userScriptManager: UserScriptManager by inject()
     private val coroutineScope: CoroutineScope by inject()
-    private val httpClient = OkHttpClient.Builder()
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .callTimeout(60, TimeUnit.SECONDS)
-        .retryOnConnectionFailure(true)
-        .build()
+    private val httpClient =
+        OkHttpClient
+            .Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .callTimeout(60, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
+            .build()
 
     // region capability tokens
 
     /** token -> script id, populated as shims are injected, cleared on each navigation. */
     private val tokens = ConcurrentHashMap<String, Long>()
 
-    fun registerToken(token: String, scriptId: Long) {
+    fun registerToken(
+        token: String,
+        scriptId: Long,
+    ) {
         tokens[token] = scriptId
     }
 
@@ -81,19 +85,29 @@ class UserScriptBridge(
     // region GM value storage (synchronous)
 
     @JavascriptInterface
-    fun gmGetValue(token: String, key: String): String? {
+    fun gmGetValue(
+        token: String,
+        key: String,
+    ): String? {
         val scriptId = scriptIdFor(token) ?: return null
         return userScriptManager.gmGetValue(scriptId, key)
     }
 
     @JavascriptInterface
-    fun gmSetValue(token: String, key: String, value: String) {
+    fun gmSetValue(
+        token: String,
+        key: String,
+        value: String,
+    ) {
         val scriptId = scriptIdFor(token) ?: return
         userScriptManager.gmSetValue(scriptId, key, value)
     }
 
     @JavascriptInterface
-    fun gmDeleteValue(token: String, key: String) {
+    fun gmDeleteValue(
+        token: String,
+        key: String,
+    ) {
         val scriptId = scriptIdFor(token) ?: return
         userScriptManager.gmDeleteValue(scriptId, key)
     }
@@ -112,7 +126,11 @@ class UserScriptBridge(
     // region GM_xmlhttpRequest
 
     @JavascriptInterface
-    fun gmXhr(token: String, reqId: String, detailsJson: String) {
+    fun gmXhr(
+        token: String,
+        reqId: String,
+        detailsJson: String,
+    ) {
         val scriptId = scriptIdFor(token)
         if (scriptId == null) {
             Log.w(TAG, "gmXhr rejected: invalid token")
@@ -153,31 +171,40 @@ class UserScriptBridge(
                 // Honor the script's per-request timeout (Tampermonkey semantics). When it
                 // fires, deliver a distinct "timeout" event so the script's ontimeout runs
                 // instead of leaving the request pending forever.
-                val client = if (timeoutMs > 0) {
-                    httpClient.newBuilder().callTimeout(timeoutMs, TimeUnit.MILLISECONDS).build()
-                } else {
-                    httpClient
-                }
+                val client =
+                    if (timeoutMs > 0) {
+                        httpClient.newBuilder().callTimeout(timeoutMs, TimeUnit.MILLISECONDS).build()
+                    } else {
+                        httpClient
+                    }
 
                 client.newCall(builder.build()).execute().use { resp ->
                     val bodyText = resp.body?.string().orEmpty()
                     val headerText = resp.headers.joinToString("\r\n") { "${it.first}: ${it.second}" }
-                    val payload = JSONObject().apply {
-                        put("readyState", 4)
-                        put("status", resp.code)
-                        put("statusText", resp.message)
-                        put("responseText", bodyText)
-                        put("response", bodyText)
-                        put("responseHeaders", headerText)
-                        put("finalUrl", resp.request.url.toString())
-                    }
+                    val payload =
+                        JSONObject().apply {
+                            put("readyState", 4)
+                            put("status", resp.code)
+                            put("statusText", resp.message)
+                            put("responseText", bodyText)
+                            put("response", bodyText)
+                            put("responseHeaders", headerText)
+                            put("finalUrl", resp.request.url.toString())
+                        }
                     deliverXhr(reqId, "load", payload.toString())
                 }
             } catch (e: java.io.InterruptedIOException) {
                 Log.w(TAG, "gmXhr timeout: ${e.message}")
-                deliverXhr(reqId, "timeout", JSONObject().apply {
-                    put("readyState", 4); put("status", 0); put("statusText", "timeout")
-                }.toString())
+                deliverXhr(
+                    reqId,
+                    "timeout",
+                    JSONObject()
+                        .apply {
+                            put("readyState", 4)
+                            put("status", 0)
+                            put("statusText", "timeout")
+                        }.toString(),
+                )
             } catch (e: Exception) {
                 Log.w(TAG, "gmXhr failed: ${e.message}")
                 deliverXhrError(reqId, e.message ?: "request failed")
@@ -185,41 +212,57 @@ class UserScriptBridge(
         }
     }
 
-    private fun isConnectAllowed(scriptId: Long, url: String): Boolean {
+    private fun isConnectAllowed(
+        scriptId: Long,
+        url: String,
+    ): Boolean {
         val connects = userScriptManager.getById(scriptId)?.metadata?.connects ?: return false
         if (connects.any { it == "*" }) return true
-        val host = try {
-            URI(url).host?.lowercase() ?: return false
-        } catch (e: Exception) {
-            return false
-        }
+        val host =
+            try {
+                URI(url).host?.lowercase() ?: return false
+            } catch (e: Exception) {
+                return false
+            }
         // page's own host is always allowed
-        val pageHost = try {
-            Uri.parse(webView.currentPageUrl ?: "").host?.lowercase()
-        } catch (e: Exception) {
-            null
-        }
+        val pageHost =
+            try {
+                Uri.parse(webView.currentPageUrl ?: "").host?.lowercase()
+            } catch (e: Exception) {
+                null
+            }
         if (pageHost != null && host == pageHost) return true
         return connects.any { entry ->
             val e = entry.lowercase()
-            e == host || host == e.removePrefix("*.") || host.endsWith(".$e") ||
+            e == host ||
+                host == e.removePrefix("*.") ||
+                host.endsWith(".$e") ||
                 (e.startsWith("*.") && host.endsWith(e.substring(1)))
         }
     }
 
-    private fun deliverXhrError(reqId: String, message: String) {
-        val payload = JSONObject().apply {
-            put("readyState", 4)
-            put("status", 0)
-            put("statusText", "error")
-            put("error", message)
-        }
+    private fun deliverXhrError(
+        reqId: String,
+        message: String,
+    ) {
+        val payload =
+            JSONObject().apply {
+                put("readyState", 4)
+                put("status", 0)
+                put("statusText", "error")
+                put("error", message)
+            }
         deliverXhr(reqId, "error", payload.toString())
     }
 
-    private fun deliverXhr(reqId: String, event: String, payloadJson: String) {
-        val js = "window.__einkbroGM && window.__einkbroGM.handleXhr(" +
-            "${JSONObject.quote(reqId)}, ${JSONObject.quote(event)}, ${JSONObject.quote(payloadJson)});"
+    private fun deliverXhr(
+        reqId: String,
+        event: String,
+        payloadJson: String,
+    ) {
+        val js =
+            "window.__einkbroGM && window.__einkbroGM.handleXhr(" +
+                "${JSONObject.quote(reqId)}, ${JSONObject.quote(event)}, ${JSONObject.quote(payloadJson)});"
         coroutineScope.launch(Dispatchers.Main) {
             if (webView.isAttachedToWindow) webView.evaluateJavascript(js, null)
         }
@@ -230,7 +273,11 @@ class UserScriptBridge(
     // region menu / misc
 
     @JavascriptInterface
-    fun gmRegisterMenuCommand(token: String, caption: String, fnId: String) {
+    fun gmRegisterMenuCommand(
+        token: String,
+        caption: String,
+        fnId: String,
+    ) {
         if (scriptIdFor(token) == null) return
         coroutineScope.launch(Dispatchers.Main) {
             webView.registerUserScriptMenuCommand(caption, fnId)
@@ -238,7 +285,10 @@ class UserScriptBridge(
     }
 
     @JavascriptInterface
-    fun gmUnregisterMenuCommand(token: String, fnId: String) {
+    fun gmUnregisterMenuCommand(
+        token: String,
+        fnId: String,
+    ) {
         if (scriptIdFor(token) == null) return
         coroutineScope.launch(Dispatchers.Main) {
             webView.unregisterUserScriptMenuCommand(fnId)
@@ -246,7 +296,11 @@ class UserScriptBridge(
     }
 
     @JavascriptInterface
-    fun gmOpenInTab(token: String, url: String, active: Boolean) {
+    fun gmOpenInTab(
+        token: String,
+        url: String,
+        active: Boolean,
+    ) {
         if (scriptIdFor(token) == null) return
         // A userscript only ever opens web pages. Refusing every other scheme keeps the
         // bridge from becoming a way to navigate a tab to file:, content: or intent:
@@ -258,7 +312,10 @@ class UserScriptBridge(
     }
 
     @JavascriptInterface
-    fun gmSetClipboard(token: String, text: String) {
+    fun gmSetClipboard(
+        token: String,
+        text: String,
+    ) {
         if (scriptIdFor(token) == null) return
         coroutineScope.launch(Dispatchers.Main) {
             val cm = webView.context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
@@ -267,7 +324,10 @@ class UserScriptBridge(
     }
 
     @JavascriptInterface
-    fun gmNotification(token: String, text: String) {
+    fun gmNotification(
+        token: String,
+        text: String,
+    ) {
         if (scriptIdFor(token) == null) return
         coroutineScope.launch(Dispatchers.Main) {
             Toast.makeText(webView.context, text, Toast.LENGTH_SHORT).show()
@@ -275,7 +335,10 @@ class UserScriptBridge(
     }
 
     @JavascriptInterface
-    fun gmLog(token: String, message: String) {
+    fun gmLog(
+        token: String,
+        message: String,
+    ) {
         if (scriptIdFor(token) == null) return
         Log.d(TAG, "userscript: $message")
     }

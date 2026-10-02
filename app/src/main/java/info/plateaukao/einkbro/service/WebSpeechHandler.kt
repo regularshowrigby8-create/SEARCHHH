@@ -46,7 +46,9 @@ import kotlin.coroutines.suspendCoroutine
  * TextToSpeech instance so switching to a page-requested language can't disturb
  * an ongoing article read in TtsManager.
  */
-class WebSpeechHandler(private val context: Context) : KoinComponent {
+class WebSpeechHandler(
+    private val context: Context,
+) : KoinComponent {
     private val config: ConfigManager by inject()
     private val coroutineScope: CoroutineScope by inject()
 
@@ -74,17 +76,21 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
     }
 
     private fun resolveType(): TtsType =
-        if (config.tts.useOpenAiTts && config.ai.gptApiKey.isNotBlank()) TtsType.GPT
-        else config.tts.ttsType
+        if (config.tts.useOpenAiTts && config.ai.gptApiKey.isNotBlank()) {
+            TtsType.GPT
+        } else {
+            config.tts.ttsType
+        }
 
     /** Called on the WebView JS bridge thread; must return quickly. */
-    fun getVoicesJson(): String = when (resolveType()) {
-        TtsType.SYSTEM -> systemVoicesJson()
-        TtsType.ETTS -> edgeVoicesJson()
-        // GPT voices are fixed multilingual personas with no language list;
-        // speak() still works, pages just can't pick a per-language voice.
-        TtsType.GPT -> "[]"
-    }
+    fun getVoicesJson(): String =
+        when (resolveType()) {
+            TtsType.SYSTEM -> systemVoicesJson()
+            TtsType.ETTS -> edgeVoicesJson()
+            // GPT voices are fixed multilingual personas with no language list;
+            // speak() still works, pages just can't pick a per-language voice.
+            TtsType.GPT -> "[]"
+        }
 
     @Synchronized
     fun speak(
@@ -103,12 +109,13 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
         // guard against a page calling the bridge directly with bad numbers.
         val safeRate = if (rate.isFinite()) rate else 1f
         val safePitch = if (pitch.isFinite()) pitch else 1f
-        speakJob = coroutineScope.launch {
-            when (type) {
-                TtsType.SYSTEM -> speakBySystemTts(text, lang, safeRate, safePitch, utteranceId)
-                else -> speakByByteEngine(type, text, lang, safeRate, utteranceId, voiceName)
+        speakJob =
+            coroutineScope.launch {
+                when (type) {
+                    TtsType.SYSTEM -> speakBySystemTts(text, lang, safeRate, safePitch, utteranceId)
+                    else -> speakByByteEngine(type, text, lang, safeRate, utteranceId, voiceName)
+                }
             }
-        }
     }
 
     @Synchronized
@@ -154,12 +161,16 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
         }
         tts.setSpeechRate(rate.coerceIn(0.1f, 4f))
         tts.setPitch(pitch.coerceIn(0.5f, 2f))
-        tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-            override fun onStart(id: String) = dispatchEvent(id, "start")
-            override fun onDone(id: String) = dispatchEvent(id, "end")
-            @Deprecated("Deprecated in Java")
-            override fun onError(id: String) = dispatchEvent(id, "error")
-        })
+        tts.setOnUtteranceProgressListener(
+            object : UtteranceProgressListener() {
+                override fun onStart(id: String) = dispatchEvent(id, "start")
+
+                override fun onDone(id: String) = dispatchEvent(id, "end")
+
+                @Deprecated("Deprecated in Java")
+                override fun onError(id: String) = dispatchEvent(id, "error")
+            },
+        )
         // Don't speak an utterance that was cancelled while awaiting engine init.
         coroutineContext.ensureActive()
         // A synchronous failure never reaches the progress listener; without the
@@ -177,15 +188,16 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
         utteranceId: String,
         voiceName: String,
     ) {
-        val byteArray = withContext(Dispatchers.IO) {
-            if (type == TtsType.ETTS) {
-                // ETts speed is percent, 100 = normal — same scale as utterance.rate * 100.
-                val speed = (rate * 100).toInt().coerceIn(20, 300)
-                eTts.tts(resolveEdgeVoice(lang, voiceName), speed, text)
-            } else {
-                openAiRepository.tts(text)
+        val byteArray =
+            withContext(Dispatchers.IO) {
+                if (type == TtsType.ETTS) {
+                    // ETts speed is percent, 100 = normal — same scale as utterance.rate * 100.
+                    val speed = (rate * 100).toInt().coerceIn(20, 300)
+                    eTts.tts(resolveEdgeVoice(lang, voiceName), speed, text)
+                } else {
+                    openAiRepository.tts(text)
+                }
             }
-        }
         if (byteArray == null || byteArray.isEmpty()) {
             Log.e(TAG, "no audio returned for utterance $utteranceId")
             dispatchEvent(utteranceId, "error")
@@ -203,7 +215,10 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
      * exact locale, then any for the language, then the configured voice
      * (the multilingual default can speak most languages).
      */
-    private fun resolveEdgeVoice(lang: String, voiceName: String): VoiceItem {
+    private fun resolveEdgeVoice(
+        lang: String,
+        voiceName: String,
+    ): VoiceItem {
         val configured = config.tts.ettsVoice
         if (voiceName.isNotBlank()) {
             edgeVoices.firstOrNull { it.shortName.equals(voiceName, ignoreCase = true) }?.let { return it }
@@ -217,29 +232,30 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
             ?: configured
     }
 
-    private suspend fun playAudio(byteArray: ByteArray) = suspendCoroutine { cont ->
-        val player = mediaPlayer ?: CustomMediaPlayer().also { mediaPlayer = it }
-        try {
-            player.setOnResetListener {
+    private suspend fun playAudio(byteArray: ByteArray) =
+        suspendCoroutine { cont ->
+            val player = mediaPlayer ?: CustomMediaPlayer().also { mediaPlayer = it }
+            try {
+                player.setOnResetListener {
+                    player.setOnResetListener { }
+                    cont.resume(Unit)
+                }
+                player.setDataSource(ByteArrayMediaDataSource(byteArray))
+                player.setOnPreparedListener { player.start() }
+                player.prepare()
+                player.setOnCompletionListener { player.reset() }
+                player.setOnErrorListener { _, what, extra ->
+                    Log.e(TAG, "playAudio error: $what, $extra")
+                    player.reset()
+                    true
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "playAudio exception: ${e.message}")
                 player.setOnResetListener { }
+                runCatching { player.reset() }
                 cont.resume(Unit)
             }
-            player.setDataSource(ByteArrayMediaDataSource(byteArray))
-            player.setOnPreparedListener { player.start() }
-            player.prepare()
-            player.setOnCompletionListener { player.reset() }
-            player.setOnErrorListener { _, what, extra ->
-                Log.e(TAG, "playAudio error: $what, $extra")
-                player.reset()
-                true
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "playAudio exception: ${e.message}")
-            player.setOnResetListener { }
-            runCatching { player.reset() }
-            cont.resume(Unit)
         }
-    }
 
     @Synchronized
     private fun ensureSystemTtsInit(): CompletableDeferred<Boolean> {
@@ -247,9 +263,10 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
         val deferred = CompletableDeferred<Boolean>()
         systemTtsInit = deferred
         coroutineScope.launch(Dispatchers.Main) {
-            systemTts = TextToSpeech(context) { status ->
-                deferred.complete(status == TextToSpeech.SUCCESS)
-            }
+            systemTts =
+                TextToSpeech(context) { status ->
+                    deferred.complete(status == TextToSpeech.SUCCESS)
+                }
         }
         return deferred
     }
@@ -263,12 +280,14 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
         val locales = runCatching { tts.availableLanguages?.toList() }.getOrNull() ?: emptyList()
         val array = JSONArray()
         locales.forEach { locale ->
-            array.put(JSONObject().apply {
-                put("name", locale.displayName)
-                put("lang", locale.toLanguageTag())
-                put("localService", true)
-                put("default", locale.language == config.tts.ttsLocale.language)
-            })
+            array.put(
+                JSONObject().apply {
+                    put("name", locale.displayName)
+                    put("lang", locale.toLanguageTag())
+                    put("localService", true)
+                    put("default", locale.language == config.tts.ttsLocale.language)
+                },
+            )
         }
         return array.toString()
     }
@@ -277,12 +296,14 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
         val configuredShortName = config.tts.ettsVoice.shortName
         val array = JSONArray()
         edgeVoices.forEach { voice ->
-            array.put(JSONObject().apply {
-                put("name", voice.shortName)
-                put("lang", voice.locale)
-                put("localService", false)
-                put("default", voice.shortName == configuredShortName)
-            })
+            array.put(
+                JSONObject().apply {
+                    put("name", voice.shortName)
+                    put("lang", voice.locale)
+                    put("localService", false)
+                    put("default", voice.shortName == configuredShortName)
+                },
+            )
         }
         return array.toString()
     }
@@ -290,7 +311,10 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
     // evaluateJavascript reaches the main frame only: an utterance spoken from
     // an iframe plays but its start/end events are dropped (the main frame's
     // polyfill has no matching utterance and ignores them).
-    private fun dispatchEvent(utteranceId: String, event: String) {
+    private fun dispatchEvent(
+        utteranceId: String,
+        event: String,
+    ) {
         val webView = webViewRef?.get() ?: return
         // Ids are polyfill-generated counters; anything else never gets events.
         val id = utteranceId.takeIf { it.matches(UTTERANCE_ID_REGEX) } ?: return
@@ -298,7 +322,7 @@ class WebSpeechHandler(private val context: Context) : KoinComponent {
             if (webView.isAttachedToWindow) {
                 webView.evaluateJavascript(
                     "window.__ebTts && window.__ebTts.dispatch('$id', '$event')",
-                    null
+                    null,
                 )
             }
         }

@@ -6,17 +6,17 @@ import io.github.edsuns.adfilter.BuildConfig
  * Created by Edsuns@qq.com on 2021/4/3.
  */
 internal object ScriptInjection {
-
     private const val INJECTION = "{{INJECTION}}"
     private const val DEBUG_FLAG = "{{DEBUG}}"
     private const val JS_BRIDGE = "{{BRIDGE}}"
 
     private val injectJS by lazy { parse(JsAssets.load("inject.js")) }
 
-    private val bridgeRegister = arrayListOf(
-        ElementHiding::class.java,
-        Scriptlet::class.java
-    )
+    private val bridgeRegister =
+        arrayListOf(
+            ElementHiding::class.java,
+            Scriptlet::class.java,
+        )
 
     private val bridgeNamePrefix = randomAlphanumericString()
 
@@ -39,7 +39,10 @@ internal object ScriptInjection {
             .joinToString("")
     }
 
-    private fun parse(raw: String, bridgeName: String? = null): String {
+    private fun parse(
+        raw: String,
+        bridgeName: String? = null,
+    ): String {
         var js = raw.replace(DEBUG_FLAG, if (BuildConfig.DEBUG) "" else "//")
         if (bridgeName != null) {
             js = js.replace(JS_BRIDGE, bridgeName)
@@ -47,7 +50,11 @@ internal object ScriptInjection {
         return js
     }
 
-    fun parseScript(owner: Any, raw: String, wrapper: Boolean = false): String {
+    fun parseScript(
+        owner: Any,
+        raw: String,
+        wrapper: Boolean = false,
+    ): String {
         val js = parse(raw, bridgeNameFor(owner))
         return if (wrapper) injectJS.replace(INJECTION, js) else js
     }

@@ -18,7 +18,6 @@ import java.io.OutputStream
  * File I/O (EPERM) on `/storage/emulated/0/Document/`, so we must go through SAF.
  */
 object SupernoteStorage : KoinComponent {
-
     private val config: ConfigManager by inject()
 
     @Volatile
@@ -41,7 +40,10 @@ object SupernoteStorage : KoinComponent {
     fun storedTreeUri(): Uri? = config.browser.supernoteFolderUri?.toUri()
 
     /** Persist a freshly-granted tree URI and run the queued callback (if any). */
-    fun onPickerResult(context: Context, uri: Uri?) {
+    fun onPickerResult(
+        context: Context,
+        uri: Uri?,
+    ) {
         if (uri != null) {
             try {
                 context.contentResolver.takePersistableUriPermission(
@@ -66,7 +68,10 @@ object SupernoteStorage : KoinComponent {
      * / no launcher is currently registered.
      */
     fun ensureTreeUri(onResult: (Uri?) -> Unit) {
-        storedTreeUri()?.let { onResult(it); return }
+        storedTreeUri()?.let {
+            onResult(it)
+            return
+        }
         val launcher = pickerLauncher
         if (launcher == null) {
             onResult(null)

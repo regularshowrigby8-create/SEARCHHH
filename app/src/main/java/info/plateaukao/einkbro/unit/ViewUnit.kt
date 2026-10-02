@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
-import androidx.core.view.drawToBitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
@@ -28,19 +26,21 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.WindowInsetsCompat
-import info.plateaukao.einkbro.view.CenterExpandProgressBar
-import info.plateaukao.einkbro.view.MainActivityLayout
+import androidx.core.view.drawToBitmap
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.util.TranslationLanguage
+import info.plateaukao.einkbro.view.MainActivityLayout
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-
-object ViewUnit: KoinComponent {
+object ViewUnit : KoinComponent {
     private val config: ConfigManager by inject()
 
     @JvmStatic
-    fun bound(context: Context, view: View) {
+    fun bound(
+        context: Context,
+        view: View,
+    ) {
         val windowWidth = getWindowWidth(context)
         val windowHeight = getWindowHeight(context)
         val widthSpec = View.MeasureSpec.makeMeasureSpec(windowWidth, View.MeasureSpec.EXACTLY)
@@ -50,7 +50,11 @@ object ViewUnit: KoinComponent {
     }
 
     @JvmStatic
-    fun createImage(width: Int, height: Int, color: Int): Bitmap {
+    fun createImage(
+        width: Int,
+        height: Int,
+        color: Int,
+    ): Bitmap {
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val paint = Paint()
@@ -60,44 +64,38 @@ object ViewUnit: KoinComponent {
         return bitmap
     }
 
-    fun captureDrawingCache(view: View): Bitmap {
-        return view.drawToBitmap()
-    }
+    fun captureDrawingCache(view: View): Bitmap = view.drawToBitmap()
 
     @JvmStatic
-    fun isLandscape(context: Context): Boolean =
-        context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    fun isLandscape(context: Context): Boolean = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     @JvmStatic
     fun isTablet(context: Context): Boolean =
         (context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) >=
-                Configuration.SCREENLAYOUT_SIZE_LARGE
+            Configuration.SCREENLAYOUT_SIZE_LARGE
 
     @JvmStatic
-    fun getDensity(context: Context): Float {
-        return context.resources.displayMetrics.density
-    }
+    fun getDensity(context: Context): Float = context.resources.displayMetrics.density
 
     @JvmStatic
-    private fun getWindowHeight(context: Context): Int {
-        return context.resources.displayMetrics.heightPixels
-    }
+    private fun getWindowHeight(context: Context): Int = context.resources.displayMetrics.heightPixels
 
     @JvmStatic
-    fun getWindowWidth(context: Context): Int {
-        return context.resources.displayMetrics.widthPixels
-    }
+    fun getWindowWidth(context: Context): Int = context.resources.displayMetrics.widthPixels
+
     @JvmStatic
-    fun getWindowWidthInDp(context: Context): Int {
-        return context.resources.displayMetrics.widthPixels.toDp(context)
-    }
+    fun getWindowWidthInDp(context: Context): Int =
+        context.resources.displayMetrics.widthPixels
+            .toDp(context)
 
     @JvmStatic
     fun dpToPixel(dp: Int): Float {
-        val metrics = android.content.res.Resources.getSystem().displayMetrics
+        val metrics =
+            android.content.res.Resources
+                .getSystem()
+                .displayMetrics
         return dp * (metrics.densityDpi / 160f)
     }
-
 
     fun isWideLayout(context: Context): Boolean = isLandscape(context) || isTablet(context)
 
@@ -121,18 +119,22 @@ object ViewUnit: KoinComponent {
     }
 
     private var isNavigationBarDisplayed: Boolean? = null
+
     @Suppress("DEPRECATION")
     fun setCustomFullscreen(
         window: Window,
         fullscreen: Boolean,
         keepHideStatusBar: Boolean,
-        hideNavigationBar: Boolean
+        hideNavigationBar: Boolean,
     ) {
         if (fullscreen) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (isNavigationBarDisplayed == null) isNavigationBarDisplayed =
-                    WindowInsetsCompat.toWindowInsetsCompat(window.decorView.rootWindowInsets)
-                        .isVisible(WindowInsetsCompat.Type.navigationBars())
+                if (isNavigationBarDisplayed == null) {
+                    isNavigationBarDisplayed =
+                        WindowInsetsCompat
+                            .toWindowInsetsCompat(window.decorView.rootWindowInsets)
+                            .isVisible(WindowInsetsCompat.Type.navigationBars())
+                }
                 window.insetsController?.let {
                     it.hide(WindowInsets.Type.statusBars())
                     it.hide(WindowInsets.Type.navigationBars())
@@ -171,7 +173,10 @@ object ViewUnit: KoinComponent {
         }
     }
 
-    fun expandViewTouchArea(view: View, size: Int) {
+    fun expandViewTouchArea(
+        view: View,
+        size: Int,
+    ) {
         val parent = view.parent as View // button: the view you want to enlarge hit area
 
         parent.post {
@@ -187,7 +192,10 @@ object ViewUnit: KoinComponent {
 
     fun isMultiWindowEnabled(activity: Activity): Boolean = activity.isInMultiWindowMode
 
-    fun updateLanguageLabel(textView: TextView, translationLanguage: TranslationLanguage) {
+    fun updateLanguageLabel(
+        textView: TextView,
+        translationLanguage: TranslationLanguage,
+    ) {
         val languageString = translationLanguage.value
         val language = languageString.split("-").last()
         textView.text = language
@@ -198,34 +206,61 @@ object ViewUnit: KoinComponent {
     // the inversion state hasn't changed.
     private val invertedViews = java.util.WeakHashMap<View, Boolean>()
 
-    fun invertColor(view: View, shouldInvertColor: Boolean) {
+    fun invertColor(
+        view: View,
+        shouldInvertColor: Boolean,
+    ) {
         if (invertedViews[view] == shouldInvertColor) return
         invertedViews[view] = shouldInvertColor
         if (shouldInvertColor) {
-            val invertPaint = Paint().apply {
-                val colorMatrix = ColorMatrix(
-                    floatArrayOf(
-                        -1f, 0f, 0f, 0f, 255f,
-                        0f, -1f, 0f, 0f, 255f,
-                        0f, 0f, -1f, 0f, 255f,
-                        0f, 0f, 0f, 1f, 0f
-                    )
-                )
-                colorFilter = ColorMatrixColorFilter(colorMatrix)
-            }
+            val invertPaint =
+                Paint().apply {
+                    val colorMatrix =
+                        ColorMatrix(
+                            floatArrayOf(
+                                -1f,
+                                0f,
+                                0f,
+                                0f,
+                                255f,
+                                0f,
+                                -1f,
+                                0f,
+                                0f,
+                                255f,
+                                0f,
+                                0f,
+                                -1f,
+                                0f,
+                                255f,
+                                0f,
+                                0f,
+                                0f,
+                                1f,
+                                0f,
+                            ),
+                        )
+                    colorFilter = ColorMatrixColorFilter(colorMatrix)
+                }
             view.setLayerType(LAYER_TYPE_HARDWARE, invertPaint)
         } else {
             view.setLayerType(LAYER_TYPE_HARDWARE, null)
         }
     }
 
-    fun updateViewPosition(view: View, point: Point) {
+    fun updateViewPosition(
+        view: View,
+        point: Point,
+    ) {
         val properPoint = getProperPosition(view, point)
         view.x = properPoint.x + dpToPixel(10)
         view.y = properPoint.y + dpToPixel(10)
     }
 
-    private fun getProperPosition(view: View, point: Point): Point {
+    private fun getProperPosition(
+        view: View,
+        point: Point,
+    ): Point {
         val parentWidth = (view.parent as View).width
         val parentHeight = (view.parent as View).height
 
@@ -241,7 +276,10 @@ object ViewUnit: KoinComponent {
         return Point(x.toInt(), y.toInt())
     }
 
-    fun isTextEditMode(context: Context, menu: Menu): Boolean {
+    fun isTextEditMode(
+        context: Context,
+        menu: Menu,
+    ): Boolean {
         for (i in 0 until menu.size()) {
             val item = menu.getItem(i)
             if (item.title == context.getString(android.R.string.paste)) {
@@ -251,14 +289,16 @@ object ViewUnit: KoinComponent {
         return false
     }
 
-    fun createCountString(superScript: Int, subScript: Int): String {
+    fun createCountString(
+        superScript: Int,
+        subScript: Int,
+    ): String {
         if (subScript == 0 || superScript == 0) return "1"
 
         if (subScript == superScript) return subScript.toString()
 
         return "$superScript/$subScript"
     }
-
 
     fun updateAppbarPosition(binding: MainActivityLayout) {
         when (config.ui.toolbarPosition) {
@@ -269,70 +309,70 @@ object ViewUnit: KoinComponent {
         }
     }
 
-
     private fun moveAppbarToBottom(binding: MainActivityLayout) {
         setAppbarHorizontalLayoutParams(binding)
         setProgressBarHorizontal(binding)
         binding.contentSeparator.visibility = android.view.View.VISIBLE
         // toolbar below the band: edge line at the band's top, fill below it
         binding.contentSeparator.edgeAtTop = true
-        val constraintSet = ConstraintSet().apply {
-            clone(binding.root)
-            clear(binding.appBar.id, ConstraintSet.TOP)
-            clear(binding.appBar.id, ConstraintSet.START)
-            clear(binding.appBar.id, ConstraintSet.END)
-            connect(
-                binding.appBar.id,
-                ConstraintSet.BOTTOM,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.BOTTOM,
-                0
-            )
-            connect(
-                binding.inputUrl.id,
-                ConstraintSet.BOTTOM,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.BOTTOM,
-                0
-            )
-            connect(
-                binding.twoPanelLayout.id,
-                ConstraintSet.START,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.START
-            )
-            connect(
-                binding.twoPanelLayout.id,
-                ConstraintSet.END,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.END
-            )
-            connect(
-                binding.twoPanelLayout.id,
-                ConstraintSet.TOP,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.TOP
-            )
-            connect(
-                binding.twoPanelLayout.id,
-                ConstraintSet.BOTTOM,
-                binding.appBar.id,
-                ConstraintSet.TOP
-            )
+        val constraintSet =
+            ConstraintSet().apply {
+                clone(binding.root)
+                clear(binding.appBar.id, ConstraintSet.TOP)
+                clear(binding.appBar.id, ConstraintSet.START)
+                clear(binding.appBar.id, ConstraintSet.END)
+                connect(
+                    binding.appBar.id,
+                    ConstraintSet.BOTTOM,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.BOTTOM,
+                    0,
+                )
+                connect(
+                    binding.inputUrl.id,
+                    ConstraintSet.BOTTOM,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.BOTTOM,
+                    0,
+                )
+                connect(
+                    binding.twoPanelLayout.id,
+                    ConstraintSet.START,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.START,
+                )
+                connect(
+                    binding.twoPanelLayout.id,
+                    ConstraintSet.END,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.END,
+                )
+                connect(
+                    binding.twoPanelLayout.id,
+                    ConstraintSet.TOP,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.TOP,
+                )
+                connect(
+                    binding.twoPanelLayout.id,
+                    ConstraintSet.BOTTOM,
+                    binding.appBar.id,
+                    ConstraintSet.TOP,
+                )
 
-            clear(binding.contentSeparator.id, ConstraintSet.TOP)
-            clear(binding.contentSeparator.id, ConstraintSet.START)
-            clear(binding.contentSeparator.id, ConstraintSet.END)
-            connect(
-                binding.contentSeparator.id,
-                ConstraintSet.BOTTOM,
-                binding.appBar.id,
-                ConstraintSet.TOP
-            )
+                clear(binding.contentSeparator.id, ConstraintSet.TOP)
+                clear(binding.contentSeparator.id, ConstraintSet.START)
+                clear(binding.contentSeparator.id, ConstraintSet.END)
+                connect(
+                    binding.contentSeparator.id,
+                    ConstraintSet.BOTTOM,
+                    binding.appBar.id,
+                    ConstraintSet.TOP,
+                )
 
-            // Horizontal toolbars keep the strip inside the app bar itself.
-            setVisibility(binding.sideTabBar.id, View.GONE)
-        }
+                // Horizontal toolbars keep the strip inside the app bar itself.
+                setVisibility(binding.sideTabBar.id, View.GONE)
+            }
         constraintSet.applyTo(binding.root)
     }
 
@@ -342,57 +382,58 @@ object ViewUnit: KoinComponent {
         binding.contentSeparator.visibility = android.view.View.VISIBLE
         // toolbar above the band: edge line at the band's bottom, fill above it
         binding.contentSeparator.edgeAtTop = false
-        val constraintSet = ConstraintSet().apply {
-            clone(binding.root)
-            clear(binding.appBar.id, ConstraintSet.BOTTOM)
-            clear(binding.appBar.id, ConstraintSet.START)
-            clear(binding.appBar.id, ConstraintSet.END)
-            connect(
-                binding.appBar.id,
-                ConstraintSet.TOP,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.TOP,
-                0
-            )
+        val constraintSet =
+            ConstraintSet().apply {
+                clone(binding.root)
+                clear(binding.appBar.id, ConstraintSet.BOTTOM)
+                clear(binding.appBar.id, ConstraintSet.START)
+                clear(binding.appBar.id, ConstraintSet.END)
+                connect(
+                    binding.appBar.id,
+                    ConstraintSet.TOP,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.TOP,
+                    0,
+                )
 
-            connect(
-                binding.twoPanelLayout.id,
-                ConstraintSet.START,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.START
-            )
-            connect(
-                binding.twoPanelLayout.id,
-                ConstraintSet.END,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.END
-            )
-            connect(
-                binding.twoPanelLayout.id,
-                ConstraintSet.TOP,
-                binding.appBar.id,
-                ConstraintSet.BOTTOM
-            )
-            connect(
-                binding.twoPanelLayout.id,
-                ConstraintSet.BOTTOM,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.BOTTOM
-            )
+                connect(
+                    binding.twoPanelLayout.id,
+                    ConstraintSet.START,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.START,
+                )
+                connect(
+                    binding.twoPanelLayout.id,
+                    ConstraintSet.END,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.END,
+                )
+                connect(
+                    binding.twoPanelLayout.id,
+                    ConstraintSet.TOP,
+                    binding.appBar.id,
+                    ConstraintSet.BOTTOM,
+                )
+                connect(
+                    binding.twoPanelLayout.id,
+                    ConstraintSet.BOTTOM,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.BOTTOM,
+                )
 
-            clear(binding.contentSeparator.id, ConstraintSet.BOTTOM)
-            clear(binding.contentSeparator.id, ConstraintSet.START)
-            clear(binding.contentSeparator.id, ConstraintSet.END)
-            connect(
-                binding.contentSeparator.id,
-                ConstraintSet.TOP,
-                binding.appBar.id,
-                ConstraintSet.BOTTOM
-            )
+                clear(binding.contentSeparator.id, ConstraintSet.BOTTOM)
+                clear(binding.contentSeparator.id, ConstraintSet.START)
+                clear(binding.contentSeparator.id, ConstraintSet.END)
+                connect(
+                    binding.contentSeparator.id,
+                    ConstraintSet.TOP,
+                    binding.appBar.id,
+                    ConstraintSet.BOTTOM,
+                )
 
-            // Horizontal toolbars keep the strip inside the app bar itself.
-            setVisibility(binding.sideTabBar.id, View.GONE)
-        }
+                // Horizontal toolbars keep the strip inside the app bar itself.
+                setVisibility(binding.sideTabBar.id, View.GONE)
+            }
         constraintSet.applyTo(binding.root)
     }
 
@@ -400,26 +441,27 @@ object ViewUnit: KoinComponent {
         setAppbarVerticalLayoutParams(binding)
         binding.contentSeparator.visibility = android.view.View.GONE
         val showTabBar = shouldShowSideTabBar(binding)
-        val constraintSet = ConstraintSet().apply {
-            clone(binding.root)
-            clear(binding.appBar.id, ConstraintSet.TOP)
-            clear(binding.appBar.id, ConstraintSet.BOTTOM)
-            clear(binding.appBar.id, ConstraintSet.END)
-            connect(binding.appBar.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-            connect(binding.appBar.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-            connect(binding.appBar.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+        val constraintSet =
+            ConstraintSet().apply {
+                clone(binding.root)
+                clear(binding.appBar.id, ConstraintSet.TOP)
+                clear(binding.appBar.id, ConstraintSet.BOTTOM)
+                clear(binding.appBar.id, ConstraintSet.END)
+                connect(binding.appBar.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                connect(binding.appBar.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                connect(binding.appBar.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
 
-            // The strip clears the toolbar column and spans the rest of the width.
-            clear(binding.sideTabBar.id, ConstraintSet.START)
-            clear(binding.sideTabBar.id, ConstraintSet.END)
-            connect(binding.sideTabBar.id, ConstraintSet.START, binding.appBar.id, ConstraintSet.END)
-            connect(binding.sideTabBar.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-            anchorSideTabBar(binding, showTabBar)
+                // The strip clears the toolbar column and spans the rest of the width.
+                clear(binding.sideTabBar.id, ConstraintSet.START)
+                clear(binding.sideTabBar.id, ConstraintSet.END)
+                connect(binding.sideTabBar.id, ConstraintSet.START, binding.appBar.id, ConstraintSet.END)
+                connect(binding.sideTabBar.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                anchorSideTabBar(binding, showTabBar)
 
-            connect(binding.twoPanelLayout.id, ConstraintSet.START, binding.appBar.id, ConstraintSet.END)
-            connect(binding.twoPanelLayout.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-            connectContentEdges(binding, showTabBar)
-        }
+                connect(binding.twoPanelLayout.id, ConstraintSet.START, binding.appBar.id, ConstraintSet.END)
+                connect(binding.twoPanelLayout.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                connectContentEdges(binding, showTabBar)
+            }
         constraintSet.applyTo(binding.root)
         setProgressBarVertical(binding, isLeft = true)
     }
@@ -428,25 +470,26 @@ object ViewUnit: KoinComponent {
         setAppbarVerticalLayoutParams(binding)
         binding.contentSeparator.visibility = android.view.View.GONE
         val showTabBar = shouldShowSideTabBar(binding)
-        val constraintSet = ConstraintSet().apply {
-            clone(binding.root)
-            clear(binding.appBar.id, ConstraintSet.TOP)
-            clear(binding.appBar.id, ConstraintSet.BOTTOM)
-            clear(binding.appBar.id, ConstraintSet.START)
-            connect(binding.appBar.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-            connect(binding.appBar.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-            connect(binding.appBar.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+        val constraintSet =
+            ConstraintSet().apply {
+                clone(binding.root)
+                clear(binding.appBar.id, ConstraintSet.TOP)
+                clear(binding.appBar.id, ConstraintSet.BOTTOM)
+                clear(binding.appBar.id, ConstraintSet.START)
+                connect(binding.appBar.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                connect(binding.appBar.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                connect(binding.appBar.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
 
-            clear(binding.sideTabBar.id, ConstraintSet.START)
-            clear(binding.sideTabBar.id, ConstraintSet.END)
-            connect(binding.sideTabBar.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-            connect(binding.sideTabBar.id, ConstraintSet.END, binding.appBar.id, ConstraintSet.START)
-            anchorSideTabBar(binding, showTabBar)
+                clear(binding.sideTabBar.id, ConstraintSet.START)
+                clear(binding.sideTabBar.id, ConstraintSet.END)
+                connect(binding.sideTabBar.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                connect(binding.sideTabBar.id, ConstraintSet.END, binding.appBar.id, ConstraintSet.START)
+                anchorSideTabBar(binding, showTabBar)
 
-            connect(binding.twoPanelLayout.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-            connect(binding.twoPanelLayout.id, ConstraintSet.END, binding.appBar.id, ConstraintSet.START)
-            connectContentEdges(binding, showTabBar)
-        }
+                connect(binding.twoPanelLayout.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                connect(binding.twoPanelLayout.id, ConstraintSet.END, binding.appBar.id, ConstraintSet.START)
+                connectContentEdges(binding, showTabBar)
+            }
         constraintSet.applyTo(binding.root)
         setProgressBarVertical(binding, isLeft = false)
     }
@@ -466,15 +509,19 @@ object ViewUnit: KoinComponent {
         if (!config.ui.isVerticalToolbar) return
 
         val showTabBar = shouldShowSideTabBar(binding)
-        ConstraintSet().apply {
-            clone(binding.root)
-            anchorSideTabBar(binding, showTabBar)
-            connectContentEdges(binding, showTabBar)
-        }.applyTo(binding.root)
+        ConstraintSet()
+            .apply {
+                clone(binding.root)
+                anchorSideTabBar(binding, showTabBar)
+                connectContentEdges(binding, showTabBar)
+            }.applyTo(binding.root)
     }
 
     /** Pin the side strip to whichever edge the user picked, and show or hide it. */
-    private fun ConstraintSet.anchorSideTabBar(binding: MainActivityLayout, showTabBar: Boolean) {
+    private fun ConstraintSet.anchorSideTabBar(
+        binding: MainActivityLayout,
+        showTabBar: Boolean,
+    ) {
         clear(binding.sideTabBar.id, ConstraintSet.TOP)
         clear(binding.sideTabBar.id, ConstraintSet.BOTTOM)
         if (config.tab.sideTabBarOnTop) {
@@ -486,7 +533,10 @@ object ViewUnit: KoinComponent {
     }
 
     /** Content fills the space the side strip leaves, on whichever edge it occupies. */
-    private fun ConstraintSet.connectContentEdges(binding: MainActivityLayout, showTabBar: Boolean) {
+    private fun ConstraintSet.connectContentEdges(
+        binding: MainActivityLayout,
+        showTabBar: Boolean,
+    ) {
         val onTop = config.tab.sideTabBarOnTop
         if (showTabBar && onTop) {
             connect(binding.twoPanelLayout.id, ConstraintSet.TOP, binding.sideTabBar.id, ConstraintSet.BOTTOM)
@@ -500,7 +550,10 @@ object ViewUnit: KoinComponent {
         }
     }
 
-    private fun setProgressBarVertical(binding: MainActivityLayout, isLeft: Boolean) {
+    private fun setProgressBarVertical(
+        binding: MainActivityLayout,
+        isLeft: Boolean,
+    ) {
         val horizontalBar = binding.activityMainContent.mainProgressBar
         val verticalBar = binding.activityMainContent.mainProgressBarVertical
         val root = binding.activityMainContent.root
@@ -528,7 +581,10 @@ object ViewUnit: KoinComponent {
         cs.applyTo(root)
     }
 
-    private fun setProgressBarHorizontal(binding: MainActivityLayout, atTop: Boolean = false) {
+    private fun setProgressBarHorizontal(
+        binding: MainActivityLayout,
+        atTop: Boolean = false,
+    ) {
         val horizontalBar = binding.activityMainContent.mainProgressBar
         val verticalBar = binding.activityMainContent.mainProgressBarVertical
         val root = binding.activityMainContent.root
@@ -560,36 +616,42 @@ object ViewUnit: KoinComponent {
     }
 
     private fun setAppbarHorizontalLayoutParams(binding: MainActivityLayout) {
-        binding.appBar.layoutParams = (binding.appBar.layoutParams as ConstraintLayout.LayoutParams).apply {
-            width = ConstraintLayout.LayoutParams.MATCH_PARENT
-            height = ConstraintLayout.LayoutParams.WRAP_CONTENT
-        }
+        binding.appBar.layoutParams =
+            (binding.appBar.layoutParams as ConstraintLayout.LayoutParams).apply {
+                width = ConstraintLayout.LayoutParams.MATCH_PARENT
+                height = ConstraintLayout.LayoutParams.WRAP_CONTENT
+            }
         // Restore children to MATCH_PARENT width for horizontal toolbar
-        binding.composeIconBar.layoutParams = (binding.composeIconBar.layoutParams as android.widget.FrameLayout.LayoutParams).apply {
-            width = android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-            height = android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
-        }
-        binding.mainSearchPanel.layoutParams = (binding.mainSearchPanel.layoutParams as android.widget.FrameLayout.LayoutParams).apply {
-            width = android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-            height = android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
-        }
+        binding.composeIconBar.layoutParams =
+            (binding.composeIconBar.layoutParams as android.widget.FrameLayout.LayoutParams).apply {
+                width = android.widget.FrameLayout.LayoutParams.MATCH_PARENT
+                height = android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
+            }
+        binding.mainSearchPanel.layoutParams =
+            (binding.mainSearchPanel.layoutParams as android.widget.FrameLayout.LayoutParams).apply {
+                width = android.widget.FrameLayout.LayoutParams.MATCH_PARENT
+                height = android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
+            }
     }
 
     private fun setAppbarVerticalLayoutParams(binding: MainActivityLayout) {
         val toolbarWidthPx = (50 * binding.root.context.resources.displayMetrics.density).toInt()
-        binding.appBar.layoutParams = (binding.appBar.layoutParams as ConstraintLayout.LayoutParams).apply {
-            width = toolbarWidthPx
-            height = ConstraintSet.MATCH_CONSTRAINT
-        }
+        binding.appBar.layoutParams =
+            (binding.appBar.layoutParams as ConstraintLayout.LayoutParams).apply {
+                width = toolbarWidthPx
+                height = ConstraintSet.MATCH_CONSTRAINT
+            }
         // Children fill the fixed-width appBar
-        binding.composeIconBar.layoutParams = (binding.composeIconBar.layoutParams as android.widget.FrameLayout.LayoutParams).apply {
-            width = android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-            height = android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-        }
-        binding.mainSearchPanel.layoutParams = (binding.mainSearchPanel.layoutParams as android.widget.FrameLayout.LayoutParams).apply {
-            width = android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-            height = android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
-        }
+        binding.composeIconBar.layoutParams =
+            (binding.composeIconBar.layoutParams as android.widget.FrameLayout.LayoutParams).apply {
+                width = android.widget.FrameLayout.LayoutParams.MATCH_PARENT
+                height = android.widget.FrameLayout.LayoutParams.MATCH_PARENT
+            }
+        binding.mainSearchPanel.layoutParams =
+            (binding.mainSearchPanel.layoutParams as android.widget.FrameLayout.LayoutParams).apply {
+                width = android.widget.FrameLayout.LayoutParams.MATCH_PARENT
+                height = android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
+            }
     }
 }
 

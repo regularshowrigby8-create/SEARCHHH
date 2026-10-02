@@ -18,9 +18,9 @@ import kotlin.math.max
 open class MultitouchListener(
     context: Context,
     webView: EBWebView,
-    private val touchCount: Int = 2
-) : View.OnTouchListener, KoinComponent {
-
+    private val touchCount: Int = 2,
+) : View.OnTouchListener,
+    KoinComponent {
     private var startPoint0: Point = Point(0, 0)
     private var startPoint1: Point = Point(0, 0)
     private var endPoint0: Point = Point(0, 0)
@@ -37,8 +37,11 @@ open class MultitouchListener(
         ScaleGestureDetector(context, ScaleListener())
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onTouch(view: View, event: MotionEvent): Boolean {
-        scaleGestureDetector.onTouchEvent(event);
+    override fun onTouch(
+        view: View,
+        event: MotionEvent,
+    ): Boolean {
+        scaleGestureDetector.onTouchEvent(event)
 
         when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_MOVE -> onLongPressMove(event)
@@ -70,7 +73,7 @@ open class MultitouchListener(
                 if (inSwipe) {
                     val offSetX = endPoint1.x - startPoint1.x
                     val offSetY = endPoint1.y - startPoint1.y
-                    //Log.i("SWIPE", "offsetX: $offSetX, offsetY: $offSetY")
+                    // Log.i("SWIPE", "offsetX: $offSetX, offsetY: $offSetY")
 
                     if (isValidSwipe(offSetX, offSetY)) {
                         if (abs(offSetX) > abs(offSetY)) {
@@ -102,13 +105,16 @@ open class MultitouchListener(
             }
 
             MotionEvent.ACTION_UP,
-            MotionEvent.ACTION_CANCEL -> inSwipe = false
+            MotionEvent.ACTION_CANCEL,
+            -> inSwipe = false
         }
         return gestureDetector.onTouchEvent(event)
     }
 
-    private fun isValidSwipe(offSetX: Int, offSetY: Int) =
-        max(abs(offSetX), abs(offSetY)) > SWIPE_THRESHOLD && !isScaling()
+    private fun isValidSwipe(
+        offSetX: Int,
+        offSetY: Int,
+    ) = max(abs(offSetX), abs(offSetY)) > SWIPE_THRESHOLD && !isScaling()
 
     private fun isScaling(): Boolean = abs(1 - scaleFactor) > SCALE_THRESHOLD
 
@@ -133,6 +139,7 @@ open class MultitouchListener(
     open fun onSwipeBottom() {}
 
     open fun onLongPressMove(motionEvent: MotionEvent) {}
+
     open fun onMoveDone(motionEvent: MotionEvent) {}
 
     companion object {
@@ -140,8 +147,7 @@ open class MultitouchListener(
         private const val SCALE_THRESHOLD = 0.03f
     }
 
-    private fun MotionEvent.getPoint(index: Int): Point =
-        Point(getX(index).toInt(), getY(index).toInt())
+    private fun MotionEvent.getPoint(index: Int): Point = Point(getX(index).toInt(), getY(index).toInt())
 }
 
 private var scaleFactor = 1f

@@ -24,7 +24,8 @@ enum class StatusbarItem(
     VolumePagination(
         titleResId = R.string.statusbar_item_volume_pagination,
         previewIcon = Icons.AutoMirrored.Outlined.VolumeUp,
-    );
+    ),
+    ;
 
     companion object {
         val defaultItems: List<StatusbarItem> = listOf(Time, PageInfo, Battery, Wifi, TouchPagination, VolumePagination)
@@ -33,7 +34,9 @@ enum class StatusbarItem(
     }
 }
 
-enum class StatusbarPosition(val titleResId: Int) {
+enum class StatusbarPosition(
+    val titleResId: Int,
+) {
     Top(R.string.statusbar_position_top),
     Bottom(R.string.statusbar_position_bottom),
 }

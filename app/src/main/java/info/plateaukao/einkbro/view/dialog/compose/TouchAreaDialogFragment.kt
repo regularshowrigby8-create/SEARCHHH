@@ -33,15 +33,17 @@ import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.activity.SettingRoute
 import info.plateaukao.einkbro.preference.TouchAreaType
 import info.plateaukao.einkbro.preference.TouchAreaType.BottomLeftRight
+import info.plateaukao.einkbro.preference.TouchAreaType.Ebook
 import info.plateaukao.einkbro.preference.TouchAreaType.Left
 import info.plateaukao.einkbro.preference.TouchAreaType.MiddleLeftRight
-import info.plateaukao.einkbro.preference.TouchAreaType.Ebook
 import info.plateaukao.einkbro.preference.TouchAreaType.Right
 import info.plateaukao.einkbro.preference.toggle
 import info.plateaukao.einkbro.unit.IntentUnit
 import org.koin.core.component.KoinComponent
 
-class TouchAreaDialogFragment : ComposeDialogFragment(), KoinComponent {
+class TouchAreaDialogFragment :
+    ComposeDialogFragment(),
+    KoinComponent {
     @Composable
     override fun Content() {
         val touchAreaType = remember { mutableStateOf(config.touch.touchAreaType) }
@@ -61,7 +63,7 @@ class TouchAreaDialogFragment : ComposeDialogFragment(), KoinComponent {
             onCloseClick = { dismiss() },
             onConfigActionsClick = {
                 IntentUnit.gotoSettings(requireActivity(), SettingRoute.Gesture)
-            }
+            },
         )
     }
 }
@@ -80,38 +82,38 @@ fun TouchAreaContent(
             Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp),
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.SpaceAround,
         ) {
             TouchAreaItem(
                 state = touchAreaType == Left,
-                iconResId = R.drawable.ic_touch_left
+                iconResId = R.drawable.ic_touch_left,
             ) { onTouchTypeClick(Left) }
             TouchAreaItem(
                 state = touchAreaType == MiddleLeftRight,
-                iconResId = R.drawable.ic_touch_middle_left_right
+                iconResId = R.drawable.ic_touch_middle_left_right,
             ) { onTouchTypeClick(MiddleLeftRight) }
             TouchAreaItem(
                 state = touchAreaType == Right,
-                iconResId = R.drawable.ic_touch_right
+                iconResId = R.drawable.ic_touch_right,
             ) { onTouchTypeClick(Right) }
         }
         Row(
             Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp),
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.SpaceAround,
         ) {
             TouchAreaItem(
                 state = touchAreaType == BottomLeftRight,
-                iconResId = R.drawable.ic_touch_left_right
+                iconResId = R.drawable.ic_touch_left_right,
             ) { onTouchTypeClick(BottomLeftRight) }
             TouchAreaItem(
                 state = touchAreaType == TouchAreaType.Long,
-                iconResId = R.drawable.ic_touch_long
+                iconResId = R.drawable.ic_touch_long,
             ) { onTouchTypeClick(TouchAreaType.Long) }
             TouchAreaItem(
                 state = touchAreaType == Ebook,
-                iconResId = R.drawable.ic_touch_ebook
+                iconResId = R.drawable.ic_touch_ebook,
             ) { onTouchTypeClick(Ebook) }
         }
 
@@ -126,17 +128,19 @@ fun TouchAreaContent(
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             Text(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .weight(1f),
+                modifier =
+                    Modifier
+                        .padding(10.dp)
+                        .weight(1f),
                 text = stringResource(R.string.dialog_touch_area_enable),
                 color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.h6,
                 textAlign = TextAlign.Start,
             )
             Switch(
-                modifier = Modifier
-                    .wrapContentHeight(),
+                modifier =
+                    Modifier
+                        .wrapContentHeight(),
                 checked = enableTurn,
                 onCheckedChange = {
                     onToggle()
@@ -147,19 +151,20 @@ fun TouchAreaContent(
         HorizontalSeparator()
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
             TextButton(
                 modifier = Modifier.weight(1f),
-                onClick = onCloseClick
+                onClick = onCloseClick,
             ) {
                 Text(
                     stringResource(id = android.R.string.ok),
-                    color = MaterialTheme.colors.onBackground
+                    color = MaterialTheme.colors.onBackground,
                 )
             }
         }
@@ -175,24 +180,26 @@ fun TouchAreaItem(
     val interactionSource = remember { MutableInteractionSource() }
     val borderWidth = if (state) 4.dp else -1.dp
     Column(
-        modifier = Modifier
-            .padding(5.dp)
-            .clickable(
-                indication = null,
-                interactionSource = interactionSource
-            ) {
-                onClicked()
-            },
+        modifier =
+            Modifier
+                .padding(5.dp)
+                .clickable(
+                    indication = null,
+                    interactionSource = interactionSource,
+                ) {
+                    onClicked()
+                },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = iconResId),
             contentDescription = null,
-            modifier = Modifier
-                .height(80.dp)
-                .border(borderWidth, MaterialTheme.colors.primary),
-            tint = MaterialTheme.colors.onBackground
+            modifier =
+                Modifier
+                    .height(80.dp)
+                    .border(borderWidth, MaterialTheme.colors.primary),
+            tint = MaterialTheme.colors.onBackground,
         )
     }
 }
@@ -205,17 +212,18 @@ fun ActionItem(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     Row(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .clickable(
-                indication = null,
-                interactionSource = interactionSource
-            ) {
-                onClicked()
-            },
+        modifier =
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .clickable(
+                    indication = null,
+                    interactionSource = interactionSource,
+                ) {
+                    onClicked()
+                },
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             modifier = Modifier.weight(1f),
@@ -226,7 +234,7 @@ fun ActionItem(
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.icon_arrow_right_gest),
             contentDescription = null,
-            tint = MaterialTheme.colors.onBackground
+            tint = MaterialTheme.colors.onBackground,
         )
     }
 }

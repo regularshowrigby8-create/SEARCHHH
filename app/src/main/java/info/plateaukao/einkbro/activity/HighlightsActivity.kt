@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
-import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -19,10 +19,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -43,9 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.activity.compose.BackHandler
 import androidx.lifecycle.viewModelScope
-import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.database.Article
 import info.plateaukao.einkbro.database.Highlight
@@ -56,14 +54,16 @@ import info.plateaukao.einkbro.unit.ShareUtil
 import info.plateaukao.einkbro.view.EBToast
 import info.plateaukao.einkbro.view.compose.MyTheme
 import info.plateaukao.einkbro.view.compose.SystemBarIconsForBlackTopBar
+import info.plateaukao.einkbro.view.compose.onTopBar
 import info.plateaukao.einkbro.view.compose.scaffoldEdgeToEdgePadding
+import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import info.plateaukao.einkbro.viewmodel.HighlightViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
-import info.plateaukao.einkbro.view.compose.onTopBar
+import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
 class HighlightsActivity : LocaleAwareComponentActivity() {
     private val highlightViewModel: HighlightViewModel by koinViewModel()
@@ -73,7 +73,11 @@ class HighlightsActivity : LocaleAwareComponentActivity() {
 
     private var highlightsRoute = HighlightsRoute.RouteArticles
     private var exportArticleId = 0
-    private fun showFileChooser(highlightsRoute: HighlightsRoute, articleId: Int) {
+
+    private fun showFileChooser(
+        highlightsRoute: HighlightsRoute,
+        articleId: Int,
+    ) {
         this.highlightsRoute = highlightsRoute
         this.exportArticleId = articleId
         BrowserUnit.createFilePicker(exportHighlightsLauncher, "highlights.html")
@@ -87,15 +91,17 @@ class HighlightsActivity : LocaleAwareComponentActivity() {
                 it.data?.data?.let { uri -> exportHighlights(uri) }
             }
 
-
         setContent {
             MyTheme {
                 // Two screens, one back level: plain state instead of a NavHost
                 // (navigation-compose was the only user of the dependency).
                 var openedArticleId by remember { mutableStateOf<Int?>(null) }
                 val currentScreen =
-                    if (openedArticleId == null) HighlightsRoute.RouteArticles
-                    else HighlightsRoute.RouteHighlights
+                    if (openedArticleId == null) {
+                        HighlightsRoute.RouteArticles
+                    } else {
+                        HighlightsRoute.RouteHighlights
+                    }
 
                 BackHandler(enabled = openedArticleId != null) { openedArticleId = null }
 
@@ -109,30 +115,36 @@ class HighlightsActivity : LocaleAwareComponentActivity() {
                                 showFileChooser(currentScreen, openedArticleId ?: 0)
                             },
                             navigateUp = {
-                                if (openedArticleId != null) openedArticleId = null
-                                else finish()
-                            }
-                        )
-                    }
-                ) { innerPadding ->
-                    when (val articleId = openedArticleId) {
-                        null -> ArticlesScreen(
-                            modifier = Modifier.padding(innerPadding),
-                            highlightViewModel = highlightViewModel,
-                            onArticleClick = { article -> openedArticleId = article.id },
-                            onLinkClick = { article ->
-                                highlightViewModel.launchUrl(this@HighlightsActivity, article.url)
+                                if (openedArticleId != null) {
+                                    openedArticleId = null
+                                } else {
+                                    finish()
+                                }
                             },
                         )
+                    },
+                ) { innerPadding ->
+                    when (val articleId = openedArticleId) {
+                        null ->
+                            ArticlesScreen(
+                                modifier = Modifier.padding(innerPadding),
+                                highlightViewModel = highlightViewModel,
+                                onArticleClick = { article -> openedArticleId = article.id },
+                                onLinkClick = { article ->
+                                    highlightViewModel.launchUrl(this@HighlightsActivity, article.url)
+                                },
+                            )
 
-                        else -> HighlightsScreen(
-                            articleId,
-                            modifier = Modifier
-                                .padding(innerPadding)
-                                .padding(10.dp),
-                            highlightViewModel,
-                            deleteHighlight = { highlightViewModel.deleteHighlight(it) }
-                        )
+                        else ->
+                            HighlightsScreen(
+                                articleId,
+                                modifier =
+                                    Modifier
+                                        .padding(innerPadding)
+                                        .padding(10.dp),
+                                highlightViewModel,
+                                deleteHighlight = { highlightViewModel.deleteHighlight(it) },
+                            )
                     }
                 }
             }
@@ -141,11 +153,12 @@ class HighlightsActivity : LocaleAwareComponentActivity() {
 
     private fun exportHighlights(uri: Uri) {
         highlightViewModel.viewModelScope.launch(Dispatchers.IO) {
-            val data = if (highlightsRoute == HighlightsRoute.RouteArticles) {
-                highlightViewModel.dumpArticlesHighlightsAsHtml()
-            } else {
-                highlightViewModel.dumpSingleArticleHighlights(exportArticleId)
-            }
+            val data =
+                if (highlightsRoute == HighlightsRoute.RouteArticles) {
+                    highlightViewModel.dumpArticlesHighlightsAsHtml()
+                } else {
+                    highlightViewModel.dumpSingleArticleHighlights(exportArticleId)
+                }
             backupUnit.exportDataToFileUri(uri, data)
 
             withContext(Dispatchers.Main) {
@@ -156,14 +169,17 @@ class HighlightsActivity : LocaleAwareComponentActivity() {
     }
 
     companion object {
-        fun createIntent(context: Context) = Intent(
-            context,
-            HighlightsActivity::class.java
-        )
+        fun createIntent(context: Context) =
+            Intent(
+                context,
+                HighlightsActivity::class.java,
+            )
     }
 }
 
-enum class HighlightsRoute(@StringRes val titleResId: Int) {
+enum class HighlightsRoute(
+    @StringRes val titleResId: Int,
+) {
     RouteArticles(R.string.articles),
     RouteHighlights(R.string.highlights),
 }
@@ -178,7 +194,7 @@ fun ArticlesScreen(
     val articles by highlightViewModel.getAllArticles().collectAsState(emptyList())
     LazyColumn(
         modifier = modifier.padding(10.dp),
-        reverseLayout = true
+        reverseLayout = true,
     ) {
         items(articles.size, key = { articles[it].id }) { index ->
             val article = articles[index]
@@ -189,7 +205,7 @@ fun ArticlesScreen(
                 onLinkClick = { onLinkClick(article) },
                 deleteArticle = {
                     highlightViewModel.deleteArticle(article.id)
-                }
+                },
             )
             if (index < articles.lastIndex) HorizontalSeparator()
         }
@@ -206,12 +222,13 @@ fun ArticleItem(
     deleteArticle: (Article) -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = { deleteArticle(article) }
-            )
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = { deleteArticle(article) },
+                ),
     ) {
         Text(
             modifier = modifier,
@@ -219,16 +236,18 @@ fun ArticleItem(
             color = MaterialTheme.colors.onBackground,
         )
         Row(
-            modifier = Modifier
-                .align(Alignment.End)
-                .clickable { onLinkClick() },
+            modifier =
+                Modifier
+                    .align(Alignment.End)
+                    .clickable { onLinkClick() },
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                modifier = Modifier
-                    .padding(end = 5.dp)
-                    .size(23.dp),
+                modifier =
+                    Modifier
+                        .padding(end = 5.dp)
+                        .size(23.dp),
                 imageVector = ImageVector.vectorResource(id = R.drawable.icon_exit),
                 contentDescription = "link",
                 tint = MaterialTheme.colors.onBackground,
@@ -236,14 +255,16 @@ fun ArticleItem(
             Text(
                 modifier = Modifier.padding(end = 15.dp),
                 text = SimpleDateFormat("MM-dd", Locale.getDefault()).format(article.date),
-                style = MaterialTheme.typography.caption.copy(
-                    color = MaterialTheme.colors.onBackground,
-                )
+                style =
+                    MaterialTheme.typography.caption.copy(
+                        color = MaterialTheme.colors.onBackground,
+                    ),
             )
             Icon(
-                modifier = Modifier
-                    .size(23.dp)
-                    .clickable { deleteArticle(article) },
+                modifier =
+                    Modifier
+                        .size(23.dp)
+                        .clickable { deleteArticle(article) },
                 imageVector = ImageVector.vectorResource(id = R.drawable.icon_delete),
                 contentDescription = "delete",
                 tint = MaterialTheme.colors.onBackground,
@@ -259,8 +280,8 @@ fun HighlightsScreen(
     highlightViewModel: HighlightViewModel,
     deleteHighlight: (Highlight) -> Unit,
 ) {
-
-    val highlights by highlightViewModel.getHighlightsForArticle(articleId)
+    val highlights by highlightViewModel
+        .getHighlightsForArticle(articleId)
         .collectAsState(emptyList())
 
     var articleName by remember { mutableStateOf("") }
@@ -276,9 +297,10 @@ fun HighlightsScreen(
             Text(
                 modifier = Modifier.padding(vertical = 10.dp),
                 text = articleName,
-                style = MaterialTheme.typography.h6.copy(
-                    color = MaterialTheme.colors.onBackground,
-                )
+                style =
+                    MaterialTheme.typography.h6.copy(
+                        color = MaterialTheme.colors.onBackground,
+                    ),
             )
         }
         items(highlights.size, key = { highlights[it].id }) { index ->
@@ -299,11 +321,12 @@ fun HighlightItem(
 ) {
     val context = LocalContext.current
     Column(
-        modifier = Modifier
-            .padding(vertical = 5.dp)
-            .clickable {
-                ShareUtil.copyToClipboard(context, highlight.content)
-            }
+        modifier =
+            Modifier
+                .padding(vertical = 5.dp)
+                .clickable {
+                    ShareUtil.copyToClipboard(context, highlight.content)
+                },
     ) {
         Text(
             modifier = Modifier.padding(vertical = 10.dp),
@@ -315,22 +338,24 @@ fun HighlightItem(
             horizontalArrangement = Arrangement.End,
         ) {
             Icon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        ShareUtil.copyToClipboard(context, highlight.content)
-                    },
+                modifier =
+                    Modifier
+                        .size(24.dp)
+                        .clickable {
+                            ShareUtil.copyToClipboard(context, highlight.content)
+                        },
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_copy),
                 contentDescription = "copy",
                 tint = MaterialTheme.colors.onBackground,
             )
             Spacer(modifier = Modifier.size(10.dp))
             Icon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        deleteHighlight(highlight)
-                    },
+                modifier =
+                    Modifier
+                        .size(24.dp)
+                        .clickable {
+                            deleteHighlight(highlight)
+                        },
                 imageVector = ImageVector.vectorResource(id = R.drawable.icon_delete),
                 contentDescription = "delete",
                 tint = MaterialTheme.colors.onBackground,
@@ -350,7 +375,7 @@ fun HighlightsBar(
         title = {
             Text(
                 stringResource(currentScreen.titleResId),
-                color = MaterialTheme.colors.onTopBar
+                color = MaterialTheme.colors.onTopBar,
             )
         },
         navigationIcon = {
@@ -358,7 +383,7 @@ fun HighlightsBar(
                 Icon(
                     tint = MaterialTheme.colors.onTopBar,
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
+                    contentDescription = stringResource(R.string.back),
                 )
             }
         },
@@ -367,10 +392,10 @@ fun HighlightsBar(
                 Icon(
                     tint = MaterialTheme.colors.onTopBar,
                     imageVector = ImageVector.vectorResource(id = R.drawable.icon_export),
-                    contentDescription = ""
+                    contentDescription = "",
                 )
             }
-        }
+        },
     )
 }
 
@@ -380,13 +405,14 @@ fun PreviewArticleItem() {
     MyTheme {
         ArticleItem(
             modifier = Modifier,
-            article = Article(
-                title = "Hello",
-                url = "123",
-                date = System.currentTimeMillis(),
-                tags = ""
-            ),
-            deleteArticle = { Unit }
+            article =
+                Article(
+                    title = "Hello",
+                    url = "123",
+                    date = System.currentTimeMillis(),
+                    tags = "",
+                ),
+            deleteArticle = { Unit },
         )
     }
 }
@@ -396,11 +422,12 @@ fun PreviewArticleItem() {
 fun PreviewHighlightItem() {
     MyTheme {
         HighlightItem(
-            highlight = Highlight(
-                articleId = 1,
-                content = "Hello",
-            ),
-            deleteHighlight = { Unit }
+            highlight =
+                Highlight(
+                    articleId = 1,
+                    content = "Hello",
+                ),
+            deleteHighlight = { Unit },
         )
     }
 }

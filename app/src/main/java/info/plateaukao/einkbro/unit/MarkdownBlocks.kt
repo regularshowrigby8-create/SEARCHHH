@@ -6,8 +6,14 @@ package info.plateaukao.einkbro.unit
  * view of its own (an AnnotatedString can't carry one).
  */
 sealed interface MarkdownBlock {
-    data class Text(val markdown: String) : MarkdownBlock
-    data class Image(val url: String, val alt: String) : MarkdownBlock
+    data class Text(
+        val markdown: String,
+    ) : MarkdownBlock
+
+    data class Image(
+        val url: String,
+        val alt: String,
+    ) : MarkdownBlock
 }
 
 object MarkdownBlocks {
@@ -27,7 +33,7 @@ object MarkdownBlocks {
                 MarkdownBlock.Image(
                     url = match.groupValues[2],
                     alt = match.groupValues[1].trim(),
-                )
+                ),
             )
             cursor = match.range.last + 1
         }
@@ -35,7 +41,10 @@ object MarkdownBlocks {
         return blocks
     }
 
-    private fun addText(blocks: MutableList<MarkdownBlock>, text: String) {
+    private fun addText(
+        blocks: MutableList<MarkdownBlock>,
+        text: String,
+    ) {
         if (text.isNotBlank()) blocks.add(MarkdownBlock.Text(text.trim()))
     }
 }

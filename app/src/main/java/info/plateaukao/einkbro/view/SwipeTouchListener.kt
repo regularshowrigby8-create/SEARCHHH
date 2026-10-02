@@ -9,7 +9,9 @@ import android.view.View
 import android.view.View.OnTouchListener
 import kotlin.math.abs
 
-open class SwipeTouchListener(ctx: Context?) : OnTouchListener {
+open class SwipeTouchListener(
+    ctx: Context?,
+) : OnTouchListener {
     private val gestureDetector: GestureDetector
 
     init {
@@ -17,12 +19,20 @@ open class SwipeTouchListener(ctx: Context?) : OnTouchListener {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onTouch(v: View, event: MotionEvent): Boolean = gestureDetector.onTouchEvent(event)
+    override fun onTouch(
+        v: View,
+        event: MotionEvent,
+    ): Boolean = gestureDetector.onTouchEvent(event)
 
     private inner class GestureListener : SimpleOnGestureListener() {
         override fun onDown(e: MotionEvent): Boolean = false
 
-        override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+        override fun onFling(
+            e1: MotionEvent?,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float,
+        ): Boolean {
             if (e1 == null) return false
             var result = false
             try {
@@ -42,8 +52,8 @@ open class SwipeTouchListener(ctx: Context?) : OnTouchListener {
             }
             return result
         }
-
     }
+
     companion object {
         private const val SWIPE_THRESHOLD = 100
         private const val SWIPE_VELOCITY_THRESHOLD = 100
@@ -51,7 +61,10 @@ open class SwipeTouchListener(ctx: Context?) : OnTouchListener {
 
     // ↓ do not remove, needed for swipe listener of the "navigation button"
     open fun onSwipeRight() {}
+
     open fun onSwipeLeft() {}
+
     open fun onSwipeTop() {}
+
     open fun onSwipeBottom() {}
 }

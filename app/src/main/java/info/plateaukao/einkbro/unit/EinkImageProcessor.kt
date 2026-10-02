@@ -21,10 +21,13 @@ import kotlin.math.roundToInt
  *   4. Floyd-Steinberg dithering – smoother gradients on limited palettes
  */
 object EinkImageProcessor {
-
     private fun clamp(v: Int): Int = v.coerceIn(0, 255)
 
-    private fun buildToneLUT(gamma: Double, k: Double, shadowLift: Double): IntArray {
+    private fun buildToneLUT(
+        gamma: Double,
+        k: Double,
+        shadowLift: Double,
+    ): IntArray {
         val lut = IntArray(256)
         val sig0: Double
         val sigRange: Double
@@ -53,14 +56,17 @@ object EinkImageProcessor {
      * Process a bitmap in-place with e-ink optimizations.
      * @param strength 0-100, where 0 = no change
      */
-    fun process(bitmap: Bitmap, strength: Int): Bitmap {
+    fun process(
+        bitmap: Bitmap,
+        strength: Int,
+    ): Bitmap {
         if (strength <= 0) return bitmap
 
         val t = strength / 100.0
-        val gamma = 1.0 + t * 1.0       // 1.0 → 2.0
-        val sat = 1.0 + t * 0.8         // 1.0 → 1.8
-        val sCurveK = t * 5.0           // 0   → 5  (gentler to preserve dark detail)
-        val shadowLift = t * 0.08       // 0   → 8% black-point raise
+        val gamma = 1.0 + t * 1.0 // 1.0 → 2.0
+        val sat = 1.0 + t * 0.8 // 1.0 → 1.8
+        val sCurveK = t * 5.0 // 0   → 5  (gentler to preserve dark detail)
+        val shadowLift = t * 0.08 // 0   → 8% black-point raise
 
         val lut = buildToneLUT(gamma, sCurveK, shadowLift)
 
@@ -104,15 +110,26 @@ object EinkImageProcessor {
      * Floyd-Steinberg error-diffusion dithering in-place.
      * Quantises each channel to [levels] values.
      */
-    private fun applyDither(pixels: IntArray, w: Int, h: Int, levels: Int) {
+    private fun applyDither(
+        pixels: IntArray,
+        w: Int,
+        h: Int,
+        levels: Int,
+    ) {
         val step = 255.0f / (levels - 1)
         // Error buffers for current and next row, per channel (offset by 1 so x-1 is safe)
         val sz = w + 2
-        var ecR = FloatArray(sz); var ecG = FloatArray(sz); var ecB = FloatArray(sz)
-        var enR = FloatArray(sz); var enG = FloatArray(sz); var enB = FloatArray(sz)
+        var ecR = FloatArray(sz)
+        var ecG = FloatArray(sz)
+        var ecB = FloatArray(sz)
+        var enR = FloatArray(sz)
+        var enG = FloatArray(sz)
+        var enB = FloatArray(sz)
 
         for (y in 0 until h) {
-            enR.fill(0f); enG.fill(0f); enB.fill(0f)
+            enR.fill(0f)
+            enG.fill(0f)
+            enB.fill(0f)
             for (x in 0 until w) {
                 val i = y * w + x
                 val pixel = pixels[i]
@@ -132,21 +149,37 @@ object EinkImageProcessor {
 
                 pixels[i] = Color.argb(a, qr, qg, qb)
 
-                val er = r - qr; val eg = g - qg; val eb = b - qb
+                val er = r - qr
+                val eg = g - qg
+                val eb = b - qb
 
                 // Right: 7/16
-                ecR[xi + 1] += er * 0.4375f; ecG[xi + 1] += eg * 0.4375f; ecB[xi + 1] += eb * 0.4375f
+                ecR[xi + 1] += er * 0.4375f
+                ecG[xi + 1] += eg * 0.4375f
+                ecB[xi + 1] += eb * 0.4375f
                 // Below-left: 3/16
-                enR[xi - 1] += er * 0.1875f; enG[xi - 1] += eg * 0.1875f; enB[xi - 1] += eb * 0.1875f
+                enR[xi - 1] += er * 0.1875f
+                enG[xi - 1] += eg * 0.1875f
+                enB[xi - 1] += eb * 0.1875f
                 // Below: 5/16
-                enR[xi] += er * 0.3125f; enG[xi] += eg * 0.3125f; enB[xi] += eb * 0.3125f
+                enR[xi] += er * 0.3125f
+                enG[xi] += eg * 0.3125f
+                enB[xi] += eb * 0.3125f
                 // Below-right: 1/16
-                enR[xi + 1] += er * 0.0625f; enG[xi + 1] += eg * 0.0625f; enB[xi + 1] += eb * 0.0625f
+                enR[xi + 1] += er * 0.0625f
+                enG[xi + 1] += eg * 0.0625f
+                enB[xi + 1] += eb * 0.0625f
             }
             // Swap current / next error rows
-            val tmpR = ecR; val tmpG = ecG; val tmpB = ecB
-            ecR = enR; ecG = enG; ecB = enB
-            enR = tmpR; enG = tmpG; enB = tmpB
+            val tmpR = ecR
+            val tmpG = ecG
+            val tmpB = ecB
+            ecR = enR
+            ecG = enG
+            ecB = enB
+            enR = tmpR
+            enG = tmpG
+            enB = tmpB
         }
     }
 
@@ -174,13 +207,17 @@ object EinkImageProcessor {
      * image carries no EXIF, so orientation must be baked into the pixels or
      * the browser shows camera photos rotated.
      */
-    private fun applyExifOrientation(originalBytes: ByteArray, bitmap: Bitmap): Bitmap {
-        val orientation = try {
-            ExifInterface(ByteArrayInputStream(originalBytes))
-                .getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-        } catch (_: Exception) {
-            ExifInterface.ORIENTATION_NORMAL
-        }
+    private fun applyExifOrientation(
+        originalBytes: ByteArray,
+        bitmap: Bitmap,
+    ): Bitmap {
+        val orientation =
+            try {
+                ExifInterface(ByteArrayInputStream(originalBytes))
+                    .getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            } catch (_: Exception) {
+                ExifInterface.ORIENTATION_NORMAL
+            }
         val matrix = Matrix()
         when (orientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
@@ -189,18 +226,21 @@ object EinkImageProcessor {
             ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.postScale(-1f, 1f)
             ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.postScale(1f, -1f)
             ExifInterface.ORIENTATION_TRANSPOSE -> {
-                matrix.postRotate(90f); matrix.postScale(-1f, 1f)
+                matrix.postRotate(90f)
+                matrix.postScale(-1f, 1f)
             }
             ExifInterface.ORIENTATION_TRANSVERSE -> {
-                matrix.postRotate(270f); matrix.postScale(-1f, 1f)
+                matrix.postRotate(270f)
+                matrix.postScale(-1f, 1f)
             }
             else -> return bitmap
         }
-        val rotated = try {
-            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-        } catch (_: OutOfMemoryError) {
-            return bitmap
-        }
+        val rotated =
+            try {
+                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            } catch (_: OutOfMemoryError) {
+                return bitmap
+            }
         if (rotated !== bitmap) bitmap.recycle()
         return rotated
     }
@@ -222,22 +262,25 @@ object EinkImageProcessor {
         val srcMaxEdge = maxOf(bounds.outWidth, bounds.outHeight)
         if (srcMaxEdge < MIN_PROCESS_EDGE) return null
 
-        val opts = BitmapFactory.Options().apply {
-            inMutable = true // process() adjusts in place, no defensive copy
-            inSampleSize = computeSampleSize(srcMaxEdge)
-        }
-        val bitmap = BitmapFactory.decodeByteArray(originalBytes, 0, originalBytes.size, opts)
-            ?: return null
+        val opts =
+            BitmapFactory.Options().apply {
+                inMutable = true // process() adjusts in place, no defensive copy
+                inSampleSize = computeSampleSize(srcMaxEdge)
+            }
+        val bitmap =
+            BitmapFactory.decodeByteArray(originalBytes, 0, originalBytes.size, opts)
+                ?: return null
 
         // Rotate after processing: per-pixel ops are orientation-independent,
         // and createBitmap's result is immutable (would force a copy in process()).
         val processed = applyExifOrientation(originalBytes, process(bitmap, strength))
 
-        val format = when {
-            mimeType.contains("png") -> Bitmap.CompressFormat.PNG
-            mimeType.contains("webp") -> Bitmap.CompressFormat.WEBP
-            else -> Bitmap.CompressFormat.JPEG
-        }
+        val format =
+            when {
+                mimeType.contains("png") -> Bitmap.CompressFormat.PNG
+                mimeType.contains("webp") -> Bitmap.CompressFormat.WEBP
+                else -> Bitmap.CompressFormat.JPEG
+            }
         val quality = if (format == Bitmap.CompressFormat.PNG) 100 else 85
 
         val outputStream = ByteArrayOutputStream()

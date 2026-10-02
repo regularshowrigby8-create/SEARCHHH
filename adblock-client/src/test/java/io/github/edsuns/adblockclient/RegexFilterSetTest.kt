@@ -7,7 +7,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class RegexFilterSetTest {
-
     private val noMatch = MatchResult(false, null, null)
 
     private fun set(vararg lines: String) = RegexFilterSet.parse(lines.joinToString("\n"))
@@ -128,7 +127,10 @@ class RegexFilterSetTest {
         assertEquals("139.45.197.2", RegexRule.requiredLiteral("^139\\.45\\.197\\.2(4[0-9]|5[0-4])"))
         assertEquals("51.195.31.", RegexRule.requiredLiteral("(https?:\\/\\/)51\\.195\\.31\\..{100,}"))
         assertEquals("doseofporn", RegexRule.requiredLiteral("doseofporn.com\\/[a-z]{0,5}[1-9]{0,5}"))
-        assertEquals("https://rayinfosports.com/wp-content/uploads/", RegexRule.requiredLiteral("^https:\\/\\/rayinfosports\\.com\\/wp-content\\/uploads\\/[a-z]{8}\\.js\\?ver="))
+        assertEquals(
+            "https://rayinfosports.com/wp-content/uploads/",
+            RegexRule.requiredLiteral("^https:\\/\\/rayinfosports\\.com\\/wp-content\\/uploads\\/[a-z]{8}\\.js\\?ver="),
+        )
         // optional last char is dropped
         assertEquals("abc", RegexRule.requiredLiteral("abcd?e"))
         assertEquals("abc", RegexRule.requiredLiteral("abcd*"))

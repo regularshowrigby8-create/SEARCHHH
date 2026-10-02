@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class SplitSearchItemInfo(
     val title: String,
     val stringPattern: String,
-    val enabled: Boolean
+    val enabled: Boolean,
 )

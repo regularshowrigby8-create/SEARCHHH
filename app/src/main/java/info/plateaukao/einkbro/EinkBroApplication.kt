@@ -20,26 +20,21 @@ import androidx.core.content.ContextCompat
 import info.plateaukao.einkbro.activity.BrowserActivity
 import info.plateaukao.einkbro.activity.SettingActivity
 import info.plateaukao.einkbro.browser.AdBlock
-import info.plateaukao.einkbro.view.compose.UiThemeState
 import info.plateaukao.einkbro.browser.Cookie
 import info.plateaukao.einkbro.browser.Javascript
+import info.plateaukao.einkbro.data.remote.GoogleDriveRepository
+import info.plateaukao.einkbro.data.remote.InstapaperRepository
 import info.plateaukao.einkbro.database.BookmarkManager
 import info.plateaukao.einkbro.database.RecordRepository
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.search.suggestion.SearchSuggestionViewModel
-import info.plateaukao.einkbro.data.remote.GoogleDriveRepository
-import info.plateaukao.einkbro.data.remote.InstapaperRepository
 import info.plateaukao.einkbro.service.TtsManager
 import info.plateaukao.einkbro.service.TtsNotificationManager
 import info.plateaukao.einkbro.service.WebSpeechHandler
 import info.plateaukao.einkbro.unit.EinkImageCache
 import info.plateaukao.einkbro.unit.LocaleManager
 import info.plateaukao.einkbro.util.WebViewUtil
-import io.github.edsuns.adfilter.AdFilter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import info.plateaukao.einkbro.view.compose.UiThemeState
 import info.plateaukao.einkbro.viewmodel.ActionModeMenuViewModel
 import info.plateaukao.einkbro.viewmodel.ExternalSearchViewModel
 import info.plateaukao.einkbro.viewmodel.GptQueryViewModel
@@ -49,6 +44,11 @@ import info.plateaukao.einkbro.viewmodel.RemoteConnViewModel
 import info.plateaukao.einkbro.viewmodel.SavedPageViewModel
 import info.plateaukao.einkbro.viewmodel.TranslationViewModel
 import info.plateaukao.einkbro.viewmodel.TtsViewModel
+import io.github.edsuns.adfilter.AdFilter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.GlobalContext.startKoin
@@ -56,7 +56,6 @@ import org.koin.dsl.module
 import timber.log.Timber
 
 class EinkBroApplication : Application() {
-
     private val sp: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(applicationContext)
     }
@@ -71,34 +70,41 @@ class EinkBroApplication : Application() {
 
     private val ttsManager: TtsManager = TtsManager(this, appScope)
 
-    private val myModule = module {
-        single<CoroutineScope> { appScope }
-        single { config }
-        single { sp }
-        single { BookmarkManager(androidContext()) }
-        single { info.plateaukao.einkbro.unit.FaviconFetcher(get()) }
-        single { einkImageCache }
-        single { info.plateaukao.einkbro.userscript.UserScriptManager(androidContext()) }
-        single { RecordRepository() }
-        single { AdBlock(androidContext()) }
-        single { Javascript(androidContext()) }
-        single { Cookie(androidContext()) }
-        single { ttsManager }
-        single { TtsNotificationManager(androidContext()) }
-        single { WebSpeechHandler(androidContext()) }
-        single { InstapaperRepository() }
-        single { GoogleDriveRepository() }
-        single { SearchSuggestionViewModel() }
-        viewModel { TranslationViewModel(get(), get()) }
-        viewModel { TtsViewModel(get(), get(), get()) }
-        viewModel { ActionModeMenuViewModel(get()) }
-        viewModel { ExternalSearchViewModel(get()) }
-        viewModel { RemoteConnViewModel(get()) }
-        viewModel { InstapaperViewModel(get()) }
-        viewModel { GptQueryViewModel(get()) }
-        viewModel { HighlightViewModel(get()) }
-        viewModel { SavedPageViewModel(get()) }
-    }
+    private val myModule =
+        module {
+            single<CoroutineScope> { appScope }
+            single { config }
+            single { sp }
+            single { BookmarkManager(androidContext()) }
+            single {
+                info.plateaukao.einkbro.unit
+                    .FaviconFetcher(get())
+            }
+            single { einkImageCache }
+            single {
+                info.plateaukao.einkbro.userscript
+                    .UserScriptManager(androidContext())
+            }
+            single { RecordRepository() }
+            single { AdBlock(androidContext()) }
+            single { Javascript(androidContext()) }
+            single { Cookie(androidContext()) }
+            single { ttsManager }
+            single { TtsNotificationManager(androidContext()) }
+            single { WebSpeechHandler(androidContext()) }
+            single { InstapaperRepository() }
+            single { GoogleDriveRepository() }
+            single { SearchSuggestionViewModel() }
+            viewModel { TranslationViewModel(get(), get()) }
+            viewModel { TtsViewModel(get(), get(), get()) }
+            viewModel { ActionModeMenuViewModel(get()) }
+            viewModel { ExternalSearchViewModel(get()) }
+            viewModel { RemoteConnViewModel(get()) }
+            viewModel { InstapaperViewModel(get()) }
+            viewModel { GptQueryViewModel(get()) }
+            viewModel { HighlightViewModel(get()) }
+            viewModel { SavedPageViewModel(get()) }
+        }
 
     override fun onCreate() {
         super.onCreate()
@@ -108,10 +114,11 @@ class EinkBroApplication : Application() {
             modules(myModule)
         }
 
-
         UiThemeState.current.value = config.display.uiTheme
         UiThemeState.darkMode.value = config.display.darkMode
-        UiThemeState.customColor.value = androidx.compose.ui.graphics.Color(config.display.customThemeColor)
+        UiThemeState.customColor.value =
+            androidx.compose.ui.graphics
+                .Color(config.display.customThemeColor)
         UiThemeState.uiBorder.value = config.display.uiBorder
         UiThemeState.uiFill.value = config.display.uiFill
         UiThemeState.inverted.value = config.display.uiThemeInverted
@@ -163,34 +170,35 @@ class EinkBroApplication : Application() {
         ttsManager.release()
     }
 
-
     private var isDownloading = false
     private val channelId = "DOWNLOAD"
     private val notificationId = 1
 
     private fun notifyDownloading(finished: Boolean) {
-        if (isDownloading != finished) {// only accept valid event
+        if (isDownloading != finished) { // only accept valid event
             return
         }
 
         val clazz = if (finished) BrowserActivity::class.java else SettingActivity::class.java
-        val intent = Intent(this, clazz).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+        val intent =
+            Intent(this, clazz).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
-        val builder = NotificationCompat.Builder(this, channelId).apply {
-            setContentTitle("Adblock Filter Download")
-            setContentIntent(pendingIntent)
-            setDefaults(NotificationCompat.DEFAULT_ALL)
-            setVibrate(longArrayOf(0L))
-            setSound(null)
-            priority = NotificationCompat.PRIORITY_HIGH
-        }
+        val builder =
+            NotificationCompat.Builder(this, channelId).apply {
+                setContentTitle("Adblock Filter Download")
+                setContentIntent(pendingIntent)
+                setDefaults(NotificationCompat.DEFAULT_ALL)
+                setVibrate(longArrayOf(0L))
+                setSound(null)
+                priority = NotificationCompat.PRIORITY_HIGH
+            }
         if (finished) {
             isDownloading = false
             builder.apply {
-                //setContentText(getString(R.string.download_complete))
+                // setContentText(getString(R.string.download_complete))
                 setContentText("Download Complete")
                 setSmallIcon(android.R.drawable.stat_sys_download_done)
                 setProgress(0, 0, false)
@@ -199,11 +207,11 @@ class EinkBroApplication : Application() {
         } else {
             isDownloading = true
             builder.apply {
-                //setContentText(getString(R.string.download_in_progress))
+                // setContentText(getString(R.string.download_in_progress))
                 setContentText("Download in Progress")
                 setSmallIcon(android.R.drawable.stat_sys_download)
                 setProgress(0, 0, true)
-                setOngoing(true)// make the notification unable to be cleared
+                setOngoing(true) // make the notification unable to be cleared
             }
         }
         NotificationManagerCompat.from(this).apply {
@@ -221,7 +229,7 @@ class EinkBroApplication : Application() {
             // Check if notification permission is granted
             if (ContextCompat.checkSelfPermission(
                     this@EinkBroApplication,
-                    Manifest.permission.POST_NOTIFICATIONS
+                    Manifest.permission.POST_NOTIFICATIONS,
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 val notification = builder.build()
@@ -232,7 +240,7 @@ class EinkBroApplication : Application() {
                     ActivityCompat.requestPermissions(
                         (this@EinkBroApplication as BrowserActivity),
                         arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                        1
+                        1,
                     )
                 }
             }
@@ -245,10 +253,11 @@ class EinkBroApplication : Application() {
         try {
             // Override the value passed as X-Requested-With in WebView requests
             val stackTrace = Looper.getMainLooper().thread.stackTrace
-            val isChromiumCall = stackTrace.any { trace ->
-                trace.className.lowercase() in setOf("org.chromium.base.buildinfo", "org.chromium.base.apkinfo") &&
+            val isChromiumCall =
+                stackTrace.any { trace ->
+                    trace.className.lowercase() in setOf("org.chromium.base.buildinfo", "org.chromium.base.apkinfo") &&
                         trace.methodName.lowercase() in setOf("getall", "getpackagename", "<init>")
-            }
+                }
 
             if (isChromiumCall) return WebViewUtil.spoofedPackageName(applicationContext)
         } catch (_: Exception) {
@@ -256,5 +265,4 @@ class EinkBroApplication : Application() {
 
         return super.getPackageName()
     }
-
 }

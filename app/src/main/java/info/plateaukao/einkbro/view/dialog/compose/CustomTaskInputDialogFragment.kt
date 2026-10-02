@@ -29,7 +29,6 @@ import info.plateaukao.einkbro.R
 class CustomTaskInputDialogFragment(
     private val onSubmit: (String) -> Unit,
 ) : ComposeDialogFragment() {
-
     init {
         shouldShowInCenter = true
     }
@@ -38,9 +37,10 @@ class CustomTaskInputDialogFragment(
     override fun Content() {
         var prompt by remember { mutableStateOf("") }
         Column(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .width(320.dp)
+                    .padding(16.dp),
         ) {
             Text(
                 text = stringResource(R.string.task_custom),
@@ -60,12 +60,13 @@ class CustomTaskInputDialogFragment(
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 maxLines = 4,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = MaterialTheme.colors.onBackground,
-                    cursorColor = MaterialTheme.colors.onBackground,
-                    focusedBorderColor = MaterialTheme.colors.onBackground,
-                    unfocusedBorderColor = MaterialTheme.colors.onBackground,
-                ),
+                colors =
+                    TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = MaterialTheme.colors.onBackground,
+                        cursorColor = MaterialTheme.colors.onBackground,
+                        focusedBorderColor = MaterialTheme.colors.onBackground,
+                        unfocusedBorderColor = MaterialTheme.colors.onBackground,
+                    ),
             )
             Spacer(Modifier.height(12.dp))
             Row(

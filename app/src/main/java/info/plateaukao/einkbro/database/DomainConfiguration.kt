@@ -64,15 +64,29 @@ data class DomainConfigurationData(
 
     /** Number of fields this rule sets explicitly. */
     val overrideCount: Int
-        get() = listOf(
-            shouldFixScroll, shouldTranslateSite, shouldUseWhiteBackground, shouldInvertColor,
-            webViewDarkMode,
-            fontSize, fontType, boldFontStyle, blackFontStyle, fontBoldness,
-            desktopMode, desktopViewportWidth, enableJavascript, enableAdBlock, enableCookies,
-            enableImages, translationMode, customCss?.takeIf { it.isNotBlank() },
-            pageReservedOffset?.takeIf { it.isNotBlank() },
-            postLoadJavascript?.takeIf { it.isNotBlank() },
-        ).count { it != null }
+        get() =
+            listOf(
+                shouldFixScroll,
+                shouldTranslateSite,
+                shouldUseWhiteBackground,
+                shouldInvertColor,
+                webViewDarkMode,
+                fontSize,
+                fontType,
+                boldFontStyle,
+                blackFontStyle,
+                fontBoldness,
+                desktopMode,
+                desktopViewportWidth,
+                enableJavascript,
+                enableAdBlock,
+                enableCookies,
+                enableImages,
+                translationMode,
+                customCss?.takeIf { it.isNotBlank() },
+                pageReservedOffset?.takeIf { it.isNotBlank() },
+                postLoadJavascript?.takeIf { it.isNotBlank() },
+            ).count { it != null }
 
     val isEmpty: Boolean get() = overrideCount == 0
 
@@ -81,32 +95,37 @@ data class DomainConfigurationData(
      * restore meets a rule that already exists locally: local values win,
      * the backup only contributes what is missing here.
      */
-    fun mergedWith(fallback: DomainConfigurationData): DomainConfigurationData = copy(
-        shouldFixScroll = shouldFixScroll ?: fallback.shouldFixScroll,
-        shouldTranslateSite = shouldTranslateSite ?: fallback.shouldTranslateSite,
-        shouldUseWhiteBackground = shouldUseWhiteBackground ?: fallback.shouldUseWhiteBackground,
-        shouldInvertColor = shouldInvertColor ?: fallback.shouldInvertColor,
-        webViewDarkMode = webViewDarkMode ?: fallback.webViewDarkMode,
-        fontSize = fontSize ?: fallback.fontSize,
-        fontType = fontType ?: fallback.fontType,
-        boldFontStyle = boldFontStyle ?: fallback.boldFontStyle,
-        blackFontStyle = blackFontStyle ?: fallback.blackFontStyle,
-        fontBoldness = fontBoldness ?: fallback.fontBoldness,
-        desktopMode = desktopMode ?: fallback.desktopMode,
-        desktopViewportWidth = desktopViewportWidth ?: fallback.desktopViewportWidth,
-        enableJavascript = enableJavascript ?: fallback.enableJavascript,
-        enableAdBlock = enableAdBlock ?: fallback.enableAdBlock,
-        enableCookies = enableCookies ?: fallback.enableCookies,
-        enableImages = enableImages ?: fallback.enableImages,
-        translationMode = translationMode ?: fallback.translationMode,
-        pageReservedOffset = pageReservedOffset?.takeIf { it.isNotBlank() } ?: fallback.pageReservedOffset,
-        customCss = customCss?.takeIf { it.isNotBlank() } ?: fallback.customCss,
-        postLoadJavascript = postLoadJavascript?.takeIf { it.isNotBlank() } ?: fallback.postLoadJavascript,
-        // the on/off switch travels with whichever side supplied the script
-        customCssEnabled = if (customCss.isNullOrBlank()) fallback.customCssEnabled else customCssEnabled,
-        postLoadJavascriptEnabled = if (postLoadJavascript.isNullOrBlank()) fallback.postLoadJavascriptEnabled
-            else postLoadJavascriptEnabled,
-    )
+    fun mergedWith(fallback: DomainConfigurationData): DomainConfigurationData =
+        copy(
+            shouldFixScroll = shouldFixScroll ?: fallback.shouldFixScroll,
+            shouldTranslateSite = shouldTranslateSite ?: fallback.shouldTranslateSite,
+            shouldUseWhiteBackground = shouldUseWhiteBackground ?: fallback.shouldUseWhiteBackground,
+            shouldInvertColor = shouldInvertColor ?: fallback.shouldInvertColor,
+            webViewDarkMode = webViewDarkMode ?: fallback.webViewDarkMode,
+            fontSize = fontSize ?: fallback.fontSize,
+            fontType = fontType ?: fallback.fontType,
+            boldFontStyle = boldFontStyle ?: fallback.boldFontStyle,
+            blackFontStyle = blackFontStyle ?: fallback.blackFontStyle,
+            fontBoldness = fontBoldness ?: fallback.fontBoldness,
+            desktopMode = desktopMode ?: fallback.desktopMode,
+            desktopViewportWidth = desktopViewportWidth ?: fallback.desktopViewportWidth,
+            enableJavascript = enableJavascript ?: fallback.enableJavascript,
+            enableAdBlock = enableAdBlock ?: fallback.enableAdBlock,
+            enableCookies = enableCookies ?: fallback.enableCookies,
+            enableImages = enableImages ?: fallback.enableImages,
+            translationMode = translationMode ?: fallback.translationMode,
+            pageReservedOffset = pageReservedOffset?.takeIf { it.isNotBlank() } ?: fallback.pageReservedOffset,
+            customCss = customCss?.takeIf { it.isNotBlank() } ?: fallback.customCss,
+            postLoadJavascript = postLoadJavascript?.takeIf { it.isNotBlank() } ?: fallback.postLoadJavascript,
+            // the on/off switch travels with whichever side supplied the script
+            customCssEnabled = if (customCss.isNullOrBlank()) fallback.customCssEnabled else customCssEnabled,
+            postLoadJavascriptEnabled =
+                if (postLoadJavascript.isNullOrBlank()) {
+                    fallback.postLoadJavascriptEnabled
+                } else {
+                    postLoadJavascriptEnabled
+                },
+        )
 
     /**
      * Rows written before path rules existed stored the four legacy flags as
@@ -138,7 +157,10 @@ object SiteRuleKey {
         return if (p.isEmpty()) "" else "/$p"
     }
 
-    fun of(host: String, path: String): String {
+    fun of(
+        host: String,
+        path: String,
+    ): String {
         val normalized = normalizePath(path)
         return if (normalized.isEmpty()) host else host + normalized
     }
@@ -156,11 +178,12 @@ object SiteRuleKey {
     fun hostOfUrl(url: String): String? {
         val authority = authorityOf(url) ?: return null
         var host = authority.substringAfterLast('@')
-        host = if (host.startsWith("[")) {
-            host.substringBefore(']') + "]"
-        } else {
-            host.substringBefore(':')
-        }
+        host =
+            if (host.startsWith("[")) {
+                host.substringBefore(']') + "]"
+            } else {
+                host.substringBefore(':')
+            }
         return host.lowercase().takeIf { it.isNotBlank() }
     }
 
@@ -169,8 +192,10 @@ object SiteRuleKey {
         if (schemeEnd < 0) return ""
         val afterAuthority = url.indexOf('/', schemeEnd + 3)
         if (afterAuthority < 0) return ""
-        val end = url.indexOfAny(charArrayOf('?', '#'), afterAuthority)
-            .let { if (it < 0) url.length else it }
+        val end =
+            url
+                .indexOfAny(charArrayOf('?', '#'), afterAuthority)
+                .let { if (it < 0) url.length else it }
         return normalizePath(url.substring(afterAuthority, end))
     }
 
@@ -178,13 +203,19 @@ object SiteRuleKey {
         val schemeEnd = url.indexOf("://")
         if (schemeEnd < 0) return null
         val start = schemeEnd + 3
-        val end = url.indexOfAny(charArrayOf('/', '?', '#'), start)
-            .let { if (it < 0) url.length else it }
+        val end =
+            url
+                .indexOfAny(charArrayOf('/', '?', '#'), start)
+                .let { if (it < 0) url.length else it }
         return url.substring(start, end).takeIf { it.isNotEmpty() }
     }
 
     /** True when a rule with [key] applies to a page at [host] + [path]. */
-    fun matches(key: String, host: String, path: String): Boolean {
+    fun matches(
+        key: String,
+        host: String,
+        path: String,
+    ): Boolean {
         if (!hostOf(key).equals(host, ignoreCase = true)) return false
         val rulePath = pathOf(key)
         if (rulePath.isEmpty()) return true

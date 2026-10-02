@@ -51,11 +51,12 @@ fun Statusbar(
     pageInfo: String,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(barHeight)
-            .background(MaterialTheme.colors.background)
-            .padding(horizontal = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(barHeight)
+                .background(MaterialTheme.colors.background)
+                .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
     ) {
@@ -129,16 +130,28 @@ private fun StatusbarWifi() {
     var isWifi by remember { mutableStateOf(isWifiConnected(context)) }
     DisposableEffect(Unit) {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-        val callback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) { isWifi = isWifiConnected(context) }
-            override fun onLost(network: Network) { isWifi = isWifiConnected(context) }
-            override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
-                isWifi = isWifiConnected(context)
+        val callback =
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    isWifi = isWifiConnected(context)
+                }
+
+                override fun onLost(network: Network) {
+                    isWifi = isWifiConnected(context)
+                }
+
+                override fun onCapabilitiesChanged(
+                    network: Network,
+                    caps: NetworkCapabilities,
+                ) {
+                    isWifi = isWifiConnected(context)
+                }
             }
-        }
-        val request = NetworkRequest.Builder()
-            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .build()
+        val request =
+            NetworkRequest
+                .Builder()
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .build()
         runCatching { cm?.registerNetworkCallback(request, callback) }
         onDispose { runCatching { cm?.unregisterNetworkCallback(callback) } }
     }
@@ -151,8 +164,9 @@ private fun StatusbarWifi() {
 }
 
 private fun isWifiConnected(context: Context): Boolean {
-    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-        ?: return false
+    val cm =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            ?: return false
     val active = cm.activeNetwork ?: return false
     val caps = cm.getNetworkCapabilities(active) ?: return false
     return caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
@@ -163,9 +177,10 @@ private fun StatusbarTouchPagination() {
     val context = LocalContext.current
     val enabled = rememberBooleanPref(context, TouchConfig.K_ENABLE_TOUCH, default = false)
     Icon(
-        imageVector = androidx.compose.ui.graphics.vector.ImageVector.vectorResource(
-            id = if (enabled) R.drawable.ic_touch_enabled else R.drawable.ic_touch_disabled
-        ),
+        imageVector =
+            androidx.compose.ui.graphics.vector.ImageVector.vectorResource(
+                id = if (enabled) R.drawable.ic_touch_enabled else R.drawable.ic_touch_disabled,
+            ),
         contentDescription = null,
         tint = MaterialTheme.colors.onBackground,
         modifier = Modifier.size(iconSize),
@@ -185,14 +200,19 @@ private fun StatusbarVolumePagination() {
 }
 
 @Composable
-private fun rememberBooleanPref(context: Context, key: String, default: Boolean): Boolean {
+private fun rememberBooleanPref(
+    context: Context,
+    key: String,
+    default: Boolean,
+): Boolean {
     @Suppress("DEPRECATION")
     val sp = remember { android.preference.PreferenceManager.getDefaultSharedPreferences(context) }
     var value by remember { mutableStateOf(sp.getBoolean(key, default)) }
     DisposableEffect(key) {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, changedKey ->
-            if (changedKey == key) value = prefs.getBoolean(key, default)
-        }
+        val listener =
+            SharedPreferences.OnSharedPreferenceChangeListener { prefs, changedKey ->
+                if (changedKey == key) value = prefs.getBoolean(key, default)
+            }
         sp.registerOnSharedPreferenceChangeListener(listener)
         onDispose { sp.unregisterOnSharedPreferenceChangeListener(listener) }
     }

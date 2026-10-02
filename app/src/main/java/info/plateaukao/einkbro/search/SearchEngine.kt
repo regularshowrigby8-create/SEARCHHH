@@ -11,5 +11,5 @@ enum class SearchEngine {
     QWANT,
     ECOSIA,
     CUSTOM,
-    YANDEX
+    YANDEX,
 }

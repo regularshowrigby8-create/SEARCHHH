@@ -12,38 +12,55 @@ import android.content.SharedPreferences
  * e.g. DisplayConfig.einkImageAdjustment's boolean->int migration).
  */
 class FakeSharedPreferences : SharedPreferences {
-
     val store: MutableMap<String, Any?> = LinkedHashMap()
 
     override fun getAll(): MutableMap<String, *> = HashMap(store)
 
-    override fun getString(key: String?, defValue: String?): String? {
+    override fun getString(
+        key: String?,
+        defValue: String?,
+    ): String? {
         val value = store[key] ?: return defValue
         return value as String
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun getStringSet(key: String?, defValues: MutableSet<String>?): MutableSet<String>? {
+    override fun getStringSet(
+        key: String?,
+        defValues: MutableSet<String>?,
+    ): MutableSet<String>? {
         val value = store[key] ?: return defValues
         return (value as Set<String>).toMutableSet()
     }
 
-    override fun getInt(key: String?, defValue: Int): Int {
+    override fun getInt(
+        key: String?,
+        defValue: Int,
+    ): Int {
         val value = store[key] ?: return defValue
         return value as Int
     }
 
-    override fun getLong(key: String?, defValue: Long): Long {
+    override fun getLong(
+        key: String?,
+        defValue: Long,
+    ): Long {
         val value = store[key] ?: return defValue
         return value as Long
     }
 
-    override fun getFloat(key: String?, defValue: Float): Float {
+    override fun getFloat(
+        key: String?,
+        defValue: Float,
+    ): Float {
         val value = store[key] ?: return defValue
         return value as Float
     }
 
-    override fun getBoolean(key: String?, defValue: Boolean): Boolean {
+    override fun getBoolean(
+        key: String?,
+        defValue: Boolean,
+    ): Boolean {
         val value = store[key] ?: return defValue
         return value as Boolean
     }
@@ -52,29 +69,49 @@ class FakeSharedPreferences : SharedPreferences {
 
     override fun edit(): SharedPreferences.Editor = FakeEditor()
 
-    override fun registerOnSharedPreferenceChangeListener(
-        listener: SharedPreferences.OnSharedPreferenceChangeListener?,
-    ) = Unit
+    override fun registerOnSharedPreferenceChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener?) = Unit
 
-    override fun unregisterOnSharedPreferenceChangeListener(
-        listener: SharedPreferences.OnSharedPreferenceChangeListener?,
-    ) = Unit
+    override fun unregisterOnSharedPreferenceChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener?) = Unit
 
     private inner class FakeEditor : SharedPreferences.Editor {
         private val pending = LinkedHashMap<String, Any?>()
         private val removals = LinkedHashSet<String>()
         private var clearRequested = false
 
-        override fun putString(key: String, value: String?) = put(key, value)
-        override fun putStringSet(key: String, values: MutableSet<String>?) =
-            put(key, values?.toSet())
+        override fun putString(
+            key: String,
+            value: String?,
+        ) = put(key, value)
 
-        override fun putInt(key: String, value: Int) = put(key, value)
-        override fun putLong(key: String, value: Long) = put(key, value)
-        override fun putFloat(key: String, value: Float) = put(key, value)
-        override fun putBoolean(key: String, value: Boolean) = put(key, value)
+        override fun putStringSet(
+            key: String,
+            values: MutableSet<String>?,
+        ) = put(key, values?.toSet())
 
-        private fun put(key: String, value: Any?): SharedPreferences.Editor {
+        override fun putInt(
+            key: String,
+            value: Int,
+        ) = put(key, value)
+
+        override fun putLong(
+            key: String,
+            value: Long,
+        ) = put(key, value)
+
+        override fun putFloat(
+            key: String,
+            value: Float,
+        ) = put(key, value)
+
+        override fun putBoolean(
+            key: String,
+            value: Boolean,
+        ) = put(key, value)
+
+        private fun put(
+            key: String,
+            value: Any?,
+        ): SharedPreferences.Editor {
             pending[key] = value
             return this
         }

@@ -1,6 +1,7 @@
 package info.plateaukao.einkbro.activity.delegates
 
 import android.graphics.Point
+import android.net.Uri
 import android.os.Message
 import android.view.MotionEvent
 import androidx.fragment.app.FragmentActivity
@@ -20,7 +21,6 @@ import info.plateaukao.einkbro.view.dialog.TextInputDialog
 import info.plateaukao.einkbro.view.dialog.compose.ContextMenuDialogFragment
 import info.plateaukao.einkbro.view.dialog.compose.ContextMenuItemType
 import info.plateaukao.einkbro.viewmodel.TtsViewModel
-import android.net.Uri
 import kotlinx.coroutines.launch
 
 class ContextMenuDelegate(
@@ -43,7 +43,10 @@ class ContextMenuDelegate(
     var activeContextMenuDialog: ContextMenuDialogFragment? = null
     var isInLongPressMode = false
 
-    fun onLongPress(message: Message, event: MotionEvent?) {
+    fun onLongPress(
+        message: Message,
+        event: MotionEvent?,
+    ) {
         val ebWebView = state.ebWebView
         if (ebWebView.isSelectingText) return
 
@@ -55,30 +58,32 @@ class ContextMenuDelegate(
             val linkImageUrl = BrowserUnit.getWebViewLinkImageUrl(ebWebView, message)
             BrowserUnit.getWebViewLinkTitle(ebWebView) { linkTitle ->
                 val titleText = linkTitle.ifBlank { url }.toString()
-                val contextMenuDialog = ContextMenuDialogFragment(
-                    url,
-                    linkImageUrl.isNotBlank(),
-                    config.ai.imageApiKey.isNotBlank(),
-                    rawPoint,
-                    isEbookMode = config.touch.isEbookModeActive,
-                    itemClicked = {
-                        handleContextMenuItem(it, titleText, url, linkImageUrl)
-                        activeContextMenuDialog = null
-                        isInLongPressMode = false
-                    },
-                    itemLongClicked = {
-                        when (it) {
-                            ContextMenuItemType.TranslateImage -> translateAllImages(linkImageUrl)
-                            ContextMenuItemType.ShareLink -> ShareUtil.copyToClipboard(
-                                activity,
-                                BrowserUnit.stripUrlQuery(url)
-                            )
-                            else -> Unit
-                        }
-                        activeContextMenuDialog = null
-                        isInLongPressMode = false
-                    }
-                )
+                val contextMenuDialog =
+                    ContextMenuDialogFragment(
+                        url,
+                        linkImageUrl.isNotBlank(),
+                        config.ai.imageApiKey.isNotBlank(),
+                        rawPoint,
+                        isEbookMode = config.touch.isEbookModeActive,
+                        itemClicked = {
+                            handleContextMenuItem(it, titleText, url, linkImageUrl)
+                            activeContextMenuDialog = null
+                            isInLongPressMode = false
+                        },
+                        itemLongClicked = {
+                            when (it) {
+                                ContextMenuItemType.TranslateImage -> translateAllImages(linkImageUrl)
+                                ContextMenuItemType.ShareLink ->
+                                    ShareUtil.copyToClipboard(
+                                        activity,
+                                        BrowserUnit.stripUrlQuery(url),
+                                    )
+                                else -> Unit
+                            }
+                            activeContextMenuDialog = null
+                            isInLongPressMode = false
+                        },
+                    )
                 activeContextMenuDialog = contextMenuDialog
                 isInLongPressMode = true
                 contextMenuDialog.show(activity.supportFragmentManager, "contextMenu")
@@ -99,21 +104,26 @@ class ContextMenuDelegate(
             ContextMenuItemType.NewTabForeground -> addAlbum(title, url, true)
             ContextMenuItemType.NewTabBackground -> addAlbum(title, url, false)
             ContextMenuItemType.ShareLink -> {
-                if (prepareRecord()) EBToast.show(activity, activity.getString(R.string.toast_share_failed))
-                else IntentUnit.share(activity, title, url)
+                if (prepareRecord()) {
+                    EBToast.show(activity, activity.getString(R.string.toast_share_failed))
+                } else {
+                    IntentUnit.share(activity, title, url)
+                }
             }
 
             ContextMenuItemType.GotoLink -> ebWebView.clickLinkElement(longPressPoint)
 
-            ContextMenuItemType.SelectText -> ebWebView.post {
-                ebWebView.selectLinkText(longPressPoint)
-            }
+            ContextMenuItemType.SelectText ->
+                ebWebView.post {
+                    ebWebView.selectLinkText(longPressPoint)
+                }
 
-            ContextMenuItemType.OpenWith -> HelperUnit.showBrowserChooser(
-                activity,
-                url,
-                activity.getString(R.string.menu_open_with)
-            )
+            ContextMenuItemType.OpenWith ->
+                HelperUnit.showBrowserChooser(
+                    activity,
+                    url,
+                    activity.getString(R.string.menu_open_with),
+                )
 
             ContextMenuItemType.SaveBookmark -> saveBookmark(url, title)
             ContextMenuItemType.SplitScreen -> toggleSplitScreen(url)
@@ -144,12 +154,13 @@ class ContextMenuDelegate(
             confirmRemoveAdSite(host)
         } else {
             activity.lifecycleScope.launch {
-                val domain = TextInputDialog(
-                    activity,
-                    "Ad domain to be blocked",
-                    "",
-                    host,
-                ).show().orEmpty()
+                val domain =
+                    TextInputDialog(
+                        activity,
+                        "Ad domain to be blocked",
+                        "",
+                        host,
+                    ).show().orEmpty()
 
                 if (domain.isNotBlank()) {
                     config.browser.adSites = config.browser.adSites.apply { add(domain) }
@@ -165,7 +176,7 @@ class ContextMenuDelegate(
             okAction = {
                 config.browser.adSites = config.browser.adSites.apply { remove(url) }
                 state.ebWebView.reload()
-            }
+            },
         )
     }
 
@@ -192,6 +203,7 @@ class ContextMenuDelegate(
     }
 
     private var toBeReadProcessUrlList: MutableList<String> = mutableListOf()
+
     private fun addContentToReadList(url: String) {
         toBeReadProcessUrlList.add(url)
         if (toBeReadProcessUrlList.size == 1) {

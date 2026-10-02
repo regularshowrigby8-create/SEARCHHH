@@ -1,12 +1,10 @@
 package info.plateaukao.einkbro.view.dialog.compose
 
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.draw.alpha
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -30,8 +28,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.ChromeReaderMode
-import androidx.compose.material.icons.automirrored.outlined.Feed
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.automirrored.outlined.SendToMobile
 import androidx.compose.material.icons.filled.RecordVoiceOver
@@ -46,6 +42,8 @@ import androidx.compose.material.icons.outlined.Copyright
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.FormatSize
+import androidx.compose.material.icons.outlined.Headset
+import androidx.compose.material.icons.outlined.HeadsetOff
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.InstallMobile
 import androidx.compose.material.icons.outlined.InvertColors
@@ -58,36 +56,33 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.SettingsSuggest
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Straighten
-import androidx.compose.material.icons.outlined.Headset
-import androidx.compose.material.icons.outlined.HeadsetOff
 import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.ViewColumn
 import androidx.compose.material.icons.outlined.ViewStream
 import androidx.compose.material.icons.twotone.Copyright
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import info.plateaukao.einkbro.R
-import info.plateaukao.einkbro.preference.toggle
 import info.plateaukao.einkbro.view.compose.MyTheme
 import info.plateaukao.einkbro.view.dialog.compose.MenuItemType.CloseTab
 import info.plateaukao.einkbro.view.dialog.compose.MenuItemType.Epub
@@ -108,17 +103,18 @@ class MenuDialogFragment(
     private val itemClicked: (MenuItemType) -> Unit,
     private val itemLongClicked: (MenuItemType) -> Unit,
 ) : ComposeDialogFragment() {
-
     @Composable
     override fun Content() {
-        val hiddenItems = remember {
-            config.ui.hiddenMenuItems.mapNotNull { name ->
-                runCatching { MenuItemType.valueOf(name) }.getOrNull()
-            }.toSet()
-        }
+        val hiddenItems =
+            remember {
+                config.ui.hiddenMenuItems
+                    .mapNotNull { name ->
+                        runCatching { MenuItemType.valueOf(name) }.getOrNull()
+                    }.toSet()
+            }
         val menuItemOrder = remember { config.ui.menuItemOrder }
         CompositionLocalProvider(
-            LocalMenuHideConfig provides MenuHideConfig(hideMode = false, hiddenItems = hiddenItems)
+            LocalMenuHideConfig provides MenuHideConfig(hideMode = false, hiddenItems = hiddenItems),
         ) {
             MenuItems(
                 hasWhiteBkd = config.whiteBackground(url),
@@ -129,7 +125,10 @@ class MenuDialogFragment(
                 hasVideo = hasVideo,
                 hasInvertedColor = config.hasInvertedColor(url),
                 isTouchPaginationEnabled = isTouchPaginationEnabled,
-                onClicked = { dialog?.dismiss(); itemClicked(it) },
+                onClicked = {
+                    dialog?.dismiss()
+                    itemClicked(it)
+                },
                 onLongClicked = this::runItemLongClickAndDismiss,
                 menuItemOrder = menuItemOrder,
             )
@@ -149,44 +148,74 @@ class MenuDialogFragment(
          */
         fun prewarm(activity: FragmentActivity) {
             val root = activity.findViewById<ViewGroup>(android.R.id.content) ?: return
-            val warmView = ComposeView(activity).apply {
-                visibility = View.INVISIBLE
-                layoutParams = ViewGroup.LayoutParams(0, 0)
-                setContent {
-                    MyTheme {
-                        MenuItems(
-                            hasWhiteBkd = false,
-                            boldFont = false,
-                            blackFont = false,
-                            isSpeaking = false,
-                            isAudioOnly = false,
-                            hasVideo = true,
-                            hasInvertedColor = false,
-                            isTouchPaginationEnabled = false,
-                            onClicked = { Unit },
-                            onLongClicked = { Unit },
-                        )
+            val warmView =
+                ComposeView(activity).apply {
+                    visibility = View.INVISIBLE
+                    layoutParams = ViewGroup.LayoutParams(0, 0)
+                    setContent {
+                        MyTheme {
+                            MenuItems(
+                                hasWhiteBkd = false,
+                                boldFont = false,
+                                blackFont = false,
+                                isSpeaking = false,
+                                isAudioOnly = false,
+                                hasVideo = true,
+                                hasInvertedColor = false,
+                                isTouchPaginationEnabled = false,
+                                onClicked = { Unit },
+                                onLongClicked = { Unit },
+                            )
+                        }
                     }
                 }
-            }
             root.addView(warmView)
             root.postDelayed({ root.removeView(warmView) }, 3000)
         }
     }
 }
 
-
 enum class MenuItemType {
-    Tts, QuickToggle, OpenHome, CloseTab, Quit,
-    SplitScreen, Translate, VerticalRead, ReaderMode, TouchSetting, ToolbarSetting,
-    ReceiveData, SendLink, ShareLink, OpenWith, Shortcut,
-    SetHome, SaveBookmark, Epub, SavePdf,
-    FontSize, WhiteBknd, BoldFont, Search, Download, Settings, BlackFont,
-    SaveArchive, SaveMht, Highlights, InvertColor, PageAiActions, Instapaper, AudioOnly,
-    SiteSettings
+    Tts,
+    QuickToggle,
+    OpenHome,
+    CloseTab,
+    Quit,
+    SplitScreen,
+    Translate,
+    VerticalRead,
+    ReaderMode,
+    TouchSetting,
+    ToolbarSetting,
+    ReceiveData,
+    SendLink,
+    ShareLink,
+    OpenWith,
+    Shortcut,
+    SetHome,
+    SaveBookmark,
+    Epub,
+    SavePdf,
+    FontSize,
+    WhiteBknd,
+    BoldFont,
+    Search,
+    Download,
+    Settings,
+    BlackFont,
+    SaveArchive,
+    SaveMht,
+    Highlights,
+    InvertColor,
+    PageAiActions,
+    Instapaper,
+    AudioOnly,
+    SiteSettings,
 }
 
-enum class MenuSection(val headerRes: Int?) {
+enum class MenuSection(
+    val headerRes: Int?,
+) {
     Top(null),
     Share(R.string.share_save),
     Content(R.string.content_adjustment),
@@ -197,71 +226,110 @@ enum class MenuSection(val headerRes: Int?) {
 // in relative order; dragging an Item past a Boundary moves it into the other section.
 // Spacer is display-only (empty grid cell used to pad the overflow row in bottom-first layouts).
 sealed class MenuEntry {
-    data class Item(val type: MenuItemType) : MenuEntry()
-    data class Boundary(val sectionStart: MenuSection) : MenuEntry()
+    data class Item(
+        val type: MenuItemType,
+    ) : MenuEntry()
+
+    data class Boundary(
+        val sectionStart: MenuSection,
+    ) : MenuEntry()
+
     object Spacer : MenuEntry()
 }
 
-private val defaultSectionItems: Map<MenuSection, List<MenuItemType>> = mapOf(
-    MenuSection.Top to listOf(
-        MenuItemType.Highlights, MenuItemType.SetHome, MenuItemType.OpenHome,
-        MenuItemType.CloseTab, MenuItemType.Quit,
-    ),
-    MenuSection.Share to listOf(
-        MenuItemType.ReceiveData, MenuItemType.SaveBookmark, MenuItemType.Shortcut,
-        MenuItemType.OpenWith, MenuItemType.ShareLink,
-        MenuItemType.SendLink, MenuItemType.Instapaper, MenuItemType.SaveArchive,
-        MenuItemType.SaveMht, MenuItemType.Epub, MenuItemType.SavePdf,
-    ),
-    MenuSection.Content to listOf(
-        MenuItemType.PageAiActions, MenuItemType.SplitScreen, MenuItemType.Translate,
-        MenuItemType.VerticalRead, MenuItemType.ReaderMode, MenuItemType.TouchSetting,
-        MenuItemType.Tts, MenuItemType.InvertColor, MenuItemType.WhiteBknd,
-        MenuItemType.BlackFont, MenuItemType.BoldFont, MenuItemType.FontSize,
-    ),
-    MenuSection.Bottom to listOf(
-        MenuItemType.AudioOnly, MenuItemType.Search, MenuItemType.Download,
-        MenuItemType.ToolbarSetting, MenuItemType.QuickToggle, MenuItemType.SiteSettings,
-        MenuItemType.Settings,
-    ),
-)
+private val defaultSectionItems: Map<MenuSection, List<MenuItemType>> =
+    mapOf(
+        MenuSection.Top to
+            listOf(
+                MenuItemType.Highlights,
+                MenuItemType.SetHome,
+                MenuItemType.OpenHome,
+                MenuItemType.CloseTab,
+                MenuItemType.Quit,
+            ),
+        MenuSection.Share to
+            listOf(
+                MenuItemType.ReceiveData,
+                MenuItemType.SaveBookmark,
+                MenuItemType.Shortcut,
+                MenuItemType.OpenWith,
+                MenuItemType.ShareLink,
+                MenuItemType.SendLink,
+                MenuItemType.Instapaper,
+                MenuItemType.SaveArchive,
+                MenuItemType.SaveMht,
+                MenuItemType.Epub,
+                MenuItemType.SavePdf,
+            ),
+        MenuSection.Content to
+            listOf(
+                MenuItemType.PageAiActions,
+                MenuItemType.SplitScreen,
+                MenuItemType.Translate,
+                MenuItemType.VerticalRead,
+                MenuItemType.ReaderMode,
+                MenuItemType.TouchSetting,
+                MenuItemType.Tts,
+                MenuItemType.InvertColor,
+                MenuItemType.WhiteBknd,
+                MenuItemType.BlackFont,
+                MenuItemType.BoldFont,
+                MenuItemType.FontSize,
+            ),
+        MenuSection.Bottom to
+            listOf(
+                MenuItemType.AudioOnly,
+                MenuItemType.Search,
+                MenuItemType.Download,
+                MenuItemType.ToolbarSetting,
+                MenuItemType.QuickToggle,
+                MenuItemType.SiteSettings,
+                MenuItemType.Settings,
+            ),
+    )
 
-val defaultMenuEntries: List<MenuEntry> = buildList {
-    addAll(defaultSectionItems[MenuSection.Top]!!.map { MenuEntry.Item(it) })
-    add(MenuEntry.Boundary(MenuSection.Share))
-    addAll(defaultSectionItems[MenuSection.Share]!!.map { MenuEntry.Item(it) })
-    add(MenuEntry.Boundary(MenuSection.Content))
-    addAll(defaultSectionItems[MenuSection.Content]!!.map { MenuEntry.Item(it) })
-    add(MenuEntry.Boundary(MenuSection.Bottom))
-    addAll(defaultSectionItems[MenuSection.Bottom]!!.map { MenuEntry.Item(it) })
-}
+val defaultMenuEntries: List<MenuEntry> =
+    buildList {
+        addAll(defaultSectionItems[MenuSection.Top]!!.map { MenuEntry.Item(it) })
+        add(MenuEntry.Boundary(MenuSection.Share))
+        addAll(defaultSectionItems[MenuSection.Share]!!.map { MenuEntry.Item(it) })
+        add(MenuEntry.Boundary(MenuSection.Content))
+        addAll(defaultSectionItems[MenuSection.Content]!!.map { MenuEntry.Item(it) })
+        add(MenuEntry.Boundary(MenuSection.Bottom))
+        addAll(defaultSectionItems[MenuSection.Bottom]!!.map { MenuEntry.Item(it) })
+    }
 
 private const val BOUNDARY_PREFIX = "#"
 
 // Spacers are display-only; never persisted.
-fun encodeMenuEntries(entries: List<MenuEntry>): List<String> = entries.mapNotNull { e ->
-    when (e) {
-        is MenuEntry.Item -> e.type.name
-        is MenuEntry.Boundary -> BOUNDARY_PREFIX + e.sectionStart.name
-        is MenuEntry.Spacer -> null
+fun encodeMenuEntries(entries: List<MenuEntry>): List<String> =
+    entries.mapNotNull { e ->
+        when (e) {
+            is MenuEntry.Item -> e.type.name
+            is MenuEntry.Boundary -> BOUNDARY_PREFIX + e.sectionStart.name
+            is MenuEntry.Spacer -> null
+        }
     }
-}
 
-private fun decodeMenuEntries(tokens: List<String>): List<MenuEntry> = tokens.mapNotNull { token ->
-    if (token.startsWith(BOUNDARY_PREFIX)) {
-        val name = token.removePrefix(BOUNDARY_PREFIX)
-        runCatching { MenuSection.valueOf(name) }.getOrNull()?.let { MenuEntry.Boundary(it) }
-    } else {
-        runCatching { MenuItemType.valueOf(token) }.getOrNull()?.let { MenuEntry.Item(it) }
+private fun decodeMenuEntries(tokens: List<String>): List<MenuEntry> =
+    tokens.mapNotNull { token ->
+        if (token.startsWith(BOUNDARY_PREFIX)) {
+            val name = token.removePrefix(BOUNDARY_PREFIX)
+            runCatching { MenuSection.valueOf(name) }.getOrNull()?.let { MenuEntry.Boundary(it) }
+        } else {
+            runCatching { MenuItemType.valueOf(token) }.getOrNull()?.let { MenuEntry.Item(it) }
+        }
     }
-}
 
 /**
  * Transforms underlying entries into display entries with bottom-first layout:
  * within each section, the last chunk (partial overflow) is moved to the top, preceded
  * by Spacer entries so the top row's leftmost cells are empty.
  */
-fun menuDisplayEntries(underlying: List<MenuEntry>, cols: Int = MENU_GRID_COLUMNS): List<MenuEntry> {
+fun menuDisplayEntries(
+    underlying: List<MenuEntry>,
+    cols: Int = MENU_GRID_COLUMNS,
+): List<MenuEntry> {
     val out = mutableListOf<MenuEntry>()
     val buf = mutableListOf<MenuEntry.Item>()
 
@@ -280,7 +348,10 @@ fun menuDisplayEntries(underlying: List<MenuEntry>, cols: Int = MENU_GRID_COLUMN
     underlying.forEach { e ->
         when (e) {
             is MenuEntry.Item -> buf.add(e)
-            is MenuEntry.Boundary -> { flush(); out.add(e) }
+            is MenuEntry.Boundary -> {
+                flush()
+                out.add(e)
+            }
             is MenuEntry.Spacer -> Unit
         }
     }
@@ -293,7 +364,10 @@ fun menuDisplayEntries(underlying: List<MenuEntry>, cols: Int = MENU_GRID_COLUMN
  * back into underlying Item + Boundary entries. Spacers are dropped; per-section chunks are
  * reversed so the section is stored in natural top-down order.
  */
-fun menuDisplayToUnderlying(display: List<MenuEntry>, cols: Int = MENU_GRID_COLUMNS): List<MenuEntry> {
+fun menuDisplayToUnderlying(
+    display: List<MenuEntry>,
+    cols: Int = MENU_GRID_COLUMNS,
+): List<MenuEntry> {
     val out = mutableListOf<MenuEntry>()
     val buf = mutableListOf<MenuEntry>()
 
@@ -308,7 +382,10 @@ fun menuDisplayToUnderlying(display: List<MenuEntry>, cols: Int = MENU_GRID_COLU
 
     display.forEach { e ->
         when (e) {
-            is MenuEntry.Boundary -> { flush(); out.add(e) }
+            is MenuEntry.Boundary -> {
+                flush()
+                out.add(e)
+            }
             else -> buf.add(e)
         }
     }
@@ -332,8 +409,11 @@ fun effectiveMenuEntries(stored: List<String>): List<MenuEntry> {
         if (section !in presentBoundaries) result.add(MenuEntry.Boundary(section))
     }
     // Append missing items at the end of their default section if possible, else at end.
-    val missing = defaultMenuEntries.filterIsInstance<MenuEntry.Item>()
-        .map { it.type }.filter { it !in presentItems }
+    val missing =
+        defaultMenuEntries
+            .filterIsInstance<MenuEntry.Item>()
+            .map { it.type }
+            .filter { it !in presentItems }
     missing.forEach { type ->
         val defaultSection = defaultSectionItems.entries.first { type in it.value }.key
         val insertIdx = findSectionEnd(result, defaultSection)
@@ -342,10 +422,20 @@ fun effectiveMenuEntries(stored: List<String>): List<MenuEntry> {
     return result
 }
 
-private fun findSectionEnd(entries: List<MenuEntry>, section: MenuSection): Int {
+private fun findSectionEnd(
+    entries: List<MenuEntry>,
+    section: MenuSection,
+): Int {
     // Section starts at the Boundary for it (or index 0 for Top) and ends just before the next Boundary.
-    val start = if (section == MenuSection.Top) 0
-    else entries.indexOfFirst { it is MenuEntry.Boundary && it.sectionStart == section }.let { if (it < 0) return entries.size else it + 1 }
+    val start =
+        if (section == MenuSection.Top) {
+            0
+        } else {
+            entries
+                .indexOfFirst {
+                    it is MenuEntry.Boundary && it.sectionStart == section
+                }.let { if (it < 0) return entries.size else it + 1 }
+        }
     val end = entries.drop(start).indexOfFirst { it is MenuEntry.Boundary }
     return if (end < 0) entries.size else start + end
 }
@@ -370,7 +460,10 @@ val LocalMenuActions = staticCompositionLocalOf { MenuActions() }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun HideableSlot(type: MenuItemType, content: @Composable () -> Unit) {
+private fun HideableSlot(
+    type: MenuItemType,
+    content: @Composable () -> Unit,
+) {
     val cfg = LocalMenuHideConfig.current
     val isHidden = type in cfg.hiddenItems
     when {
@@ -381,14 +474,15 @@ private fun HideableSlot(type: MenuItemType, content: @Composable () -> Unit) {
                 content()
                 // Overlay absorbs both tap and long-press so underlying MenuItem handlers don't fire.
                 Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .combinedClickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onLongClick = { cfg.onToggleHide(type) },
-                            onClick = { cfg.onToggleHide(type) },
-                        )
+                    modifier =
+                        Modifier
+                            .matchParentSize()
+                            .combinedClickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onLongClick = { cfg.onToggleHide(type) },
+                                onClick = { cfg.onToggleHide(type) },
+                            ),
                 )
             }
         }
@@ -443,7 +537,13 @@ fun MenuItemForType(
         MenuItemType.Shortcut -> HideableMenuItem(type, R.string.menu_sc, Icons.Outlined.AddLink)
         MenuItemType.OpenWith -> HideableMenuItem(type, R.string.menu_open_with, Icons.Outlined.Apps)
         MenuItemType.ShareLink -> HideableMenuItem(type, R.string.menu_share_link, Icons.Outlined.Share, supportsLongClick = true)
-        MenuItemType.SendLink -> HideableMenuItem(type, R.string.menu_send_link, Icons.AutoMirrored.Outlined.SendToMobile, supportsLongClick = true)
+        MenuItemType.SendLink ->
+            HideableMenuItem(
+                type,
+                R.string.menu_send_link,
+                Icons.AutoMirrored.Outlined.SendToMobile,
+                supportsLongClick = true,
+            )
         MenuItemType.Instapaper -> HideableMenuItem(type, R.string.menu_instapaper, Icons.Outlined.CloudUpload, supportsLongClick = true)
         MenuItemType.SaveArchive -> HideableMenuItem(type, R.string.menu_save_archive, Icons.Outlined.Save, supportsLongClick = true)
         MenuItemType.SaveMht -> HideableMenuItem(type, R.string.menu_save_mht, Icons.Outlined.Save)
@@ -453,7 +553,13 @@ fun MenuItemForType(
         MenuItemType.SplitScreen -> HideableMenuItem(type, R.string.split_screen, Icons.Outlined.ViewStream)
         MenuItemType.Translate -> HideableMenuItem(type, R.string.translate, Icons.Outlined.Translate, supportsLongClick = true)
         MenuItemType.VerticalRead -> HideableMenuItem(type, R.string.vertical_read, Icons.Outlined.ViewColumn)
-        MenuItemType.ReaderMode -> HideableMenuItem(type, R.string.reader_mode, Icons.AutoMirrored.Outlined.ChromeReaderMode, supportsLongClick = true)
+        MenuItemType.ReaderMode ->
+            HideableMenuItem(
+                type,
+                R.string.reader_mode,
+                Icons.AutoMirrored.Outlined.ChromeReaderMode,
+                supportsLongClick = true,
+            )
         MenuItemType.TouchSetting -> {
             val touchRes = if (isTouchPaginationEnabled) R.drawable.ic_touch_enabled else R.drawable.ic_touch_disabled
             HideableMenuItem(type, R.string.touch_area_setting, iconResId = touchRes, supportsLongClick = true)
@@ -511,37 +617,51 @@ fun MenuItems(
     val entries = effectiveMenuEntries(menuItemOrder)
 
     // Partition into sections by scanning for Boundary markers.
-    data class Section(val section: MenuSection, val items: List<MenuItemType>)
-    val sections = buildList {
-        var current = MenuSection.Top
-        val buf = mutableListOf<MenuItemType>()
-        fun flush() { add(Section(current, buf.toList())); buf.clear() }
-        entries.forEach { e ->
-            when (e) {
-                is MenuEntry.Item -> buf.add(e.type)
-                is MenuEntry.Boundary -> { flush(); current = e.sectionStart }
-                is MenuEntry.Spacer -> Unit
+    data class Section(
+        val section: MenuSection,
+        val items: List<MenuItemType>,
+    )
+    val sections =
+        buildList {
+            var current = MenuSection.Top
+            val buf = mutableListOf<MenuItemType>()
+
+            fun flush() {
+                add(Section(current, buf.toList()))
+                buf.clear()
             }
+            entries.forEach { e ->
+                when (e) {
+                    is MenuEntry.Item -> buf.add(e.type)
+                    is MenuEntry.Boundary -> {
+                        flush()
+                        current = e.sectionStart
+                    }
+                    is MenuEntry.Spacer -> Unit
+                }
+            }
+            flush()
         }
-        flush()
-    }
 
     // Apply hide + hasVideo filtering per section.
-    val sectionsFiltered = sections.map { sec ->
-        val filtered = sec.items
-            .let { if (hasVideo) it else it.filter { t -> t != MenuItemType.AudioOnly } }
-            .let { if (hideMode) it else it.filter { t -> t !in hiddenItems } }
-        sec.copy(items = filtered)
-    }
+    val sectionsFiltered =
+        sections.map { sec ->
+            val filtered =
+                sec.items
+                    .let { if (hasVideo) it else it.filter { t -> t != MenuItemType.AudioOnly } }
+                    .let { if (hideMode) it else it.filter { t -> t !in hiddenItems } }
+            sec.copy(items = filtered)
+        }
 
     CompositionLocalProvider(
-        LocalMenuActions provides MenuActions(onClicked, onLongClicked)
+        LocalMenuActions provides MenuActions(onClicked, onLongClicked),
     ) {
         Column(
-            modifier = Modifier
-                .wrapContentHeight()
-                .verticalScroll(rememberScrollState())
-                .width(IntrinsicSize.Max),
+            modifier =
+                Modifier
+                    .wrapContentHeight()
+                    .verticalScroll(rememberScrollState())
+                    .width(IntrinsicSize.Max),
             horizontalAlignment = Alignment.End,
         ) {
             val renderItem: @Composable (MenuItemType) -> Unit = { type ->
@@ -615,7 +735,11 @@ fun menuItemWidth(isLargeType: Boolean): Dp {
  * instead of being cut off at the dialog edge.
  */
 @Composable
-fun fittedMenuItemWidth(count: Int, available: Dp, isLargeType: Boolean = true): Dp {
+fun fittedMenuItemWidth(
+    count: Int,
+    available: Dp,
+    isLargeType: Boolean = true,
+): Dp {
     val natural = menuItemWidth(isLargeType)
     if (count <= 0 || available == Dp.Infinity || available <= 0.dp) return natural
     return minOf(natural, available / count)
@@ -641,7 +765,14 @@ fun MenuItem(
 
     val width = cellWidth ?: menuItemWidth(isLargeType)
 
-    val fontSize = if (!showIcon) 16.sp else if (isBigScreen) 11.sp else 8.sp
+    val fontSize =
+        if (!showIcon) {
+            16.sp
+        } else if (isBigScreen) {
+            11.sp
+        } else {
+            8.sp
+        }
 
     // In reorder mode we hand gesture control to the outer ReorderableItem's
     // longPressDraggableHandle — combinedClickable here would consume long-press first.
@@ -650,60 +781,79 @@ fun MenuItem(
     Box {
         if (pressed) {
             Box(
-                modifier = Modifier
-                    .size(6.dp)
-                    .background(MaterialTheme.colors.onBackground, shape = CircleShape)
-                    .align(Alignment.TopCenter)
+                modifier =
+                    Modifier
+                        .size(6.dp)
+                        .background(MaterialTheme.colors.onBackground, shape = CircleShape)
+                        .align(Alignment.TopCenter),
             )
         }
         // Min heights sized so the default (font scale 1.0) geometry is unchanged;
         // the cell and its label can grow when a larger system font scale wraps
         // the label text (issue #623).
-        val labelMinHeight = when {
-            !showIcon -> 40.dp
-            isLargeType -> 25.dp
-            else -> 26.dp
-        }
+        val labelMinHeight =
+            when {
+                !showIcon -> 40.dp
+                isLargeType -> 25.dp
+                else -> 26.dp
+            }
         Column(
-            modifier = Modifier
-                .width(width)
-                .heightIn(min = if (!showIcon) 50.dp else if (isLargeType) 80.dp else 70.dp)
-                .then(
-                    if (reorderMode) Modifier
-                    else Modifier.combinedClickable(
-                        interactionSource = interactionSource,
-                        indication = null,
-                        onLongClick = { onLongClicked() },
-                        onClick = { onClicked() },
-                    )
-                ),
+            modifier =
+                Modifier
+                    .width(width)
+                    .heightIn(
+                        min =
+                            if (!showIcon) {
+                                50.dp
+                            } else if (isLargeType) {
+                                80.dp
+                            } else {
+                                70.dp
+                            },
+                    ).then(
+                        if (reorderMode) {
+                            Modifier
+                        } else {
+                            Modifier.combinedClickable(
+                                interactionSource = interactionSource,
+                                indication = null,
+                                onLongClick = { onLongClicked() },
+                                onClick = { onClicked() },
+                            )
+                        },
+                    ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = if (!showIcon) Arrangement.Center else Arrangement.Top
+            verticalArrangement = if (!showIcon) Arrangement.Center else Arrangement.Top,
         ) {
             if (showIcon) {
                 if (imageVector != null) {
                     Icon(
-                        imageVector = imageVector, contentDescription = null,
-                        modifier = Modifier
-                            .size(if (isLargeType) 55.dp else 44.dp)
-                            .padding(horizontal = 6.dp),
-                        tint = MaterialTheme.colors.onBackground
+                        imageVector = imageVector,
+                        contentDescription = null,
+                        modifier =
+                            Modifier
+                                .size(if (isLargeType) 55.dp else 44.dp)
+                                .padding(horizontal = 6.dp),
+                        tint = MaterialTheme.colors.onBackground,
                     )
                 } else {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = iconResId), contentDescription = null,
-                        modifier = Modifier
-                            .size(if (isLargeType) 55.dp else 44.dp)
-                            .padding(horizontal = 6.dp),
-                        tint = MaterialTheme.colors.onBackground
+                        imageVector = ImageVector.vectorResource(id = iconResId),
+                        contentDescription = null,
+                        modifier =
+                            Modifier
+                                .size(if (isLargeType) 55.dp else 44.dp)
+                                .padding(horizontal = 6.dp),
+                        tint = MaterialTheme.colors.onBackground,
                     )
                 }
             }
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = labelMinHeight),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = labelMinHeight),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
@@ -713,7 +863,7 @@ fun MenuItem(
                     overflow = TextOverflow.Ellipsis,
                     lineHeight = if (!showIcon) 20.sp else 12.sp,
                     fontSize = fontSize,
-                    color = MaterialTheme.colors.onBackground
+                    color = MaterialTheme.colors.onBackground,
                 )
             }
         }

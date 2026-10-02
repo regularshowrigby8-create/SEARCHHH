@@ -28,35 +28,43 @@ fun SearchhhTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val colors = if (darkTheme) {
-        darkColors(
-            primary = SearchhhDesignTokens.accent,
-            background = SearchhhDesignTokens.darkBackground,
-            surface = SearchhhDesignTokens.darkSurface,
-            onPrimary = Color(0xFF14200D),
-            onBackground = Color(0xFFE8F0E8),
-            onSurface = Color(0xFFE8F0E8),
-            error = Color(0xFFFFB4AB),
-        )
-    } else {
-        lightColors(
-            primary = Color(0xFF496A18),
-            background = SearchhhDesignTokens.lightBackground,
-            surface = SearchhhDesignTokens.lightSurface,
-            onPrimary = Color.White,
-            onBackground = Color(0xFF182019),
-            onSurface = Color(0xFF182019),
-            error = Color(0xFFBA1A1A),
-        )
-    }
+    val colors =
+        if (darkTheme) {
+            darkColors(
+                primary = SearchhhDesignTokens.accent,
+                background = SearchhhDesignTokens.darkBackground,
+                surface = SearchhhDesignTokens.darkSurface,
+                onPrimary = Color(0xFF14200D),
+                onBackground = Color(0xFFE8F0E8),
+                onSurface = Color(0xFFE8F0E8),
+                error = Color(0xFFFFB4AB),
+            )
+        } else {
+            lightColors(
+                primary = Color(0xFF496A18),
+                background = SearchhhDesignTokens.lightBackground,
+                surface = SearchhhDesignTokens.lightSurface,
+                onPrimary = Color.White,
+                onBackground = Color(0xFF182019),
+                onSurface = Color(0xFF182019),
+                error = Color(0xFFBA1A1A),
+            )
+        }
     MaterialTheme(
         colors = colors,
         typography = Typography().copy(h4 = Typography().h4.copy(fontWeight = FontWeight.Bold)),
-        shapes = MaterialTheme.shapes.copy(
-            small = androidx.compose.foundation.shape.RoundedCornerShape(10.dp),
-            medium = androidx.compose.foundation.shape.RoundedCornerShape(14.dp),
-            large = androidx.compose.foundation.shape.RoundedCornerShape(18.dp),
-        ),
+        shapes =
+            MaterialTheme.shapes.copy(
+                small =
+                    androidx.compose.foundation.shape
+                        .RoundedCornerShape(10.dp),
+                medium =
+                    androidx.compose.foundation.shape
+                        .RoundedCornerShape(14.dp),
+                large =
+                    androidx.compose.foundation.shape
+                        .RoundedCornerShape(18.dp),
+            ),
         content = content,
     )
 }

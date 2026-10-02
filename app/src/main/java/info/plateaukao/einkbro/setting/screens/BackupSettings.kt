@@ -11,27 +11,27 @@ fun buildBackupSettingItems(deps: SettingScreenDeps): List<SettingItemInterface>
         ActionSettingItem(
             R.string.setting_title_gdrive_sync,
             0,
-            R.string.setting_summary_gdrive_sync
+            R.string.setting_summary_gdrive_sync,
         ) { backupOps.syncWithGoogleDrive() },
         ActionSettingItem(
             R.string.setting_title_export_appData,
             0,
-            R.string.setting_summary_export_appData
+            R.string.setting_summary_export_appData,
         ) { backupOps.exportAppData() },
         ActionSettingItem(
             R.string.setting_title_import_appData,
             0,
-            R.string.setting_summary_import_appData
+            R.string.setting_summary_import_appData,
         ) { backupOps.importAppData() },
         ActionSettingItem(
             R.string.setting_title_share_appData,
             0,
-            R.string.setting_summary_share_appData
+            R.string.setting_summary_share_appData,
         ) { backupOps.shareAppData() },
         ActionSettingItem(
             R.string.setting_title_receive_appData,
             0,
-            R.string.setting_summary_receive_appData
+            R.string.setting_summary_receive_appData,
         ) { backupOps.receiveAppData() },
         DividerSettingItem(),
         ActionSettingItem(

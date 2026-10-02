@@ -11,7 +11,6 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
-
 // No debt baseline: existing violations must fail until reviewed and resolved.
 detekt {
     toolVersion = libs.versions.detekt.get()
@@ -29,7 +28,10 @@ ktlint {
 subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     extensions.configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-        version.set(rootProject.libs.versions.ktlint.get())
+        version.set(
+            rootProject.libs.versions.ktlint
+                .get(),
+        )
         ignoreFailures.set(false)
     }
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -98,9 +100,18 @@ tasks.register("searchhhJvmVerification") {
     group = "verification"
     description = "Host checks only; this is not the full UI verification gate."
     dependsOn(
-        failOnUnfinishedCode, verifyInteractionInventory, "detekt", "ktlintCheck",
-        ":app:compileDebugKotlin", ":app:testDebugUnitTest", ":ad-filter:testDebugUnitTest", ":adblock-client:testDebugUnitTest",
-        ":app:lintDebug", ":ad-filter:lintDebug", ":adblock-client:lintDebug", ":app:assembleDebug",
+        failOnUnfinishedCode,
+        verifyInteractionInventory,
+        "detekt",
+        "ktlintCheck",
+        ":app:compileDebugKotlin",
+        ":app:testDebugUnitTest",
+        ":ad-filter:testDebugUnitTest",
+        ":adblock-client:testDebugUnitTest",
+        ":app:lintDebug",
+        ":ad-filter:lintDebug",
+        ":adblock-client:lintDebug",
+        ":app:assembleDebug",
     )
 }
 

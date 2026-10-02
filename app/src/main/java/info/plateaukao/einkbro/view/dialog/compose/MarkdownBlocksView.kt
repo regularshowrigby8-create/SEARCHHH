@@ -35,28 +35,35 @@ import java.net.URL
  * re-splits on every chunk, doesn't refetch images already shown.
  */
 @Composable
-fun RichMarkdownResponse(markdown: String, modifier: Modifier = Modifier) {
+fun RichMarkdownResponse(
+    markdown: String,
+    modifier: Modifier = Modifier,
+) {
     val blocks = remember(markdown) { MarkdownBlocks.split(markdown) }
     Column(modifier = modifier) {
         blocks.forEachIndexed { index, block ->
             key(index, block) {
                 when (block) {
-                    is MarkdownBlock.Text -> Text(
-                        text = HelperUnit.parseMarkdown(block.markdown),
-                        color = MaterialTheme.colors.onBackground,
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(),
-                        textAlign = TextAlign.Start,
-                    )
+                    is MarkdownBlock.Text ->
+                        Text(
+                            text = HelperUnit.parseMarkdown(block.markdown),
+                            color = MaterialTheme.colors.onBackground,
+                            modifier =
+                                Modifier
+                                    .padding(10.dp)
+                                    .fillMaxWidth(),
+                            textAlign = TextAlign.Start,
+                        )
 
-                    is MarkdownBlock.Image -> RemoteImage(
-                        url = block.url,
-                        alt = block.alt,
-                        modifier = Modifier
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
-                            .fillMaxWidth(),
-                    )
+                    is MarkdownBlock.Image ->
+                        RemoteImage(
+                            url = block.url,
+                            alt = block.alt,
+                            modifier =
+                                Modifier
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                                    .fillMaxWidth(),
+                        )
                 }
             }
         }
@@ -65,7 +72,11 @@ fun RichMarkdownResponse(markdown: String, modifier: Modifier = Modifier) {
 
 /** Fetches [url] once and shows it full-width; the alt text stands in until then, or for good on failure. */
 @Composable
-fun RemoteImage(url: String, alt: String, modifier: Modifier = Modifier) {
+fun RemoteImage(
+    url: String,
+    alt: String,
+    modifier: Modifier = Modifier,
+) {
     val bitmap by produceState<Bitmap?>(initialValue = null, key1 = url) {
         value = withContext(Dispatchers.IO) { loadBitmap(url) }
     }

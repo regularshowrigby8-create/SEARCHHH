@@ -21,57 +21,53 @@ data class VoiceItem(
     @SerialName("SuggestedCodec")
     val suggestedCodec: String,
     @SerialName("VoiceTag")
-    val voiceTag: VoiceTag
+    val voiceTag: VoiceTag,
 ) {
-    private fun description(): String {
-        return "${shortName.replace("Neural", "")}  " +
-                if (specialPersonalities().isNotEmpty()) {
-                    "(${specialPersonalities().joinToString(", ")})"
-                } else {
-                    ""
-                }
-    }
+    private fun description(): String =
+        "${shortName.replace("Neural", "")}  " +
+            if (specialPersonalities().isNotEmpty()) {
+                "(${specialPersonalities().joinToString(", ")})"
+            } else {
+                ""
+            }
 
-    fun getLanguageCode(): String {
-        return shortName.split("-")[0]
-    }
+    fun getLanguageCode(): String = shortName.split("-")[0]
 
-    fun getCountryCode(): String {
-        return shortName.split("-")[1]
-    }
+    fun getCountryCode(): String = shortName.split("-")[1]
 
     fun getVoiceRole(): String = description().split("-").last()
 
     fun getShortNameWithoutNeural(): String = shortName.replace("Neural", "").split("-").last()
 
-    private fun specialPersonalities(): List<String> =
-        voiceTag.voicePersonalities.filter { it != "Friendly" && it != "Positive" }
+    private fun specialPersonalities(): List<String> = voiceTag.voicePersonalities.filter { it != "Friendly" && it != "Positive" }
 }
 
 /*
 use this to generate the default voice item
  */
-val defaultVoiceItem: VoiceItem = Json.decodeFromString("""
-  {
-    "Name": "Microsoft Server Speech Text to Speech Voice (en-US, AvaMultilingualNeural)",
-    "ShortName": "en-US-AvaMultilingualNeural",
-    "Gender": "Female",
-    "Locale": "en-US",
-    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft AvaMultilingual Online (Natural) - English (United States)",
-    "Status": "GA",
-    "VoiceTag": {
-      "ContentCategories": [
-        "Conversation",
-        "Copilot"
-      ],
-      "VoicePersonalities": [
-        "Expressive",
-        "Caring",
-        "Pleasant",
-        "Friendly"
-      ]
-    }
-  }
-""".trimIndent()
-)
+val defaultVoiceItem: VoiceItem =
+    Json.decodeFromString(
+        """
+        {
+          "Name": "Microsoft Server Speech Text to Speech Voice (en-US, AvaMultilingualNeural)",
+          "ShortName": "en-US-AvaMultilingualNeural",
+          "Gender": "Female",
+          "Locale": "en-US",
+          "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+          "FriendlyName": "Microsoft AvaMultilingual Online (Natural) - English (United States)",
+          "Status": "GA",
+          "VoiceTag": {
+            "ContentCategories": [
+              "Conversation",
+              "Copilot"
+            ],
+            "VoicePersonalities": [
+              "Expressive",
+              "Caring",
+              "Pleasant",
+              "Friendly"
+            ]
+          }
+        }
+        """.trimIndent(),
+    )

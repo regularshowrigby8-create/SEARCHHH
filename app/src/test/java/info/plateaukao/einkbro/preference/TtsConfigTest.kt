@@ -11,7 +11,6 @@ import org.junit.Before
 import org.junit.Test
 
 class TtsConfigTest {
-
     private lateinit var sp: FakeSharedPreferences
     private lateinit var config: TtsConfig
 
@@ -21,19 +20,21 @@ class TtsConfigTest {
         config = TtsConfig(sp)
     }
 
-    private fun voiceItem(shortName: String) = VoiceItem(
-        friendlyName = "Friendly $shortName",
-        gender = "Female",
-        locale = shortName.substringBeforeLast("-"),
-        name = "Microsoft Server Speech Text to Speech Voice ($shortName)",
-        shortName = shortName,
-        status = "GA",
-        suggestedCodec = "audio-24khz-48kbitrate-mono-mp3",
-        voiceTag = VoiceTag(
-            contentCategories = listOf("General"),
-            voicePersonalities = listOf("Friendly"),
-        ),
-    )
+    private fun voiceItem(shortName: String) =
+        VoiceItem(
+            friendlyName = "Friendly $shortName",
+            gender = "Female",
+            locale = shortName.substringBeforeLast("-"),
+            name = "Microsoft Server Speech Text to Speech Voice ($shortName)",
+            shortName = shortName,
+            status = "GA",
+            suggestedCodec = "audio-24khz-48kbitrate-mono-mp3",
+            voiceTag =
+                VoiceTag(
+                    contentCategories = listOf("General"),
+                    voicePersonalities = listOf("Friendly"),
+                ),
+        )
 
     @Test
     fun localeScriptAndRegionSurvivePersistence() {

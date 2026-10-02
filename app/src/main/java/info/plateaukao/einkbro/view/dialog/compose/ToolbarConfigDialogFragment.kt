@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -45,11 +44,12 @@ class ToolbarConfigDialogFragment : ComposeDialogFragment() {
     override fun Content() {
         val actionInfoList = getCurrentActionList()
         val isVerticalMode = config.ui.isVerticalToolbar
-        val orientation = if (isVerticalMode) {
-            Modifier.wrapContentWidth().heightIn(max = 500.dp)
-        } else {
-            Modifier.width(IntrinsicSize.Max)
-        }
+        val orientation =
+            if (isVerticalMode) {
+                Modifier.wrapContentWidth().heightIn(max = 500.dp)
+            } else {
+                Modifier.width(IntrinsicSize.Max)
+            }
         Column(
             orientation,
             horizontalAlignment = Alignment.End,
@@ -69,20 +69,22 @@ class ToolbarConfigDialogFragment : ComposeDialogFragment() {
                     if (actionInfo.isOn) {
                         val toIndex = actionInfos.indexOfFirst { !it.isOn }
                         val fromIndex = actionInfos.indexOf(actionInfo)
-                        if (toIndex != -1 && toIndex < fromIndex)
+                        if (toIndex != -1 && toIndex < fromIndex) {
                             actionInfos.apply { add(toIndex, removeAt(fromIndex)) }
+                        }
                     } else {
                         val toIndex = actionInfos.indexOfLast { it.isOn }
                         val fromIndex = actionInfos.indexOf(actionInfo)
-                        if (toIndex != -1 && toIndex > fromIndex)
+                        if (toIndex != -1 && toIndex > fromIndex) {
                             actionInfos.apply { add(toIndex, removeAt(fromIndex)) }
+                        }
                     }
                     rememberList = actionInfos
                 },
                 onItemMoved = { from, to ->
                     rememberList =
                         rememberList.toMutableList().apply { add(to, removeAt(from)) }
-                }
+                },
             )
             HorizontalSeparator()
             DialogButtonBar(
@@ -90,18 +92,18 @@ class ToolbarConfigDialogFragment : ComposeDialogFragment() {
                 okAction = {
                     config.ui.toolbarActions =
                         rememberList.filter { it.isOn }.map { it.toolbarAction }
-                }
+                },
             )
         }
     }
 
     private fun getCurrentActionList(): List<ToolbarActionItemInfo> =
         config.ui.toolbarActions.map { ToolbarActionItemInfo(it, true) } +
-                ToolbarAction.entries
-                    // need to filter only addable actions here
-                    .filter { it.isAddable }
-                    .filterNot { config.ui.toolbarActions.contains(it) }
-                    .map { ToolbarActionItemInfo(it, false) }
+            ToolbarAction.entries
+                // need to filter only addable actions here
+                .filter { it.isAddable }
+                .filterNot { config.ui.toolbarActions.contains(it) }
+                .map { ToolbarActionItemInfo(it, false) }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -113,13 +115,14 @@ private fun ToolbarList(
     onItemMoved: (Int, Int) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
-    val state = rememberReorderableLazyListState(lazyListState) { from, to ->
-        onItemMoved(from.index, to.index)
-    }
+    val state =
+        rememberReorderableLazyListState(lazyListState) { from, to ->
+            onItemMoved(from.index, to.index)
+        }
 
     LazyColumn(
         modifier = modifier,
-        state = lazyListState
+        state = lazyListState,
     ) {
         items(infos, { it.hashCode() }) { info ->
             ReorderableItem(
@@ -128,13 +131,13 @@ private fun ToolbarList(
             ) { isDragging ->
                 val borderWidth = if (isDragging) 1.5.dp else (-1).dp
                 Column(
-                    modifier = Modifier
-                        .border(
-                            borderWidth,
-                            MaterialTheme.colors.primary,
-                            RoundedCornerShape(3.dp)
-                        )
-                        .background(MaterialTheme.colors.background)
+                    modifier =
+                        Modifier
+                            .border(
+                                borderWidth,
+                                MaterialTheme.colors.primary,
+                                RoundedCornerShape(3.dp),
+                            ).background(MaterialTheme.colors.background),
                 ) {
                     ToolbarToggleItem(
                         modifier = Modifier.draggableHandle(),
@@ -161,17 +164,19 @@ fun ToolbarToggleItem(
             ToggleItem(
                 state = info.isOn,
                 titleResId = info.toolbarAction.titleResId,
-                imageVector = info.toolbarAction.imageVector
-                    ?: ImageVector.vectorResource(id = info.toolbarAction.iconResId),
+                imageVector =
+                    info.toolbarAction.imageVector
+                        ?: ImageVector.vectorResource(id = info.toolbarAction.iconResId),
                 isEnabled = shouldEnableCheckClick,
                 // settings should not be clickable, and always there
-                onClicked = { if (info.toolbarAction != ToolbarAction.Settings) onItemClicked(info.toolbarAction) }
+                onClicked = { if (info.toolbarAction != ToolbarAction.Settings) onItemClicked(info.toolbarAction) },
             )
         }
         Icon(
             modifier = modifier.padding(4.dp),
-            imageVector = Icons.Outlined.DragHandle, contentDescription = null,
-            tint = MaterialTheme.colors.onBackground
+            imageVector = Icons.Outlined.DragHandle,
+            contentDescription = null,
+            tint = MaterialTheme.colors.onBackground,
         )
     }
 }
@@ -183,33 +188,41 @@ fun DialogButtonBar(
     okAction: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .width(IntrinsicSize.Max)
-            .wrapContentHeight(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .width(IntrinsicSize.Max)
+                .wrapContentHeight(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         TextButton(
             modifier = Modifier.wrapContentWidth(),
-            onClick = dismissAction
+            onClick = dismissAction,
         ) {
             Text(
                 stringResource(id = android.R.string.cancel),
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colors.primary,
             )
         }
         VerticalSeparator()
         TextButton(
             modifier = Modifier.wrapContentWidth(),
-            onClick = { dismissAction(); okAction() }) {
+            onClick = {
+                dismissAction()
+                okAction()
+            },
+        ) {
             Text(
                 stringResource(okResId),
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colors.primary,
             )
         }
     }
 }
 
-class ToolbarActionItemInfo(val toolbarAction: ToolbarAction, var isOn: Boolean)
+class ToolbarActionItemInfo(
+    val toolbarAction: ToolbarAction,
+    var isOn: Boolean,
+)
 
 @Preview
 @Composable
@@ -223,7 +236,7 @@ private fun previewToolBar() {
                     .padding(2.dp), // for round corner spaces
                 ToolbarAction.values().map { ToolbarActionItemInfo(it, true) },
                 {},
-                { _, _ -> }
+                { _, _ -> },
             )
             DialogButtonBar(0, {}, {})
         }

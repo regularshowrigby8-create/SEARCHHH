@@ -3,11 +3,11 @@ package info.plateaukao.einkbro.unit
 import android.content.ComponentCallbacks2
 import android.content.Context
 import android.util.LruCache
+import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
 import java.security.MessageDigest
-import timber.log.Timber
 
 /**
  * Two-tier cache (memory + disk) for e-ink processed images.
@@ -17,14 +17,19 @@ import timber.log.Timber
  * WebViewClient hitting the same disk directory through its own memory tier
  * would multiply RAM use by the tab count and duplicate the disk trimming.
  */
-class EinkImageCache(context: Context) {
-
+class EinkImageCache(
+    context: Context,
+) {
     // LruCache's default sizeOf() is 1 per entry, so a plain
     // LruCache<String, ByteArray>(16 MB) would have capped the *entry count*
     // at 16 million, not the bytes. Account in bytes.
-    private val memoryCache = object : LruCache<String, ByteArray>(MAX_MEMORY_BYTES) {
-        override fun sizeOf(key: String, value: ByteArray): Int = value.size
-    }
+    private val memoryCache =
+        object : LruCache<String, ByteArray>(MAX_MEMORY_BYTES) {
+            override fun sizeOf(
+                key: String,
+                value: ByteArray,
+            ): Int = value.size
+        }
 
     private val diskCacheDir = File(context.cacheDir, "eink_images").apply { mkdirs() }
 
@@ -34,7 +39,10 @@ class EinkImageCache(context: Context) {
     // right unit here (default sizeOf); entries are just short strings.
     private val oversizedUrls = LruCache<String, Boolean>(MAX_OVERSIZED_URLS)
 
-    fun get(url: String, strength: Int): InputStream? {
+    fun get(
+        url: String,
+        strength: Int,
+    ): InputStream? {
         val key = cacheKey(url, strength)
 
         // 1. Check memory cache
@@ -53,7 +61,11 @@ class EinkImageCache(context: Context) {
         return null
     }
 
-    fun put(url: String, strength: Int, data: ByteArray) {
+    fun put(
+        url: String,
+        strength: Int,
+        data: ByteArray,
+    ) {
         val key = cacheKey(url, strength)
         putInMemory(key, data)
 
@@ -77,7 +89,9 @@ class EinkImageCache(context: Context) {
     }
 
     // -1 = not yet counted; first put lists the directory once.
-    private val approxDiskBytes = java.util.concurrent.atomic.AtomicLong(-1)
+    private val approxDiskBytes =
+        java.util.concurrent.atomic
+            .AtomicLong(-1)
 
     private fun ensureDiskUsageCounted() {
         if (approxDiskBytes.get() < 0) {
@@ -112,7 +126,10 @@ class EinkImageCache(context: Context) {
 
     // A single entry larger than a quarter of the budget would evict most of
     // the working set for one image; leave such entries on disk only.
-    private fun putInMemory(key: String, data: ByteArray) {
+    private fun putInMemory(
+        key: String,
+        data: ByteArray,
+    ) {
         if (data.size > MAX_MEMORY_ENTRY_BYTES) return
         memoryCache.put(key, data)
     }
@@ -132,7 +149,10 @@ class EinkImageCache(context: Context) {
         approxDiskBytes.set(totalSize)
     }
 
-    private fun cacheKey(url: String, strength: Int): String {
+    private fun cacheKey(
+        url: String,
+        strength: Int,
+    ): String {
         val raw = "$url|$strength"
         val digest = MessageDigest.getInstance("MD5").digest(raw.toByteArray())
         // manual hex: 32 String.format calls per lookup showed up on the
@@ -152,6 +172,6 @@ class EinkImageCache(context: Context) {
         private const val MAX_MEMORY_BYTES = 16 * 1024 * 1024 // 16 MB
         private const val MAX_MEMORY_ENTRY_BYTES = MAX_MEMORY_BYTES / 4
         private const val MAX_OVERSIZED_URLS = 512
-        private const val MAX_DISK_BYTES = 50L * 1024 * 1024  // 50 MB
+        private const val MAX_DISK_BYTES = 50L * 1024 * 1024 // 50 MB
     }
 }

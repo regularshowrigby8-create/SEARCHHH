@@ -20,7 +20,10 @@ object FileHelper : KoinComponent {
     private val appContext: Context by inject()
     private val fileCache = mutableMapOf<String, String>()
 
-    fun getCachedPathFromURI(context: Context, contentURI: Uri): String {
+    fun getCachedPathFromURI(
+        context: Context,
+        contentURI: Uri,
+    ): String {
         val tempFile = File.createTempFile("tempfile", ".mht", context.cacheDir)
         tempFile.deleteOnExit()
 
@@ -32,7 +35,10 @@ object FileHelper : KoinComponent {
         return tempFile.absolutePath
     }
 
-    fun readContentAsStringList(contentResolver: ContentResolver, contentUri: Uri): List<String> {
+    fun readContentAsStringList(
+        contentResolver: ContentResolver,
+        contentUri: Uri,
+    ): List<String> {
         contentResolver.openInputStream(contentUri).use { inputStream ->
             BufferedReader(InputStreamReader(inputStream)).use { reader ->
                 val lines = mutableListOf<String>()
@@ -46,7 +52,10 @@ object FileHelper : KoinComponent {
         }
     }
 
-    fun getFileInfoFromContentUri(context: Context, contentUri: Uri): Pair<String?, String?> {
+    fun getFileInfoFromContentUri(
+        context: Context,
+        contentUri: Uri,
+    ): Pair<String?, String?> {
         var fileName: String? = null
         var mimeType: String? = null
 
@@ -56,21 +65,25 @@ object FileHelper : KoinComponent {
                 if (it.moveToFirst()) {
                     val displayNameColumnIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
 
-                    fileName = if (displayNameColumnIndex != -1)
-                        it.getString(displayNameColumnIndex)
-                    else {
-                        contentUri.path?.split("/")?.last()
-                    }
+                    fileName =
+                        if (displayNameColumnIndex != -1) {
+                            it.getString(displayNameColumnIndex)
+                        } else {
+                            contentUri.path?.split("/")?.last()
+                        }
 
-                    val mimeTypeColumnIndex = it.getColumnIndex(
-                        MimeTypeMap.getSingleton()
-                            .getExtensionFromMimeType(it.getString(it.getColumnIndexOrThrow("mime_type")))
-                    )
-                    mimeType = if (mimeTypeColumnIndex != -1)
-                        it.getString(mimeTypeColumnIndex)
-                    else {
-                        context.contentResolver.getType(contentUri)
-                    }
+                    val mimeTypeColumnIndex =
+                        it.getColumnIndex(
+                            MimeTypeMap
+                                .getSingleton()
+                                .getExtensionFromMimeType(it.getString(it.getColumnIndexOrThrow("mime_type"))),
+                        )
+                    mimeType =
+                        if (mimeTypeColumnIndex != -1) {
+                            it.getString(mimeTypeColumnIndex)
+                        } else {
+                            context.contentResolver.getType(contentUri)
+                        }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -80,7 +93,10 @@ object FileHelper : KoinComponent {
         return Pair(fileName, mimeType)
     }
 
-    fun loadAssetFileToString(context: Context, filename: String): String {
+    fun loadAssetFileToString(
+        context: Context,
+        filename: String,
+    ): String {
         val inputStream = context.assets.open(filename)
         val bufferedReader = BufferedReader(InputStreamReader(inputStream))
         val stringBuilder = StringBuilder()
@@ -95,7 +111,11 @@ object FileHelper : KoinComponent {
         }
 
         try {
-            val jsContent = appContext.assets.open(fileName).bufferedReader().use { it.readText() }
+            val jsContent =
+                appContext.assets
+                    .open(fileName)
+                    .bufferedReader()
+                    .use { it.readText() }
             fileCache[fileName] = jsContent
             return jsContent
         } catch (e: IOException) {
@@ -106,13 +126,22 @@ object FileHelper : KoinComponent {
     }
 
     fun getStringFromAsset(fileName: String): String =
-        appContext.assets.open(fileName).bufferedReader().use { it.readText() }
+        appContext.assets
+            .open(fileName)
+            .bufferedReader()
+            .use { it.readText() }
 
     @JvmStatic
     fun fileName(url: String?): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault())
         val currentTime = sdf.format(Date())
-        val domain = Uri.parse(url).host?.replace("www.", "")?.trim { it <= ' ' }.orEmpty()
+        val domain =
+            Uri
+                .parse(url)
+                .host
+                ?.replace("www.", "")
+                ?.trim { it <= ' ' }
+                .orEmpty()
         return domain.replace(".", "_").trim { it <= ' ' } + "_" + currentTime.trim { it <= ' ' }
     }
 }

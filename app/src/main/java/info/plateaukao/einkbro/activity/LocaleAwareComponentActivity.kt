@@ -12,13 +12,15 @@ import org.koin.core.component.inject
  * override. Previously only 4 of the 11 such activities did this, so a user
  * with a non-system app language got mixed-language screens.
  */
-abstract class LocaleAwareComponentActivity : ComponentActivity(), KoinComponent {
+abstract class LocaleAwareComponentActivity :
+    ComponentActivity(),
+    KoinComponent {
     protected val localeAwareConfig: ConfigManager by inject()
 
     override fun attachBaseContext(newBase: Context) {
         if (localeAwareConfig.uiLocaleLanguage.isNotEmpty()) {
             super.attachBaseContext(
-                LocaleManager.setLocale(newBase, localeAwareConfig.uiLocaleLanguage)
+                LocaleManager.setLocale(newBase, localeAwareConfig.uiLocaleLanguage),
             )
         } else {
             super.attachBaseContext(newBase)

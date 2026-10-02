@@ -27,7 +27,10 @@ class BookmarkActionsDelegate(
     private val addAlbum: (String, String, Boolean) -> Unit,
     private val toggleSplitScreen: (String?) -> Unit,
 ) {
-    fun saveBookmark(url: String?, title: String?) {
+    fun saveBookmark(
+        url: String?,
+        title: String?,
+    ) {
         val currentUrl = url ?: state.ebWebView.url ?: return
         val nonNullTitle = title ?: HelperUnit.secString(state.ebWebView.title)
         try {
@@ -38,7 +41,10 @@ class BookmarkActionsDelegate(
                     currentUrl,
                     order = if (ViewUnit.isWideLayout(activity)) 999 else 0,
                 ),
-                { ViewUnit.hideKeyboard(activity); EBToast.show(activity, R.string.toast_edit_successful) },
+                {
+                    ViewUnit.hideKeyboard(activity)
+                    EBToast.show(activity, R.string.toast_edit_successful)
+                },
                 { ViewUnit.hideKeyboard(activity) },
             ).show(activity.supportFragmentManager, "bookmark_edit")
         } catch (e: Exception) {
@@ -74,9 +80,12 @@ class BookmarkActionsDelegate(
         val webView = state.currentAlbumController as EBWebView
         val title = webView.title
         val url = webView.url
-        return (title.isNullOrEmpty() || url.isNullOrEmpty()
-                || url.startsWith(BrowserUnit.URL_SCHEME_ABOUT)
-                || url.startsWith(BrowserUnit.URL_SCHEME_MAIL_TO)
-                || url.startsWith(BrowserUnit.URL_SCHEME_INTENT))
+        return (
+            title.isNullOrEmpty() ||
+                url.isNullOrEmpty() ||
+                url.startsWith(BrowserUnit.URL_SCHEME_ABOUT) ||
+                url.startsWith(BrowserUnit.URL_SCHEME_MAIL_TO) ||
+                url.startsWith(BrowserUnit.URL_SCHEME_INTENT)
+        )
     }
 }

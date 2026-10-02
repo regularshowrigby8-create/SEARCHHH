@@ -9,14 +9,16 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.util.Locale
 
-class TtsConfig(private val sp: SharedPreferences) {
-
+class TtsConfig(
+    private val sp: SharedPreferences,
+) {
     private val K_TTS_LOCALE = "sp_tts_locale"
     var ttsLocale: Locale
-        get() = Locale.forLanguageTag(
-            (sp.getString(K_TTS_LOCALE, Locale.getDefault().toLanguageTag()) ?: Locale.getDefault().toLanguageTag())
-                .replace('_', '-'),
-        )
+        get() =
+            Locale.forLanguageTag(
+                (sp.getString(K_TTS_LOCALE, Locale.getDefault().toLanguageTag()) ?: Locale.getDefault().toLanguageTag())
+                    .replace('_', '-'),
+            )
         set(value) {
             sp.edit { putString(K_TTS_LOCALE, value.toLanguageTag()) }
         }
@@ -47,7 +49,8 @@ class TtsConfig(private val sp: SharedPreferences) {
             if (string.isBlank()) return mutableListOf()
 
             return try {
-                string.split("###")
+                string
+                    .split("###")
                     .mapNotNull { Json.decodeFromString<VoiceItem>(it) }
                     .toMutableList()
             } catch (exception: Exception) {
@@ -56,11 +59,12 @@ class TtsConfig(private val sp: SharedPreferences) {
             }
         }
         set(value) {
-            val processedValue = if (value.distinct().size > 5) {
-                value.distinct().subList(0, 5)
-            } else {
-                value.distinct()
-            }
+            val processedValue =
+                if (value.distinct().size > 5) {
+                    value.distinct().subList(0, 5)
+                } else {
+                    value.distinct()
+                }
 
             sp.edit {
                 if (processedValue.isEmpty()) {
@@ -69,18 +73,20 @@ class TtsConfig(private val sp: SharedPreferences) {
                     // check if the new value the same as the old one
                     putString(
                         K_RECENT_USED_TTS_VOICES,
-                        processedValue.joinToString("###") { Json.encodeToString(it) }
+                        processedValue.joinToString("###") { Json.encodeToString(it) },
                     )
                 }
             }
         }
 
     var ettsVoice: VoiceItem
-        get() = Json.decodeFromString(
-            sp.getString(
-                "K_ETTS_VOICE", Json.encodeToString(defaultVoiceItem)
-            ) ?: Json.encodeToString(defaultVoiceItem)
-        )
+        get() =
+            Json.decodeFromString(
+                sp.getString(
+                    "K_ETTS_VOICE",
+                    Json.encodeToString(defaultVoiceItem),
+                ) ?: Json.encodeToString(defaultVoiceItem),
+            )
         set(value) {
             sp.edit { putString("K_ETTS_VOICE", Json.encodeToString(value)) }
             recentUsedTtsVoices = recentUsedTtsVoices.apply { add(0, value) }

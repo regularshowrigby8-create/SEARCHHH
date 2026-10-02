@@ -1,18 +1,11 @@
 package info.plateaukao.einkbro.view.dialog.compose
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,11 +15,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
@@ -42,16 +37,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
-import info.plateaukao.einkbro.searchhh.testing.SearchhhTestTags
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,15 +58,16 @@ import info.plateaukao.einkbro.preference.UiBorder
 import info.plateaukao.einkbro.preference.UiFill
 import info.plateaukao.einkbro.preference.UiTheme
 import info.plateaukao.einkbro.preference.palette
+import info.plateaukao.einkbro.searchhh.testing.SearchhhTestTags
 import info.plateaukao.einkbro.view.ThemedBorders
 import info.plateaukao.einkbro.view.compose.MyTheme
 import info.plateaukao.einkbro.view.compose.UiThemeState
 import info.plateaukao.einkbro.view.compose.dashedBorder
-import info.plateaukao.einkbro.view.compose.stampShape
-import info.plateaukao.einkbro.view.compose.patternFill
-import info.plateaukao.einkbro.view.compose.tonalFillColor
-import info.plateaukao.einkbro.view.compose.sketchShape
 import info.plateaukao.einkbro.view.compose.isAppInDarkTheme
+import info.plateaukao.einkbro.view.compose.patternFill
+import info.plateaukao.einkbro.view.compose.sketchShape
+import info.plateaukao.einkbro.view.compose.stampShape
+import info.plateaukao.einkbro.view.compose.tonalFillColor
 
 /**
  * Theme picker with color swatches. Selecting a swatch applies the theme
@@ -146,11 +145,12 @@ private fun ThemeColorContent(
     // window maximum, which would push its border frame out of view
     val maxDialogHeight = (LocalConfiguration.current.screenHeightDp * 0.78f).dp
     Column(
-        modifier = Modifier
-            .widthIn(max = 360.dp)
-            .heightIn(max = maxDialogHeight)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 8.dp, vertical = 10.dp),
+        modifier =
+            Modifier
+                .widthIn(max = 360.dp)
+                .heightIn(max = maxDialogHeight)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 8.dp, vertical = 10.dp),
     ) {
         Text(
             stringResource(R.string.theme_section_color),
@@ -236,8 +236,11 @@ private fun ThemeColorContent(
                             // tapping the selected Gradient fill again toggles
                             // the direction/level dial
                             showGradientAdjust =
-                                if (fill == currentFill && fill == UiFill.GRADIENT) !showGradientAdjust
-                                else false
+                                if (fill == currentFill && fill == UiFill.GRADIENT) {
+                                    !showGradientAdjust
+                                } else {
+                                    false
+                                }
                             if (fill != currentFill) onSelectFill(fill)
                         },
                         modifier = Modifier.weight(1f),
@@ -275,84 +278,102 @@ private fun CustomColorWheel(
     onPreview: (Color) -> Unit,
     onPicked: (Color) -> Unit,
 ) {
-    val initial = remember {
-        val arr = FloatArray(3)
-        android.graphics.Color.colorToHSV(UiThemeState.customColor.value.toArgb(), arr)
-        arr
-    }
+    val initial =
+        remember {
+            val arr = FloatArray(3)
+            android.graphics.Color.colorToHSV(UiThemeState.customColor.value.toArgb(), arr)
+            arr
+        }
     var hue by remember { mutableFloatStateOf(initial[0]) }
     var sat by remember { mutableFloatStateOf(initial[1]) }
     var value by remember { mutableFloatStateOf(initial[2]) }
-    fun currentColor() =
-        Color(android.graphics.Color.HSVToColor(floatArrayOf(hue, sat, value)))
+
+    fun currentColor() = Color(android.graphics.Color.HSVToColor(floatArrayOf(hue, sat, value)))
 
     val wheelSize = 220.dp
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Canvas(
-            modifier = Modifier
-                .requiredSize(wheelSize)
-                .pointerInput(Unit) {
-                    // consume from the first down so a press applies instantly
-                    // and the dialog's scroll container never steals the drag
-                    awaitEachGesture {
-                        fun apply(x: Float, y: Float) {
-                            val cx = size.width / 2f
-                            val cy = size.height / 2f
-                            val dx = x - cx
-                            val dy = y - cy
-                            hue = ((Math.toDegrees(kotlin.math.atan2(dy, dx).toDouble()) + 360.0) % 360.0)
-                                .toFloat()
-                            sat = (kotlin.math.sqrt(dx * dx + dy * dy) / kotlin.math.min(cx, cy))
-                                .coerceIn(0f, 1f)
-                            onPreview(currentColor())
+            modifier =
+                Modifier
+                    .requiredSize(wheelSize)
+                    .pointerInput(Unit) {
+                        // consume from the first down so a press applies instantly
+                        // and the dialog's scroll container never steals the drag
+                        awaitEachGesture {
+                            fun apply(
+                                x: Float,
+                                y: Float,
+                            ) {
+                                val cx = size.width / 2f
+                                val cy = size.height / 2f
+                                val dx = x - cx
+                                val dy = y - cy
+                                hue =
+                                    ((Math.toDegrees(kotlin.math.atan2(dy, dx).toDouble()) + 360.0) % 360.0)
+                                        .toFloat()
+                                sat =
+                                    (kotlin.math.sqrt(dx * dx + dy * dy) / kotlin.math.min(cx, cy))
+                                        .coerceIn(0f, 1f)
+                                onPreview(currentColor())
+                            }
+                            val down = awaitFirstDown()
+                            down.consume()
+                            apply(down.position.x, down.position.y)
+                            while (true) {
+                                val change =
+                                    awaitPointerEvent()
+                                        .changes
+                                        .firstOrNull { it.id == down.id } ?: break
+                                change.consume()
+                                apply(change.position.x, change.position.y)
+                                if (!change.pressed) break
+                            }
+                            onPicked(currentColor())
                         }
-                        val down = awaitFirstDown()
-                        down.consume()
-                        apply(down.position.x, down.position.y)
-                        while (true) {
-                            val change = awaitPointerEvent().changes
-                                .firstOrNull { it.id == down.id } ?: break
-                            change.consume()
-                            apply(change.position.x, change.position.y)
-                            if (!change.pressed) break
-                        }
-                        onPicked(currentColor())
-                    }
-                },
+                    },
         ) {
             val radius = kotlin.math.min(size.width, size.height) / 2f
             val center = Offset(size.width / 2f, size.height / 2f)
             drawCircle(
-                brush = Brush.sweepGradient(
-                    listOf(
-                        Color.Red, Color.Yellow, Color.Green, Color.Cyan,
-                        Color.Blue, Color.Magenta, Color.Red,
+                brush =
+                    Brush.sweepGradient(
+                        listOf(
+                            Color.Red,
+                            Color.Yellow,
+                            Color.Green,
+                            Color.Cyan,
+                            Color.Blue,
+                            Color.Magenta,
+                            Color.Red,
+                        ),
+                        center = center,
                     ),
-                    center = center,
-                ),
                 radius = radius,
                 center = center,
             )
             drawCircle(
-                brush = Brush.radialGradient(
-                    listOf(Color.White, Color(0x00FFFFFF)),
-                    center = center,
-                    radius = radius,
-                ),
+                brush =
+                    Brush.radialGradient(
+                        listOf(Color.White, Color(0x00FFFFFF)),
+                        center = center,
+                        radius = radius,
+                    ),
                 radius = radius,
                 center = center,
             )
             // thumb at the current hue/saturation position
             val rad = Math.toRadians(hue.toDouble())
-            val thumb = Offset(
-                center.x + radius * sat * kotlin.math.cos(rad).toFloat(),
-                center.y + radius * sat * kotlin.math.sin(rad).toFloat(),
-            )
+            val thumb =
+                Offset(
+                    center.x + radius * sat * kotlin.math.cos(rad).toFloat(),
+                    center.y + radius * sat * kotlin.math.sin(rad).toFloat(),
+                )
             drawCircle(Color.White, radius = 11.dp.toPx(), center = thumb)
             drawCircle(
                 Color(android.graphics.Color.HSVToColor(floatArrayOf(hue, sat, value))),
@@ -403,60 +424,71 @@ private fun GradientAdjust(
     val bg = MaterialTheme.colors.background
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Canvas(
-            modifier = Modifier
-                .requiredSize(140.dp)
-                .pointerInput(Unit) {
-                    // consume from the first down: a press applies direction and
-                    // level immediately, and the dialog's scroll never intercepts
-                    awaitEachGesture {
-                        fun apply(x: Float, y: Float) {
-                            val cx = size.width / 2f
-                            val cy = size.height / 2f
-                            val dx = x - cx
-                            val dy = y - cy
-                            val a = ((Math.toDegrees(kotlin.math.atan2(dy, dx).toDouble()) + 360.0) % 360.0)
-                                .toInt()
-                            val frac = (kotlin.math.sqrt(dx * dx + dy * dy) / kotlin.math.min(cx, cy))
-                                .coerceIn(0f, 1f)
-                            onPreview(a, (40 + frac * 140).toInt())
+            modifier =
+                Modifier
+                    .requiredSize(140.dp)
+                    .pointerInput(Unit) {
+                        // consume from the first down: a press applies direction and
+                        // level immediately, and the dialog's scroll never intercepts
+                        awaitEachGesture {
+                            fun apply(
+                                x: Float,
+                                y: Float,
+                            ) {
+                                val cx = size.width / 2f
+                                val cy = size.height / 2f
+                                val dx = x - cx
+                                val dy = y - cy
+                                val a =
+                                    ((Math.toDegrees(kotlin.math.atan2(dy, dx).toDouble()) + 360.0) % 360.0)
+                                        .toInt()
+                                val frac =
+                                    (kotlin.math.sqrt(dx * dx + dy * dy) / kotlin.math.min(cx, cy))
+                                        .coerceIn(0f, 1f)
+                                onPreview(a, (40 + frac * 140).toInt())
+                            }
+                            val down = awaitFirstDown()
+                            down.consume()
+                            apply(down.position.x, down.position.y)
+                            while (true) {
+                                val change =
+                                    awaitPointerEvent()
+                                        .changes
+                                        .firstOrNull { it.id == down.id } ?: break
+                                change.consume()
+                                apply(change.position.x, change.position.y)
+                                if (!change.pressed) break
+                            }
+                            onPicked(
+                                UiThemeState.gradientAngle.value,
+                                UiThemeState.gradientLevel.value,
+                            )
                         }
-                        val down = awaitFirstDown()
-                        down.consume()
-                        apply(down.position.x, down.position.y)
-                        while (true) {
-                            val change = awaitPointerEvent().changes
-                                .firstOrNull { it.id == down.id } ?: break
-                            change.consume()
-                            apply(change.position.x, change.position.y)
-                            if (!change.pressed) break
-                        }
-                        onPicked(
-                            UiThemeState.gradientAngle.value,
-                            UiThemeState.gradientLevel.value,
-                        )
-                    }
-                },
+                    },
         ) {
             val radius = kotlin.math.min(size.width, size.height) / 2f - 4.dp.toPx()
             val center = Offset(size.width / 2f, size.height / 2f)
             val rad = Math.toRadians(angle.toDouble())
-            val dir = Offset(
-                kotlin.math.cos(rad).toFloat(),
-                kotlin.math.sin(rad).toFloat(),
-            )
+            val dir =
+                Offset(
+                    kotlin.math.cos(rad).toFloat(),
+                    kotlin.math.sin(rad).toFloat(),
+                )
             // fill previews the gradient with the chosen direction and level
             drawCircle(
-                brush = Brush.linearGradient(
-                    listOf(bg, lerp(bg, accent, (0.28f * level / 100f).coerceIn(0f, 0.9f))),
-                    start = center - Offset(dir.x * radius, dir.y * radius),
-                    end = center + Offset(dir.x * radius, dir.y * radius),
-                ),
+                brush =
+                    Brush.linearGradient(
+                        listOf(bg, lerp(bg, accent, (0.28f * level / 100f).coerceIn(0f, 0.9f))),
+                        start = center - Offset(dir.x * radius, dir.y * radius),
+                        end = center + Offset(dir.x * radius, dir.y * radius),
+                    ),
                 radius = radius,
                 center = center,
             )
@@ -484,9 +516,10 @@ private fun SwatchCell(
     preview: @Composable () -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp),
+        modifier =
+            modifier
+                .clickable(onClick = onClick)
+                .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -513,52 +546,59 @@ private fun BorderSwatch(
     val bgColor = MaterialTheme.colors.background
     val shape = RoundedCornerShape(minOf(border.itemRadiusDp, 12f).dp)
     val base = Modifier.requiredSize(width = 52.dp, height = 32.dp)
-    val previewModifier = when (border) {
-        // "none": faint outline with a diagonal strike-through
-        UiBorder.NONE -> base
-            .border(1.dp, accent.copy(alpha = 0.25f), shape)
-            .drawBehind {
-                drawLine(
-                    accent.copy(alpha = 0.6f),
-                    start = Offset(4.dp.toPx(), size.height - 4.dp.toPx()),
-                    end = Offset(size.width - 4.dp.toPx(), 4.dp.toPx()),
-                    strokeWidth = 1.5.dp.toPx(),
-                )
-            }
-        UiBorder.CLASSIC, UiBorder.ROUND, UiBorder.SHARP ->
-            base.border(border.widthDp.dp, accent, shape)
-        UiBorder.DASHED ->
-            base.dashedBorder(border.widthDp.dp, minOf(border.itemRadiusDp, 12f).dp, accent)
-        UiBorder.PAPER -> base
-            .border(border.widthDp.dp, accent, shape)
-            .padding(3.dp)
-            .border(border.widthDp.dp, accent, shape)
-        UiBorder.STAMP -> base.border(border.widthDp.dp, accent, stampShape(3.dp))
-        UiBorder.SKETCH -> base.border(1.dp, accent, sketchShape(1.5.dp))
-        UiBorder.CERTIFICATE -> base
-            .border(2.dp, accent, shape)
-            .padding(3.dp)
-            .border(1.dp, accent, shape)
-        UiBorder.STICKER -> base.drawBehind {
-            // front box inset by the shadow offset so the shadow reads clearly
-            val off = 5.dp.toPx()
-            val corner = CornerRadius(8.dp.toPx())
-            val boxSize = androidx.compose.ui.geometry.Size(size.width - off, size.height - off)
-            drawRoundRect(
-                accent,
-                topLeft = Offset(off, off),
-                size = boxSize,
-                cornerRadius = corner,
-            )
-            drawRoundRect(bgColor, size = boxSize, cornerRadius = corner)
-            drawRoundRect(
-                accent,
-                size = boxSize,
-                cornerRadius = corner,
-                style = Stroke(1.5.dp.toPx()),
-            )
+    val previewModifier =
+        when (border) {
+            // "none": faint outline with a diagonal strike-through
+            UiBorder.NONE ->
+                base
+                    .border(1.dp, accent.copy(alpha = 0.25f), shape)
+                    .drawBehind {
+                        drawLine(
+                            accent.copy(alpha = 0.6f),
+                            start = Offset(4.dp.toPx(), size.height - 4.dp.toPx()),
+                            end = Offset(size.width - 4.dp.toPx(), 4.dp.toPx()),
+                            strokeWidth = 1.5.dp.toPx(),
+                        )
+                    }
+            UiBorder.CLASSIC, UiBorder.ROUND, UiBorder.SHARP ->
+                base.border(border.widthDp.dp, accent, shape)
+            UiBorder.DASHED ->
+                base.dashedBorder(border.widthDp.dp, minOf(border.itemRadiusDp, 12f).dp, accent)
+            UiBorder.PAPER ->
+                base
+                    .border(border.widthDp.dp, accent, shape)
+                    .padding(3.dp)
+                    .border(border.widthDp.dp, accent, shape)
+            UiBorder.STAMP -> base.border(border.widthDp.dp, accent, stampShape(3.dp))
+            UiBorder.SKETCH -> base.border(1.dp, accent, sketchShape(1.5.dp))
+            UiBorder.CERTIFICATE ->
+                base
+                    .border(2.dp, accent, shape)
+                    .padding(3.dp)
+                    .border(1.dp, accent, shape)
+            UiBorder.STICKER ->
+                base.drawBehind {
+                    // front box inset by the shadow offset so the shadow reads clearly
+                    val off = 5.dp.toPx()
+                    val corner = CornerRadius(8.dp.toPx())
+                    val boxSize =
+                        androidx.compose.ui.geometry
+                            .Size(size.width - off, size.height - off)
+                    drawRoundRect(
+                        accent,
+                        topLeft = Offset(off, off),
+                        size = boxSize,
+                        cornerRadius = corner,
+                    )
+                    drawRoundRect(bgColor, size = boxSize, cornerRadius = corner)
+                    drawRoundRect(
+                        accent,
+                        size = boxSize,
+                        cornerRadius = corner,
+                        style = Stroke(1.5.dp.toPx()),
+                    )
+                }
         }
-    }
     SwatchCell(isSelected, onClick, modifier) { Box(modifier = previewModifier) }
 }
 
@@ -571,38 +611,44 @@ private fun FillSwatch(
 ) {
     val accent = MaterialTheme.colors.primary
     val shape = RoundedCornerShape(8.dp)
-    val base = Modifier
-        .requiredSize(width = 52.dp, height = 32.dp)
-        .clip(shape)
-    val previewModifier = when (fill) {
-        // "none": faint outline with a diagonal strike-through
-        UiFill.NONE -> base
-            .border(1.dp, accent.copy(alpha = 0.25f), shape)
-            .drawBehind {
-                drawLine(
-                    accent.copy(alpha = 0.6f),
-                    start = Offset(4.dp.toPx(), size.height - 4.dp.toPx()),
-                    end = Offset(size.width - 4.dp.toPx(), 4.dp.toPx()),
-                    strokeWidth = 1.5.dp.toPx(),
+    val base =
+        Modifier
+            .requiredSize(width = 52.dp, height = 32.dp)
+            .clip(shape)
+    val previewModifier =
+        when (fill) {
+            // "none": faint outline with a diagonal strike-through
+            UiFill.NONE ->
+                base
+                    .border(1.dp, accent.copy(alpha = 0.25f), shape)
+                    .drawBehind {
+                        drawLine(
+                            accent.copy(alpha = 0.6f),
+                            start = Offset(4.dp.toPx(), size.height - 4.dp.toPx()),
+                            end = Offset(size.width - 4.dp.toPx(), 4.dp.toPx()),
+                            strokeWidth = 1.5.dp.toPx(),
+                        )
+                    }
+            UiFill.TONAL -> base.background(tonalFillColor(), shape)
+            UiFill.GRADIENT ->
+                base.background(
+                    Brush.linearGradient(
+                        listOf(
+                            lerp(MaterialTheme.colors.background, accent, 0.10f),
+                            lerp(MaterialTheme.colors.background, accent, 0.40f),
+                        ),
+                    ),
+                    shape,
                 )
-            }
-        UiFill.TONAL -> base.background(tonalFillColor(), shape)
-        UiFill.GRADIENT -> base.background(
-            Brush.linearGradient(
-                listOf(
-                    lerp(MaterialTheme.colors.background, accent, 0.10f),
-                    lerp(MaterialTheme.colors.background, accent, 0.40f),
-                ),
-            ),
-            shape,
-        )
-        else -> base
-            .border(1.dp, accent.copy(alpha = 0.25f), shape)
-            .patternFill(
-                fill, shape,
-                lerp(MaterialTheme.colors.background, accent, 0.45f),
-            )
-    }
+            else ->
+                base
+                    .border(1.dp, accent.copy(alpha = 0.25f), shape)
+                    .patternFill(
+                        fill,
+                        shape,
+                        lerp(MaterialTheme.colors.background, accent, 0.45f),
+                    )
+        }
     SwatchCell(isSelected, onClick, modifier) { Box(modifier = previewModifier) }
 }
 
@@ -614,25 +660,30 @@ private fun InvertSwatch(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .clickable(onClick = onClick)
-            .padding(vertical = 6.dp),
+        modifier =
+            modifier
+                .clickable(onClick = onClick)
+                .padding(vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
-            modifier = Modifier
-                .requiredSize(44.dp)
-                .clip(CircleShape)
-                .drawBehind {
-                    drawArc(Color.Black, 90f, 180f, useCenter = true)
-                    drawArc(Color.White, 270f, 180f, useCenter = true)
-                }
-                .border(
-                    width = if (isSelected) 3.dp else 1.dp,
-                    color = if (isSelected) MaterialTheme.colors.onBackground
-                    else MaterialTheme.colors.onBackground.copy(alpha = 0.3f),
-                    shape = CircleShape,
-                ),
+            modifier =
+                Modifier
+                    .requiredSize(44.dp)
+                    .clip(CircleShape)
+                    .drawBehind {
+                        drawArc(Color.Black, 90f, 180f, useCenter = true)
+                        drawArc(Color.White, 270f, 180f, useCenter = true)
+                    }.border(
+                        width = if (isSelected) 3.dp else 1.dp,
+                        color =
+                            if (isSelected) {
+                                MaterialTheme.colors.onBackground
+                            } else {
+                                MaterialTheme.colors.onBackground.copy(alpha = 0.3f)
+                            },
+                        shape = CircleShape,
+                    ),
             contentAlignment = Alignment.Center,
         ) {
             if (isSelected) {
@@ -658,38 +709,50 @@ private fun ThemeSwatch(
     val palette = theme.palette(customColor)
     val swatchColor = if (darkMode) palette.accentDark else palette.accent
     Column(
-        modifier = modifier
-            .clickable(onClick = onClick)
-            .padding(vertical = 6.dp),
+        modifier =
+            modifier
+                .clickable(onClick = onClick)
+                .padding(vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
-            modifier = Modifier
-                .requiredSize(44.dp)
-                .clip(CircleShape)
-                .background(swatchColor)
-                .let { base ->
-                    if (theme == UiTheme.CUSTOM) {
-                        // rainbow ring marks the adjustable custom color
-                        base.border(
-                            width = if (isSelected) 4.dp else 3.dp,
-                            brush = Brush.sweepGradient(
-                                listOf(
-                                    Color.Red, Color.Yellow, Color.Green, Color.Cyan,
-                                    Color.Blue, Color.Magenta, Color.Red,
-                                ),
-                            ),
-                            shape = CircleShape,
-                        )
-                    } else {
-                        base.border(
-                            width = if (isSelected) 3.dp else 1.dp,
-                            color = if (isSelected) MaterialTheme.colors.onBackground
-                            else MaterialTheme.colors.onBackground.copy(alpha = 0.3f),
-                            shape = CircleShape,
-                        )
-                    }
-                },
+            modifier =
+                Modifier
+                    .requiredSize(44.dp)
+                    .clip(CircleShape)
+                    .background(swatchColor)
+                    .let { base ->
+                        if (theme == UiTheme.CUSTOM) {
+                            // rainbow ring marks the adjustable custom color
+                            base.border(
+                                width = if (isSelected) 4.dp else 3.dp,
+                                brush =
+                                    Brush.sweepGradient(
+                                        listOf(
+                                            Color.Red,
+                                            Color.Yellow,
+                                            Color.Green,
+                                            Color.Cyan,
+                                            Color.Blue,
+                                            Color.Magenta,
+                                            Color.Red,
+                                        ),
+                                    ),
+                                shape = CircleShape,
+                            )
+                        } else {
+                            base.border(
+                                width = if (isSelected) 3.dp else 1.dp,
+                                color =
+                                    if (isSelected) {
+                                        MaterialTheme.colors.onBackground
+                                    } else {
+                                        MaterialTheme.colors.onBackground.copy(alpha = 0.3f)
+                                    },
+                                shape = CircleShape,
+                            )
+                        }
+                    },
             contentAlignment = Alignment.Center,
         ) {
             if (isSelected) {
@@ -707,6 +770,12 @@ private fun ThemeSwatch(
 @Composable
 private fun PreviewThemeColorContent() {
     MyTheme {
-        ThemeColorContent(onSelect = { Unit }, onSelectBorder = { Unit }, onSelectFill = { Unit }, onToggleInvert = { Unit }, onGradientPreview = { _, _ -> }, onGradientPicked = { _, _ -> }, onCustomColorPreview = { Unit }, onCustomColorPicked = { Unit }, onClose = { Unit })
+        ThemeColorContent(onSelect = {
+            Unit
+        }, onSelectBorder = { Unit }, onSelectFill = { Unit }, onToggleInvert = { Unit }, onGradientPreview = {
+            _,
+            _,
+            ->
+        }, onGradientPicked = { _, _ -> }, onCustomColorPreview = { Unit }, onCustomColorPicked = { Unit }, onClose = { Unit })
     }
 }

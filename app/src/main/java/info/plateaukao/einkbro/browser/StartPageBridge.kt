@@ -24,7 +24,9 @@ import org.koin.core.component.inject
  * the current page really is the start page before doing anything — arbitrary
  * sites must not read history/bookmark-based suggestions or steer the tab.
  */
-class StartPageBridge(private val webView: EBWebView) : KoinComponent {
+class StartPageBridge(
+    private val webView: EBWebView,
+) : KoinComponent {
     private val coroutineScope: CoroutineScope by inject()
     private val suggestionViewModel = SearchSuggestionViewModel()
 
@@ -32,27 +34,31 @@ class StartPageBridge(private val webView: EBWebView) : KoinComponent {
     private var searchJob: Job? = null
 
     @JavascriptInterface
-    fun querySuggestions(query: String, token: Int) {
+    fun querySuggestions(
+        query: String,
+        token: Int,
+    ) {
         webView.post {
             if (webView.url != Constants.START_PAGE_URL) return@post
             searchJob?.cancel()
-            searchJob = coroutineScope.launch(Dispatchers.IO) {
-                if (query.isEmpty() || !initialized) {
-                    suggestionViewModel.initSuggestions()
-                    initialized = true
+            searchJob =
+                coroutineScope.launch(Dispatchers.IO) {
+                    if (query.isEmpty() || !initialized) {
+                        suggestionViewModel.initSuggestions()
+                        initialized = true
+                    }
+                    if (query.isNotEmpty()) {
+                        suggestionViewModel.updateSuggestions(query)
+                    }
+                    val json = toJson(suggestionViewModel.suggestions.value)
+                    webView.post {
+                        if (webView.url != Constants.START_PAGE_URL) return@post
+                        webView.evaluateJavascript(
+                            "window.__einkbroSuggestions && window.__einkbroSuggestions($token, $json)",
+                            null,
+                        )
+                    }
                 }
-                if (query.isNotEmpty()) {
-                    suggestionViewModel.updateSuggestions(query)
-                }
-                val json = toJson(suggestionViewModel.suggestions.value)
-                webView.post {
-                    if (webView.url != Constants.START_PAGE_URL) return@post
-                    webView.evaluateJavascript(
-                        "window.__einkbroSuggestions && window.__einkbroSuggestions($token, $json)",
-                        null
-                    )
-                }
-            }
         }
     }
 
@@ -74,7 +80,7 @@ class StartPageBridge(private val webView: EBWebView) : KoinComponent {
                 JSONObject()
                     .put("title", it.title ?: "")
                     .put("url", it.url)
-                    .put("s", it.type == RecordType.Suggestion)
+                    .put("s", it.type == RecordType.Suggestion),
             )
         }
         return array.toString()

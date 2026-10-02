@@ -15,11 +15,15 @@ class DualCaptionProcessor : KoinComponent {
     private val config: ConfigManager by inject()
     private val serializer = TimedText.serializer()
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-    }
+    private val json =
+        Json {
+            ignoreUnknownKeys = true
+        }
 
-    fun processUrl(url: String, requestHeaders: Map<String, String>? = null): String? {
+    fun processUrl(
+        url: String,
+        requestHeaders: Map<String, String>? = null,
+    ): String? {
         if (!url.contains(urlWithCaption)) return null
 
         val rawCaption: ByteArray = runBlocking { fetchWithCookies(url, requestHeaders) }
@@ -49,8 +53,10 @@ class DualCaptionProcessor : KoinComponent {
 
                     val newCaptionSeg = newCaptionJson.events.firstOrNull { it.tStartMs == event.tStartMs }?.segs
                     if (!newCaptionSeg.isNullOrEmpty()) {
-                        first.utf8 += ("\n" +
-                                newCaptionSeg.map { it.utf8 }.reduce { acc, str -> acc + str })
+                        first.utf8 += (
+                            "\n" +
+                                newCaptionSeg.map { it.utf8 }.reduce { acc, str -> acc + str }
+                        )
                     }
                     event.segs.clear()
                     event.segs.add(first)
@@ -82,14 +88,14 @@ class DualCaptionProcessor : KoinComponent {
     private suspend fun fetchWithCookies(
         url: String,
         requestHeaders: Map<String, String>? = null,
-    ): ByteArray {
-        return withContext(Dispatchers.IO) {
+    ): ByteArray =
+        withContext(Dispatchers.IO) {
             try {
                 val connection = URL(url).openConnection() as HttpURLConnection
                 if (requestHeaders.isNullOrEmpty()) {
                     connection.addRequestProperty(
                         "User-Agent",
-                        "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
+                        "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
                     )
                 } else {
                     // Mirror the player's original request headers (User-Agent,
@@ -111,7 +117,8 @@ class DualCaptionProcessor : KoinComponent {
                             // Don't forward conditional-fetch headers; we always
                             // need the full body, never a 304.
                             "if-none-match", "if-modified-since",
-                            "if-match", "if-unmodified-since" -> Unit
+                            "if-match", "if-unmodified-since",
+                            -> Unit
                             else -> connection.addRequestProperty(name, value)
                         }
                     }
@@ -124,12 +131,13 @@ class DualCaptionProcessor : KoinComponent {
                 connection.connect()
                 if (connection.responseCode == HttpURLConnection.HTTP_OK) {
                     connection.inputStream.use { it.readBytes() }
-                } else ByteArray(0)
+                } else {
+                    ByteArray(0)
+                }
             } catch (e: Exception) {
                 ByteArray(0)
             }
         }
-    }
 
     companion object {
         const val urlWithCaption = "timedtext"

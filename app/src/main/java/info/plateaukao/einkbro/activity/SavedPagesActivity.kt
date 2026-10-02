@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -28,16 +27,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.database.SavedPage
 import info.plateaukao.einkbro.unit.IntentUnit
 import info.plateaukao.einkbro.view.compose.EmptyListPlaceholder
 import info.plateaukao.einkbro.view.compose.ListScaffold
+import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
 import info.plateaukao.einkbro.viewmodel.SavedPageViewModel
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
+import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
 class SavedPagesActivity : LocaleAwareComponentActivity() {
     private val viewModel: SavedPageViewModel by koinViewModel()
@@ -57,14 +57,14 @@ class SavedPagesActivity : LocaleAwareComponentActivity() {
                         if (file.exists()) {
                             IntentUnit.launchUrl(
                                 this@SavedPagesActivity,
-                                "file://${savedPage.filePath}"
+                                "file://${savedPage.filePath}",
                             )
                             finish()
                         }
                     },
                     onPageDelete = { savedPage ->
                         viewModel.deleteSavedPage(savedPage)
-                    }
+                    },
                 )
             }
         }
@@ -112,13 +112,13 @@ fun SavedPageItem(
 ) {
     val dateFormatter = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onDelete,
-            )
-            .padding(vertical = 10.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onDelete,
+                ).padding(vertical = 10.dp),
     ) {
         Text(
             text = savedPage.title,
@@ -126,9 +126,10 @@ fun SavedPageItem(
             style = MaterialTheme.typography.body1,
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -142,15 +143,17 @@ fun SavedPageItem(
             Text(
                 modifier = Modifier.padding(start = 8.dp),
                 text = dateFormatter.format(savedPage.savedAt),
-                style = MaterialTheme.typography.caption.copy(
-                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f),
-                ),
+                style =
+                    MaterialTheme.typography.caption.copy(
+                        color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f),
+                    ),
             )
             Icon(
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .size(24.dp)
-                    .clickable { onDelete() },
+                modifier =
+                    Modifier
+                        .padding(start = 8.dp)
+                        .size(24.dp)
+                        .clickable { onDelete() },
                 imageVector = ImageVector.vectorResource(id = R.drawable.icon_delete),
                 contentDescription = "delete",
                 tint = MaterialTheme.colors.onBackground,

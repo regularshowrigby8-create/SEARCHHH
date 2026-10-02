@@ -9,8 +9,10 @@ import info.plateaukao.einkbro.view.statusbar.StatusbarItem
 import info.plateaukao.einkbro.view.statusbar.StatusbarPosition
 import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction
 
-class UiConfig(private val context: Context, private val sp: SharedPreferences) {
-
+class UiConfig(
+    private val context: Context,
+    private val sp: SharedPreferences,
+) {
     var toolbarPosition: ToolbarPosition
         get() {
             val posOrdinal = sp.getInt(K_TOOLBAR_POSITION, -1)
@@ -22,7 +24,9 @@ class UiConfig(private val context: Context, private val sp: SharedPreferences) 
 
     var isToolbarOnTop: Boolean
         get() = toolbarPosition == ToolbarPosition.Top
-        set(value) { toolbarPosition = if (value) ToolbarPosition.Top else ToolbarPosition.Bottom }
+        set(value) {
+            toolbarPosition = if (value) ToolbarPosition.Top else ToolbarPosition.Bottom
+        }
 
     val isVerticalToolbar: Boolean
         get() = toolbarPosition == ToolbarPosition.Left || toolbarPosition == ToolbarPosition.Right
@@ -41,9 +45,10 @@ class UiConfig(private val context: Context, private val sp: SharedPreferences) 
                 token.toIntOrNull()?.let { StatusbarItem.fromOrdinal(it) }
             }
         }
-        set(value) = sp.edit {
-            putString(K_STATUSBAR_ITEMS, value.joinToString(",") { it.ordinal.toString() })
-        }
+        set(value) =
+            sp.edit {
+                putString(K_STATUSBAR_ITEMS, value.joinToString(",") { it.ordinal.toString() })
+            }
 
     var shouldHideToolbar by BooleanPreference(sp, K_HIDE_TOOLBAR, false)
     var showToolbarFirst by BooleanPreference(sp, K_SHOW_TOOLBAR_FIRST, true)
@@ -58,14 +63,19 @@ class UiConfig(private val context: Context, private val sp: SharedPreferences) 
 
     var hiddenMenuItems: Set<String>
         get() = sp.getStringSet(K_HIDDEN_MENU_ITEMS, emptySet())?.toSet() ?: emptySet()
+
         // Defensive copy: SharedPreferences takes ownership of the Set passed to
         // putStringSet and the caller must not mutate it afterward.
         set(value) = sp.edit { putStringSet(K_HIDDEN_MENU_ITEMS, value.toSet()) }
 
     // Flat ordering of menu item names. Empty → use defaults.
     var menuItemOrder: List<String>
-        get() = sp.getString(K_MENU_ITEM_ORDER, "").orEmpty()
-            .split(",").filter { it.isNotBlank() }
+        get() =
+            sp
+                .getString(K_MENU_ITEM_ORDER, "")
+                .orEmpty()
+                .split(",")
+                .filter { it.isNotBlank() }
         set(value) = sp.edit { putString(K_MENU_ITEM_ORDER, value.joinToString(",")) }
 
     var fabPosition: FabPosition
@@ -77,8 +87,11 @@ class UiConfig(private val context: Context, private val sp: SharedPreferences) 
     var fabCustomPosition: Point
         get() {
             val str = sp.getString(K_FAB_POSITION, "").orEmpty()
-            return if (str.isBlank()) Point(0, 0)
-            else Point(str.split(",").first().toInt(), str.split(",").last().toInt())
+            return if (str.isBlank()) {
+                Point(0, 0)
+            } else {
+                Point(str.split(",").first().toInt(), str.split(",").last().toInt())
+            }
         }
         set(value) {
             sp.edit { putString(K_FAB_POSITION, "${value.x},${value.y}") }
@@ -87,8 +100,11 @@ class UiConfig(private val context: Context, private val sp: SharedPreferences) 
     var fabCustomPositionLandscape: Point
         get() {
             val str = sp.getString(K_FAB_POSITION_LAND, "").orEmpty()
-            return if (str.isBlank()) Point(0, 0)
-            else Point(str.split(",").first().toInt(), str.split(",").last().toInt())
+            return if (str.isBlank()) {
+                Point(0, 0)
+            } else {
+                Point(str.split(",").first().toInt(), str.split(",").last().toInt())
+            }
         }
         set(value) {
             sp.edit { putString(K_FAB_POSITION_LAND, "${value.x},${value.y}") }

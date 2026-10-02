@@ -19,7 +19,9 @@ import android.view.View
  * The stroke is a dark core over a light halo so it reads on both light and
  * dark page backgrounds, matching the contrast trick of the old dashed border.
  */
-class TouchAreaHintView(context: Context) : View(context) {
+class TouchAreaHintView(
+    context: Context,
+) : View(context) {
     companion object {
         private const val RADIUS_DP = 10f
         private const val TAIL_DP = 4f
@@ -40,16 +42,18 @@ class TouchAreaHintView(context: Context) : View(context) {
     private val radius = RADIUS_DP * density
     private val tail = TAIL_DP * density
 
-    private val corePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        strokeCap = Paint.Cap.ROUND
-        strokeWidth = CORE_WIDTH_DP * density
-        color = CORE_COLOR
-    }
-    private val haloPaint = Paint(corePaint).apply {
-        strokeWidth = HALO_WIDTH_DP * density
-        color = HALO_COLOR
-    }
+    private val corePaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeCap = Paint.Cap.ROUND
+            strokeWidth = CORE_WIDTH_DP * density
+            color = CORE_COLOR
+        }
+    private val haloPaint =
+        Paint(corePaint).apply {
+            strokeWidth = HALO_WIDTH_DP * density
+            color = HALO_COLOR
+        }
 
     private val path = Path()
     private val arcRect = RectF()

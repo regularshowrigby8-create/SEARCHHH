@@ -63,9 +63,10 @@ class EinkImageInterceptor(
                 if (responseContentType?.contains("image/gif", ignoreCase = true) == true) {
                     return null
                 }
-                val mimeType = getImageMimeFromContentType(responseContentType)
-                    ?: getImageMimeFromUrl(url)
-                    ?: return null
+                val mimeType =
+                    getImageMimeFromContentType(responseContentType)
+                        ?: getImageMimeFromUrl(url)
+                        ?: return null
 
                 val body = response.body ?: return null
 
@@ -78,20 +79,22 @@ class EinkImageInterceptor(
                     einkImageCache.markOversized(url)
                     return null
                 }
-                val originalBytes = readAtMost(body.byteStream(), MAX_SOURCE_BYTES, declaredLength)
-                    ?: run {
-                        einkImageCache.markOversized(url)
-                        return null
-                    }
+                val originalBytes =
+                    readAtMost(body.byteStream(), MAX_SOURCE_BYTES, declaredLength)
+                        ?: run {
+                            einkImageCache.markOversized(url)
+                            return null
+                        }
 
                 // Bound concurrent decode/process/encode: several WebView threads
                 // intercept at once, and each full-size bitmap is tens of MB.
                 processSemaphore.acquire()
-                val processedBytes = try {
-                    EinkImageProcessor.processBytes(originalBytes, mimeType, adjustment.strength)
-                } finally {
-                    processSemaphore.release()
-                }
+                val processedBytes =
+                    try {
+                        EinkImageProcessor.processBytes(originalBytes, mimeType, adjustment.strength)
+                    } finally {
+                        processSemaphore.release()
+                    }
 
                 // null means pass-through (tiny or undecodable): serve the already
                 // downloaded original instead of making the WebView re-fetch it.
@@ -102,8 +105,12 @@ class EinkImageInterceptor(
                 val responseHeaders = mutableMapOf<String, String>()
                 for ((name, value) in response.headers) {
                     // Skip headers we override or that no longer apply after re-encoding
-                    if (name.lowercase() !in setOf(
-                            "content-length", "content-encoding", "transfer-encoding", "content-type"
+                    if (name.lowercase() !in
+                        setOf(
+                            "content-length",
+                            "content-encoding",
+                            "transfer-encoding",
+                            "content-type",
                         )
                     ) {
                         responseHeaders[name] = value
@@ -112,8 +119,12 @@ class EinkImageInterceptor(
                 WebResourceResponse(
                     // HTTP/2 responses have no reason phrase; an empty one makes
                     // the WebResourceResponse constructor throw
-                    mimeType, null, response.code, response.message.ifBlank { "OK" },
-                    responseHeaders, ByteArrayInputStream(servedBytes)
+                    mimeType,
+                    null,
+                    response.code,
+                    response.message.ifBlank { "OK" },
+                    responseHeaders,
+                    ByteArrayInputStream(servedBytes),
                 )
             }
         } catch (e: Exception) {
@@ -126,7 +137,11 @@ class EinkImageInterceptor(
      * [sizeHint] (the Content-Length, or -1) presizes the buffer so a known
      * length costs one allocation instead of repeated doubling.
      */
-    private fun readAtMost(input: InputStream, maxBytes: Long, sizeHint: Long): ByteArray? {
+    private fun readAtMost(
+        input: InputStream,
+        maxBytes: Long,
+        sizeHint: Long,
+    ): ByteArray? {
         val output = ByteArrayOutputStream(sizeHint.coerceIn(0L, maxBytes).toInt().coerceAtLeast(DEFAULT_BUFFER_SIZE))
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         var total = 0L
@@ -146,7 +161,8 @@ class EinkImageInterceptor(
         // close to what Chromium's own stack pays; a fresh HttpURLConnection
         // per request paid a new TLS handshake per image on many CDNs.
         private val httpClient by lazy {
-            OkHttpClient.Builder()
+            OkHttpClient
+                .Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .build()
@@ -164,8 +180,10 @@ class EinkImageInterceptor(
 
     private fun looksLikeImageUrl(url: String): Boolean {
         val lower = url.substringBefore('?').substringBefore('#').lowercase()
-        return lower.endsWith(".jpg") || lower.endsWith(".jpeg") ||
-                lower.endsWith(".png") || lower.endsWith(".webp")
+        return lower.endsWith(".jpg") ||
+            lower.endsWith(".jpeg") ||
+            lower.endsWith(".png") ||
+            lower.endsWith(".webp")
     }
 
     private fun hasImageAcceptHeader(request: WebResourceRequest): Boolean {

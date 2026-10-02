@@ -8,7 +8,6 @@ import info.plateaukao.einkbro.database.Bookmark
 import info.plateaukao.einkbro.database.BookmarkManager
 import info.plateaukao.einkbro.database.DomainConfigurationData
 import info.plateaukao.einkbro.util.Constants
-import info.plateaukao.einkbro.util.TranslationLanguage
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.Json.Default.decodeFromString
 import org.koin.core.component.KoinComponent
@@ -67,11 +66,15 @@ class ConfigManager(
 
     // Per-domain configuration (extracted to DomainConfigManager); forwards kept so
     // existing call sites are unchanged.
-    val domain = DomainConfigManager(
-        display, browser, translation, touch,
-        persist = { bookmarkManager.addDomainConfiguration(it) },
-        remove = { bookmarkManager.deleteDomainConfiguration(it) },
-    )
+    val domain =
+        DomainConfigManager(
+            display,
+            browser,
+            translation,
+            touch,
+            persist = { bookmarkManager.addDomainConfiguration(it) },
+            remove = { bookmarkManager.deleteDomainConfiguration(it) },
+        )
 
     var domainConfigurationMap: MutableMap<String, DomainConfigurationData>
         get() = domain.domainConfigurationMap
@@ -113,13 +116,14 @@ class ConfigManager(
 
     fun getWebViewDarkMode(url: String): Boolean? = domain.getWebViewDarkMode(url)
 
-    fun isAppDarkMode(context: Context): Boolean = when (display.darkMode) {
-        DarkMode.FORCE_ON -> true
-        DarkMode.DISABLED -> false
-        DarkMode.SYSTEM ->
-            (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                Configuration.UI_MODE_NIGHT_YES
-    }
+    fun isAppDarkMode(context: Context): Boolean =
+        when (display.darkMode) {
+            DarkMode.FORCE_ON -> true
+            DarkMode.DISABLED -> false
+            DarkMode.SYSTEM ->
+                (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                    Configuration.UI_MODE_NIGHT_YES
+        }
 
     // Per-site display overrides (null = use global setting)
 
@@ -158,7 +162,8 @@ class ConfigManager(
             if (string.isBlank()) return emptyList()
 
             return try {
-                string.split(RECENT_BOOKMARKS_SEPARATOR)
+                string
+                    .split(RECENT_BOOKMARKS_SEPARATOR)
                     .mapNotNull { it.toRecentBookmark() }
                     .sortedByDescending { it.count }
             } catch (exception: Exception) {
@@ -177,7 +182,7 @@ class ConfigManager(
                 } else {
                     putString(
                         K_RECENT_BOOKMARKS,
-                        value.joinToString(RECENT_BOOKMARKS_SEPARATOR) { it.toSerializedString() }
+                        value.joinToString(RECENT_BOOKMARKS_SEPARATOR) { it.toSerializedString() },
                     )
                 }
             }
@@ -192,11 +197,12 @@ class ConfigManager(
             newList.add(RecentBookmark(bookmark.title, bookmark.url, 1))
         }
 
-        recentBookmarks = if (newList.size > RECENT_BOOKMARK_LIST_SIZE) {
-            newList.sortedByDescending { it.count }.subList(0, RECENT_BOOKMARK_LIST_SIZE - 1)
-        } else {
-            newList.sortedByDescending { it.count }
-        }
+        recentBookmarks =
+            if (newList.size > RECENT_BOOKMARK_LIST_SIZE) {
+                newList.sortedByDescending { it.count }.subList(0, RECENT_BOOKMARK_LIST_SIZE - 1)
+            } else {
+                newList.sortedByDescending { it.count }
+            }
     }
 
     fun clearRecentBookmarks() {
@@ -225,7 +231,7 @@ class ConfigManager(
                 } else {
                     putString(
                         K_START_PAGE_ITEMS,
-                        Json.encodeToString(startPageItemsSerializer, value)
+                        Json.encodeToString(startPageItemsSerializer, value),
                     )
                 }
             }
@@ -250,9 +256,12 @@ class ConfigManager(
     var splitSearchItemInfoList: List<SplitSearchItemInfo>
         get() {
             val str = sp.getString(K_SPLIT_SEARCH_ITEMS, "").orEmpty()
-            return if (str.isBlank()) emptyList()
-            else str.split("###").mapNotNull {
-                decodeFromString(SplitSearchItemInfo.serializer(), it)
+            return if (str.isBlank()) {
+                emptyList()
+            } else {
+                str.split("###").mapNotNull {
+                    decodeFromString(SplitSearchItemInfo.serializer(), it)
+                }
             }
         }
         private set(value) {
@@ -261,7 +270,7 @@ class ConfigManager(
                     K_SPLIT_SEARCH_ITEMS,
                     value.joinToString("###") {
                         Json.encodeToString(SplitSearchItemInfo.serializer(), it)
-                    }
+                    },
                 )
             }
         }
@@ -338,10 +347,15 @@ class ConfigManager(
     }
 
     private fun String.toSavedFileInfoList(): MutableList<SavedFileInfo> =
-        if (this.isEmpty() || this == SAVED_FILE_INFO_SEPARATOR) mutableListOf()
-        else this.split(SAVED_FILE_INFO_SEPARATOR).map { fileString ->
-            SavedFileInfo.fromString(fileString)
-        }.toMutableList()
+        if (this.isEmpty() || this == SAVED_FILE_INFO_SEPARATOR) {
+            mutableListOf()
+        } else {
+            this
+                .split(SAVED_FILE_INFO_SEPARATOR)
+                .map { fileString ->
+                    SavedFileInfo.fromString(fileString)
+                }.toMutableList()
+        }
 
     private fun toSavedFileInfosString(list: List<SavedFileInfo>): String =
         list.joinToString(separator = SAVED_FILE_INFO_SEPARATOR) { it.toPrefString() }
@@ -361,7 +375,6 @@ class ConfigManager(
     fun removeSavedPdfFile(pdfFileInfo: SavedFileInfo) {
         savedPdfFileInfos = savedPdfFileInfos.toMutableList().apply { remove(pdfFileInfo) }
     }
-
 }
 
 // Property delegates moved to PreferenceDelegates.kt

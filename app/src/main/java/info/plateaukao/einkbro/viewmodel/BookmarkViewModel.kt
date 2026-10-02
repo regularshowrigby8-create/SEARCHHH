@@ -17,8 +17,10 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.Stack
 
-class BookmarkViewModel(private val bookmarkManager: BookmarkManager) : ViewModel(), KoinComponent {
-
+class BookmarkViewModel(
+    private val bookmarkManager: BookmarkManager,
+) : ViewModel(),
+    KoinComponent {
     private val faviconFetcher: FaviconFetcher by inject()
 
     /** Bumped when a stored icon changes so remembered bitmaps re-read the store. */
@@ -45,15 +47,16 @@ class BookmarkViewModel(private val bookmarkManager: BookmarkManager) : ViewMode
     }
 
     private fun updateUiState() {
-        loadJob = viewModelScope.launch {
-            val bookmarks = bookmarkManager.getBookmarksByParent(folderStack.peek().id)
-            currentFolder.value = folderStack.peek()
-            if (sortMode == BookmarkManager.SortMode.BY_ORDER) {
-                _uiState.value = bookmarks.sortedBy { bookmark -> bookmark.order }
-            } else {
-                _uiState.value = bookmarks.sortedBy { bookmark -> bookmark.title }
+        loadJob =
+            viewModelScope.launch {
+                val bookmarks = bookmarkManager.getBookmarksByParent(folderStack.peek().id)
+                currentFolder.value = folderStack.peek()
+                if (sortMode == BookmarkManager.SortMode.BY_ORDER) {
+                    _uiState.value = bookmarks.sortedBy { bookmark -> bookmark.order }
+                } else {
+                    _uiState.value = bookmarks.sortedBy { bookmark -> bookmark.title }
+                }
             }
-        }
     }
 
     fun deleteBookmark(bookmark: Bookmark) {
@@ -63,11 +66,13 @@ class BookmarkViewModel(private val bookmarkManager: BookmarkManager) : ViewMode
         }
     }
 
-    fun getFavicon(bookmark: Bookmark): Bitmap? =
-        bookmarkManager.findFaviconBitmapBy(bookmark.url)
+    fun getFavicon(bookmark: Bookmark): Bitmap? = bookmarkManager.findFaviconBitmapBy(bookmark.url)
 
     /** Re-fetches the site's icon and replaces the stored one; [onDone] gets whether one was found. */
-    fun refreshFavicon(bookmark: Bookmark, onDone: (Boolean) -> Unit) {
+    fun refreshFavicon(
+        bookmark: Bookmark,
+        onDone: (Boolean) -> Unit,
+    ) {
         viewModelScope.launch {
             val found = faviconFetcher.refresh(bookmark.url) != null
             if (found) faviconVersion.value++
@@ -94,7 +99,10 @@ class BookmarkViewModel(private val bookmarkManager: BookmarkManager) : ViewMode
         updateUiState()
     }
 
-    fun insertBookmark(bookmark: Bookmark, doneAction: (() -> Unit)? = null) {
+    fun insertBookmark(
+        bookmark: Bookmark,
+        doneAction: (() -> Unit)? = null,
+    ) {
         viewModelScope.launch {
             bookmarkManager.insert(bookmark)
             updateUiState()
@@ -110,26 +118,27 @@ class BookmarkViewModel(private val bookmarkManager: BookmarkManager) : ViewMode
         }
     }
 
-    suspend fun insertDirectory(title: String, parentId: Int = 0) {
+    suspend fun insertDirectory(
+        title: String,
+        parentId: Int = 0,
+    ) {
         bookmarkManager.insert(
             Bookmark(
                 title = title,
                 url = "",
                 isDirectory = true,
                 parent = parentId,
-            )
+            ),
         )
         updateUiState()
     }
 
-    suspend fun getBookmarkFolders(): List<Bookmark> {
-        return bookmarkManager.getBookmarkFolders()
-    }
+    suspend fun getBookmarkFolders(): List<Bookmark> = bookmarkManager.getBookmarkFolders()
 }
 
-class BookmarkViewModelFactory(private val bookmarkManager: BookmarkManager) :
-    ViewModelProvider.NewInstanceFactory() {
+class BookmarkViewModelFactory(
+    private val bookmarkManager: BookmarkManager,
+) : ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        BookmarkViewModel(bookmarkManager) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = BookmarkViewModel(bookmarkManager) as T
 }

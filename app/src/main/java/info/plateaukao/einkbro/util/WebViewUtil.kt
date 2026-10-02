@@ -9,14 +9,13 @@ object WebViewUtil {
     private const val CHROME_PACKAGE = "com.android.chrome"
     private const val SYSTEM_SETTINGS_PACKAGE = "com.android.settings"
 
-    fun spoofedPackageName(context: Context): String {
-        return try {
+    fun spoofedPackageName(context: Context): String =
+        try {
             context.packageManager.getPackageInfo(CHROME_PACKAGE, PackageManager.GET_META_DATA)
 
             CHROME_PACKAGE
         } catch (_: PackageManager.NameNotFoundException) {
             SYSTEM_SETTINGS_PACKAGE
         }
-    }
     // end snippet
 }

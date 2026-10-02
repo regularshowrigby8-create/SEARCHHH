@@ -36,9 +36,9 @@ import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.database.DomainConfigurationData
 import info.plateaukao.einkbro.view.compose.EmptyListPlaceholder
 import info.plateaukao.einkbro.view.compose.ListScaffold
+import info.plateaukao.einkbro.view.compose.onTopBar
 import info.plateaukao.einkbro.view.dialog.DialogManager
 import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
-import info.plateaukao.einkbro.view.compose.onTopBar
 
 /**
  * Every stored site rule, grouped by host, so per-site settings can be
@@ -46,7 +46,6 @@ import info.plateaukao.einkbro.view.compose.onTopBar
  * the regular site-settings editor for that rule.
  */
 class SiteRuleListActivity : LocaleAwareComponentActivity() {
-
     private val dialogManager: DialogManager by lazy { DialogManager(this) }
     private var rules by mutableStateOf<List<DomainConfigurationData>>(emptyList())
 
@@ -124,7 +123,7 @@ private fun SiteRuleList(
 ) {
     if (rules.isEmpty()) {
         EmptyListPlaceholder(
-            stringResource(R.string.list_empty) + "\n" + stringResource(R.string.site_rules_empty_hint)
+            stringResource(R.string.list_empty) + "\n" + stringResource(R.string.site_rules_empty_hint),
         )
         return
     }
@@ -151,10 +150,11 @@ private fun SiteRuleRow(
 ) {
     val color = MaterialTheme.colors.onBackground
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onEdit(rule) }
-            .padding(start = if (rule.isHostRule) 16.dp else 32.dp, end = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable { onEdit(rule) }
+                .padding(start = if (rule.isHostRule) 16.dp else 32.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f).padding(vertical = 12.dp)) {
@@ -185,37 +185,41 @@ private fun SiteRuleRow(
 /** Which settings a rule touches, e.g. "Font size, Desktop mode, Custom CSS". */
 @Composable
 private fun overrideSummary(rule: DomainConfigurationData): String {
-    val parts = buildList {
-        if (rule.fontSize != null) add(stringResource(R.string.font_size))
-        if (rule.fontType != null) add(stringResource(R.string.font_type))
-        if (rule.boldFontStyle != null) add(stringResource(R.string.bold_font))
-        if (rule.fontBoldness != null) add(stringResource(R.string.bold_font))
-        if (rule.blackFontStyle != null) add(stringResource(R.string.black_font))
-        if (rule.shouldUseWhiteBackground != null) add(stringResource(R.string.white_background))
-        if (rule.shouldInvertColor != null) add(stringResource(R.string.menu_invert_color))
-        if (rule.webViewDarkMode != null) add(stringResource(R.string.site_webview_dark_mode))
-        if (rule.desktopMode != null) add(stringResource(R.string.desktop_mode))
-        if (rule.desktopViewportWidth != null) add(stringResource(R.string.site_force_viewport_width))
-        if (rule.pageReservedOffset != null) add(stringResource(R.string.setting_title_page_left_value))
-        if (rule.enableJavascript != null) add(stringResource(R.string.setting_title_javascript))
-        if (rule.enableAdBlock != null) add(stringResource(R.string.setting_title_adblock))
-        if (rule.enableCookies != null) add(stringResource(R.string.setting_title_cookie))
-        if (rule.enableImages != null) add(stringResource(R.string.setting_title_images))
-        if (rule.shouldTranslateSite != null) add(stringResource(R.string.action_category_translation))
-        if (rule.translationMode != null) add(stringResource(R.string.translation_mode))
-        if (!rule.customCss.isNullOrBlank()) {
-            add(scriptPart(R.string.site_custom_css, rule.customCssEnabled))
-        }
-        if (!rule.postLoadJavascript.isNullOrBlank()) {
-            add(scriptPart(R.string.site_post_load_js, rule.postLoadJavascriptEnabled))
-        }
-    }.distinct()
+    val parts =
+        buildList {
+            if (rule.fontSize != null) add(stringResource(R.string.font_size))
+            if (rule.fontType != null) add(stringResource(R.string.font_type))
+            if (rule.boldFontStyle != null) add(stringResource(R.string.bold_font))
+            if (rule.fontBoldness != null) add(stringResource(R.string.bold_font))
+            if (rule.blackFontStyle != null) add(stringResource(R.string.black_font))
+            if (rule.shouldUseWhiteBackground != null) add(stringResource(R.string.white_background))
+            if (rule.shouldInvertColor != null) add(stringResource(R.string.menu_invert_color))
+            if (rule.webViewDarkMode != null) add(stringResource(R.string.site_webview_dark_mode))
+            if (rule.desktopMode != null) add(stringResource(R.string.desktop_mode))
+            if (rule.desktopViewportWidth != null) add(stringResource(R.string.site_force_viewport_width))
+            if (rule.pageReservedOffset != null) add(stringResource(R.string.setting_title_page_left_value))
+            if (rule.enableJavascript != null) add(stringResource(R.string.setting_title_javascript))
+            if (rule.enableAdBlock != null) add(stringResource(R.string.setting_title_adblock))
+            if (rule.enableCookies != null) add(stringResource(R.string.setting_title_cookie))
+            if (rule.enableImages != null) add(stringResource(R.string.setting_title_images))
+            if (rule.shouldTranslateSite != null) add(stringResource(R.string.action_category_translation))
+            if (rule.translationMode != null) add(stringResource(R.string.translation_mode))
+            if (!rule.customCss.isNullOrBlank()) {
+                add(scriptPart(R.string.site_custom_css, rule.customCssEnabled))
+            }
+            if (!rule.postLoadJavascript.isNullOrBlank()) {
+                add(scriptPart(R.string.site_post_load_js, rule.postLoadJavascriptEnabled))
+            }
+        }.distinct()
     return if (parts.isEmpty()) stringResource(R.string.site_rules_no_overrides) else parts.joinToString(", ")
 }
 
 /** Script name, marked "(off)" when the rule keeps the code but has it switched off. */
 @Composable
-private fun scriptPart(labelRes: Int, enabled: Boolean): String {
+private fun scriptPart(
+    labelRes: Int,
+    enabled: Boolean,
+): String {
     val label = stringResource(labelRes)
     return if (enabled) label else stringResource(R.string.site_rule_part_off, label)
 }
@@ -224,12 +228,12 @@ private fun scriptPart(labelRes: Int, enabled: Boolean): String {
 private fun OverrideCountBadge(count: Int) {
     if (count == 0) return
     Box(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.12f),
-                shape = CircleShape,
-            )
-            .padding(horizontal = 8.dp, vertical = 2.dp),
+        modifier =
+            Modifier
+                .background(
+                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.12f),
+                    shape = CircleShape,
+                ).padding(horizontal = 8.dp, vertical = 2.dp),
     ) {
         Text(
             text = count.toString(),

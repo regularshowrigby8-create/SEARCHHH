@@ -9,8 +9,8 @@ import info.plateaukao.einkbro.preference.TranslationMode
 import info.plateaukao.einkbro.preference.TranslationTextStyle
 import info.plateaukao.einkbro.unit.HelperUnit
 import info.plateaukao.einkbro.unit.HelperUnit.loadAssetFile
-import java.io.IOException
 import org.json.JSONObject
+import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -18,8 +18,9 @@ import kotlin.coroutines.suspendCoroutine
  * Handles all JavaScript injection, CSS injection, and JS-based interactions for EBWebView.
  * Separates JS bridge concerns from core WebView configuration.
  */
-class WebViewJsBridge(private val webView: WebView) {
-
+class WebViewJsBridge(
+    private val webView: WebView,
+) {
     //region CSS Injection
 
     /**
@@ -28,12 +29,16 @@ class WebViewJsBridge(private val webView: WebView) {
      * appending another style tag; an empty [css] removes the slot, which
      * reverts to the page's own styling without a reload.
      */
-    fun updateCssSlot(slot: String, css: String) {
+    fun updateCssSlot(
+        slot: String,
+        css: String,
+    ) {
         try {
             val encoded = Base64.encodeToString(css.toByteArray(), Base64.NO_WRAP)
-            val js = loadAssetFile("update_css_slot.js")
-                .replace("__SLOT_ID__", slot)
-                .replace("__CSS_B64__", encoded)
+            val js =
+                loadAssetFile("update_css_slot.js")
+                    .replace("__SLOT_ID__", slot)
+                    .replace("__CSS_B64__", encoded)
             webView.evaluateJavascript(js, null)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -63,12 +68,13 @@ class WebViewJsBridge(private val webView: WebView) {
 
     //region Text Selection
 
-    suspend fun getSelectedText(): String = suspendCoroutine { continuation ->
-        val js = "window.getSelection().toString();"
-        webView.evaluateJavascript(js) { value ->
-            continuation.resume(value.substring(1, value.length - 1))
+    suspend fun getSelectedText(): String =
+        suspendCoroutine { continuation ->
+            val js = "window.getSelection().toString();"
+            webView.evaluateJavascript(js) { value ->
+                continuation.resume(value.substring(1, value.length - 1))
+            }
         }
-    }
 
     fun selectSentence(point: Point) =
         evaluateJsFile("select_sentence.js") {
@@ -94,7 +100,7 @@ class WebViewJsBridge(private val webView: WebView) {
     fun removeTextSelection() {
         webView.evaluateJavascript(
             "javascript:window.getSelection().removeAllRanges()",
-            null
+            null,
         )
     }
 
@@ -102,11 +108,12 @@ class WebViewJsBridge(private val webView: WebView) {
 
     //region Link Extraction
 
-    suspend fun getPageLinks(): String = suspendCoroutine { continuation ->
-        evaluateJsFile("extract_links.js", withPrefix = false) { value ->
-            continuation.resume(value ?: "[]")
+    suspend fun getPageLinks(): String =
+        suspendCoroutine { continuation ->
+            evaluateJsFile("extract_links.js", withPrefix = false) { value ->
+                continuation.resume(value ?: "[]")
+            }
         }
-    }
 
     //endregion
 
@@ -115,10 +122,11 @@ class WebViewJsBridge(private val webView: WebView) {
         mimeType: String,
         downloadId: String,
     ) {
-        val script = loadAssetFile("blob_url_fetch.js")
-            .replace("__BLOB_URL__", JSONObject.quote(blobUrl))
-            .replace("__MIME_TYPE__", JSONObject.quote(mimeType))
-            .replace("__DOWNLOAD_ID__", JSONObject.quote(downloadId))
+        val script =
+            loadAssetFile("blob_url_fetch.js")
+                .replace("__BLOB_URL__", JSONObject.quote(blobUrl))
+                .replace("__MIME_TYPE__", JSONObject.quote(mimeType))
+                .replace("__DOWNLOAD_ID__", JSONObject.quote(downloadId))
         webView.evaluateJavascript(script, null)
     }
 
@@ -129,17 +137,18 @@ class WebViewJsBridge(private val webView: WebView) {
         // one-shot flag it survives navigations to a new document.
         updateCssSlot(CSS_SLOT_HIGHLIGHT, loadAssetFile("highlight.css"))
 
-        val className = when (highlightStyle) {
-            HighlightStyle.UNDERLINE -> "highlight_underline"
-            HighlightStyle.BACKGROUND_YELLOW -> "highlight_yellow"
-            HighlightStyle.BACKGROUND_GREEN -> "highlight_green"
-            HighlightStyle.BACKGROUND_BLUE -> "highlight_blue"
-            HighlightStyle.BACKGROUND_PINK -> "highlight_pink"
-        }
+        val className =
+            when (highlightStyle) {
+                HighlightStyle.UNDERLINE -> "highlight_underline"
+                HighlightStyle.BACKGROUND_YELLOW -> "highlight_yellow"
+                HighlightStyle.BACKGROUND_GREEN -> "highlight_green"
+                HighlightStyle.BACKGROUND_BLUE -> "highlight_blue"
+                HighlightStyle.BACKGROUND_PINK -> "highlight_pink"
+            }
 
         webView.evaluateJavascript(
             String.format(loadAssetFile("text_selection_highlight.js"), className).wrapJsFunction(),
-            null
+            null,
         )
     }
 
@@ -160,8 +169,9 @@ class WebViewJsBridge(private val webView: WebView) {
      * EBWebView, which the native side then rejects — no translation, but no leak.
      */
     private fun injectTextNodeMonitor(token: String) {
-        val js = loadAssetFile("text_node_monitor.js")
-            .replace("__EINKBRO_TL_TOKEN__", token)
+        val js =
+            loadAssetFile("text_node_monitor.js")
+                .replace("__EINKBRO_TL_TOKEN__", token)
         webView.evaluateJavascript(js, null)
     }
 
@@ -174,13 +184,14 @@ class WebViewJsBridge(private val webView: WebView) {
     }
 
     fun translateByParagraphInPlace(translationTextStyle: TranslationTextStyle) {
-        val textBlockStyle = when (translationTextStyle) {
-            TranslationTextStyle.NONE -> TRANSLATED_P_CSS_NONE
-            TranslationTextStyle.DASHED_BORDER -> TRANSLATED_P_CSS_DASHED_BORDER
-            TranslationTextStyle.VERTICAL_LINE -> TRANSLATED_P_CSS_VERTICAL_LINE
-            TranslationTextStyle.GRAY -> TRANSLATED_P_CSS_GRAY
-            TranslationTextStyle.BOLD -> TRANSLATED_P_CSS_BOLD
-        }
+        val textBlockStyle =
+            when (translationTextStyle) {
+                TranslationTextStyle.NONE -> TRANSLATED_P_CSS_NONE
+                TranslationTextStyle.DASHED_BORDER -> TRANSLATED_P_CSS_DASHED_BORDER
+                TranslationTextStyle.VERTICAL_LINE -> TRANSLATED_P_CSS_VERTICAL_LINE
+                TranslationTextStyle.GRAY -> TRANSLATED_P_CSS_GRAY
+                TranslationTextStyle.BOLD -> TRANSLATED_P_CSS_BOLD
+            }
         updateCssSlot(CSS_SLOT_TRANSLATION, textBlockStyle)
         val token = (webView as? EBWebView)?.beginTranslationSession() ?: ""
         evaluateJsFile("translate_by_paragraph.js") {
@@ -197,8 +208,11 @@ class WebViewJsBridge(private val webView: WebView) {
     private fun injectGoogleTranslateV2Js(preferredLanguages: String): String =
         String.format(
             INJECT_GOOGLE_TRANSLATE_V2_JS_FORMAT,
-            if (preferredLanguages.isNotEmpty()) "includedLanguages: '$preferredLanguages',"
-            else ""
+            if (preferredLanguages.isNotEmpty()) {
+                "includedLanguages: '$preferredLanguages',"
+            } else {
+                ""
+            },
         )
 
     fun hideTranslateContext(translationMode: TranslationMode) {
@@ -219,11 +233,12 @@ class WebViewJsBridge(private val webView: WebView) {
     ) {
         updateCssSlot(
             CSS_SLOT_READER,
-            loadAssetFile(if (isVertical) "verticalReaderview.css" else "readerview.css")
+            loadAssetFile(if (isVertical) "verticalReaderview.css" else "readerview.css"),
         )
         updateCssSlot(CSS_SLOT_VERTICAL, if (isVertical) loadAssetFile("vertical_layout.css") else "")
 
-        val jsString = HelperUnit.getStringFromAsset("MozReadability.js") +
+        val jsString =
+            HelperUnit.getStringFromAsset("MozReadability.js") +
                 "\n" + HelperUnit.getStringFromAsset("jsonld_article.js")
         webView.evaluateJavascript(jsString) {
             postAction?.invoke()
@@ -238,25 +253,29 @@ class WebViewJsBridge(private val webView: WebView) {
      */
     fun injectMozReaderModeJs() {
         try {
-            val buffer = (loadAssetFile("MozReadability.js") +
-                    "\n" + loadAssetFile("jsonld_article.js")).toByteArray()
+            val buffer =
+                (
+                    loadAssetFile("MozReadability.js") +
+                        "\n" + loadAssetFile("jsonld_article.js")
+                ).toByteArray()
             val cssBuffer = loadAssetFile("readerview.css").toByteArray()
 
             val encodedJs = Base64.encodeToString(buffer, Base64.NO_WRAP)
             val encodedCss = Base64.encodeToString(cssBuffer, Base64.NO_WRAP)
             webView.evaluateJavascript(
                 "javascript:(function() {" +
-                        "var parent = document.getElementsByTagName('head').item(0);" +
-                        "var script = document.createElement('script');" +
-                        "script.type = 'text/javascript';" +
-                        "script.innerHTML = window.atob('" + encodedJs + "');" +
-                        "parent.appendChild(script);" +
-                        "var style = document.createElement('style');" +
-                        "style.type = 'text/css';" +
-                        "style.innerHTML = window.atob('" + encodedCss + "');" +
-                        "parent.appendChild(style);" +
-                        "window.scrollTo(0, 0);" +
-                        "})()", null
+                    "var parent = document.getElementsByTagName('head').item(0);" +
+                    "var script = document.createElement('script');" +
+                    "script.type = 'text/javascript';" +
+                    "script.innerHTML = window.atob('" + encodedJs + "');" +
+                    "parent.appendChild(script);" +
+                    "var style = document.createElement('style');" +
+                    "style.type = 'text/css';" +
+                    "style.innerHTML = window.atob('" + encodedCss + "');" +
+                    "parent.appendChild(style);" +
+                    "window.scrollTo(0, 0);" +
+                    "})()",
+                null,
             )
         } catch (e: IOException) {
             e.printStackTrace()
@@ -270,8 +289,9 @@ class WebViewJsBridge(private val webView: WebView) {
      * after an orientation change.
      */
     fun setViewportContent(content: String) {
-        val js = loadAssetFile("set_viewport_content.js")
-            .replace("__VIEWPORT_CONTENT__", content)
+        val js =
+            loadAssetFile("set_viewport_content.js")
+                .replace("__VIEWPORT_CONTENT__", content)
         webView.evaluateJavascript(js, null)
     }
 
@@ -287,21 +307,31 @@ class WebViewJsBridge(private val webView: WebView) {
         webView.evaluateJavascript(loadAssetFile("disable_reader_mode.js"), null)
     }
 
-    fun replaceWithReaderModeBody(keepExtraContent: Boolean, callback: ValueCallback<String>?) {
+    fun replaceWithReaderModeBody(
+        keepExtraContent: Boolean,
+        callback: ValueCallback<String>?,
+    ) {
         webView.evaluateJavascript(
             "(function() { ${replaceWithReaderModeBodyJs(keepExtraContent)} })();",
-            callback
+            callback,
         )
     }
 
-    fun getReaderModeBodyHtml(keepExtraContent: Boolean, url: String?, callback: ValueCallback<String>?) {
+    fun getReaderModeBodyHtml(
+        keepExtraContent: Boolean,
+        url: String?,
+        callback: ValueCallback<String>?,
+    ) {
         webView.evaluateJavascript(
             String.format(getReaderModeBodyHtmlJs(keepExtraContent), url),
-            callback
+            callback,
         )
     }
 
-    fun getReaderModeBodyText(keepExtraContent: Boolean, callback: ValueCallback<String>?) {
+    fun getReaderModeBodyText(
+        keepExtraContent: Boolean,
+        callback: ValueCallback<String>?,
+    ) {
         webView.evaluateJavascript(getReaderModeBodyTextJs(keepExtraContent), callback)
     }
 
@@ -335,15 +365,15 @@ class WebViewJsBridge(private val webView: WebView) {
 
         //region Reader Mode JS Templates
 
-        private fun readabilityOptions(keepExtraContent: Boolean): String {
-            return if (keepExtraContent) {
+        private fun readabilityOptions(keepExtraContent: Boolean): String =
+            if (keepExtraContent) {
                 "{classesToPreserve: preservedClasses, overwriteImgSrc: true, keepExtraContent: true}"
             } else {
                 "{classesToPreserve: preservedClasses, overwriteImgSrc: true}"
             }
-        }
 
-        private fun replaceWithReaderModeBodyJs(keepExtraContent: Boolean) = """
+        private fun replaceWithReaderModeBodyJs(keepExtraContent: Boolean) =
+            """
             ${if (keepExtraContent) "inlineCodeStyles();" else ""}
             var scopedDoc = (typeof getReadabilityScopedDocument === 'function') ? getReadabilityScopedDocument() : null;
             var documentClone = scopedDoc || document.cloneNode(true);
@@ -361,7 +391,8 @@ class WebViewJsBridge(private val webView: WebView) {
             }
         """
 
-        private fun getReaderModeBodyHtmlJs(keepExtraContent: Boolean) = """
+        private fun getReaderModeBodyHtmlJs(keepExtraContent: Boolean) =
+            """
             javascript:(function() {
                 ${if (keepExtraContent) "inlineCodeStyles();" else ""}
                 var scopedDoc = (typeof getReadabilityScopedDocument === 'function') ? getReadabilityScopedDocument() : null;
@@ -375,7 +406,8 @@ class WebViewJsBridge(private val webView: WebView) {
             })()
         """
 
-        private fun getReaderModeBodyTextJs(keepExtraContent: Boolean) = """
+        private fun getReaderModeBodyTextJs(keepExtraContent: Boolean) =
+            """
             javascript:(function() {
                 var scopedDoc = (typeof getReadabilityScopedDocument === 'function') ? getReadabilityScopedDocument() : null;
                 var documentClone = scopedDoc || document.cloneNode(true);
@@ -391,35 +423,35 @@ class WebViewJsBridge(private val webView: WebView) {
 
         const val NOTO_SANS_SERIF_FONT_CSS =
             "@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400&display=swap');" +
-                    "@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400&display=swap');" +
-                    "@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400&display=swap');" +
-                    "@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400&display=swap');" +
-                    "* {\n" +
-                    "font-family: 'Noto Serif TC', 'Noto Serif JP', 'Noto Serif KR', 'Noto Serif SC', serif !important;\n" +
-                    "}\n"
+                "@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400&display=swap');" +
+                "@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400&display=swap');" +
+                "@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400&display=swap');" +
+                "* {\n" +
+                "font-family: 'Noto Serif TC', 'Noto Serif JP', 'Noto Serif KR', 'Noto Serif SC', serif !important;\n" +
+                "}\n"
 
         const val IANSUI_FONT_CSS =
             "@import url('https://fonts.googleapis.com/css2?family=BIZ+UDPMincho&family=Iansui&display=swap');" +
-                    "* {\n" +
-                    "font-family: 'Iansui',serif !important;\n" +
-                    "}\n"
+                "* {\n" +
+                "font-family: 'Iansui',serif !important;\n" +
+                "}\n"
 
         const val JA_MINCHO_FONT_CSS =
             "@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400&display=swap');" +
-                    "* {\n" +
-                    "font-family: 'Shippori Mincho',serif !important;\n" +
-                    "}\n"
+                "* {\n" +
+                "font-family: 'Shippori Mincho',serif !important;\n" +
+                "}\n"
 
         const val KO_GAMJA_FONT_CSS =
             "@import url('https://fonts.googleapis.com/css2?family=Gamja+Flower:wght@400&display=swap');" +
-                    "* {\n" +
-                    "font-family: 'Gamja Flower',serif !important;\n" +
-                    "}\n"
+                "* {\n" +
+                "font-family: 'Gamja Flower',serif !important;\n" +
+                "}\n"
 
         const val SERIF_FONT_CSS =
             "* {\n" +
-                    "font-family: serif !important;\n" +
-                    "}\n"
+                "font-family: serif !important;\n" +
+                "}\n"
 
         const val CUSTOM_FONT_CSS = """
             @font-face {
@@ -473,7 +505,8 @@ input[type=button]: focus,input[type=submit]: focus,input[type=reset]: focus,inp
             }
         """
 
-        const val BOLD_FONT_CSS = "* {\n" +
+        const val BOLD_FONT_CSS =
+            "* {\n" +
                 "\tfont-weight:value !important;\n" +
                 "}\n" +
                 "a,a * {\n" +
@@ -593,16 +626,16 @@ input[type=button]: focus,input[type=submit]: focus,input[type=reset]: focus,inp
 
         private const val INJECT_GOOGLE_TRANSLATE_V2_JS_FORMAT =
             "!function(){!function(){function e(){" +
-                    "window.setTimeout(" +
-                    "function(){window[t].showBanner(!0)},10)}" +
-                    "function n(){" +
-                    "return new google.translate.TranslateElement({" +
-                    "autoDisplay:!1,floatPosition:0,%s pageLanguage:'auto'" +
-                    "})}" +
-                    "var t=(document.documentElement.lang,'TE_7777'),o='TECB_7777';" +
-                    "if(window[t])e();" +
-                    "else if(!window.google||!google.translate||!google.translate.TranslateElement){window[o]||(window[o]=function(){window[t]=n(),e()});" +
-                    "var a=document.createElement('script');a.src='https://translate.google.com/translate_a/element.js?cb='+encodeURIComponent(o)+'&client=tee',document.getElementsByTagName('head')[0].appendChild(a);$SECOND_PART}}()}();"
+                "window.setTimeout(" +
+                "function(){window[t].showBanner(!0)},10)}" +
+                "function n(){" +
+                "return new google.translate.TranslateElement({" +
+                "autoDisplay:!1,floatPosition:0,%s pageLanguage:'auto'" +
+                "})}" +
+                "var t=(document.documentElement.lang,'TE_7777'),o='TECB_7777';" +
+                "if(window[t])e();" +
+                "else if(!window.google||!google.translate||!google.translate.TranslateElement){window[o]||(window[o]=function(){window[t]=n(),e()});" +
+                "var a=document.createElement('script');a.src='https://translate.google.com/translate_a/element.js?cb='+encodeURIComponent(o)+'&client=tee',document.getElementsByTagName('head')[0].appendChild(a);$SECOND_PART}}()}();"
 
         private const val HIDE_GURL_TRANSLATE_CONTEXT = """
             javascript:(function() {

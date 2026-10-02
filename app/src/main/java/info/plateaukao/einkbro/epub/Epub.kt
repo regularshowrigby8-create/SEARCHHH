@@ -36,19 +36,20 @@ data class EpubBook(
     data class Image(
         val absPath: String,
         val mediaType: String,
-        val image: ByteArray
+        val image: ByteArray,
     )
 
     data class ToCEntry(
         val chapterTitle: String,
-        val chapterLink: String
+        val chapterLink: String,
     )
 }
+
 data class ManifestItem(
     val id: String,
     val absPath: String,
     val mediaType: String,
-    val properties: String
+    val properties: String,
 )
 
 enum class PageProgressDirection { LTR, RTL }

@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -37,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import info.plateaukao.einkbro.view.compose.MyTheme
-import info.plateaukao.einkbro.view.data.MenuInfo
 import info.plateaukao.einkbro.view.compose.ebItemFrame
+import info.plateaukao.einkbro.view.data.MenuInfo
 
 @Composable
 fun ActionModeMenu(
@@ -48,10 +46,11 @@ fun ActionModeMenu(
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
-        modifier = Modifier
-            .wrapContentHeight()
-            .width(280.dp)
-            .ebItemFrame(paintBackground = true)
+        modifier =
+            Modifier
+                .wrapContentHeight()
+                .width(280.dp)
+                .ebItemFrame(paintBackground = true),
     ) {
         val menuInfos = menus.value
         items(menuInfos.size) { index ->
@@ -67,7 +66,7 @@ fun ActionModeMenu(
                 },
                 onLongClicked = {
                     info.longClickAction?.invoke()
-                }
+                },
             )
         }
     }
@@ -87,40 +86,51 @@ fun ActionMenuItem(
     val pressed by interactionSource.collectIsPressedAsState()
 
     val configuration = LocalConfiguration.current
-    val width = when {
-        configuration.screenWidthDp > 500 -> 55.dp
-        else -> 45.dp
-    }
+    val width =
+        when {
+            configuration.screenWidthDp > 500 -> 55.dp
+            else -> 45.dp
+        }
 
-    val fontSize = if (cornerDrawable != null || (iconDrawable == null && imageVector == null)) 12.sp else
-        if (configuration.screenWidthDp > 500) 10.sp else 8.sp
+    val fontSize =
+        if (cornerDrawable != null || (iconDrawable == null && imageVector == null)) {
+            12.sp
+        } else {
+            if (configuration.screenWidthDp > 500) {
+                10.sp
+            } else {
+                8.sp
+            }
+        }
     Box(
-        modifier = Modifier
-            .width(width)
-            .wrapContentHeight()
+        modifier =
+            Modifier
+                .width(width)
+                .wrapContentHeight(),
     ) {
         if (pressed) {
             Box(
-                modifier = Modifier
-                    .padding(start = (width + 16.dp) / 2, top = 4.dp)
-                    .size(6.dp)
-                    .background(MaterialTheme.colors.onBackground, shape = CircleShape)
-                    .align(Alignment.TopStart)
+                modifier =
+                    Modifier
+                        .padding(start = (width + 16.dp) / 2, top = 4.dp)
+                        .size(6.dp)
+                        .background(MaterialTheme.colors.onBackground, shape = CircleShape)
+                        .align(Alignment.TopStart),
             )
         }
         if (cornerDrawable != null) {
             // GPT action: title centered, small type icon at bottom-right
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .combinedClickable(
-                        indication = null,
-                        interactionSource = interactionSource,
-                        onClick = onClicked,
-                        onLongClick = onLongClicked,
-                    )
-                    .padding(8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .combinedClickable(
+                            indication = null,
+                            interactionSource = interactionSource,
+                            onClick = onClicked,
+                            onLongClick = onLongClicked,
+                        ).padding(8.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -135,32 +145,34 @@ fun ActionMenuItem(
                 Image(
                     painter = rememberDrawablePainter(drawable = cornerDrawable),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(14.dp)
-                        .align(Alignment.BottomEnd),
+                    modifier =
+                        Modifier
+                            .size(14.dp)
+                            .align(Alignment.BottomEnd),
                 )
             }
         } else {
             Column(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .padding(8.dp)
-                    .combinedClickable(
-                        indication = null,
-                        interactionSource = interactionSource,
-                        onClick = onClicked,
-                        onLongClick = onLongClicked,
-                    ),
-
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .wrapContentHeight()
+                        .padding(8.dp)
+                        .combinedClickable(
+                            indication = null,
+                            interactionSource = interactionSource,
+                            onClick = onClicked,
+                            onLongClick = onLongClicked,
+                        ),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 if (iconDrawable != null) {
                     Image(
                         painter = rememberDrawablePainter(drawable = iconDrawable),
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(44.dp)
-                            .padding(horizontal = 6.dp),
+                        modifier =
+                            Modifier
+                                .size(44.dp)
+                                .padding(horizontal = 6.dp),
                     )
                 }
                 if (imageVector != null) {
@@ -168,22 +180,24 @@ fun ActionMenuItem(
                         imageVector = imageVector,
                         colorFilter = ColorFilter.tint(MaterialTheme.colors.onBackground),
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(44.dp)
-                            .padding(horizontal = 6.dp),
+                        modifier =
+                            Modifier
+                                .size(44.dp)
+                                .padding(horizontal = 6.dp),
                     )
                 }
                 if (title.isNotEmpty()) {
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
                         text = title,
                         textAlign = TextAlign.Center,
                         maxLines = 2,
                         lineHeight = fontSize,
                         fontSize = fontSize,
-                        color = MaterialTheme.colors.onBackground
+                        color = MaterialTheme.colors.onBackground,
                     )
                 }
             }

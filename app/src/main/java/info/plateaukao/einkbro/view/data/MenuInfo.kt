@@ -20,9 +20,10 @@ data class MenuInfo(
 fun ResolveInfo.toMenuInfo(pm: PackageManager): MenuInfo {
     val title = loadLabel(pm).toString()
     val icon = loadIcon(pm)
-    val intent = Intent(Intent.ACTION_PROCESS_TEXT).apply {
-        type = "text/plain"
-        setClassName(activityInfo.packageName, activityInfo.name)
-    }
+    val intent =
+        Intent(Intent.ACTION_PROCESS_TEXT).apply {
+            type = "text/plain"
+            setClassName(activityInfo.packageName, activityInfo.name)
+        }
     return MenuInfo(title, icon, null, intent)
 }

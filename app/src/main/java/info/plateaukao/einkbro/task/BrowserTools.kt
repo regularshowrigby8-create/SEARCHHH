@@ -12,6 +12,7 @@ import info.plateaukao.einkbro.preference.ChatGPTActionInfo
  * active tab is never disturbed. Cookies are shared process-wide via Android's
  * CookieManager, so auth-walled sites work automatically.
  */
+
 /** Immutable snapshot of the page the user was viewing when they triggered an agent task.
  *  Captured once at entry and exposed through [BrowserTools] so the agent can inspect the
  *  originating tab even after the chat tab has replaced it as the active tab. */
@@ -31,7 +32,6 @@ data class InitialPageSnapshot(
 )
 
 interface BrowserTools {
-
     // ── Originating page snapshot ──────────────────────────────────────
     //
     // In agent-chat mode the chat tab itself becomes the active tab, so the methods
@@ -39,8 +39,11 @@ interface BrowserTools {
     // snapshot lookups are zero-cost — no WebView access.
 
     fun initialPageUrl(): String
+
     fun initialPageTitle(): String
+
     fun initialPageText(): String
+
     fun initialPageLinks(): List<Link>
 
     /** Raw `document.body.innerHTML` of the originating page. Captured at task entry —
@@ -133,7 +136,11 @@ interface BrowserTools {
      * (created at the top level when missing); blank files it at the bookmark
      * root. URLs that are already bookmarked are skipped — returns false then.
      */
-    suspend fun addBookmark(title: String, url: String, folderName: String = ""): Boolean
+    suspend fun addBookmark(
+        title: String,
+        url: String,
+        folderName: String = "",
+    ): Boolean
 
     // ── LLM ─────────────────────────────────────────────────────────────
 
@@ -141,7 +148,10 @@ interface BrowserTools {
      * Non-streaming LLM call using the user's configured default OpenAI/Gemini action.
      * Returns the assistant's text content, or null on failure.
      */
-    suspend fun askLlm(system: String, user: String): String?
+    suspend fun askLlm(
+        system: String,
+        user: String,
+    ): String?
 
     /** Returns the [ChatGPTActionInfo] configured for summarization (used by templates). */
     fun summarizeActionInfo(): ChatGPTActionInfo
@@ -159,7 +169,10 @@ interface BrowserTools {
      * the TTS queue and played after the current utterance finishes. [title] drives
      * the TTS notification and has no effect on spoken output.
      */
-    fun speak(text: String, title: String = "")
+    fun speak(
+        text: String,
+        title: String = "",
+    )
 
     // ── Progress reporting ──────────────────────────────────────────────
 
@@ -194,8 +207,14 @@ interface BrowserTools {
     /** Releases the off-screen WebView. Called by TaskRunner when done. */
     fun dispose()
 
-    data class Link(val text: String, val href: String)
+    data class Link(
+        val text: String,
+        val href: String,
+    )
 
     /** One requested EPUB chapter: [url] to fetch, optional [title] (defaults to page title). */
-    data class EpubChapterSpec(val url: String, val title: String = "")
+    data class EpubChapterSpec(
+        val url: String,
+        val title: String = "",
+    )
 }

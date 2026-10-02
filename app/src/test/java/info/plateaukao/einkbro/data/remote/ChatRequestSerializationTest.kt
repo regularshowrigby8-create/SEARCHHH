@@ -15,16 +15,16 @@ import org.junit.Test
  * the exact keys the various backends understand.
  */
 class ChatRequestSerializationTest {
-
     // Same configuration as OpenAiRepository's instances.
     private val json = Json { ignoreUnknownKeys = true }
 
     @OptIn(ExperimentalSerializationApi::class)
-    private val toolJson = Json {
-        ignoreUnknownKeys = true
-        explicitNulls = false
-        encodeDefaults = true
-    }
+    private val toolJson =
+        Json {
+            ignoreUnknownKeys = true
+            explicitNulls = false
+            encodeDefaults = true
+        }
 
     private val messages = listOf(ChatMessage("hi", ChatRole.User))
 
@@ -38,47 +38,52 @@ class ChatRequestSerializationTest {
 
     @Test
     fun `explicit effort produces the OpenAI-style key`() {
-        val encoded = json.encodeToString(
-            ChatRequest("m", messages, reasoningEffort = "none")
-        )
+        val encoded =
+            json.encodeToString(
+                ChatRequest("m", messages, reasoningEffort = "none"),
+            )
         assertTrue(encoded.contains(""""reasoning_effort":"none""""))
         assertFalse(encoded.contains("enable_thinking"))
     }
 
     @Test
     fun `self-hosted thinking switch encodes both forms`() {
-        val encoded = json.encodeToString(
-            ChatRequest(
-                "m", messages,
-                reasoningEffort = "none",
-                enableThinking = false,
-                chatTemplateKwargs = ChatTemplateKwargs(false),
+        val encoded =
+            json.encodeToString(
+                ChatRequest(
+                    "m",
+                    messages,
+                    reasoningEffort = "none",
+                    enableThinking = false,
+                    chatTemplateKwargs = ChatTemplateKwargs(false),
+                ),
             )
-        )
         assertTrue(encoded.contains(""""enable_thinking":false"""))
         assertTrue(encoded.contains(""""chat_template_kwargs":{"enable_thinking":false}"""))
     }
 
     @Test
     fun `tool request omits null reasoning fields despite encodeDefaults`() {
-        val encoded = toolJson.encodeToString(
-            ToolChatRequest("m", listOf(ToolChatMessage(role = "user", content = "hi")))
-        )
+        val encoded =
+            toolJson.encodeToString(
+                ToolChatRequest("m", listOf(ToolChatMessage(role = "user", content = "hi"))),
+            )
         assertFalse(encoded.contains("reasoning"))
         assertFalse(encoded.contains("enable_thinking"))
     }
 
     @Test
     fun `tool request carries reasoning fields when set`() {
-        val encoded = toolJson.encodeToString(
-            ToolChatRequest(
-                "m",
-                listOf(ToolChatMessage(role = "user", content = "hi")),
-                reasoningEffort = "high",
-                enableThinking = true,
-                chatTemplateKwargs = ChatTemplateKwargs(true),
+        val encoded =
+            toolJson.encodeToString(
+                ToolChatRequest(
+                    "m",
+                    listOf(ToolChatMessage(role = "user", content = "hi")),
+                    reasoningEffort = "high",
+                    enableThinking = true,
+                    chatTemplateKwargs = ChatTemplateKwargs(true),
+                ),
             )
-        )
         assertTrue(encoded.contains(""""reasoning_effort":"high""""))
         assertTrue(encoded.contains(""""chat_template_kwargs":{"enable_thinking":true}"""))
     }

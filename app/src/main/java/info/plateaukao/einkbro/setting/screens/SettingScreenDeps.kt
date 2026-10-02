@@ -18,12 +18,20 @@ class SettingScreenDeps(
 
 interface BackupOps {
     fun exportAppData()
+
     fun importAppData()
+
     fun shareAppData()
+
     fun receiveAppData()
+
     fun syncWithGoogleDrive()
+
     fun exportBookmarks()
+
     fun importBookmarks()
+
     fun exportUserscripts()
+
     fun importUserscripts()
 }

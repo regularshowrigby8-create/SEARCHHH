@@ -28,15 +28,16 @@ object ImageRequestClassifier {
     fun Map<String, String>.headerValue(name: String): String? =
         entries.firstOrNull { (headerName, _) -> headerName.equals(name, ignoreCase = true) }?.value
 
-    private val IMAGE_EXTENSIONS = setOf(
-        ".avif",
-        ".bmp",
-        ".gif",
-        ".ico",
-        ".jpeg",
-        ".jpg",
-        ".png",
-        ".svg",
-        ".webp",
-    )
+    private val IMAGE_EXTENSIONS =
+        setOf(
+            ".avif",
+            ".bmp",
+            ".gif",
+            ".ico",
+            ".jpeg",
+            ".jpg",
+            ".png",
+            ".svg",
+            ".webp",
+        )
 }

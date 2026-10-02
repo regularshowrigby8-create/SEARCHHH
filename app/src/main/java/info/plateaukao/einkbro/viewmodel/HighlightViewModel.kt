@@ -7,10 +7,10 @@ import info.plateaukao.einkbro.database.BookmarkManager
 import info.plateaukao.einkbro.database.Highlight
 import info.plateaukao.einkbro.unit.IntentUnit
 import kotlinx.coroutines.launch
+
 class HighlightViewModel(
     private val bookmarkManager: BookmarkManager,
 ) : ViewModel() {
-
     fun getAllArticles() = bookmarkManager.getAllArticles()
 
     private suspend fun getAllArticlesAsync() = bookmarkManager.getAllArticlesAsync()
@@ -42,13 +42,14 @@ class HighlightViewModel(
         }
     }
 
-    fun getHighlightsForArticle(articleId: Int) =
-        bookmarkManager.getHighlightsForArticle(articleId)
+    fun getHighlightsForArticle(articleId: Int) = bookmarkManager.getHighlightsForArticle(articleId)
 
-    private suspend fun getHighlightsForArticleAsync(articleId: Int) =
-        bookmarkManager.getHighlightsForArticleAsync(articleId)
+    private suspend fun getHighlightsForArticleAsync(articleId: Int) = bookmarkManager.getHighlightsForArticleAsync(articleId)
 
-    fun launchUrl(activity: Activity, url: String) {
+    fun launchUrl(
+        activity: Activity,
+        url: String,
+    ) {
         IntentUnit.launchUrl(activity, url)
     }
 

@@ -12,7 +12,10 @@ class WebContentPostProcessor : KoinComponent {
     private val configManager: ConfigManager by inject()
     private val application: Application by inject()
 
-    fun postProcess(ebWebView: EBWebView, url: String) {
+    fun postProcess(
+        ebWebView: EBWebView,
+        url: String,
+    ) {
         if (url.startsWith("data:text/html")) return
 
         ViewUnit.invertColor(ebWebView, configManager.hasInvertedColor(url))
@@ -32,9 +35,9 @@ class WebContentPostProcessor : KoinComponent {
             ebWebView.evaluateJavascript(
                 zoomAndDesktopTemplateJs.format(
                     if (configManager.display.enableZoom) enableZoomJs else "",
-                    if (isDesktopMode) "width=$width" else ""
+                    if (isDesktopMode) "width=$width" else "",
                 ),
-                null
+                null,
             )
         }
 
@@ -49,7 +52,7 @@ class WebContentPostProcessor : KoinComponent {
             ebWebView.hasVideo = true
         } else {
             ebWebView.evaluateJavascript(
-                "(function() { return document.querySelectorAll('video, iframe[src*=\"youtube\"], iframe[src*=\"vimeo\"]').length > 0; })()"
+                "(function() { return document.querySelectorAll('video, iframe[src*=\"youtube\"], iframe[src*=\"vimeo\"]').length > 0; })()",
             ) { result ->
                 ebWebView.hasVideo = result == "true"
             }
@@ -126,21 +129,22 @@ class WebContentPostProcessor : KoinComponent {
             "javascript:document.getElementsByName('viewport')[0].setAttribute('content', '%s%s');"
 
         private const val enableZoomJs = "initial-scale=1,maximum-scale=10.0,"
-        val urlScriptMap = mapOf(
-            "github.com" to "github_include_fragment.js"
-        )
+        val urlScriptMap =
+            mapOf(
+                "github.com" to "github_include_fragment.js",
+            )
 
-        private val videoSitePatterns = listOf(
-            "youtube.com/watch",
-            "youtube.com/shorts",
-            "youtu.be/",
-            "vimeo.com/",
-            "dailymotion.com/video",
-            "twitch.tv/",
-            "bilibili.com/video",
-        )
+        private val videoSitePatterns =
+            listOf(
+                "youtube.com/watch",
+                "youtube.com/shorts",
+                "youtu.be/",
+                "vimeo.com/",
+                "dailymotion.com/video",
+                "twitch.tv/",
+                "bilibili.com/video",
+            )
 
-        fun isVideoSiteUrl(url: String): Boolean =
-            videoSitePatterns.any { url.contains(it) }
+        fun isVideoSiteUrl(url: String): Boolean = videoSitePatterns.any { url.contains(it) }
     }
 }

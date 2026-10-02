@@ -19,18 +19,18 @@ import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.browser.AlbumCallback
 import info.plateaukao.einkbro.browser.AlbumController
 import info.plateaukao.einkbro.browser.ChatWebInterface
-import info.plateaukao.einkbro.browser.InputController
-import info.plateaukao.einkbro.browser.JsBrowserCallback
-import info.plateaukao.einkbro.browser.TabController
-import info.plateaukao.einkbro.browser.WebChromeCallback
-import info.plateaukao.einkbro.browser.WebViewCallback
 import info.plateaukao.einkbro.browser.Cookie
 import info.plateaukao.einkbro.browser.EBClickHandler
 import info.plateaukao.einkbro.browser.EBDownloadListener
 import info.plateaukao.einkbro.browser.EBWebChromeClient
 import info.plateaukao.einkbro.browser.EBWebViewClient
+import info.plateaukao.einkbro.browser.InputController
 import info.plateaukao.einkbro.browser.Javascript
+import info.plateaukao.einkbro.browser.JsBrowserCallback
 import info.plateaukao.einkbro.browser.JsWebInterface
+import info.plateaukao.einkbro.browser.TabController
+import info.plateaukao.einkbro.browser.WebChromeCallback
+import info.plateaukao.einkbro.browser.WebViewCallback
 import info.plateaukao.einkbro.caption.CaptionFetchResult
 import info.plateaukao.einkbro.caption.DualCaptionProcessor
 import info.plateaukao.einkbro.caption.YouTubeCaptionFetcher
@@ -41,10 +41,10 @@ import info.plateaukao.einkbro.preference.HighlightStyle
 import info.plateaukao.einkbro.unit.BookmarkRenderer
 import info.plateaukao.einkbro.unit.BrowserUnit
 import info.plateaukao.einkbro.unit.FaviconFetcher
-import info.plateaukao.einkbro.util.Constants
 import info.plateaukao.einkbro.unit.HelperUnit
 import info.plateaukao.einkbro.unit.ViewUnit
 import info.plateaukao.einkbro.unit.ViewUnit.dp
+import info.plateaukao.einkbro.util.Constants
 import info.plateaukao.einkbro.util.PdfDocumentAdapter
 import info.plateaukao.einkbro.viewmodel.TRANSLATE_API
 import kotlinx.coroutines.CancellableContinuation
@@ -58,13 +58,14 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.resume
 
-
-
 open class EBWebView(
     context: Context,
     var webViewCallback: WebViewCallback?,
-) : WebView(context), AlbumController, KoinComponent {
+) : WebView(context),
+    AlbumController,
+    KoinComponent {
     private var onScrollChangeListener: OnScrollChangeListener? = null
+
     // var: a lazily restored tab hands its Album over so the tab keeps its
     // identity in the list when the real WebView is created on activation
     override var album: Album = Album(this, webViewCallback as? AlbumCallback)
@@ -72,9 +73,10 @@ open class EBWebView(
     private val webChromeClient: EBWebChromeClient
     private val downloadListener by lazy { EBDownloadListener(this) }
     private val clickHandler: EBClickHandler
-    val jsBridge: WebViewJsBridge = WebViewJsBridge(this).apply {
-        simulateClickAction = { point -> touchSimulator.simulateClick(point) }
-    }
+    val jsBridge: WebViewJsBridge =
+        WebViewJsBridge(this).apply {
+            simulateClickAction = { point -> touchSimulator.simulateClick(point) }
+        }
 
     var dualCaption: String? = null
     var shouldHideTranslateContext: Boolean = false
@@ -100,19 +102,24 @@ open class EBWebView(
     // Helpers for delegated concerns
     val readerHelper = WebViewReaderHelper(this, config)
     val translationHelper = WebViewTranslationHelper(this, config)
-    val navigationHelper = WebViewNavigationHelper(this, config) { info ->
-        (webViewCallback as? InputController)?.updatePageInfo(info)
-    }
+    val navigationHelper =
+        WebViewNavigationHelper(this, config) { info ->
+            (webViewCallback as? InputController)?.updatePageInfo(info)
+        }
     private val configApplier = WebViewConfigApplier(this, config)
     private val touchSimulator = WebViewTouchSimulator(this)
 
     // Delegated reader state
     var isReaderModeOn: Boolean
         get() = readerHelper.isReaderModeOn
-        set(value) { readerHelper.isReaderModeOn = value }
+        set(value) {
+            readerHelper.isReaderModeOn = value
+        }
     var isVerticalRead: Boolean
         get() = readerHelper.isVerticalRead
-        set(value) { readerHelper.isVerticalRead = value }
+        set(value) {
+            readerHelper.isVerticalRead = value
+        }
 
     // Rendered line advance (physical px) of the vertical-read text, measured
     // after entering vertical mode; 0 when unknown. Vertical page turns snap to
@@ -121,20 +128,28 @@ open class EBWebView(
     var verticalLineAdvancePx: Float = 0f
     var isPlainText: Boolean
         get() = readerHelper.isPlainText
-        set(value) { readerHelper.isPlainText = value }
+        set(value) {
+            readerHelper.isPlainText = value
+        }
     var isEpubReaderMode: Boolean
         get() = readerHelper.isEpubReaderMode
-        set(value) { readerHelper.isEpubReaderMode = value }
+        set(value) {
+            readerHelper.isEpubReaderMode = value
+        }
     val isTwoColumnReaderOn: Boolean
         get() = readerHelper.isTwoColumnActive()
 
     // Delegated translation state
     var translateApi: TRANSLATE_API
         get() = translationHelper.translateApi
-        set(value) { translationHelper.translateApi = value }
+        set(value) {
+            translationHelper.translateApi = value
+        }
     var isTranslateByParagraph: Boolean
         get() = translationHelper.isTranslateByParagraph
-        set(value) { translationHelper.isTranslateByParagraph = value }
+        set(value) {
+            translationHelper.isTranslateByParagraph = value
+        }
     override var isTranslatePage = false
         set(value) {
             field = value
@@ -155,10 +170,13 @@ open class EBWebView(
     // Inner scrollable container state, updated via JsWebInterface callback.
     @Volatile
     var isInnerScrollAtTop: Boolean = true
+
     @Volatile
     var innerScrollTop: Int = 0
+
     @Volatile
     var innerScrollHeight: Int = 0
+
     @Volatile
     var innerClientHeight: Int = 0
 
@@ -249,11 +267,17 @@ open class EBWebView(
 
                 val midX = width / 2f
                 if (!config.touch.switchTouchAreaAction) {
-                    if (ebookTouchStartX < midX) pageUpWithNoAnimation()
-                    else pageDownWithNoAnimation()
+                    if (ebookTouchStartX < midX) {
+                        pageUpWithNoAnimation()
+                    } else {
+                        pageDownWithNoAnimation()
+                    }
                 } else {
-                    if (ebookTouchStartX < midX) pageDownWithNoAnimation()
-                    else pageUpWithNoAnimation()
+                    if (ebookTouchStartX < midX) {
+                        pageDownWithNoAnimation()
+                    } else {
+                        pageUpWithNoAnimation()
+                    }
                 }
                 return true
             }
@@ -274,7 +298,12 @@ open class EBWebView(
         cancelEvent.recycle()
     }
 
-    override fun onScrollChanged(l: Int, t: Int, old_l: Int, old_t: Int) {
+    override fun onScrollChanged(
+        l: Int,
+        t: Int,
+        old_l: Int,
+        old_t: Int,
+    ) {
         super.onScrollChanged(l, t, old_l, old_t)
         onScrollChangeListener?.onScrollChange(t, old_t)
     }
@@ -327,14 +356,21 @@ open class EBWebView(
      * instead of reloading file:///android_asset/error_page.html. [pageBaseUrl] carries the
      * url/reason query the page's script reads from location.search.
      */
-    fun showOfflineErrorPage(failedUrl: String, pageBaseUrl: String) {
+    fun showOfflineErrorPage(
+        failedUrl: String,
+        pageBaseUrl: String,
+    ) {
         album.isLoaded = true
         // The error page needs JS for the Retry button and the mini-game; the failed
         // site may have had JS disabled. loadUrl() restores the per-site setting on retry.
         settings.javaScriptEnabled = true
-        val html = runCatching {
-            context.assets.open("error_page.html").bufferedReader().use { it.readText() }
-        }.getOrNull() ?: return
+        val html =
+            runCatching {
+                context.assets
+                    .open("error_page.html")
+                    .bufferedReader()
+                    .use { it.readText() }
+            }.getOrNull() ?: return
         errorPageUrl = failedUrl
         loadDataWithBaseURL(pageBaseUrl, html, "text/html", "UTF-8", failedUrl)
     }
@@ -379,7 +415,10 @@ open class EBWebView(
     }
 
     interface OnScrollChangeListener {
-        fun onScrollChange(scrollY: Int, oldScrollY: Int)
+        fun onScrollChange(
+            scrollY: Int,
+            oldScrollY: Int,
+        )
     }
 
     init {
@@ -388,9 +427,10 @@ open class EBWebView(
         webViewClient =
             EBWebViewClient(this) { title, url -> webViewCallback?.addHistory(title, url) }
         webChromeClient = EBWebChromeClient(this, { onChromiumFavicon(it) }, webViewCallback as? WebChromeCallback)
-        clickHandler = EBClickHandler { msg, event ->
-            (webViewCallback as? InputController)?.onLongPress(msg, event)
-        }
+        clickHandler =
+            EBClickHandler { msg, event ->
+                (webViewCallback as? InputController)?.onLongPress(msg, event)
+            }
         initWebView()
         configApplier.initWebSettings()
         initPreferences()
@@ -437,10 +477,13 @@ open class EBWebView(
     private fun setupJsWebInterface() {
         jsWebInterface = JsWebInterface(this, webViewCallback as? JsBrowserCallback)
         addJavascriptInterface(jsWebInterface, "androidApp")
-        userScriptBridge = info.plateaukao.einkbro.browser.UserScriptBridge(this)
+        userScriptBridge =
+            info.plateaukao.einkbro.browser
+                .UserScriptBridge(this)
         addJavascriptInterface(userScriptBridge, "einkbroGM")
         addJavascriptInterface(
-            info.plateaukao.einkbro.browser.StartPageBridge(this),
+            info.plateaukao.einkbro.browser
+                .StartPageBridge(this),
             "einkbroStartPage",
         )
     }
@@ -464,11 +507,17 @@ open class EBWebView(
     // the document actually changes, alongside the userscript registry.
     val perDocumentOnceKeys = mutableSetOf<String>()
 
-    fun oncePerDocument(key: String, block: () -> Unit) {
+    fun oncePerDocument(
+        key: String,
+        block: () -> Unit,
+    ) {
         if (perDocumentOnceKeys.add(key)) block()
     }
 
-    fun registerUserScriptMenuCommand(caption: String, fnId: String) {
+    fun registerUserScriptMenuCommand(
+        caption: String,
+        fnId: String,
+    ) {
         userScriptMenuCommands[caption] = fnId
     }
 
@@ -548,23 +597,29 @@ open class EBWebView(
         }
     }
 
-    val requestHeaders: HashMap<String, String> = HashMap<String, String>().apply {
-        put("DNT", "1")
-        put("Save-Data", if (config.browser.enableSaveData) "on" else "off")
-    }
+    val requestHeaders: HashMap<String, String> =
+        HashMap<String, String>().apply {
+            put("DNT", "1")
+            put("Save-Data", if (config.browser.enableSaveData) "on" else "off")
+        }
 
-    /* continue playing if preference is set */
+    // continue playing if preference is set
     override fun onWindowVisibilityChanged(visibility: Int) {
         if (config.browser.continueMedia) {
-            if (visibility != GONE && visibility != INVISIBLE) super.onWindowVisibilityChanged(
-                VISIBLE
-            )
+            if (visibility != GONE && visibility != INVISIBLE) {
+                super.onWindowVisibilityChanged(
+                    VISIBLE,
+                )
+            }
         } else {
             super.onWindowVisibilityChanged(visibility)
         }
     }
 
-    override fun loadUrl(url: String, additionalHttpHeaders: MutableMap<String, String>) {
+    override fun loadUrl(
+        url: String,
+        additionalHttpHeaders: MutableMap<String, String>,
+    ) {
         if (url == Constants.START_PAGE_URL) {
             album.isLoaded = true
             BookmarkRenderer.loadStartPage(this)
@@ -598,7 +653,7 @@ open class EBWebView(
         val partial = url.startsWith("javascript:") || url.startsWith("content:")
         resetState(partial)
 
-        if (partial) {  // Daniel
+        if (partial) { // Daniel
             super.loadUrl(url)
             return
         }
@@ -646,6 +701,7 @@ open class EBWebView(
     fun setAlbumCover(bitmap: Bitmap) = album.setAlbumCover(bitmap)
 
     private var chatWebInterface: ChatWebInterface? = null
+
     fun setupAiPage(
         lifecycleScope: LifecycleCoroutineScope,
         webContent: String,
@@ -661,20 +717,21 @@ open class EBWebView(
         isAIPage = true
 
         if (chatWebInterface == null) {
-            chatWebInterface = ChatWebInterface(
-                lifecycleScope = lifecycleScope,
-                webView = this,
-                webContent = webContent,
-                webTitle = webTitle,
-                webUrl = webUrl,
-                onOpenNewTab = { url -> (webViewCallback as? TabController)?.addNewTab(url) },
-                agentMode = agentMode,
-                initialSnapshot = initialSnapshot,
-                agentContext = agentContext,
-                agentWebViewCallback = webViewCallback,
-                agentBrowserState = agentBrowserState,
-                agentTtsViewModel = agentTtsViewModel,
-            )
+            chatWebInterface =
+                ChatWebInterface(
+                    lifecycleScope = lifecycleScope,
+                    webView = this,
+                    webContent = webContent,
+                    webTitle = webTitle,
+                    webUrl = webUrl,
+                    onOpenNewTab = { url -> (webViewCallback as? TabController)?.addNewTab(url) },
+                    agentMode = agentMode,
+                    initialSnapshot = initialSnapshot,
+                    agentContext = agentContext,
+                    agentWebViewCallback = webViewCallback,
+                    agentBrowserState = agentBrowserState,
+                    agentTtsViewModel = agentTtsViewModel,
+                )
         } else {
             chatWebInterface?.updateWebContent(webContent, webTitle, webUrl)
         }
@@ -760,7 +817,6 @@ open class EBWebView(
         }
     }
 
-
     override var albumTitle: String
         get() = album.albumTitle
         set(value) {
@@ -770,10 +826,12 @@ open class EBWebView(
 
     // if url is with prefix data, maybe it's translated data, need to use base url instead
     override val albumUrl: String
-        get() = errorPageUrl
-            ?: (if (url?.startsWith("data") == true) baseUrl else url).orEmpty()
+        get() =
+            errorPageUrl
+                ?: (if (url?.startsWith("data") == true) baseUrl else url).orEmpty()
 
     override var initAlbumUrl: String = ""
+
     override fun activate() {
         requestFocus()
         isForeground = true
@@ -802,12 +860,12 @@ open class EBWebView(
 
     override fun pauseWebView() {
         onPause()
-        //pauseTimers()
+        // pauseTimers()
     }
 
     override fun resumeWebView() {
         onResume()
-        //resumeTimers()
+        // resumeTimers()
     }
 
     fun update(progress: Int) {
@@ -904,7 +962,9 @@ open class EBWebView(
 
     var isSelectingText: Boolean
         get() = touchSimulator.isSelectingText
-        set(value) { touchSimulator.isSelectingText = value }
+        set(value) {
+            touchSimulator.isSelectingText = value
+        }
 
     fun selectLinkText(point: Point) = touchSimulator.selectLinkText(point)
 
@@ -913,28 +973,29 @@ open class EBWebView(
     // Cancellable so callers can wrap in withTimeoutOrNull: the JS bridge callback is
     // not guaranteed to fire (CSP-blocked injection, page script errors), and a plain
     // suspendCoroutine would ignore the timeout's cancellation and hang forever.
-    suspend fun getRawReaderHtml() = suspendCancellableCoroutine<String> { continuation ->
-        if (isPlainText && rawHtmlCache != null) {
-            continuation.resume(rawHtmlCache!!)
-        } else if (!isReaderModeOn && !isTranslatePage) {
-            jsBridge.injectMozReaderModeJs()
-            jsBridge.getReaderModeBodyHtml(config.display.readerKeepExtraContent, url) { html ->
-                val processedHtml = HelperUnit.unescapeJava(html)
-                val rawHtml = processedHtml.substring(1, processedHtml.length - 1)
-                rawHtmlCache = rawHtml
-                if (continuation.isActive) continuation.resume(rawHtml)
-            }
-        } else {
-            evaluateJavascript(
-                "(function() { return ('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'); })();"
-            ) { html ->
-                val processedHtml = HelperUnit.unescapeJava(html)
-                val rawHtml = processedHtml.substring(1, processedHtml.length - 1)
-                rawHtmlCache = rawHtmlCache ?: rawHtml
-                if (continuation.isActive) continuation.resume(rawHtml)
+    suspend fun getRawReaderHtml() =
+        suspendCancellableCoroutine<String> { continuation ->
+            if (isPlainText && rawHtmlCache != null) {
+                continuation.resume(rawHtmlCache!!)
+            } else if (!isReaderModeOn && !isTranslatePage) {
+                jsBridge.injectMozReaderModeJs()
+                jsBridge.getReaderModeBodyHtml(config.display.readerKeepExtraContent, url) { html ->
+                    val processedHtml = HelperUnit.unescapeJava(html)
+                    val rawHtml = processedHtml.substring(1, processedHtml.length - 1)
+                    rawHtmlCache = rawHtml
+                    if (continuation.isActive) continuation.resume(rawHtml)
+                }
+            } else {
+                evaluateJavascript(
+                    "(function() { return ('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'); })();",
+                ) { html ->
+                    val processedHtml = HelperUnit.unescapeJava(html)
+                    val rawHtml = processedHtml.substring(1, processedHtml.length - 1)
+                    rawHtmlCache = rawHtmlCache ?: rawHtml
+                    if (continuation.isActive) continuation.resume(rawHtml)
+                }
             }
         }
-    }
 
     suspend fun getRawText(onGeminiTranscribe: (() -> Unit)? = null): String {
         prepareYoutubeCaption(onGeminiTranscribe)
@@ -965,15 +1026,19 @@ open class EBWebView(
             // stop playback for the wait: a live decoder is what tips a 2 GB
             // e-reader into the OOM kill that takes the renderer with it.
             pauseMediaPlayback()
-            if (onGeminiTranscribe != null) onGeminiTranscribe()
-            else EBToast.show(context, R.string.gemini_transcribing_note)
+            if (onGeminiTranscribe != null) {
+                onGeminiTranscribe()
+            } else {
+                EBToast.show(context, R.string.gemini_transcribing_note)
+            }
         }
         // The full transcript is always fetched; this outer timeout only guards
         // against a hung network. Sized above the Gemini fallback's 10-minute read
         // timeout; on expiry getRawText falls back to page text.
-        val result = withTimeoutOrNull(660_000) {
-            YouTubeCaptionFetcher().fetchCaption(pageUrl, notify)
-        } ?: CaptionFetchResult.Failed("timeout", transient = true)
+        val result =
+            withTimeoutOrNull(660_000) {
+                YouTubeCaptionFetcher().fetchCaption(pageUrl, notify)
+            } ?: CaptionFetchResult.Failed("timeout", transient = true)
         when (result) {
             is CaptionFetchResult.Captions -> dualCaption = result.timedTextJson
             CaptionFetchResult.None -> noCaptionVideoId = videoId
@@ -982,7 +1047,7 @@ open class EBWebView(
                 withContext(Dispatchers.Main) {
                     EBToast.show(
                         context,
-                        context.getString(R.string.video_transcription_failed, result.message)
+                        context.getString(R.string.video_transcription_failed, result.message),
                     )
                 }
             }
@@ -998,20 +1063,26 @@ open class EBWebView(
                     if (text == "null") {
                         if (continuation.isActive) continuation.resume("")
                     } else {
-                        val processedText = if (text.startsWith("\"") && text.endsWith("\"")) {
-                            text.substring(1, text.length - 2)
-                        } else text
+                        val processedText =
+                            if (text.startsWith("\"") && text.endsWith("\"")) {
+                                text.substring(1, text.length - 2)
+                            } else {
+                                text
+                            }
                         if (continuation.isActive) continuation.resume(processedText)
                     }
                 }
             }
         } else {
             evaluateJavascript(
-                "(function() { return document.getElementsByTagName('html')[0].innerText; })();"
+                "(function() { return document.getElementsByTagName('html')[0].innerText; })();",
             ) { text ->
-                val processedText = if (text.startsWith("\"") && text.endsWith("\"")) {
-                    text.substring(1, text.length - 2)
-                } else text
+                val processedText =
+                    if (text.startsWith("\"") && text.endsWith("\"")) {
+                        text.substring(1, text.length - 2)
+                    } else {
+                        text
+                    }
                 if (continuation.isActive) continuation.resume(processedText)
             }
         }
@@ -1027,10 +1098,14 @@ open class EBWebView(
     var hasVideo = false
 
     var isAudioOnlyMode = false
+
     fun toggleAudioOnlyMode() {
         isAudioOnlyMode = !isAudioOnlyMode
-        if (isAudioOnlyMode) jsBridge.enableAudioOnlyMode()
-        else jsBridge.disableAudioOnlyMode()
+        if (isAudioOnlyMode) {
+            jsBridge.enableAudioOnlyMode()
+        } else {
+            jsBridge.disableAudioOnlyMode()
+        }
     }
 
     //region Reader mode (delegated to WebViewReaderHelper)
@@ -1061,8 +1136,7 @@ open class EBWebView(
 
     fun addSelectionChangeListener() = jsBridge.addSelectionChangeListener()
 
-    fun highlightTextSelection(highlightStyle: HighlightStyle) =
-        jsBridge.highlightTextSelection(highlightStyle)
+    fun highlightTextSelection(highlightStyle: HighlightStyle) = jsBridge.highlightTextSelection(highlightStyle)
 
     suspend fun getSelectedText(): String = jsBridge.getSelectedText()
 
@@ -1070,14 +1144,17 @@ open class EBWebView(
 
     fun selectParagraph(point: Point) = jsBridge.selectParagraph(point)
 
-    suspend fun getSelectedTextWithContext(contextLength: Int = 10): String =
-        jsBridge.getSelectedTextWithContext(contextLength)
+    suspend fun getSelectedTextWithContext(contextLength: Int = 10): String = jsBridge.getSelectedTextWithContext(contextLength)
 
-    fun evaluateJsFile(fileName: String, withPrefix: Boolean = true, callback: ValueCallback<String>? = null) =
-        jsBridge.evaluateJsFile(fileName, withPrefix, callback)
+    fun evaluateJsFile(
+        fileName: String,
+        withPrefix: Boolean = true,
+        callback: ValueCallback<String>? = null,
+    ) = jsBridge.evaluateJsFile(fileName, withPrefix, callback)
 
     // Public wrappers for protected scroll range methods, used by WebViewNavigationHelper
     fun horizontalScrollRange(): Int = computeHorizontalScrollRange()
+
     fun verticalScrollRange(): Int = computeVerticalScrollRange()
 
     companion object {
@@ -1089,12 +1166,13 @@ open class EBWebView(
         private const val EBOOK_LONG_PRESS_MS = 400L
 
         private var cachedDefaultUserAgent: String? = null
-        fun getDefaultUserAgent(context: Context): String {
-            return cachedDefaultUserAgent ?: WebSettings.getDefaultUserAgent(context)
+
+        fun getDefaultUserAgent(context: Context): String =
+            cachedDefaultUserAgent ?: WebSettings
+                .getDefaultUserAgent(context)
                 .replace("wv", "")
                 .replace(Regex("Version/\\d+\\.\\d+\\s"), "")
                 .also { cachedDefaultUserAgent = it }
-        }
     }
 
     init {

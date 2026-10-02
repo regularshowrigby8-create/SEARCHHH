@@ -50,9 +50,10 @@ object PdfMergeUtil {
                     existingTemp.outputStream().use { input.copyTo(it) }
                 } ?: return false
 
-                val merged = mergedTemp.outputStream().use { out ->
-                    PdfTocEditor.appendWithToc(existingTemp, newPagesPdf, out, tocTitle)
-                }
+                val merged =
+                    mergedTemp.outputStream().use { out ->
+                        PdfTocEditor.appendWithToc(existingTemp, newPagesPdf, out, tocTitle)
+                    }
                 if (!merged) return false
 
                 openTruncatedOutputStream(context, existingUri)?.use { out ->
@@ -66,7 +67,9 @@ object PdfMergeUtil {
         }.getOrDefault(false)
 
     // "wt" truncates existing content; some SAF providers only support "w", so fall back.
-    private fun openTruncatedOutputStream(context: Context, uri: Uri) =
-        runCatching { context.contentResolver.openOutputStream(uri, "wt") }
-            .getOrNull() ?: context.contentResolver.openOutputStream(uri)
+    private fun openTruncatedOutputStream(
+        context: Context,
+        uri: Uri,
+    ) = runCatching { context.contentResolver.openOutputStream(uri, "wt") }
+        .getOrNull() ?: context.contentResolver.openOutputStream(uri)
 }

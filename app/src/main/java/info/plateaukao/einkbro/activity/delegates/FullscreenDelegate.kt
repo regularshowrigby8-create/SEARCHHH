@@ -14,15 +14,10 @@ import android.widget.FrameLayout
 import android.widget.VideoView
 import androidx.fragment.app.FragmentActivity
 import info.plateaukao.einkbro.activity.BrowserState
-import info.plateaukao.einkbro.browser.AlbumController
 import info.plateaukao.einkbro.preference.ConfigManager
 import info.plateaukao.einkbro.preference.FabPosition
 import info.plateaukao.einkbro.unit.ViewUnit
-import info.plateaukao.einkbro.view.EBWebView
-import info.plateaukao.einkbro.view.MainActivityLayout
 import info.plateaukao.einkbro.view.ZoomableFrameLayout
-import info.plateaukao.einkbro.view.viewControllers.ComposeToolbarViewController
-import info.plateaukao.einkbro.view.viewControllers.FabImageViewController
 
 class FullscreenDelegate(
     private val activity: FragmentActivity,
@@ -37,15 +32,24 @@ class FullscreenDelegate(
     private var customViewCallback: CustomViewCallback? = null
     private var originalOrientation = 0
 
-    private inner class VideoCompletionListener : MediaPlayer.OnCompletionListener,
+    private inner class VideoCompletionListener :
+        MediaPlayer.OnCompletionListener,
         MediaPlayer.OnErrorListener {
-        override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean = false
+        override fun onError(
+            mp: MediaPlayer,
+            what: Int,
+            extra: Int,
+        ): Boolean = false
+
         override fun onCompletion(mp: MediaPlayer) {
             onHideCustomView()
         }
     }
 
-    fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+    fun onShowCustomView(
+        view: View?,
+        callback: CustomViewCallback?,
+    ) {
         if (view == null) return
 
         if (customView != null && callback != null) {
@@ -54,16 +58,17 @@ class FullscreenDelegate(
         }
         customView = view
         originalOrientation = activity.requestedOrientation
-        fullscreenHolder = ZoomableFrameLayout(activity).apply {
-            enableZoom = config.display.zoomInCustomView
-            addView(
-                customView,
-                FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
+        fullscreenHolder =
+            ZoomableFrameLayout(activity).apply {
+                enableZoom = config.display.zoomInCustomView
+                addView(
+                    customView,
+                    FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                    ),
                 )
-            )
-        }
+            }
         ViewUnit.invertColor(view, config.hasInvertedColor(state.ebWebView.url.orEmpty()))
 
         val decorView = activity.window.decorView as FrameLayout
@@ -71,8 +76,8 @@ class FullscreenDelegate(
             fullscreenHolder,
             FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-            )
+                FrameLayout.LayoutParams.MATCH_PARENT,
+            ),
         )
         customView?.keepScreenOn = true
         (state.currentAlbumController as View?)?.visibility = View.INVISIBLE
@@ -80,7 +85,7 @@ class FullscreenDelegate(
             activity.window,
             true,
             config.ui.hideStatusbar,
-            ViewUnit.isEdgeToEdgeEnabled(activity.resources)
+            ViewUnit.isEdgeToEdgeEnabled(activity.resources),
         )
         if (view is FrameLayout) {
             if (view.focusedChild is VideoView) {
@@ -112,7 +117,7 @@ class FullscreenDelegate(
             activity.window,
             false,
             config.ui.hideStatusbar,
-            ViewUnit.isEdgeToEdgeEnabled(activity.resources)
+            ViewUnit.isEdgeToEdgeEnabled(activity.resources),
         )
         fullscreenHolder = null
         customView = null
@@ -176,8 +181,9 @@ class FullscreenDelegate(
                 systemBarsBehavior =
                     WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 hide(WindowInsets.Type.statusBars())
-                if (ViewUnit.isEdgeToEdgeEnabled(activity.resources))
+                if (ViewUnit.isEdgeToEdgeEnabled(activity.resources)) {
                     hide(WindowInsets.Type.navigationBars())
+                }
             }
             state.binding.root.setPadding(0, 0, 0, 0)
         } else {
@@ -195,8 +201,9 @@ class FullscreenDelegate(
                 show(WindowInsets.Type.statusBars())
                 // Symmetric with hideStatusBar: nav bars stayed hidden after
                 // leaving fullscreen in edge-to-edge mode.
-                if (ViewUnit.isEdgeToEdgeEnabled(activity.resources))
+                if (ViewUnit.isEdgeToEdgeEnabled(activity.resources)) {
                     show(WindowInsets.Type.navigationBars())
+                }
             }
         } else {
             activity.window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -211,13 +218,34 @@ class FullscreenDelegate(
 
     private fun resetInputUrlConstraints() {
         val binding = state.binding
-        val constraintSet = androidx.constraintlayout.widget.ConstraintSet().apply {
-            clone(binding.root)
-            connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.TOP, androidx.constraintlayout.widget.ConstraintSet.PARENT_ID, androidx.constraintlayout.widget.ConstraintSet.TOP)
-            connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.BOTTOM, androidx.constraintlayout.widget.ConstraintSet.PARENT_ID, androidx.constraintlayout.widget.ConstraintSet.BOTTOM)
-            connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.START, androidx.constraintlayout.widget.ConstraintSet.PARENT_ID, androidx.constraintlayout.widget.ConstraintSet.START)
-            connect(binding.inputUrl.id, androidx.constraintlayout.widget.ConstraintSet.END, androidx.constraintlayout.widget.ConstraintSet.PARENT_ID, androidx.constraintlayout.widget.ConstraintSet.END)
-        }
+        val constraintSet =
+            androidx.constraintlayout.widget.ConstraintSet().apply {
+                clone(binding.root)
+                connect(
+                    binding.inputUrl.id,
+                    androidx.constraintlayout.widget.ConstraintSet.TOP,
+                    androidx.constraintlayout.widget.ConstraintSet.PARENT_ID,
+                    androidx.constraintlayout.widget.ConstraintSet.TOP,
+                )
+                connect(
+                    binding.inputUrl.id,
+                    androidx.constraintlayout.widget.ConstraintSet.BOTTOM,
+                    androidx.constraintlayout.widget.ConstraintSet.PARENT_ID,
+                    androidx.constraintlayout.widget.ConstraintSet.BOTTOM,
+                )
+                connect(
+                    binding.inputUrl.id,
+                    androidx.constraintlayout.widget.ConstraintSet.START,
+                    androidx.constraintlayout.widget.ConstraintSet.PARENT_ID,
+                    androidx.constraintlayout.widget.ConstraintSet.START,
+                )
+                connect(
+                    binding.inputUrl.id,
+                    androidx.constraintlayout.widget.ConstraintSet.END,
+                    androidx.constraintlayout.widget.ConstraintSet.PARENT_ID,
+                    androidx.constraintlayout.widget.ConstraintSet.END,
+                )
+            }
         constraintSet.applyTo(binding.root)
     }
 }

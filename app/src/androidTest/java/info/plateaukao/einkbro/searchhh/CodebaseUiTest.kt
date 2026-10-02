@@ -18,8 +18,12 @@ class CodebaseUiTest {
     @Test fun allCodebasesCanBeBrowsedAndFilteredSeparatelyFromPortals() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         LocalIdentity.create(context, "Codebase catalogue test")
-        ConnectionSettings.prefs(context).edit().putBoolean("relay_enabled", false)
-            .putBoolean("server_enabled", false).apply()
+        ConnectionSettings
+            .prefs(context)
+            .edit()
+            .putBoolean("relay_enabled", false)
+            .putBoolean("server_enabled", false)
+            .apply()
         ActivityScenario.launch(SearchhhActivity::class.java).use {
             compose.onNodeWithText("Sources").performClick()
             compose.onNodeWithText("Portals (110)").assertExists()
