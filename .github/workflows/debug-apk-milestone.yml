@@ -102,6 +102,25 @@ jobs:
             --prerelease \
             --title "Debug APK milestone $GITHUB_SHA" \
             --notes "Hosted debug transport artifact only. Not release-approved or production-signed."
+      - name: Publish debug bundle through external transfer relay
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -czf debug-delivery.tar.gz -C debug-delivery .
+          response=$(curl --fail-with-body --retry 3 --retry-delay 5 \
+            -F "file=@debug-delivery.tar.gz" \
+            'https://file.io/?expires=1d')
+          {
+            echo "## External debug bundle relay"
+            echo
+            echo 'The hosted runner uploaded the debug bundle to file.io. This is a temporary transport URL, not a release approval.'
+            echo
+            echo '```json'
+            echo "$response"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Publish debug failure tail
         if: failure()
         shell: bash
