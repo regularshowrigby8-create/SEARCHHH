@@ -1,4 +1,5 @@
 name: Debug APK milestone
+# Hosted debug artifact retrieval is intentionally external to this workflow.
 on:
   push:
     branches: [arena/01a0ea36-searchhh]
