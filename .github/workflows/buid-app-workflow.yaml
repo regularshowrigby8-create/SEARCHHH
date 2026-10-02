@@ -11,6 +11,9 @@ permissions:
 jobs:
   quality:
     uses: ./.github/workflows/android-verification.yml
+    permissions:
+      contents: write
+      actions: read
   framework:
     needs: quality
     runs-on: ubuntu-latest
