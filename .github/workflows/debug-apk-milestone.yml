@@ -43,17 +43,18 @@ jobs:
         run: |
           ./gradlew :app:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-app-tests.log
-      - name: Surface app test failure in Checks API
+      - name: Surface app test failure in job summary
         if: failure()
         shell: bash
         run: |
           if [ -f debug-app-tests.log ]; then
-            tail -80 debug-app-tests.log | while IFS= read -r line; do
-              safe=${line//'%'/'%25'}
-              safe=${safe//$'\r'/'%0D'}
-              safe=${safe//$'\n'/'%0A'}
-              echo "::error title=app JVM test::$safe"
-            done
+            {
+              echo "## app JVM test failure — last 80 lines"
+              echo
+              echo '```text'
+              tail -n 80 debug-app-tests.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Run ad-filter JVM unit tests
         shell: bash
