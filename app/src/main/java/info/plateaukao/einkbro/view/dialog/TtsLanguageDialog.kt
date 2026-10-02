@@ -1,0 +1,37 @@
+package info.plateaukao.einkbro.view.dialog
+
+import android.app.AlertDialog
+import android.content.Context
+import info.plateaukao.einkbro.R
+import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.view.withThemedFrame
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import java.util.Locale
+
+class TtsLanguageDialog(
+    val context: Context,
+) : KoinComponent {
+    private val config: ConfigManager by inject()
+
+    fun show(locales: List<Locale>) {
+        val availableLocales = locales.sortedBy { it.displayName }
+        val availableLocalDisplayNames = availableLocales.map { it.displayName }.toTypedArray()
+
+        AlertDialog
+            .Builder(context, R.style.TouchAreaDialog)
+            .apply {
+                setTitle("Read in Which Language")
+                setSingleChoiceItems(
+                    availableLocalDisplayNames,
+                    availableLocales.indexOf(config.tts.ttsLocale),
+                ) { dialog, selectedIndex ->
+                    val locale = availableLocales[selectedIndex]
+                    config.tts.ttsLocale = locale
+                    dialog.dismiss()
+                }
+            }.create()
+            .withThemedFrame()
+            .show()
+    }
+}

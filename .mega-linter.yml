@@ -1,0 +1,12 @@
+# Coverage detector only. It does not replace the factory registry or Gradle gates.
+APPLY_FIXES: none
+VALIDATE_ALL_CODEBASE: false
+SHOW_ELAPSED_TIME: true
+PRINT_ALIGNED_FILE_NAMES: false
+PARALLEL: true
+FILEIO_REPORTER: false
+REPORT_OUTPUT_FOLDER: build/reports/factory/megalinter
+FILTER_REGEX_INCLUDE: '^(app|ad-filter|adblock-client|backend|js-tests|tools|docs)/.*'
+DISABLE_LINTERS:
+  - COPYPASTE_JSCPD
+  - SPELL_CSPELL

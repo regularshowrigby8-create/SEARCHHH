@@ -1,0 +1,16 @@
+fastapi==0.141.1
+uvicorn==0.34.2
+SQLAlchemy==2.0.40
+psycopg[binary]==3.2.9
+redis==5.2.1
+rq==2.3.2
+httpx==0.28.1
+Scrapy==2.19.0
+w3lib==2.3.1
+PyYAML==6.0.2
+pytest==9.1.1
+
+starlette==1.7.0
+# Optional server-side extraction; not bundled into the Android runtime.
+extruct==0.18.0
+trafilatura==2.2.0

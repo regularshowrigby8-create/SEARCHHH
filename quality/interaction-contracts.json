@@ -1,0 +1,93 @@
+{
+  "UI-4940cf5ac282": {
+    "source": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "route": "SearchhhRoute.entries",
+    "action": "Click each registered tab, then dispatch Back",
+    "state": "Selected destination and visible screen change; Back selects home",
+    "test_file": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/NavigationBehaviorTest.kt",
+    "test_class": "info.plateaukao.einkbro.searchhh.NavigationBehaviorTest",
+    "test_method": "everyRegisteredDestinationChangesSelectionAndBackReturnsHome",
+    "label": "Discover / Sources / Saved / Settings",
+    "tag": "menu_home / menu_sources / menu_saved / menu_settings"
+  },
+  "UI-fe614d051ff3": {
+    "source": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "route": "SearchhhRoute.entries",
+    "action": "Click each registered tab, then dispatch Back",
+    "state": "Selected destination and visible screen change; Back selects home",
+    "test_file": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/NavigationBehaviorTest.kt",
+    "test_class": "info.plateaukao.einkbro.searchhh.NavigationBehaviorTest",
+    "test_method": "everyRegisteredDestinationChangesSelectionAndBackReturnsHome",
+    "label": "Discover / Sources / Saved / Settings",
+    "tag": "menu_home / menu_sources / menu_saved / menu_settings"
+  },
+  "UI-d9f288e77b29": {
+    "source": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "route": "SearchhhRoute.entries",
+    "action": "Enter a query, navigate, recreate the Activity, return home",
+    "state": "Settings selection and typed query survive recreation",
+    "test_file": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/NavigationBehaviorTest.kt",
+    "test_class": "info.plateaukao.einkbro.searchhh.NavigationBehaviorTest",
+    "test_method": "enteredQuerySurvivesNavigationAndActivityRecreation",
+    "label": "What are you looking for?",
+    "tag": "search_field"
+  },
+  "UI-46f85c7e4e9a": {
+    "label": "Start swarm",
+    "tag": "start_stop_search_button",
+    "source": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "route": "discover",
+    "action": "Start selected discovery sources with query and mode",
+    "state": "Job ID saved; queued/running state observed",
+    "blocker": "Start/stop UI behavior test not implemented"
+  },
+  "UI-a5887cca8a66": {
+    "label": "Start swarm",
+    "tag": "start_stop_search_button",
+    "source": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "route": "discover",
+    "action": "Start selected discovery sources with query and mode",
+    "state": "Job ID saved; queued/running state observed",
+    "blocker": "Start/stop UI behavior test not implemented"
+  },
+  "UI-96e05b5b0dcb": {
+    "label": "Stop",
+    "tag": "stop_search_button",
+    "source": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "route": "discover",
+    "action": "Request cancellation and refresh status",
+    "state": "Stopped status or explicit stop-not-confirmed error",
+    "blocker": "Cancellation through the actual UI not tested"
+  },
+  "UI-578cfe10d924": {
+    "label": "Stop",
+    "tag": "stop_search_button",
+    "source": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "route": "discover",
+    "action": "Request cancellation and refresh status",
+    "state": "Stopped status or explicit stop-not-confirmed error",
+    "blocker": "Cancellation through the actual UI not tested"
+  },
+  "UI-e2ab22516a3d": {
+    "source": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
+    "route": "Legacy Settings > UI > theme chooser (test opens the fragment directly)",
+    "action": "Click the actual dialog OK button",
+    "state": "Dialog removed from the fragment manager; panel theme remains configured",
+    "test_file": "app/src/androidTest/java/info/plateaukao/einkbro/view/dialog/ComposeDialogWindowTest.kt",
+    "test_class": "info.plateaukao.einkbro.view.dialog.ComposeDialogWindowTest",
+    "test_method": "panelUsesPublicThemeAndOkDismissesTheActualDialog",
+    "label": "Localized Android OK",
+    "tag": "theme_dialog_close"
+  },
+  "UI-d9eab10c778e": {
+    "source": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
+    "route": "Legacy Settings > UI > theme chooser (test opens the fragment directly)",
+    "action": "Click the actual dialog OK button",
+    "state": "Dialog removed from the fragment manager; panel theme remains configured",
+    "test_file": "app/src/androidTest/java/info/plateaukao/einkbro/view/dialog/ComposeDialogWindowTest.kt",
+    "test_class": "info.plateaukao.einkbro.view.dialog.ComposeDialogWindowTest",
+    "test_method": "panelUsesPublicThemeAndOkDismissesTheActualDialog",
+    "label": "Localized Android OK",
+    "tag": "theme_dialog_close"
+  }
+}

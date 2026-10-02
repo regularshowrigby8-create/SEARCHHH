@@ -1,0 +1,214 @@
+{
+  "verified_source": "4358317d6b23c4e1d43f0774da4e71d77ebd0e98",
+  "run": "https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36603250641",
+  "device_check": 109526241498,
+  "formatting_check": 109526242012,
+  "test_counts": {
+    "passed": 371,
+    "failure": 0,
+    "error": 0,
+    "skipped": 0
+  },
+  "focused_results": [
+    "BrowserMemoryTrimmerTest.foregroundAndUiHiddenDoNotPauseTabsOrDiscardPreloadedView:passed",
+    "BrowserMemoryTrimmerTest.absentActiveTabPausesAllRemainingTabs:passed",
+    "BrowserMemoryTrimmerTest.backgroundAndHigherPauseOnlyInactiveTabsAndReleasePreload:passed",
+    "WebViewSslHandlerTest.invalidCertificatesAreCancelledAndReportedWithoutBypass:passed",
+    "SearchhhRobotsTest.wildcardDelayAndSitemapsRemainAvailable:passed",
+    "SearchhhRobotsTest.namedAgentMatchingKeepsCaseAndLegacyPrefixSemantics:passed",
+    "SearchhhRouteTest.everyRegisteredIdRoundTripsAndHasUniqueSemantics:passed",
+    "SearchhhRouteTest.unknownAndMissingRoutesReturnHome:passed",
+    "ImageCacheTrimPolicyTest.legacyLevelsKeepTheirHistoricalCacheActions:passed",
+    "ImageCacheTrimPolicyTest.modernUiHiddenTrimsAndBackgroundOrHigherEvicts:passed",
+    "InternalBackendTest.initializesFromNameAndServesAuthenticatedMcp:passed",
+    "KtorAndroidCompatibilityTest.absentDesktopManagementApisLeaveKtorDebuggerDetectionDisabled:passed",
+    "NavigationBehaviorTest.enteredQuerySurvivesNavigationAndActivityRecreation:passed",
+    "NavigationBehaviorTest.everyRegisteredDestinationChangesSelectionAndBackReturnsHome:passed",
+    "ImageCacheBehaviorTest.trimEvictsRealMemoryWithoutDeletingTheDiskCopy:passed",
+    "ImageCacheBehaviorTest.failedDiskWriteLeavesTheMemoryEntryUsable:passed",
+    "EdgeBorderRenderingTest.dashEffectIsReusedAndRecreatedOnlyWhenDensityChanges:passed",
+    "EdgeBorderRenderingTest.renderedPixelsMatchPreFixAcrossStylesDensitySizeAndMirroring:passed",
+    "ComposeDialogWindowTest.panelUsesPublicThemeAndOkDismissesTheActualDialog:passed",
+    "TtsConfigTest.localeScriptAndRegionSurvivePersistence:passed",
+    "TtsConfigTest.legacyLanguageAndUnderscoreLocalesRemainReadable:passed",
+    "PersistenceTest.encryptedPreferencesReopenWithoutPlaintextCredentials:passed"
+  ],
+  "lint_preview": [
+    {
+      "report": "app/build/reports/lint-results-debug.xml",
+      "groups": [
+        {
+          "id": "MissingTranslation",
+          "severity": "Error",
+          "count": 92,
+          "priority": 8,
+          "file": "app/src/main/res/values/strings.xml",
+          "line": "11"
+        },
+        {
+          "id": "Typos",
+          "severity": "Error",
+          "count": 3,
+          "priority": 7,
+          "file": "app/src/main/res/values-es/strings.xml",
+          "line": "71"
+        },
+        {
+          "id": "Recycle",
+          "severity": "Error",
+          "count": 1,
+          "priority": 7,
+          "file": "app/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt",
+          "line": "98"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Error",
+          "count": 83,
+          "priority": 6,
+          "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+          "line": "147"
+        },
+        {
+          "id": "ExifInterface",
+          "severity": "Error",
+          "count": 8,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+          "line": "244"
+        },
+        {
+          "id": "TrimLambda",
+          "severity": "Hint",
+          "count": 5,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+          "line": "606"
+        }
+      ],
+      "omitted_groups": 30,
+      "draw_allocation_count": 0
+    },
+    {
+      "report": "ad-filter/build/reports/lint-results-debug.xml",
+      "groups": [
+        {
+          "id": "UseKtx",
+          "severity": "Error",
+          "count": 2,
+          "priority": 6,
+          "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+          "line": "147"
+        },
+        {
+          "id": "OldTargetApi",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "adblock-client/build.gradle",
+          "line": "12"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        },
+        {
+          "id": "NewerVersionAvailable",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "3"
+        },
+        {
+          "id": "AndroidGradlePluginVersion",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "5"
+        },
+        {
+          "id": "UseTomlInstead",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        }
+      ],
+      "omitted_groups": 0,
+      "draw_allocation_count": 0
+    },
+    {
+      "report": "adblock-client/build/reports/lint-results-debug.xml",
+      "groups": [
+        {
+          "id": "OldTargetApi",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "adblock-client/build.gradle",
+          "line": "12"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+          "line": "147"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        },
+        {
+          "id": "NewerVersionAvailable",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "3"
+        },
+        {
+          "id": "AndroidGradlePluginVersion",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "5"
+        },
+        {
+          "id": "UseTomlInstead",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        }
+      ],
+      "omitted_groups": 0,
+      "draw_allocation_count": 0
+    }
+  ],
+  "formatting_review": {
+    "new_kotlin_files_reported_findings": 0,
+    "new_arc_arguments_reported_findings": 0,
+    "preexisting_view_findings": 17
+  },
+  "image_export": "Completion marker collected, but reference-stamp.png rejected as missing/empty/over 2048 bytes; no verified image deliverable.",
+  "closure": "OPEN: image export and strengthened density/image assertions are not verified.",
+  "newest_source": "92484f60e89348bde7c4e7430e2fcabb28699256",
+  "newest_run": "https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36605281071",
+  "newest_run_result": "UNKNOWN: GitHub API retrieval failed with HTTP 401 Bad credentials. gh run watch exit code is not accepted as a successful workflow result.",
+  "release": "No approved signed APK; no next issue started."
+}
