@@ -585,7 +585,9 @@ object DownloadHelper {
 
         val decodedSegment =
             try {
-                Uri.decode(lastSegment)
+                // URLDecoder treats plus as a form-encoded space. Escape it first
+                // because this value came from a URL path, not a query/form body.
+                URLDecoder.decode(lastSegment.replace("+", "%2B"), "UTF-8")
             } catch (e: IllegalArgumentException) {
                 lastSegment
             }
