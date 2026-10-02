@@ -54,11 +54,11 @@ jobs:
           ./gradlew :adblock-client:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-adblock-tests.log
       - name: Assemble debug APK
-        if: steps.test-gate.outcome == 'success'
         run: |
           ./gradlew :app:assembleDebug --no-configuration-cache --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC"
       - name: Collect APK and checksum
+        if: success()
         shell: bash
         run: |
           set -euo pipefail
@@ -90,11 +90,9 @@ jobs:
           name: debug-apk-test-evidence-${{ github.sha }}
           path: |
             debug-compile.log
-            debug-tests.log
             debug-app-tests.log
             debug-ad-filter-tests.log
             debug-adblock-tests.log
-            debug-build.log
             app/build/test-results/
             app/build/reports/tests/
             app/build/reports/problems/
