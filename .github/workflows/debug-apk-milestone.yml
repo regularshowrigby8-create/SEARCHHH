@@ -32,11 +32,13 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
       - name: Compile and run JVM tests
+        shell: bash
         run: |
+          set -o pipefail
           ./gradlew :app:compileDebugKotlin :app:testDebugUnitTest \
             :ad-filter:testDebugUnitTest :adblock-client:testDebugUnitTest \
-            --no-configuration-cache --max-workers=2 \
-            -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC"
+            --no-configuration-cache --stacktrace --max-workers=2 \
+            -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-build.log
       - name: Assemble debug APK
         run: |
           ./gradlew :app:assembleDebug --no-configuration-cache --max-workers=2 \
@@ -57,12 +59,20 @@ jobs:
           name: searchhh-debug-apk-${{ github.sha }}
           path: debug-delivery/
           if-no-files-found: error
+      - name: Publish debug failure tail
+        if: failure()
+        shell: bash
+        run: |
+          if [ -f debug-build.log ]; then
+            { echo "## Debug APK failure tail"; echo; tail -200 debug-build.log; } >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Upload test evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: debug-apk-test-evidence-${{ github.sha }}
           path: |
+            debug-build.log
             app/build/test-results/
             app/build/reports/tests/
             app/build/reports/problems/
