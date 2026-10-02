@@ -70,9 +70,9 @@ jobs:
         id: test-gate
         shell: bash
         run: |
-          test "${{ steps.app-tests.outcome }}" = success
-          test "${{ steps.ad-filter-tests.outcome }}" = success
-          test "${{ steps.adblock-tests.outcome }}" = success
+          test "${{ steps.app-tests.conclusion }}" = success
+          test "${{ steps.ad-filter-tests.conclusion }}" = success
+          test "${{ steps.adblock-tests.conclusion }}" = success
       - name: Assemble debug APK
         if: steps.test-gate.outcome == 'success'
         run: |
