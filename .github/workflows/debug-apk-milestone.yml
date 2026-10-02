@@ -39,61 +39,20 @@ jobs:
             --no-configuration-cache --stacktrace --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-compile.log
       - name: Run app JVM unit tests
-        if: success()
-        continue-on-error: true
-        id: app-tests
         shell: bash
         run: |
-          set -o pipefail
           ./gradlew :app:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-app-tests.log
-          status=${PIPESTATUS[0]}
-          printf '%s\n' "$status" > debug-app-status.txt
-          exit 0
       - name: Run ad-filter JVM unit tests
-        if: always()
-        continue-on-error: true
-        id: ad-filter-tests
         shell: bash
         run: |
-          set -o pipefail
           ./gradlew :ad-filter:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-ad-filter-tests.log
-          status=${PIPESTATUS[0]}
-          printf '%s\n' "$status" > debug-ad-filter-status.txt
-          exit 0
       - name: Run adblock-client JVM unit tests
-        if: always()
-        continue-on-error: true
-        id: adblock-tests
         shell: bash
         run: |
-          set -o pipefail
           ./gradlew :adblock-client:testDebugUnitTest --no-configuration-cache --stacktrace --max-workers=2 \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee debug-adblock-tests.log
-          status=${PIPESTATUS[0]}
-          printf '%s\n' "$status" > debug-adblock-status.txt
-          exit 0
-      - name: Enforce JVM test result
-        if: always()
-        id: test-gate
-        shell: bash
-        run: |
-          set -u
-          app=$(cat debug-app-status.txt 2>/dev/null || echo missing)
-          ad_filter=$(cat debug-ad-filter-status.txt 2>/dev/null || echo missing)
-          adblock=$(cat debug-adblock-status.txt 2>/dev/null || echo missing)
-          {
-            echo "## JVM test status"
-            echo
-            echo "app: $app"
-            echo "ad-filter: $ad_filter"
-            echo "adblock-client: $adblock"
-          } >> "$GITHUB_STEP_SUMMARY"
-          echo "::notice title=JVM test status::app=$app; ad-filter=$ad_filter; adblock-client=$adblock"
-          test "$app" = 0
-          test "$ad_filter" = 0
-          test "$adblock" = 0
       - name: Assemble debug APK
         if: steps.test-gate.outcome == 'success'
         run: |
@@ -119,7 +78,7 @@ jobs:
         if: failure()
         shell: bash
         run: |
-          for log in debug-compile.log debug-tests.log debug-app-tests.log debug-ad-filter-tests.log debug-adblock-tests.log debug-build.log; do
+          for log in debug-compile.log debug-app-tests.log debug-ad-filter-tests.log debug-adblock-tests.log debug-build.log; do
             if [ -f "$log" ]; then
               { echo "## $log failure tail"; echo; tail -120 "$log"; } >> "$GITHUB_STEP_SUMMARY"
             fi
@@ -135,9 +94,6 @@ jobs:
             debug-app-tests.log
             debug-ad-filter-tests.log
             debug-adblock-tests.log
-            debug-app-status.txt
-            debug-ad-filter-status.txt
-            debug-adblock-status.txt
             debug-build.log
             app/build/test-results/
             app/build/reports/tests/
