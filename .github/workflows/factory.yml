@@ -52,9 +52,8 @@ jobs:
           dpkg-query --show ripgrep
       - name: Install locked development tools
         if: matrix.family != 'core'
-        run:
-          python3 tools/factory/install.py --ecosystem "$FACTORY_FAMILY"
-          --workers 3
+        run: |
+          python3 tools/factory/install.py --ecosystem "$FACTORY_FAMILY" --workers 3
       - name: Provision actual Chromium and its host libraries
         if: matrix.family == 'node'
         env:
