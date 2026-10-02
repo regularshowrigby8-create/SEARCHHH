@@ -1,0 +1,940 @@
+{
+  "schema_version": 1,
+  "purpose": "Ordered work packages and verified diagnostic seed. NOT a complete occurrence ledger and NOT release authorization.",
+  "updated": "2026-09-30",
+  "branch": "arena/01a0ea36-searchhh",
+  "runtime_evidence_source": "6abf29b57982b93fe929674c70230bb17f6940cf",
+  "documentation_checkpoint": "77fbeef55d5ea9c28fa0c0d2c097d2b2081eaba4",
+  "overall_status": "PARTIAL",
+  "release_status": "BLOCKED; no approved signed APK",
+  "work_in_progress_limit": 1,
+  "active_implementation_ticket": null,
+  "next_task": "S00",
+  "first_production_correction_after_inventory": "S01",
+  "occurrence_inventory": {
+    "complete": false,
+    "target_index": "docs/quality/issues/index.json",
+    "index_exists_at_handoff": false,
+    "reason": "All five report groups recovered and 17,890 raw diagnostic occurrences exported. Semantic ownership, stable root-cause IDs and duplicate/report alias reconciliation still pending; raw counts are not unique bug totals.",
+    "raw_recovery_complete": true,
+    "raw_export": "docs/quality/recovered-6abf29b/occurrences.json",
+    "manifest": "docs/quality/recovered-6abf29b/manifest.json"
+  },
+  "baseline": {
+    "app_lint_errors": 458,
+    "app_lint_hints": 14,
+    "known_app_error_occurrences_in_seed": 458,
+    "app_errors_not_individually_described_by_seed": 0,
+    "app_hints_not_individually_described_by_seed": 0,
+    "omitted_app_rule_groups": 0,
+    "detekt_weighted_findings": 2788,
+    "unfinished_review_candidates": 178,
+    "unfinished_scanned_files": 542,
+    "interaction_candidates": 617,
+    "interaction_contracts": 9,
+    "local_checker_tests_passed": 44,
+    "counts_are_not_additive_unique_bugs": true
+  },
+  "diagnostic_seed_reports": [
+    {
+      "report": "ad-filter/build/reports/lint-results-debug.xml",
+      "sha256": "743c9bbd7e199d6610bebdda3047ace08ea6337dcc61347de4553c19b3e75312",
+      "groups": [
+        {
+          "id": "OldTargetApi",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "adblock-client/build.gradle",
+          "line": "12"
+        },
+        {
+          "id": "AndroidGradlePluginVersion",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "5"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        },
+        {
+          "id": "NewerVersionAvailable",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "3"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Error",
+          "count": 2,
+          "priority": 6,
+          "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+          "line": "147"
+        },
+        {
+          "id": "UseTomlInstead",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        }
+      ],
+      "omitted_groups": 0
+    },
+    {
+      "report": "adblock-client/build/reports/lint-results-debug.xml",
+      "sha256": "afb9870a7457573bdcf537e384bfbbe34a5d8734c359259d6c32f107ea3fa845",
+      "groups": [
+        {
+          "id": "OldTargetApi",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "adblock-client/build.gradle",
+          "line": "12"
+        },
+        {
+          "id": "AndroidGradlePluginVersion",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "5"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        },
+        {
+          "id": "NewerVersionAvailable",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "3"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+          "line": "147"
+        },
+        {
+          "id": "UseTomlInstead",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        }
+      ],
+      "omitted_groups": 0
+    },
+    {
+      "report": "app/build/reports/lint-results-debug.xml",
+      "sha256": "ee35f0fa3bcc47688b319a96adaa36f4370d01b7f0ef532cefd7dc1d453f0539",
+      "groups": [
+        {
+          "id": "InlinedApi",
+          "severity": "Error",
+          "count": 4,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/activity/BrowserActivity.kt",
+          "line": "1147"
+        },
+        {
+          "id": "LocaleFolder",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "app/src/main/res/values-he",
+          "line": null
+        },
+        {
+          "id": "NewApi",
+          "severity": "Error",
+          "count": 3,
+          "priority": 6,
+          "file": "app/src/main/res/values-night/styles.xml",
+          "line": "6"
+        },
+        {
+          "id": "OldTargetApi",
+          "severity": "Error",
+          "count": 2,
+          "priority": 6,
+          "file": "adblock-client/build.gradle",
+          "line": "12"
+        },
+        {
+          "id": "TrimLambda",
+          "severity": "Hint",
+          "count": 5,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+          "line": "606"
+        },
+        {
+          "id": "AppBundleLocaleChanges",
+          "severity": "Error",
+          "count": 1,
+          "priority": 5,
+          "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/DisplayConfigDelegate.kt",
+          "line": "137"
+        },
+        {
+          "id": "AppLinkUrlError",
+          "severity": "Error",
+          "count": 3,
+          "priority": 5,
+          "file": "app/src/main/AndroidManifest.xml",
+          "line": "190"
+        },
+        {
+          "id": "IntentFilterUniqueDataAttributes",
+          "severity": "Error",
+          "count": 2,
+          "priority": 5,
+          "file": "app/src/main/AndroidManifest.xml",
+          "line": "236"
+        },
+        {
+          "id": "PictureInPictureIssue",
+          "severity": "Error",
+          "count": 1,
+          "priority": 5,
+          "file": "app/src/main/AndroidManifest.xml",
+          "line": "65"
+        },
+        {
+          "id": "AndroidGradlePluginVersion",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "5"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Error",
+          "count": 27,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        },
+        {
+          "id": "NewerVersionAvailable",
+          "severity": "Error",
+          "count": 30,
+          "priority": 4,
+          "file": "app/build.gradle.kts",
+          "line": "264"
+        },
+        {
+          "id": "ComposableNaming",
+          "severity": "Error",
+          "count": 3,
+          "priority": 3,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/BrowseHistoryList.kt",
+          "line": "302"
+        },
+        {
+          "id": "ModifierParameter",
+          "severity": "Error",
+          "count": 13,
+          "priority": 3,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ContextMenuDialogFragment.kt",
+          "line": "301"
+        },
+        {
+          "id": "DiscouragedApi",
+          "severity": "Error",
+          "count": 3,
+          "priority": 2,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/MainContentLayout.kt",
+          "line": "52"
+        },
+        {
+          "id": "MissingTranslation",
+          "severity": "Error",
+          "count": 92,
+          "priority": 8,
+          "file": "app/src/main/res/values/strings.xml",
+          "line": "11"
+        },
+        {
+          "id": "Typos",
+          "severity": "Error",
+          "count": 3,
+          "priority": 7,
+          "file": "app/src/main/res/values-es/strings.xml",
+          "line": "71"
+        },
+        {
+          "id": "LogNotTimber",
+          "severity": "Error",
+          "count": 127,
+          "priority": 5,
+          "file": "app/src/main/java/info/plateaukao/einkbro/browser/BaseWebConfig.kt",
+          "line": "103"
+        },
+        {
+          "id": "PluralsCandidate",
+          "severity": "Error",
+          "count": 2,
+          "priority": 5,
+          "file": "app/src/main/res/values/strings.xml",
+          "line": "141"
+        },
+        {
+          "id": "ChromeOsAbiSupport",
+          "severity": "Error",
+          "count": 1,
+          "priority": 4,
+          "file": "app/build.gradle.kts",
+          "line": "208"
+        },
+        {
+          "id": "SetJavaScriptEnabled",
+          "severity": "Error",
+          "count": 3,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+          "line": "53"
+        },
+        {
+          "id": "InsecureBaseConfiguration",
+          "severity": "Error",
+          "count": 1,
+          "priority": 5,
+          "file": "app/src/main/res/xml/network_security_config.xml",
+          "line": "3"
+        },
+        {
+          "id": "DataExtractionRules",
+          "severity": "Error",
+          "count": 1,
+          "priority": 3,
+          "file": "app/src/main/AndroidManifest.xml",
+          "line": "67"
+        },
+        {
+          "id": "StaticFieldLeak",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalBackend.kt",
+          "line": "123"
+        },
+        {
+          "id": "VectorPath",
+          "severity": "Error",
+          "count": 3,
+          "priority": 5,
+          "file": "app/src/main/res/drawable/ic_earth.xml",
+          "line": "9"
+        },
+        {
+          "id": "AutoboxingStateCreation",
+          "severity": "Hint",
+          "count": 9,
+          "priority": 3,
+          "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
+          "line": "26"
+        },
+        {
+          "id": "AutoboxingStateValueProperty",
+          "severity": "Error",
+          "count": 8,
+          "priority": 3,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontDialogFragment.kt",
+          "line": "76"
+        },
+        {
+          "id": "UnusedResources",
+          "severity": "Error",
+          "count": 15,
+          "priority": 3,
+          "file": "app/src/main/res/drawable/background_with_border_margin.xml",
+          "line": "1"
+        },
+        {
+          "id": "ViewConstructor",
+          "severity": "Error",
+          "count": 2,
+          "priority": 3,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+          "line": "63"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Error",
+          "count": 83,
+          "priority": 6,
+          "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+          "line": "147"
+        },
+        {
+          "id": "UseTomlInstead",
+          "severity": "Error",
+          "count": 15,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        },
+        {
+          "id": "ClickableViewAccessibility",
+          "severity": "Error",
+          "count": 2,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/MultiTouchSwipeRefreshLayout.kt",
+          "line": "61"
+        },
+        {
+          "id": "ConstantLocale",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptQueryListActivity.kt",
+          "line": "192"
+        },
+        {
+          "id": "RtlHardcoded",
+          "severity": "Error",
+          "count": 3,
+          "priority": 5,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ComposeDialogFragment.kt",
+          "line": "204"
+        }
+      ],
+      "omitted_groups": 0
+    }
+  ],
+  "closed_bounded_issues": [
+    {
+      "name": "Border allocation",
+      "source": "92484f6",
+      "evidence": "docs/quality/verification-92484f6.json",
+      "scope_limit": "144 software comparisons/cache tests, not full-screen/hardware/performance certification."
+    },
+    {
+      "name": "SAF stream ownership",
+      "source": "d390b4f",
+      "evidence": "docs/quality/verification-d390b4f.json",
+      "scope_limit": "Nine boundary regressions, not OEM provider/atomic replacement certification."
+    },
+    {
+      "name": "AndroidX EXIF migration",
+      "source": "6abf29b",
+      "evidence": "docs/quality/verification-6abf29b.json",
+      "scope_limit": "Preserved old background mirror omission; S01 is a separate behavior correction."
+    }
+  ],
+  "ordering_policy": "One concrete root-cause ticket at a time within each work package; record evidence-based safety/dependency reprioritization before changing order. S09 may assign future construction ownership without closing those unresolved occurrences. S15 requires all closed.",
+  "work_packages": [
+    {
+      "id": "S00",
+      "title": "Recover full reports and reconcile every occurrence",
+      "status": "auditing",
+      "depends_on": [],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Full same-source report inventory; raw totals reconcile; all findings/scenarios assigned; unknown remainder is zero.",
+      "blocker": "Raw reports recovered; semantic occurrence ownership and duplicate reconciliation unfinished."
+    },
+    {
+      "id": "S01",
+      "title": "Correct background mirrored EXIF orientations",
+      "status": "queued",
+      "depends_on": [
+        "S00"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "All eight background/web orientations pass independent coordinate tests; PNG/no-EXIF/rejection regressions retained; intentional visual delta recorded.",
+      "blocker": null
+    },
+    {
+      "id": "S02",
+      "title": "Resolve API compatibility and safety defects",
+      "status": "queued",
+      "depends_on": [
+        "S01"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Each actual API/crash/data/security finding resolved with impacted minimum/threshold API tests and current lint evidence.",
+      "blocker": null
+    },
+    {
+      "id": "S03",
+      "title": "Resolve real dead actions including TTS pause/resume",
+      "status": "queued",
+      "depends_on": [
+        "S02"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Real action/state and playback consequences tested; no pretend paused state or silent no-op.",
+      "blocker": null
+    },
+    {
+      "id": "S04",
+      "title": "Resolve resource and translation findings",
+      "status": "queued",
+      "depends_on": [
+        "S03"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "All owned keys/locales correct; placeholder/plural/resource/locale/layout tests pass; findings absent.",
+      "blocker": null
+    },
+    {
+      "id": "S05",
+      "title": "Resolve Kotlin idiom and remaining assigned lint findings",
+      "status": "queued",
+      "depends_on": [
+        "S04"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Every assigned occurrence resolved without altered lifecycle/ownership/transaction semantics; regression evidence retained.",
+      "blocker": null
+    },
+    {
+      "id": "S06",
+      "title": "Resolve dependency and toolchain findings",
+      "status": "queued",
+      "depends_on": [
+        "S05"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Every actual dependency/catalogue/target finding addressed; compatibility graph, runtime guard, R8 and Android tests pass.",
+      "blocker": null
+    },
+    {
+      "id": "S07",
+      "title": "Resolve complete Detekt inventory",
+      "status": "queued",
+      "depends_on": [
+        "S06"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "All Detekt occurrences resolved with no threshold/exclusion/debt-baseline change; behavior regressions pass.",
+      "blocker": null
+    },
+    {
+      "id": "S08",
+      "title": "Resolve formatting, compiler and residual mapped lint",
+      "status": "queued",
+      "depends_on": [
+        "S07"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Every remaining mapped static diagnostic resolved under strict unchanged policy; no ignored rule groups.",
+      "blocker": null
+    },
+    {
+      "id": "S09",
+      "title": "Resolve standalone unfinished behavior; assign dependent construction",
+      "status": "queued",
+      "depends_on": [
+        "S08"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Independent unfinished tickets fixed; construction-dependent candidates remain open under specific S10\u2013S14 tickets. Triage is not scanner PASS.",
+      "blocker": null
+    },
+    {
+      "id": "S10",
+      "title": "Complete state, identity, navigation and persistence slices",
+      "status": "queued",
+      "depends_on": [
+        "S09"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Each specified action has real durable/state consequences, error/cancellation/restoration tests and scenario/control mapping.",
+      "blocker": null
+    },
+    {
+      "id": "S11",
+      "title": "Complete safe interactive WebView slices",
+      "status": "queued",
+      "depends_on": [
+        "S10"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Schemes/TLS/origin/bridge/navigation/reuse/restoration controls tested on actual WebView; no release debug bypass.",
+      "blocker": null
+    },
+    {
+      "id": "S12",
+      "title": "Integrate and verify requested runtime sources and orchestration",
+      "status": "queued",
+      "depends_on": [
+        "S11"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Each claimed runtime executes and yields results; continuous-until-Stop and real backend/MCP/identity tests; unsupported requested work remains explicit blocker.",
+      "blocker": null
+    },
+    {
+      "id": "S13",
+      "title": "Complete authorized external AI/key lifecycle slices",
+      "status": "queued",
+      "depends_on": [
+        "S12"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "External-only inference, server-key security, review/orchestration/discovery and consent paths tested; no unimplemented-provider count inflation.",
+      "blocker": null
+    },
+    {
+      "id": "S14",
+      "title": "Complete Material3, all interaction evidence, visuals and performance",
+      "status": "queued",
+      "depends_on": [
+        "S13"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Every required scenario and control disposition evidenced; actual screen captures and measured performance; no hidden unfinished tickets.",
+      "blocker": null
+    },
+    {
+      "id": "S15",
+      "title": "Reconcile and pass full release-candidate gates",
+      "status": "queued",
+      "depends_on": [
+        "S14"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Complete fresh reports reconciled; no unresolved required findings/features; every mandatory workflow job succeeds for candidate source.",
+      "blocker": null
+    },
+    {
+      "id": "S16",
+      "title": "Sign, verify, smoke-test and publish production release",
+      "status": "queued",
+      "depends_on": [
+        "S15"
+      ],
+      "owner": "unassigned",
+      "instructions": "docs/quality/NEXT_AGENT_WORK_ORDER.md",
+      "acceptance": "Exact signed release passes signer/manifest/runtime/checksum/install/UI/crash/run-as gates; only APK and SHA256SUMS published.",
+      "blocker": null
+    }
+  ],
+  "historical_bounded_summary": {
+    "baseline": {
+      "app_lint_errors": 458,
+      "app_lint_hints": 14,
+      "known_app_error_occurrences_in_seed": 185,
+      "app_errors_not_individually_described_by_seed": 273,
+      "app_hints_not_individually_described_by_seed": 9,
+      "omitted_app_rule_groups": 28,
+      "detekt_weighted_findings": 2788,
+      "unfinished_review_candidates": 178,
+      "unfinished_scanned_files": 542,
+      "interaction_candidates": 617,
+      "interaction_contracts": 9,
+      "local_checker_tests_passed": 44,
+      "counts_are_not_additive_unique_bugs": true
+    },
+    "diagnostic_seed_reports": [
+      {
+        "report": "app/build/reports/lint-results-debug.xml",
+        "groups": [
+          {
+            "id": "MissingTranslation",
+            "severity": "Error",
+            "count": 92,
+            "priority": 8,
+            "file": "app/src/main/res/values/strings.xml",
+            "line": "11"
+          },
+          {
+            "id": "Typos",
+            "severity": "Error",
+            "count": 3,
+            "priority": 7,
+            "file": "app/src/main/res/values-es/strings.xml",
+            "line": "71"
+          },
+          {
+            "id": "UseKtx",
+            "severity": "Error",
+            "count": 83,
+            "priority": 6,
+            "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+            "line": "147"
+          },
+          {
+            "id": "TrimLambda",
+            "severity": "Hint",
+            "count": 5,
+            "priority": 6,
+            "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+            "line": "606"
+          },
+          {
+            "id": "InlinedApi",
+            "severity": "Error",
+            "count": 4,
+            "priority": 6,
+            "file": "app/src/main/java/info/plateaukao/einkbro/activity/BrowserActivity.kt",
+            "line": "1147"
+          },
+          {
+            "id": "NewApi",
+            "severity": "Error",
+            "count": 3,
+            "priority": 6,
+            "file": "app/src/main/res/values-night/styles.xml",
+            "line": "6"
+          }
+        ],
+        "omitted_groups": 28,
+        "draw_allocation_count": 0,
+        "recycle_count": 0,
+        "exif_interface_count": 0
+      },
+      {
+        "report": "ad-filter/build/reports/lint-results-debug.xml",
+        "groups": [
+          {
+            "id": "UseKtx",
+            "severity": "Error",
+            "count": 2,
+            "priority": 6,
+            "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+            "line": "147"
+          },
+          {
+            "id": "OldTargetApi",
+            "severity": "Error",
+            "count": 1,
+            "priority": 6,
+            "file": "adblock-client/build.gradle",
+            "line": "12"
+          },
+          {
+            "id": "GradleDependency",
+            "severity": "Error",
+            "count": 23,
+            "priority": 4,
+            "file": "adblock-client/build.gradle",
+            "line": "71"
+          },
+          {
+            "id": "NewerVersionAvailable",
+            "severity": "Error",
+            "count": 23,
+            "priority": 4,
+            "file": "gradle/libs.versions.toml",
+            "line": "3"
+          },
+          {
+            "id": "AndroidGradlePluginVersion",
+            "severity": "Error",
+            "count": 2,
+            "priority": 4,
+            "file": "gradle/libs.versions.toml",
+            "line": "5"
+          },
+          {
+            "id": "UseTomlInstead",
+            "severity": "Error",
+            "count": 2,
+            "priority": 4,
+            "file": "adblock-client/build.gradle",
+            "line": "71"
+          }
+        ],
+        "omitted_groups": 0,
+        "draw_allocation_count": 0,
+        "recycle_count": 0,
+        "exif_interface_count": 0
+      },
+      {
+        "report": "adblock-client/build/reports/lint-results-debug.xml",
+        "groups": [
+          {
+            "id": "OldTargetApi",
+            "severity": "Error",
+            "count": 1,
+            "priority": 6,
+            "file": "adblock-client/build.gradle",
+            "line": "12"
+          },
+          {
+            "id": "UseKtx",
+            "severity": "Error",
+            "count": 1,
+            "priority": 6,
+            "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+            "line": "147"
+          },
+          {
+            "id": "GradleDependency",
+            "severity": "Error",
+            "count": 23,
+            "priority": 4,
+            "file": "adblock-client/build.gradle",
+            "line": "71"
+          },
+          {
+            "id": "NewerVersionAvailable",
+            "severity": "Error",
+            "count": 23,
+            "priority": 4,
+            "file": "gradle/libs.versions.toml",
+            "line": "3"
+          },
+          {
+            "id": "AndroidGradlePluginVersion",
+            "severity": "Error",
+            "count": 2,
+            "priority": 4,
+            "file": "gradle/libs.versions.toml",
+            "line": "5"
+          },
+          {
+            "id": "UseTomlInstead",
+            "severity": "Error",
+            "count": 2,
+            "priority": 4,
+            "file": "adblock-client/build.gradle",
+            "line": "71"
+          }
+        ],
+        "omitted_groups": 0,
+        "draw_allocation_count": 0,
+        "recycle_count": 0,
+        "exif_interface_count": 0
+      }
+    ]
+  },
+  "recovered_counts": {
+    "app_lint_errors": 458,
+    "app_lint_hints": 14,
+    "app_lint_rule_groups": 34,
+    "detekt": 2788,
+    "ktlint": 13875,
+    "unfinished_review_candidates": 178,
+    "raw_lint_rows_including_variants_and_dependency_overlap": 1049,
+    "required_scenarios": 42,
+    "declared_scenario_blockers": 38
+  },
+  "local_validation_after_tools": {
+    "checker_tests_passed": 66,
+    "unfinished_scanned_files": 546,
+    "unfinished_findings": 178,
+    "checker_errors": 0,
+    "interaction_candidates": 617,
+    "contracts": 9,
+    "android_master": "blocked: Java/JAVA_HOME absent"
+  },
+  "completed_s00_substeps": [
+    {
+      "id": "S00-transport",
+      "evidence": "docs/quality/issues/S00-transport.md",
+      "run": 36635551405,
+      "status": "closed"
+    },
+    {
+      "id": "S00-raw-export",
+      "evidence": "docs/quality/recovered-6abf29b/manifest.json",
+      "status": "raw export verified; not semantic reconciliation"
+    }
+  ],
+  "next_action": "S00-ownership: assign collision-aware semantic tickets and aliases to every recovered occurrence/scenario; review security priorities before confirming S01 ordering.",
+  "priority_review_required": [
+    "InsecureBaseConfiguration",
+    "DataExtractionRules",
+    "SetJavaScriptEnabled",
+    "StaticFieldLeak"
+  ],
+  "factory_checkpoint": {
+    "ticket": "FACTORY-001",
+    "bounded_infrastructure_status": "closed",
+    "source": "25f9401983de16fd5fd1b029411239d211787095",
+    "run_id": 36662473189,
+    "declared_engines": 58,
+    "executed_engines": 50,
+    "pass": 20,
+    "reported": 9,
+    "fail": 21,
+    "blocked": 0,
+    "release_approved": false,
+    "evidence": "docs/factory/verification-25f9401.json"
+  },
+  "factory_expansion": {
+    "ticket": "FACTORY-002",
+    "status": "PARTIAL; infrastructure verified, effort acceptance open",
+    "source": "1171a4c9f7bf83c7c069dd6769a898603b4af284",
+    "run_id": 36665725670,
+    "declared_engines": 64,
+    "executed_engines": 56,
+    "pass": 24,
+    "reported": 9,
+    "fail": 23,
+    "blocked": 0,
+    "effort_reduction": "NOT_MEASURED",
+    "real_effort_samples": 0,
+    "release_approved": false
+  },
+  "active_ticket": {
+    "id": "S00-HTTP-WEBVIEW-SECURITY",
+    "status": "IMPLEMENTED; hosted host-unit lanes passed, device verification open",
+    "files": [
+      "app/src/main/java/info/plateaukao/einkbro/preference/BrowserConfig.kt",
+      "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+      "app/src/main/java/info/plateaukao/einkbro/view/WebViewConfigApplier.kt",
+      "app/src/main/java/info/plateaukao/einkbro/browser/EBWebChromeClient.kt",
+      "app/src/main/java/info/plateaukao/einkbro/setting/screens/StartSettings.kt",
+      "app/src/main/res/values/strings.xml"
+    ],
+    "verification": "JDK/JAVA_HOME required for Android unit test",
+    "release_approved": false,
+    "hosted_unit_counts": {
+      "debug": {
+        "passed": 362,
+        "failed": 0,
+        "errors": 0
+      },
+      "release": {
+        "passed": 338,
+        "failed": 0,
+        "errors": 0
+      }
+    },
+    "next": "Device regression for blocked HTTP, explicit approval and HTTPS mixed-content denial"
+  }
+}

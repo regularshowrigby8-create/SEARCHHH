@@ -1,0 +1,416 @@
+package info.plateaukao.einkbro.activity
+
+import android.os.Build
+import android.os.Bundle
+import android.view.WindowInsets
+import android.view.WindowInsetsController
+import android.view.WindowManager
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.view.compose.ComposedIconBar
+import info.plateaukao.einkbro.view.compose.MyTheme
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarActionInfo
+import org.koin.android.ext.android.inject
+import info.plateaukao.einkbro.R
+import info.plateaukao.einkbro.preference.ToolbarPosition
+import info.plateaukao.einkbro.unit.ViewUnit
+import info.plateaukao.einkbro.view.compose.ReorderableComposedIconBar
+import info.plateaukao.einkbro.view.compose.ReorderableComposedIconColumn
+import info.plateaukao.einkbro.view.compose.scaffoldEdgeToEdgePadding
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.background
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import kotlinx.coroutines.delay
+
+class ToolbarConfigActivity : LocaleAwareComponentActivity() {
+    private val config: ConfigManager by inject()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val isReaderMode = intent.getBooleanExtra(EXTRA_IS_READER_MODE, false)
+        val iconEnums = if (isReaderMode) config.ui.readerToolbarActions else config.ui.toolbarActions
+        val toolbarActionInfoList = iconEnums.toToolbarActionInfoList()
+
+        setContent {
+            MyTheme {
+                // Saveable so an unsaved arrangement survives rotation.
+                val list = rememberSaveable(
+                    stateSaver = listSaver(
+                        save = { infos -> infos.map { it.toolbarAction.ordinal } },
+                        restore = { saved ->
+                            saved.map { ToolbarActionInfo(ToolbarAction.fromOrdinal(it), false) }
+                        },
+                    )
+                ) { mutableStateOf(toolbarActionInfoList) }
+                val topBar: @Composable () -> Unit = {
+                    TopAppBar(
+                        title = {
+                            Text(text = stringResource(id = if (isReaderMode) R.string.reader_toolbar else R.string.toolbars))
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { finish() }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                            }
+                        },
+                        actions = {
+                            IconButton(onClick = { finish() }) {
+                                Icon(Icons.Filled.Close, contentDescription = null)
+                            }
+                            IconButton(onClick = {
+                                if (isReaderMode) {
+                                    config.ui.readerToolbarActions = list.value.map { it.toolbarAction }
+                                } else {
+                                    config.ui.toolbarActions = list.value.map { it.toolbarAction }
+                                }
+                                finish()
+                            }) {
+                                Icon(Icons.Filled.Done, contentDescription = null)
+                            }
+                        },
+                    )
+                }
+                // Same edge-to-edge handling as the ListScaffold screens: on
+                // Android 15+ the window is forced edge-to-edge, and the
+                // 3-button navigation bar would otherwise cover (and steal taps
+                // from) the bottom of the panel. The hidden status bar reports
+                // a zero inset, so only real bars add padding.
+                Box(Modifier.scaffoldEdgeToEdgePadding()) {
+                    ToolbarConfigPanel(
+                        list = list,
+                        isVerticalPreview = config.ui.isVerticalToolbar,
+                        isPreviewOnRight = config.ui.toolbarPosition == ToolbarPosition.Right,
+                        topBar = topBar,
+                    )
+                }
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
+            window.insetsController?.apply {
+                hide(WindowInsets.Type.statusBars())
+                systemBarsBehavior =
+                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        }
+    }
+
+    companion object {
+        const val EXTRA_IS_READER_MODE = "extra_is_reader_mode"
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ToolbarConfigPanel(
+    list: MutableState<List<ToolbarActionInfo>>,
+    isVerticalPreview: Boolean = false,
+    isPreviewOnRight: Boolean = false,
+    topBar: @Composable () -> Unit = { Unit },
+) {
+    val isLandscape = ViewUnit.isLandscape(LocalContext.current)
+
+    var highlightedAction by remember { mutableStateOf<ToolbarAction?>(null) }
+    LaunchedEffect(highlightedAction) {
+        if (highlightedAction != null) {
+            delay(1000)
+            highlightedAction = null
+        }
+    }
+
+    val onAddAction: (ToolbarActionInfo) -> Unit = { info ->
+        list.value = list.value.toMutableList().apply {
+            add(size / 2, info)
+        }
+        highlightedAction = info.toolbarAction
+    }
+
+    val onRemoveAction: (ToolbarAction) -> Unit = { action ->
+        if (action != ToolbarAction.Settings) {
+            list.value = list.value.toMutableList().apply {
+                val info = find { it.toolbarAction == action }
+                remove(info)
+            }
+        }
+    }
+
+    if (isVerticalPreview) {
+        val previewBar: @Composable () -> Unit = {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(50.dp)
+                    .border(1.dp, MaterialTheme.colors.primary),
+            ) {
+                ReorderableComposedIconColumn(
+                    list = list,
+                    title = "Toolbar Configuration",
+                    tabCount = "7",
+                    pageInfo = "4/21",
+                    onClick = onRemoveAction,
+                    highlightedAction = highlightedAction,
+                )
+            }
+        }
+        val availableActions: @Composable () -> Unit = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+            ) {
+                topBar()
+                Text(
+                    modifier = Modifier.padding(start = 18.dp, top = 5.dp, bottom = 5.dp),
+                    text = "Available Actions",
+                    color = MaterialTheme.colors.onBackground,
+                    style = MaterialTheme.typography.h6
+                )
+                Text(
+                    modifier = Modifier.padding(start = 18.dp, bottom = 5.dp),
+                    text = "click icon to add; click preview to remove; long click to reorder",
+                    color = MaterialTheme.colors.onBackground,
+                    style = MaterialTheme.typography.caption
+                )
+                LazyVerticalGrid(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    columns = GridCells.Adaptive(84.dp),
+                ) {
+                    val selectedActions = list.value.map { it.toolbarAction }
+                    val otherActionInfos = ToolbarAction.entries
+                        .filter { it !in selectedActions }
+                        .toToolbarActionInfoList()
+                    itemsIndexed(otherActionInfos) { index, info ->
+                        AvailableActionItem(info) { onAddAction(info) }
+                    }
+                }
+            }
+        }
+        Row(modifier = Modifier.fillMaxSize()) {
+            if (isPreviewOnRight) {
+                Box(modifier = Modifier.weight(1f)) { availableActions() }
+                previewBar()
+            } else {
+                previewBar()
+                Box(modifier = Modifier.weight(1f)) { availableActions() }
+            }
+        }
+    } else {
+        Column(modifier = Modifier.fillMaxSize()) {
+            topBar()
+            HorizontalConfigContent(list, isLandscape, onAddAction, onRemoveAction, highlightedAction)
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun HorizontalConfigContent(
+    list: MutableState<List<ToolbarActionInfo>>,
+    isLandscape: Boolean,
+    onAddAction: (ToolbarActionInfo) -> Unit,
+    onRemoveAction: (ToolbarAction) -> Unit,
+    highlightedAction: ToolbarAction?,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 8.dp, start = 1.dp, end = 1.dp, bottom = 50.dp),
+        verticalArrangement = Arrangement.Bottom
+    ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp, bottom = 5.dp),
+                        text = "Available Actions",
+                        color = MaterialTheme.colors.onBackground,
+                        style = MaterialTheme.typography.h6
+                    )
+                    if (isLandscape) {
+                        Text(
+                            modifier = Modifier.padding(start = 10.dp, bottom = 10.dp),
+                            text = "click icon to add it to the toolbar",
+                            color = MaterialTheme.colors.onBackground,
+                            style = MaterialTheme.typography.caption
+                        )
+                    }
+                }
+                if (!isLandscape) {
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp, bottom = 10.dp),
+                        text = "click icon to add it to the toolbar",
+                        color = MaterialTheme.colors.onBackground,
+                        style = MaterialTheme.typography.caption
+                    )
+                }
+                LazyVerticalGrid(
+                    modifier = Modifier.fillMaxWidth(),
+                    columns = GridCells.Adaptive(84.dp),
+                ) {
+                    val selectedActions = list.value.map { it.toolbarAction }
+                    val otherActionInfos = ToolbarAction.entries
+                        .filter { it !in selectedActions }
+                        .toToolbarActionInfoList()
+                    itemsIndexed(otherActionInfos) { index, info ->
+                        AvailableActionItem(info) { onAddAction(info) }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.size(10.dp))
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(
+                    modifier = Modifier.padding(10.dp),
+                    text = "Preview",
+                    color = MaterialTheme.colors.onBackground,
+                    style = MaterialTheme.typography.h6
+                )
+                if (isLandscape) {
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp, bottom = 10.dp),
+                        text = "click icon to remove it from the toolbar; long click to drag icon to reorder",
+                        color = MaterialTheme.colors.onBackground,
+                        style = MaterialTheme.typography.caption
+                    )
+                }
+            }
+            if (!isLandscape) {
+                Text(
+                    modifier = Modifier.padding(start = 10.dp, bottom = 20.dp),
+                    text = "click icon to remove it from the toolbar; long click to drag icon to reorder",
+                    color = MaterialTheme.colors.onBackground,
+                    style = MaterialTheme.typography.caption
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, MaterialTheme.colors.primary),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                ReorderableComposedIconBar(
+                    list = list,
+                    title = "Toolbar Configuration",
+                    tabCount = "7",
+                    pageInfo = "4/21",
+                    onClick = onRemoveAction,
+                    highlightedAction = highlightedAction,
+                )
+            }
+        }
+}
+
+@Composable
+private fun AvailableActionItem(info: ToolbarActionInfo, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 5.dp)
+            .clickable(onClick = onClick),
+    ) {
+        Icon(
+            imageVector = info.toolbarAction.imageVector
+                ?: ImageVector.vectorResource(id = info.toolbarAction.iconResId),
+            contentDescription = null,
+            modifier = Modifier
+                .size(48.dp)
+                .padding(horizontal = 6.dp)
+                .align(Alignment.CenterHorizontally),
+            tint = MaterialTheme.colors.onBackground
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally),
+            text = stringResource(id = info.toolbarAction.titleResId),
+            textAlign = TextAlign.Center,
+            fontSize = 10.sp,
+            lineHeight = 14.sp,
+            color = MaterialTheme.colors.onBackground
+        )
+    }
+}
+
+private fun List<ToolbarAction>.toToolbarActionInfoList(): List<ToolbarActionInfo> =
+    this.map { ToolbarActionInfo(it, false) }
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewToolbarConfigPanel() {
+    MyTheme {
+        val toolbarActionInfoList = ToolbarAction.defaultActions.toToolbarActionInfoList()
+        var list = remember { mutableStateOf(toolbarActionInfoList) }
+        ToolbarConfigPanel(
+            list = list,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewToolbar() {
+    MyTheme {
+        val toolbarActionInfoList = listOf(ToolbarAction.Time).toToolbarActionInfoList()
+        ComposedIconBar(
+            toolbarActionInfos = toolbarActionInfoList,
+            title = "Toolbar Configuration",
+            tabCount = "7",
+            pageInfo = "4/21",
+            isIncognito = false,
+            onClick = { Unit },
+        )
+    }
+}

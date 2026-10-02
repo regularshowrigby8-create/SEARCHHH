@@ -1,0 +1,99 @@
+package info.plateaukao.einkbro.search.suggestion
+
+import info.plateaukao.einkbro.database.Record
+import info.plateaukao.einkbro.database.RecordRepository
+import info.plateaukao.einkbro.database.RecordType
+import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.search.SearchEngine
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+
+class SearchSuggestionViewModel : KoinComponent {
+    private val config: ConfigManager by inject()
+    private val recordDb: RecordRepository by inject()
+
+    private var cachedEngine: String? = null
+    private var cachedRepository: SearchSuggestionsRepository? = null
+
+    private val repository: SearchSuggestionsRepository
+        get() {
+            val engine = config.browser.searchEngine
+            val cached = cachedRepository
+            if (cached != null && engine == cachedEngine) return cached
+            return buildRepository(engine).also {
+                cachedEngine = engine
+                cachedRepository = it
+            }
+        }
+
+    private fun buildRepository(engine: String): SearchSuggestionsRepository =
+        when (engine) {
+            SearchEngine.DUCKDUCKGO.ordinal.toString() -> OpenSearchSuggestionsRepository.duckDuckGo()
+            SearchEngine.BING.ordinal.toString() -> OpenSearchSuggestionsRepository.bing()
+            SearchEngine.ECOSIA.ordinal.toString() -> OpenSearchSuggestionsRepository.ecosia()
+            SearchEngine.STARTPAGE.ordinal.toString(),
+            SearchEngine.STARTPAGE_DE.ordinal.toString() -> OpenSearchSuggestionsRepository.startpage()
+            SearchEngine.YANDEX.ordinal.toString() -> OpenSearchSuggestionsRepository.yandex()
+            else -> GoogleSuggestionsRepository()
+        }
+
+    // create mutable state flow variable for suggestions
+    private val _suggestions = MutableStateFlow<List<Record>>(emptyList())
+    val suggestions: StateFlow<List<Record>> = _suggestions
+
+    private var historyAndBookmarkRecords = listOf<Record>()
+    private var queryString = ""
+    suspend fun initSuggestions() {
+        historyAndBookmarkRecords = recordDb.listEntries(config.browser.showBookmarksInInputBar)
+        _suggestions.value = if (config.ui.showHistoryThumbnailGrid) {
+            recordDb.listLatestHistoryPerDomain()
+        } else {
+            historyAndBookmarkRecords
+        }
+        queryString = ""
+    }
+
+    suspend fun updateSuggestions(query: String) {
+        if (query.isEmpty()) {
+            _suggestions.value = if (config.ui.showHistoryThumbnailGrid) {
+                recordDb.listLatestHistoryPerDomain()
+            } else {
+                historyAndBookmarkRecords
+            }
+            queryString = ""
+            return
+        }
+
+        if (queryString.isNotEmpty() && query.startsWith(queryString) && _suggestions.value.isEmpty())
+        {
+            // if the new query is an extension of the previous query and previous suggestions are empty, keep it empty
+            queryString = query
+            return
+        }
+
+        queryString = query
+
+        val filteredRecords = historyAndBookmarkRecords.filter {
+            it.title?.contains(query, ignoreCase = true) == true ||
+                    it.url.contains(query, ignoreCase = true)
+        }
+
+        if ((query.length <= 1 && filteredRecords.isNotEmpty()) || !config.browser.enableSearchSuggestion) {
+            _suggestions.value = filteredRecords
+            return
+        }
+
+        try {
+            val results = repository.searchSuggestionResults(query).take(4)
+            _suggestions.value =
+                results.map { Record(title = it.title, url = it.url, time = -1, type = RecordType.Suggestion) } +
+                        filteredRecords
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _suggestions.value = emptyList()
+        }
+    }
+
+}

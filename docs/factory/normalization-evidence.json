@@ -1,0 +1,65 @@
+{
+  "source_kind": "local working tree before published expansion",
+  "scan_run": "20260930T032528Z-ea7aaf",
+  "job_counts": {
+    "FAIL": 6
+  },
+  "raw_aliases_preserved": 479,
+  "provisional_packets": 156,
+  "parse_errors": [],
+  "opaque_jobs": [],
+  "all_original_failures_preserved": true,
+  "semantic_issue_closure": false,
+  "workload_reduction_measured": false,
+  "base_commit": "6f94604f8be988bb0e421a78fa30e04c6409345b",
+  "inputs": [
+    {
+      "id": "ruff",
+      "status": "FAIL",
+      "stdout_sha256": "e3c2166037b7f8644430ec74431f5aac89f92affd625dc14a3b95ee0268bd2c8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_before": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057",
+      "source_after": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057"
+    },
+    {
+      "id": "bandit",
+      "status": "FAIL",
+      "stdout_sha256": "b3df465ef3788f321b357c9a36688ea1630cb24750415920937fe2e89cc7fda2",
+      "stderr_sha256": "82545cad2075b66a954c9474dbda750b66caab3ffdde9e60d9ac5ddac75fc25d",
+      "source_before": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057",
+      "source_after": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057"
+    },
+    {
+      "id": "html-validate",
+      "status": "FAIL",
+      "stdout_sha256": "3bc119008b1d876980a18be0744bce260b79d042d809010d1dee7d9c84170429",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_before": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057",
+      "source_after": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057"
+    },
+    {
+      "id": "stylelint",
+      "status": "FAIL",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "5059d0806b9c6f22581e1a445d7eece72762f5da4524294c47de3bd74b1f6b38",
+      "source_before": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057",
+      "source_after": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057"
+    },
+    {
+      "id": "eslint",
+      "status": "FAIL",
+      "stdout_sha256": "c2768556885acfcb9f819580b1b9c54314f4c858ffd7c143e5b0f8207933d2a7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_before": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057",
+      "source_after": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057"
+    },
+    {
+      "id": "npm-audit",
+      "status": "FAIL",
+      "stdout_sha256": "5f1a31a1604beb7ef87df503836810b5ce80d63d417c4acd47da9fd95f2102c8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_before": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057",
+      "source_after": "6d588c2eb5c58ac9c06c279460f3419aa64d2554a90e78b9b7ea36193157b057"
+    }
+  ]
+}

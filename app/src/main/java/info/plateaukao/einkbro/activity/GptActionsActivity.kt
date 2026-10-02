@@ -1,0 +1,538 @@
+package info.plateaukao.einkbro.activity
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldColors
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.outlined.DragHandle
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import info.plateaukao.einkbro.R
+import info.plateaukao.einkbro.view.compose.ThemedDialogWindowFrame
+import info.plateaukao.einkbro.preference.ChatGPTActionInfo
+import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.preference.GptActionDisplay
+import info.plateaukao.einkbro.preference.GptActionType
+import info.plateaukao.einkbro.preference.GptActionScope
+import info.plateaukao.einkbro.preference.ReasoningEffort
+import info.plateaukao.einkbro.view.compose.EmptyListPlaceholder
+import info.plateaukao.einkbro.view.compose.ListScaffold
+import info.plateaukao.einkbro.view.compose.MyTheme
+import info.plateaukao.einkbro.view.compose.SelectableText
+import org.koin.android.ext.android.inject
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
+import info.plateaukao.einkbro.view.compose.onTopBar
+
+class GptActionsActivity : LocaleAwareComponentActivity() {
+    private val config: ConfigManager by inject()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val actionIndex = intent?.getIntExtra("actionIndex", -1) ?: -1
+        val defaultActionType = config.ai.getDefaultActionType()
+
+        setContent {
+            val actionList = remember { mutableStateOf(config.ai.gptActionList) }
+            var showDialog by remember { mutableStateOf(false) }
+            var editActionIndex by remember { mutableIntStateOf(actionIndex) }
+
+            ListScaffold(
+                title = stringResource(R.string.gpt_actions_title),
+                onBack = { finish() },
+                actions = {
+                    IconButton(onClick = {
+                        actionList.value = emptyList()
+                        config.ai.deleteAllGptActions()
+                    }) {
+                        Icon(
+                            tint = MaterialTheme.colors.onTopBar,
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = stringResource(R.string.menu_delete)
+                        )
+                    }
+                    IconButton(onClick = {
+                        editActionIndex = -1
+                        showDialog = true
+                    }) {
+                        Icon(
+                            tint = MaterialTheme.colors.onTopBar,
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = stringResource(R.string.whitelist_add)
+                        )
+                    }
+                },
+            ) { innerPadding ->
+                GptActionListContent(
+                    modifier = Modifier.padding(innerPadding),
+                    list = actionList,
+                    defaultActionType = defaultActionType,
+                    editAction = { index ->
+                        editActionIndex = index
+                        showDialog = true
+                    },
+                    deleteAction = { action ->
+                        actionList.value = actionList.value.toMutableList().apply { remove(action) }
+                        config.ai.deleteGptAction(action)
+                    },
+                    reorderAction = { from, to ->
+                        val newList = actionList.value.toMutableList().apply {
+                            add(to, removeAt(from))
+                        }
+                        actionList.value = newList
+                        config.ai.gptActionList = newList
+                    }
+                )
+            }
+            if (showDialog) {
+                GptActionDialog(
+                    editActionIndex,
+                    if (editActionIndex >= 0)
+                        actionList.value[editActionIndex] else createDefaultGptAction(),
+
+                    config.ai.getGptTypeModelMap(),
+                    okAction = { modifiedAction ->
+                        actionList.value = actionList.value.toMutableList().apply {
+                            if (editActionIndex >= 0) set(editActionIndex, modifiedAction)
+                            else add(modifiedAction)
+                        }
+                        config.ai.gptActionList = actionList.value
+                        showDialog = false
+                    },
+                    dismissAction = { showDialog = false }
+                )
+            }
+        }
+
+    }
+
+    private fun createDefaultGptAction(): ChatGPTActionInfo {
+        return ChatGPTActionInfo(
+            "New Action",
+            "",
+            "",
+            GptActionType.Default,
+            config.ai.getDefaultActionModel()
+        )
+    }
+
+    companion object {
+        fun start(context: Context) = context.startActivity(
+            Intent(
+                context,
+                GptActionsActivity::class.java
+            )
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun GptActionListContent(
+    modifier: Modifier = Modifier,
+    list: MutableState<List<ChatGPTActionInfo>>,
+    defaultActionType: GptActionType,
+    editAction: (Int) -> Unit, // edit action with index
+    deleteAction: (ChatGPTActionInfo) -> Unit = { Unit },
+    reorderAction: (from: Int, to: Int) -> Unit = { _, _ -> },
+) {
+    if (list.value.isEmpty()) {
+        EmptyListPlaceholder(
+            stringResource(R.string.list_empty) + stringResource(R.string.empty_whitelist_hint)
+        )
+    } else {
+        val lazyListState = rememberLazyListState()
+        val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
+            reorderAction(from.index, to.index)
+        }
+
+        LazyColumn(
+            modifier = modifier.padding(10.dp),
+            state = lazyListState,
+        ) {
+            itemsIndexed(list.value, key = { _, action -> action.id }) { index, gptAction ->
+                val actionType = gptAction.actionType.takeIf { it != GptActionType.Default }
+                    ?: defaultActionType
+
+                val iconRes = when (actionType) {
+                    GptActionType.OpenAi -> R.drawable.ic_chat_gpt
+                    GptActionType.SelfHosted -> R.drawable.ic_ollama
+                    GptActionType.Gemini -> R.drawable.ic_gemini
+                    else -> R.drawable.ic_chat_gpt
+                }
+
+                ReorderableItem(reorderableState, key = gptAction.id) { _ ->
+                    Row(
+                        Modifier
+                            .fillMaxSize()
+                            .clickable {
+                                editAction(index)
+                            }
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // icon: action type
+                        Icon(
+                            modifier = Modifier.wrapContentWidth(),
+                            imageVector = ImageVector.vectorResource(id = iconRes),
+                            contentDescription = "Action Type",
+                        )
+                        Spacer(modifier = Modifier.width(15.dp))
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
+                                text = gptAction.name,
+                                style = MaterialTheme.typography.h6,
+                                color = MaterialTheme.colors.onBackground
+                            )
+                            if (gptAction.scope == GptActionScope.WholePage) {
+                                Text(
+                                    modifier = Modifier.padding(horizontal = 1.dp, vertical = 1.dp),
+                                    text = stringResource(R.string.gpt_scope_whole_page),
+                                    style = MaterialTheme.typography.caption,
+                                    color = MaterialTheme.colors.onBackground
+                                )
+                            }
+                            if (gptAction.model.isNotEmpty()) {
+                                Text(
+                                    modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
+                                    text = gptAction.model,
+                                    style = MaterialTheme.typography.caption,
+                                    color = MaterialTheme.colors.onBackground
+                                )
+                            }
+                        }
+                        Icon(
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .draggableHandle(),
+                            imageVector = Icons.Outlined.DragHandle,
+                            contentDescription = stringResource(R.string.gpt_action_drag_handle),
+                            tint = MaterialTheme.colors.onBackground
+                        )
+                        IconButton(onClick = {
+                            deleteAction(gptAction)
+                        }) {
+                            Icon(
+                                tint = MaterialTheme.colors.onBackground,
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = stringResource(R.string.menu_delete)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun GptActionDialog(
+    editActionIndex: Int,
+    action: ChatGPTActionInfo,
+    gptTypeModelMap: Map<GptActionType, String>,
+    okAction: (ChatGPTActionInfo) -> Unit,
+    dismissAction: () -> Unit,
+) {
+    // Keyed initialization: the previous unconditional assignment block ran on
+    // every recomposition of this scope and silently wiped user-typed values.
+    val isEdit = editActionIndex >= 0
+    val name = remember(editActionIndex, action) {
+        mutableStateOf(if (isEdit) action.name else "")
+    }
+    val systemPrompt = remember(editActionIndex, action) {
+        mutableStateOf(if (isEdit) action.systemMessage else "")
+    }
+    val userPrompt = remember(editActionIndex, action) {
+        mutableStateOf(if (isEdit) action.userMessage else "")
+    }
+    val currentActionType = remember(editActionIndex, action) {
+        mutableStateOf(if (isEdit) action.actionType else GptActionType.Default)
+    }
+    val currentActionDisplay = remember(editActionIndex, action) {
+        mutableStateOf(if (isEdit) action.display else GptActionDisplay.Popup)
+    }
+    val currentActionScope = remember(editActionIndex, action) {
+        mutableStateOf(if (isEdit) action.scope else GptActionScope.TextSelection)
+    }
+    val currentReasoning = remember(editActionIndex, action) {
+        mutableStateOf(if (isEdit) action.reasoning else ReasoningEffort.Default)
+    }
+    val model = remember(editActionIndex, action) { mutableStateOf(action.model) }
+
+    AlertDialog(
+        // the ThemedBorders window frame draws the border and fill
+        backgroundColor = Color.Transparent,
+        // use caption style
+        title = { Text("Action Setting", style = MaterialTheme.typography.h6) },
+        text = {
+            ThemedDialogWindowFrame()
+            Column {
+                TextField(
+                    modifier = Modifier.padding(2.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onBackground,
+                        backgroundColor = MaterialTheme.colors.background,
+                    ),
+                    value = name.value,
+                    onValueChange = { name.value = it },
+                    label = { Text("Name") }
+                )
+                ToggleableTextField(
+                    modifier = Modifier.padding(2.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onBackground,
+                        backgroundColor = MaterialTheme.colors.background,
+                    ),
+                    value = systemPrompt.value,
+                    onValueChange = { systemPrompt.value = it },
+                    label = { Text("System Prompt") }
+                )
+                ToggleableTextField(
+                    modifier = Modifier.padding(2.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onBackground,
+                        backgroundColor = MaterialTheme.colors.background,
+                    ),
+                    minLines = 3,
+                    value = userPrompt.value,
+                    onValueChange = { userPrompt.value = it },
+                    label = { Text("User Prompt") }
+                )
+                Text(
+                    modifier = Modifier.padding(5.dp),
+                    text = "Service",
+                    style = MaterialTheme.typography.h6,
+                    color = MaterialTheme.colors.onBackground
+                )
+                FlowRow {
+                    GptActionType.entries.map { gptActionType ->
+                        val isSelect = currentActionType.value == gptActionType
+                        SelectableText(
+                            modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
+                            selected = isSelect,
+                            text = "$gptActionType",
+                        ) {
+                            currentActionType.value = gptActionType
+                            model.value = gptTypeModelMap[gptActionType] ?: ""
+                        }
+                    }
+                }
+                TextField(
+                    modifier = Modifier.padding(2.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onBackground,
+                        backgroundColor = MaterialTheme.colors.background,
+                    ),
+                    value = model.value,
+                    onValueChange = { model.value = it },
+                    label = { Text("model") }
+                )
+                FlowRow {
+                    GptActionDisplay.entries.map { gptActionDisplay ->
+                        val isSelect = currentActionDisplay.value == gptActionDisplay
+                        SelectableText(
+                            modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
+                            selected = isSelect,
+                            text = "$gptActionDisplay",
+                        ) {
+                            currentActionDisplay.value = gptActionDisplay
+                        }
+                    }
+                }
+                Text(
+                    modifier = Modifier.padding(5.dp),
+                    text = stringResource(R.string.gpt_scope),
+                    style = MaterialTheme.typography.h6,
+                    color = MaterialTheme.colors.onBackground
+                )
+                FlowRow {
+                    GptActionScope.entries.map { gptActionScope ->
+                        val isSelect = currentActionScope.value == gptActionScope
+                        val scopeLabel = if (gptActionScope == GptActionScope.WholePage)
+                            stringResource(R.string.gpt_scope_whole_page)
+                        else stringResource(R.string.gpt_scope_text_selection)
+                        SelectableText(
+                            modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
+                            selected = isSelect,
+                            text = scopeLabel,
+                        ) {
+                            currentActionScope.value = gptActionScope
+                        }
+                    }
+                }
+                Text(
+                    modifier = Modifier.padding(5.dp),
+                    text = stringResource(R.string.setting_title_reasoning),
+                    style = MaterialTheme.typography.h6,
+                    color = MaterialTheme.colors.onBackground
+                )
+                FlowRow {
+                    ReasoningEffort.entries.map { reasoningEffort ->
+                        val isSelect = currentReasoning.value == reasoningEffort
+                        val effortLabel = when (reasoningEffort) {
+                            ReasoningEffort.Default -> stringResource(R.string.system_default)
+                            ReasoningEffort.Off -> stringResource(R.string.reasoning_off)
+                            ReasoningEffort.Low -> stringResource(R.string.reasoning_low)
+                            ReasoningEffort.Medium -> stringResource(R.string.reasoning_medium)
+                            ReasoningEffort.High -> stringResource(R.string.reasoning_high)
+                        }
+                        SelectableText(
+                            modifier = Modifier.padding(horizontal = 1.dp, vertical = 3.dp),
+                            selected = isSelect,
+                            text = effortLabel,
+                        ) {
+                            currentReasoning.value = reasoningEffort
+                        }
+                    }
+                }
+            }
+        },
+        onDismissRequest = { dismissAction() },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    okAction(
+                        ChatGPTActionInfo(
+                            name.value,
+                            systemPrompt.value,
+                            userPrompt.value,
+                            currentActionType.value,
+                            model.value,
+                            currentActionDisplay.value,
+                            currentActionScope.value,
+                            reasoning = currentReasoning.value,
+                        )
+                    )
+                }
+            ) {
+                Text(
+                    stringResource(id = android.R.string.ok),
+                    color = MaterialTheme.colors.onBackground
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun ToggleableTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    colors: TextFieldColors = TextFieldDefaults.textFieldColors(),
+    modifier: Modifier = Modifier,
+    minLines: Int = 1,
+    label: @Composable (() -> Unit)? = null,
+    placeholder: String = "",
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { isExpanded = !isExpanded }
+                .padding(vertical = 8.dp)
+        ) {
+            label?.invoke()
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = if (isExpanded) "Collapse" else "Expand"
+            )
+        }
+
+        if (isExpanded) {
+            TextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(placeholder) },
+                minLines = minLines,
+                colors = colors,
+            )
+        } else if (value.isNotEmpty()) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(vertical = 4.dp),
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun GptActionListContentPreview() {
+    val actionList = remember {
+        mutableStateOf(
+            listOf(
+                ChatGPTActionInfo(
+                    "ChatGPT",
+                    "system message",
+                    "user message",
+                    GptActionType.SelfHosted,
+                    "gpt-3"
+                )
+            )
+        )
+    }
+    MyTheme {
+        GptActionListContent(
+            list = actionList,
+            defaultActionType = GptActionType.OpenAi,
+            editAction = { Unit },
+            deleteAction = { Unit }
+        )
+    }
+}

@@ -1,0 +1,652 @@
+package info.plateaukao.einkbro.database
+
+import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
+import android.util.Log
+import android.util.LruCache
+import androidx.room.Dao
+import androidx.room.Database
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.Transaction
+import androidx.room.Update
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import info.plateaukao.einkbro.BuildConfig
+import info.plateaukao.einkbro.preference.ConfigManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
+
+
+@Database(
+    entities = [
+        Bookmark::class,
+        FaviconInfo::class,
+        Highlight::class,
+        Article::class,
+        ChatGptQuery::class,
+        DomainConfiguration::class,
+        TranslationCache::class,
+        SavedPage::class,
+        HistoryRecord::class,
+        WhitelistDomain::class,
+        JavascriptDomain::class,
+        CookieDomain::class,
+        UserScript::class,
+        UserScriptValue::class,
+        VideoTranscript::class,
+        ChatSession::class,
+    ],
+    version = 14,
+    exportSchema = true
+)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun bookmarkDao(): BookmarkDao
+    abstract fun faviconDao(): FaviconDao
+    abstract fun highlightDao(): HighlightDao
+    abstract fun articleDao(): ArticleDao
+    abstract fun chatGptQueryDao(): ChatGptQueryDao
+    abstract fun domainConfigurationDao(): DomainConfigurationDao
+    abstract fun translationCacheDao(): TranslationCacheDao
+    abstract fun savedPageDao(): SavedPageDao
+    abstract fun historyDao(): HistoryDao
+    abstract fun domainListDao(): DomainListDao
+    abstract fun userScriptDao(): UserScriptDao
+    abstract fun userScriptValueDao(): UserScriptValueDao
+    abstract fun videoTranscriptDao(): VideoTranscriptDao
+    abstract fun chatSessionDao(): ChatSessionDao
+}
+
+@Dao
+interface ArticleDao {
+    @Query("SELECT * FROM articles")
+    fun getAllArticles(): Flow<List<Article>>
+
+    @Query("SELECT * FROM articles")
+    suspend fun getAllArticlesAsync(): List<Article>
+
+    @Query("SELECT * FROM articles WHERE url = :url")
+    suspend fun getArticleByUrl(url: String): Article?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(article: Article): Long
+
+    @Query("SELECT * FROM articles WHERE id = :id")
+    suspend fun getArticleById(id: Int): Article?
+
+    @Query("DELETE FROM articles WHERE id = :id")
+    suspend fun deleteArticleById(id: Int)
+
+    @Transaction
+    suspend fun insertAndGetArticle(article: Article): Article {
+        val id = insert(article)
+        return getArticleById(id.toInt())!!
+    }
+
+
+    @Delete
+    suspend fun delete(article: Article)
+
+    @Query("DELETE FROM articles")
+    suspend fun deleteAll()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(articles: List<Article>)
+}
+
+@Dao
+interface HighlightDao {
+    @Query("SELECT * FROM highlights")
+    fun getAllHighlights(): Flow<List<Highlight>>
+
+    @Query("SELECT * FROM highlights WHERE articleId = :articleId")
+    fun getHighlightsForArticle(articleId: Int): Flow<List<Highlight>>
+
+    @Query("SELECT * FROM highlights WHERE articleId = :articleId")
+    suspend fun getHighlightsForArticleIdAsync(articleId: Int): List<Highlight>
+
+    fun getHighlightsForArticle(article: Article): Flow<List<Highlight>> =
+        getHighlightsForArticle(article.id)
+
+    suspend fun getHighlightsForArticleAsync(articleId: Int): List<Highlight> =
+        getHighlightsForArticleIdAsync(articleId)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(highlight: Highlight)
+
+    @Delete
+    suspend fun delete(highlight: Highlight)
+
+    @Query("SELECT * FROM highlights")
+    suspend fun getAllHighlightsAsync(): List<Highlight>
+
+    @Query("DELETE FROM highlights")
+    suspend fun deleteAll()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(highlights: List<Highlight>)
+}
+
+@Dao
+interface FaviconDao {
+    @Query("SELECT * FROM favicons")
+    suspend fun getAllFavicons(): List<FaviconInfo>
+
+    @Query("SELECT domain FROM favicons")
+    suspend fun getAllDomains(): List<String>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(faviconInfo: FaviconInfo)
+
+    @Delete
+    suspend fun delete(faviconInfo: FaviconInfo)
+
+    @Query("SELECT * FROM favicons WHERE domain = :host")
+    suspend fun findBy(host: String): List<FaviconInfo>
+
+    @Query("DELETE FROM favicons")
+    suspend fun deleteAll()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(favicons: List<FaviconInfo>)
+}
+
+@Dao
+interface BookmarkDao {
+    @Query("SELECT * FROM bookmarks ORDER BY title COLLATE NOCASE ASC")
+    suspend fun getAllBookmarks(): List<Bookmark>
+
+    @Query("SELECT * FROM bookmarks WHERE isDirectory = 0 ORDER BY title COLLATE NOCASE ASC")
+    suspend fun getAllBookmarksOnly(): List<Bookmark>
+
+    @Query("SELECT * FROM bookmarks WHERE isDirectory = 1 ORDER BY title COLLATE NOCASE ASC")
+    suspend fun getBookmarkFolders(): List<Bookmark>
+
+    @Query("SELECT * FROM bookmarks WHERE parent = :parentId ORDER BY title COLLATE NOCASE ASC")
+    suspend fun getBookmarksByParent(parentId: Int): List<Bookmark>
+
+//    @Query("SELECT * FROM bookmarks WHERE parent = :parentId ORDER BY title COLLATE NOCASE ASC")
+//    fun getBookmarksByParentFlow(parentId: Int): Flow<List<Bookmark>>
+
+    @Query("SELECT COUNT(id) FROM bookmarks WHERE url = :url")
+    suspend fun existsUrl(url: String): Int
+
+    @Query("SELECT * FROM bookmarks WHERE url = :url")
+    suspend fun findBy(url: String): List<Bookmark>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(bookmark: Bookmark): Long
+
+    @Delete
+    suspend fun delete(bookmark: Bookmark)
+
+    @Update
+    fun update(bookmark: Bookmark)
+
+    @Query("DELETE FROM bookmarks")
+    suspend fun deleteAll()
+
+    @Transaction
+    suspend fun overwrite(bookmarks: List<Bookmark>) {
+        deleteAll()
+        bookmarks.forEach { insert(it) }
+    }
+}
+
+class BookmarkManager(private val context: Context) : KoinComponent {
+    val config: ConfigManager by inject()
+    private val coroutineScope: CoroutineScope by inject()
+
+    private val migration1To2: Migration = object : Migration(1, 2) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `favicons` (`domain` TEXT NOT NULL, `icon` BLOB, PRIMARY KEY(`domain`))")
+        }
+    }
+
+    private val migration2To3: Migration = object : Migration(2, 3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `highlights` (`articleId` INTEGER NOT NULL, `content` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FOREIGN KEY(`articleId`) REFERENCES `articles`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `articles` (`title` TEXT NOT NULL, `url` TEXT NOT NULL, `date` INTEGER NOT NULL, `tags` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+            database.execSQL("CREATE INDEX IF NOT EXISTS `index_highlights_articleId` ON `highlights` (`articleId`)")
+        }
+    }
+
+    private val migration3To4: Migration = object : Migration(3, 4) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `chat_gpt_query` (`date` INTEGER NOT NULL, `url` TEXT NOT NULL, `model` TEXT NOT NULL, `selectedText` TEXT NOT NULL, `result` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+        }
+    }
+
+    private val migration4To5: Migration = object : Migration(4, 5) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `domain_configuration` (`domain` TEXT NOT NULL, `configuration` TEXT NOT NULL, PRIMARY KEY(`domain`))")
+        }
+    }
+
+    private val migration5To6: Migration = object : Migration(5, 6) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE `bookmarks` ADD COLUMN `order` INTEGER DEFAULT 0 NOT NULL")
+        }
+    }
+
+    private val migration6To7: Migration = object : Migration(6, 7) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `translation_cache` (`originalText` TEXT NOT NULL, `targetLanguage` TEXT NOT NULL, `translatedText` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`originalText`, `targetLanguage`))")
+        }
+    }
+
+    private val migration7To8: Migration = object : Migration(7, 8) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `saved_pages` (`title` TEXT NOT NULL, `url` TEXT NOT NULL, `filePath` TEXT NOT NULL, `savedAt` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+        }
+    }
+
+    private val migration8To9: Migration = object : Migration(8, 9) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `HISTORY` (`TITLE` TEXT NOT NULL, `URL` TEXT NOT NULL, `TIME` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `WHITELIST` (`DOMAIN` TEXT NOT NULL, PRIMARY KEY(`DOMAIN`))")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `JAVASCRIPT` (`DOMAIN` TEXT NOT NULL, PRIMARY KEY(`DOMAIN`))")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `COOKIE` (`DOMAIN` TEXT NOT NULL, PRIMARY KEY(`DOMAIN`))")
+        }
+    }
+
+    private val migration9To10: Migration = object : Migration(9, 10) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `user_scripts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `code` TEXT NOT NULL, `sourceUrl` TEXT, `order` INTEGER NOT NULL)")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `user_script_values` (`scriptId` INTEGER NOT NULL, `key` TEXT NOT NULL, `value` TEXT NOT NULL, PRIMARY KEY(`scriptId`, `key`))")
+        }
+    }
+
+    // Rekeys translation_cache by text hash + provider; old rows are disposable
+    // cache data, so drop and recreate instead of converting.
+    private val migration10To11: Migration = object : Migration(10, 11) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("DROP TABLE IF EXISTS `translation_cache`")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `translation_cache` (`textHash` TEXT NOT NULL, `targetLanguage` TEXT NOT NULL, `translateApi` TEXT NOT NULL, `translatedText` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`textHash`, `targetLanguage`, `translateApi`))")
+        }
+    }
+
+    private val migration11To12: Migration = object : Migration(11, 12) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `video_transcripts` (`videoId` TEXT NOT NULL, `transcript` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`videoId`))")
+        }
+    }
+
+    private val migration12To13: Migration = object : Migration(12, 13) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `chat_sessions` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `webTitle` TEXT NOT NULL, `webUrl` TEXT NOT NULL, `messages` TEXT NOT NULL, PRIMARY KEY(`id`))")
+        }
+    }
+
+    // Per-session page text so restoring a saved chat also restores the web
+    // content the LLM sees (not the hosting tab's).
+    private val migration13To14: Migration = object : Migration(13, 14) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE `chat_sessions` ADD COLUMN `webContent` TEXT NOT NULL DEFAULT ''")
+        }
+    }
+
+    val database = Room.databaseBuilder(context, AppDatabase::class.java, "einkbro_db")
+        .addMigrations(migration1To2)
+        .addMigrations(migration2To3)
+        .addMigrations(migration3To4)
+        .addMigrations(migration4To5)
+        .addMigrations(migration5To6)
+        .addMigrations(migration6To7)
+        .addMigrations(migration7To8)
+        .addMigrations(migration8To9)
+        .addMigrations(migration9To10)
+        .addMigrations(migration10To11)
+        .addMigrations(migration11To12)
+        .addMigrations(migration12To13)
+        .addMigrations(migration13To14)
+        .build()
+
+    val bookmarkDao = database.bookmarkDao()
+    val userScriptDao = database.userScriptDao()
+    val userScriptValueDao = database.userScriptValueDao()
+
+    private val faviconDao = database.faviconDao()
+    // Only the domain keys stay resident; icon blobs are read from Room one row
+    // at a time on first use and live in the bounded bitmap cache below, instead
+    // of every stored PNG sitting on the heap for the process lifetime.
+    private val faviconDomains: MutableSet<String> =
+        Collections.newSetFromMap(ConcurrentHashMap())
+    private val faviconBitmapCache = LruCache<String, Bitmap>(100)
+
+    private val highlightDao = database.highlightDao()
+    private val articleDao = database.articleDao()
+    private val chatGptQueryDao = database.chatGptQueryDao()
+    private val domainConfigurationDao = database.domainConfigurationDao()
+    private val translationCacheDao = database.translationCacheDao()
+    private val savedPageDao = database.savedPageDao()
+
+    init {
+        coroutineScope.launch(Dispatchers.IO) {
+            if (BuildConfig.VERSION_NAME < "11.15.0") {
+                convertConfigToDomainConfiguration()
+                config.version = BuildConfig.VERSION_NAME
+            }
+            migrateNinja4DbIfNeeded()
+            faviconDomains.addAll(faviconDao.getAllDomains())
+            config.putAllDomainRules(getAllDomainConfigurations())
+            cleanupTranslationCache()
+        }
+    }
+
+    /**
+     * One-time migration: copies data from the old Ninja4.db (raw SQLite)
+     * into the new Room tables (HISTORY, WHITELIST, JAVASCRIPT, COOKIE).
+     * After successful migration, deletes the old database file.
+     */
+    private fun migrateNinja4DbIfNeeded() {
+        val oldDbFile = context.getDatabasePath("Ninja4.db")
+        if (!oldDbFile.exists()) return
+
+        try {
+            val oldDb = android.database.sqlite.SQLiteDatabase.openDatabase(
+                oldDbFile.absolutePath, null, android.database.sqlite.SQLiteDatabase.OPEN_READONLY
+            )
+
+            // Migrate history
+            oldDb.rawQuery("SELECT TITLE, URL, TIME FROM HISTORY", null)?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    val title = cursor.getString(0) ?: continue
+                    val url = cursor.getString(1) ?: continue
+                    val time = cursor.getLong(2)
+                    database.historyDao().insertSync(
+                        HistoryRecord(TITLE = title.trim(), URL = url.trim(), TIME = time)
+                    )
+                }
+            }
+
+            // Migrate domain lists
+            for ((tableName, inserter) in listOf(
+                "WHITELIST" to { domain: String -> database.domainListDao().insertWhitelistSync(WhitelistDomain(domain)) },
+                "JAVASCRIPT" to { domain: String -> database.domainListDao().insertJavascriptSync(JavascriptDomain(domain)) },
+                "COOKIE" to { domain: String -> database.domainListDao().insertCookieSync(CookieDomain(domain)) },
+            )) {
+                try {
+                    oldDb.rawQuery("SELECT DOMAIN FROM $tableName", null)?.use { cursor ->
+                        while (cursor.moveToNext()) {
+                            val domain = cursor.getString(0) ?: continue
+                            inserter(domain.trim())
+                        }
+                    }
+                } catch (_: Exception) {
+                    // Table might not exist in old db — skip silently
+                }
+            }
+
+            oldDb.close()
+            // Delete old database files after successful migration
+            oldDbFile.delete()
+            context.getDatabasePath("Ninja4.db-journal").delete()
+            context.getDatabasePath("Ninja4.db-wal").delete()
+            context.getDatabasePath("Ninja4.db-shm").delete()
+        } catch (e: Exception) {
+            Log.w("BookmarkManager", "Failed to migrate Ninja4.db: ${e.message}")
+        }
+    }
+
+    private suspend fun convertConfigToDomainConfiguration() {
+        config.scrollFixList.forEach { domain ->
+            Log.d("BookmarkManager", "convertConfigToDomainConfiguration: $domain")
+            val domainConfiguration = getDomainConfiguration(domain)
+            domainConfiguration.shouldFixScroll = true
+            addDomainConfiguration(domainConfiguration)
+        }
+        config.scrollFixList = emptyList()
+
+        config.translateSiteList.forEach { domain ->
+            val domainConfiguration = getDomainConfiguration(domain)
+            domainConfiguration.shouldTranslateSite = true
+            addDomainConfiguration(domainConfiguration)
+        }
+        config.translateSiteList = emptyList()
+
+        config.whiteBackgroundList.forEach { domain ->
+            val domainConfiguration = getDomainConfiguration(domain)
+            domainConfiguration.shouldUseWhiteBackground = true
+            addDomainConfiguration(domainConfiguration)
+        }
+        config.whiteBackgroundList = emptyList()
+    }
+
+    suspend fun insertArticle(article: Article): Article = articleDao.insertAndGetArticle(article)
+    suspend fun insertHighlight(highlight: Highlight) = highlightDao.insert(highlight)
+
+    suspend fun deleteArticle(articleId: Int) = articleDao.deleteArticleById(articleId)
+    suspend fun deleteArticle(article: Article) = articleDao.delete(article)
+
+    suspend fun deleteHighlight(highlight: Highlight) =
+        highlightDao.delete(highlight)
+
+    fun getAllArticles(): Flow<List<Article>> = articleDao.getAllArticles()
+    suspend fun getAllArticlesAsync(): List<Article> = articleDao.getAllArticlesAsync()
+
+    suspend fun getArticle(articleId: Int): Article? = articleDao.getArticleById(articleId)
+
+    fun getHighlightsForArticle(article: Article): Flow<List<Highlight>> =
+        highlightDao.getHighlightsForArticle(article)
+
+    suspend fun getHighlightsForArticleAsync(articleId: Int): List<Highlight> =
+        highlightDao.getHighlightsForArticleAsync(articleId)
+
+    fun getHighlightsForArticle(articleId: Int): Flow<List<Highlight>> =
+        highlightDao.getHighlightsForArticle(articleId)
+
+    suspend fun getArticleByUrl(url: String): Article? = articleDao.getArticleByUrl(url)
+
+    suspend fun insertFavicon(faviconInfo: FaviconInfo) {
+        faviconDao.insert(faviconInfo)
+        faviconDomains.add(faviconInfo.domain)
+        faviconBitmapCache.remove(faviconInfo.domain)
+    }
+
+    /** Marks domains written to the favicons table directly (backup restore). */
+    fun noteFaviconDomains(domains: Collection<String>) {
+        faviconDomains.addAll(domains)
+    }
+
+    // Decoded bitmaps are cached per domain so repeated lookups return the same
+    // instance; Compose skipping and mutableStateOf equality rely on that.
+    // The domain set answers misses without I/O; a hit on an uncached domain is
+    // one single-row primary-key lookup (Room's executor, the caller blocks).
+    fun findFaviconBitmapBy(url: String): Bitmap? {
+        val host = Uri.parse(url).host ?: return null
+        faviconBitmapCache.get(host)?.let { return it }
+        if (host !in faviconDomains) return null
+        val info = runBlocking { faviconDao.findBy(host).firstOrNull() }
+        if (info == null) {
+            faviconDomains.remove(host)
+            return null
+        }
+        val bitmap = info.getBitmap() ?: return null
+        faviconBitmapCache.put(host, bitmap)
+        return bitmap
+    }
+
+    suspend fun deleteFavicon(faviconInfo: FaviconInfo) {
+        faviconDao.delete(faviconInfo)
+        faviconDomains.remove(faviconInfo.domain)
+        faviconBitmapCache.remove(faviconInfo.domain)
+    }
+
+    // -- Bookmark --
+
+    suspend fun updateBookmarksOrder(bookmarks: List<Bookmark>) {
+        withContext(Dispatchers.IO) {
+            database.runInTransaction {
+                bookmarks.forEachIndexed { index, bookmark ->
+                    bookmarkDao.update(bookmark.apply { this.order = index })
+                }
+            }
+        }
+    }
+
+    suspend fun getAllBookmarks(): List<Bookmark> = bookmarkDao.getAllBookmarks()
+
+    suspend fun getAllBookmarksOnly(): List<Bookmark> = bookmarkDao.getAllBookmarksOnly()
+
+    suspend fun getBookmarks(parentId: Int = 0): List<Bookmark> =
+        bookmarkDao.getBookmarksByParent(parentId)
+
+    suspend fun getBookmarksByParent(parent: Int) = bookmarkDao.getBookmarksByParent(parent)
+
+    suspend fun getBookmarkFolders(): List<Bookmark> = bookmarkDao.getBookmarkFolders()
+
+    suspend fun insert(bookmark: Bookmark): Long = bookmarkDao.insert(bookmark)
+
+    suspend fun insert(title: String, url: String) {
+        if (existsUrl(url)) return
+
+        bookmarkDao.insert(Bookmark(title, url))
+    }
+
+    suspend fun deleteAll() = bookmarkDao.deleteAll()
+
+    private suspend fun existsUrl(url: String): Boolean = bookmarkDao.existsUrl(url) > 0
+
+    suspend fun findBy(url: String): List<Bookmark> = bookmarkDao.findBy(url)
+
+    suspend fun delete(bookmark: Bookmark) = bookmarkDao.delete(bookmark)
+
+    suspend fun update(bookmark: Bookmark) = bookmarkDao.update(bookmark)
+
+    suspend fun overwriteBookmarks(bookmarks: List<Bookmark>) {
+        if (bookmarks.isNotEmpty()) bookmarkDao.overwrite(bookmarks)
+    }
+
+    suspend fun getAllChatGptQueriesAsync(): List<ChatGptQuery> =
+        chatGptQueryDao.getAllChatGptQueriesAsync()
+
+    fun getAllChatGptQueries(): Flow<List<ChatGptQuery>> = chatGptQueryDao.getAllChatGptQueries()
+    suspend fun addChatGptQuery(chatGptQuery: ChatGptQuery) =
+        chatGptQueryDao.addChatGptQuery(chatGptQuery)
+
+    suspend fun getChatGptQueryById(id: Int): ChatGptQuery = chatGptQueryDao.getChatGptQueryById(id)
+    suspend fun deleteChatGptQuery(chatGptQuery: ChatGptQuery) =
+        chatGptQueryDao.deleteChatGptQuery(chatGptQuery)
+
+    private suspend fun getDomainConfiguration(domain: String): DomainConfigurationData =
+        domainConfigurationDao.getDomainConfiguration(domain)?.let {
+            json.decodeFromString<DomainConfigurationData>(it.configuration)
+        } ?: DomainConfigurationData(domain)
+
+    val json = Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+    }
+    private suspend fun getAllDomainConfigurations(): Map<String, DomainConfigurationData> =
+        mutableMapOf<String, DomainConfigurationData>().apply {
+            domainConfigurationDao.getAllDomainConfigurations().forEach {
+                put(it.domain, decodeDomainConfiguration(it))
+            }
+        }
+
+    fun decodeDomainConfiguration(row: DomainConfiguration): DomainConfigurationData =
+        json.decodeFromString<DomainConfigurationData>(row.configuration).normalizedLegacyFlags()
+
+    fun encodeDomainConfiguration(data: DomainConfigurationData): DomainConfiguration =
+        DomainConfiguration(
+            domain = data.domain,
+            configuration = json.encodeToString(DomainConfigurationData.serializer(), data),
+        )
+
+    /**
+     * Re-reads every site rule from Room into the in-memory map. The map is
+     * otherwise only filled at startup, so a restore that wrote new rows
+     * would not take effect until the next launch.
+     */
+    suspend fun reloadDomainConfigurations() {
+        config.putAllDomainRules(getAllDomainConfigurations())
+    }
+
+    fun deleteDomainConfiguration(key: String) =
+        coroutineScope.launch(Dispatchers.IO) {
+            domainConfigurationDao.deleteDomainConfiguration(key)
+        }
+
+    fun addDomainConfiguration(domainConfigurationData: DomainConfigurationData) =
+        coroutineScope.launch(Dispatchers.IO) {
+            domainConfigurationDao.addDomainConfiguration(
+                encodeDomainConfiguration(domainConfigurationData)
+            )
+        }
+
+    suspend fun getTranslationCache(
+        textHash: String,
+        targetLanguage: String,
+        translateApi: String,
+    ): TranslationCache? =
+        translationCacheDao.getTranslation(textHash, targetLanguage, translateApi)
+
+    suspend fun insertTranslationCache(translationCache: TranslationCache) =
+        translationCacheDao.insert(translationCache)
+
+    suspend fun getVideoTranscript(videoId: String): VideoTranscript? =
+        database.videoTranscriptDao().getTranscript(videoId)
+
+    suspend fun insertVideoTranscript(videoTranscript: VideoTranscript) =
+        database.videoTranscriptDao().insert(videoTranscript)
+
+    // -- Chat sessions (AI chat-with-web-content) --
+
+    suspend fun getAllChatSessions(): List<ChatSession> =
+        database.chatSessionDao().getAllSessions()
+
+    suspend fun getChatSessionById(id: String): ChatSession? =
+        database.chatSessionDao().getSessionById(id)
+
+    suspend fun upsertChatSession(chatSession: ChatSession) =
+        database.chatSessionDao().upsert(chatSession)
+
+    suspend fun deleteChatSession(id: String) = database.chatSessionDao().deleteById(id)
+
+    suspend fun deleteAllChatSessions() = database.chatSessionDao().deleteAll()
+
+    suspend fun refreshTranslationCacheTimestamp(
+        textHash: String,
+        targetLanguage: String,
+        translateApi: String,
+        timestamp: Long,
+    ) = translationCacheDao.refreshTimestamp(textHash, targetLanguage, translateApi, timestamp)
+
+    suspend fun cleanupTranslationCache() {
+        translationCacheDao.deleteOldCache(
+            System.currentTimeMillis() - TimeUnit.DAYS.toMillis(TRANSLATION_CACHE_EXPIRATION_DAYS)
+        )
+        translationCacheDao.trimToMaxEntries(TRANSLATION_CACHE_MAX_ENTRIES)
+    }
+
+    // -- Saved Pages --
+
+    fun getAllSavedPages(): Flow<List<SavedPage>> = savedPageDao.getAllSavedPages()
+
+    suspend fun insertSavedPage(savedPage: SavedPage) = savedPageDao.insert(savedPage)
+
+    suspend fun deleteSavedPage(savedPage: SavedPage) = savedPageDao.delete(savedPage)
+
+    suspend fun deleteSavedPageById(id: Int) = savedPageDao.deleteById(id)
+
+    enum class SortMode {
+        BY_ORDER,
+        BY_TITLE,
+    }
+}

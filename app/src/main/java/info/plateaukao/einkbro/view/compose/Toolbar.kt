@@ -1,0 +1,1053 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
+package info.plateaukao.einkbro.view.compose
+
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import info.plateaukao.einkbro.R
+import info.plateaukao.einkbro.view.dialog.compose.ComposeDialogFragment
+import info.plateaukao.einkbro.view.Album
+import info.plateaukao.einkbro.view.dialog.compose.HorizontalSeparator
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction.Bookmark
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction.NewTab
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction.PageInfo
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction.Spacer1
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction.Spacer2
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction.TabCount
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction.Time
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarAction.Title
+import info.plateaukao.einkbro.view.toolbaricons.ToolbarActionInfo
+import kotlinx.coroutines.delay
+import sh.calvin.reorderable.ReorderableColumn
+import sh.calvin.reorderable.ReorderableRow
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+
+private val toolbarIconWidth = 46.dp
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun ComposedToolbar(
+    showTabs: Boolean,
+    toolbarActionInfos: List<ToolbarActionInfo>,
+    title: String,
+    tabCount: String,
+    pageInfo: String,
+    isIncognito: Boolean,
+    isVertical: Boolean = false,
+    isToolbarOnRight: Boolean = false,
+    onIconClick: (ToolbarAction) -> Unit,
+    onIconLongClick: ((ToolbarAction) -> Unit)? = null,
+    albumList: MutableState<List<Album>>,
+    albumFocusIndex: MutableState<Int>,
+    onAlbumClick: (Album) -> Unit,
+    onAlbumLongClick: (Album) -> Unit,
+) {
+    if (isVertical) {
+        Row(
+            modifier = Modifier
+                .width(50.dp)
+                .fillMaxHeight()
+                .background(MaterialTheme.colors.background)
+                .semantics { testTagsAsResourceId = true },
+        ) {
+            if (isToolbarOnRight) {
+                Box(Modifier.fillMaxHeight().width(1.dp).background(MaterialTheme.colors.onBackground))
+            }
+            ComposedIconBar(
+                modifier = Modifier.weight(1f),
+                toolbarActionInfos = toolbarActionInfos,
+                title = title,
+                tabCount = tabCount,
+                pageInfo = pageInfo,
+                isIncognito = isIncognito,
+                isVertical = true,
+                onClick = onIconClick,
+                onLongClick = onIconLongClick,
+            )
+            if (!isToolbarOnRight) {
+                Box(Modifier.fillMaxHeight().width(1.dp).background(MaterialTheme.colors.onBackground))
+            }
+        }
+    } else {
+        val height = if (showTabs) 100.dp else 50.dp
+        Column(
+            modifier = Modifier
+                .height(height)
+                .background(MaterialTheme.colors.background)
+                .semantics { testTagsAsResourceId = true },
+            horizontalAlignment = Alignment.End
+        ) {
+            if (showTabs) {
+                TabStripRow(
+                    albumList = albumList,
+                    albumFocusIndex = albumFocusIndex,
+                    onAlbumClick = onAlbumClick,
+                    onAlbumLongClick = onAlbumLongClick,
+                    onIconClick = onIconClick,
+                    onIconLongClick = onIconLongClick,
+                )
+                HorizontalSeparator()
+            }
+            ComposedIconBar(
+                toolbarActionInfos = toolbarActionInfos,
+                title = title,
+                tabCount = tabCount,
+                pageInfo = pageInfo,
+                isIncognito = isIncognito,
+                isVertical = false,
+                onClick = onIconClick,
+                onLongClick = onIconLongClick,
+            )
+        }
+    }
+}
+
+/**
+ * The tab strip: previews plus a new-tab button. Shared by the bottom/top toolbar,
+ * which stacks it above the icon row, and by [ComposedSideTabBar], which the
+ * activity anchors across the top of the content when the toolbar is vertical.
+ */
+@Composable
+private fun TabStripRow(
+    albumList: MutableState<List<Album>>,
+    albumFocusIndex: MutableState<Int>,
+    onAlbumClick: (Album) -> Unit,
+    onAlbumLongClick: (Album) -> Unit,
+    onIconClick: (ToolbarAction) -> Unit,
+    onIconLongClick: ((ToolbarAction) -> Unit)?,
+) {
+    Row(
+        Modifier
+            .height(50.dp)
+            .fillMaxWidth()
+    ) {
+        PreviewTabs(
+            Modifier.weight(1f),
+            albumList = albumList.value,
+            albumFocusIndex = albumFocusIndex,
+            onClick = onAlbumClick,
+            closeAction = onAlbumLongClick,
+            showHorizontal = true
+        )
+        ButtonIcon(
+            iconResId = R.drawable.icon_plus,
+            onClick = { onIconClick(NewTab) },
+            onLongClick = { onIconLongClick?.invoke(NewTab) },
+        )
+    }
+}
+
+/**
+ * Standalone tab strip for vertical toolbar mode. The vertical toolbar is a 50dp
+ * column with no room for readable tab titles, so the strip stays horizontal and
+ * the activity constrains it beside the toolbar, across the top of the content.
+ */
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun ComposedSideTabBar(
+    albumList: MutableState<List<Album>>,
+    albumFocusIndex: MutableState<Int>,
+    isOnTop: Boolean,
+    onAlbumClick: (Album) -> Unit,
+    onAlbumLongClick: (Album) -> Unit,
+    onIconClick: (ToolbarAction) -> Unit,
+    onIconLongClick: ((ToolbarAction) -> Unit)? = null,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colors.background)
+            .semantics { testTagsAsResourceId = true },
+    ) {
+        // The rule divides the strip from the page, so it belongs on whichever side
+        // the content is on.
+        if (!isOnTop) HorizontalSeparator()
+        TabStripRow(
+            albumList = albumList,
+            albumFocusIndex = albumFocusIndex,
+            onAlbumClick = onAlbumClick,
+            onAlbumLongClick = onAlbumLongClick,
+            onIconClick = onIconClick,
+            onIconLongClick = onIconLongClick,
+        )
+        if (isOnTop) HorizontalSeparator()
+    }
+}
+
+@Composable
+fun ComposedIconBar(
+    modifier: Modifier = Modifier,
+    toolbarActionInfos: List<ToolbarActionInfo>,
+    title: String,
+    tabCount: String,
+    pageInfo: String,
+    isIncognito: Boolean,
+    isVertical: Boolean = false,
+    onClick: (ToolbarAction) -> Unit,
+    onLongClick: ((ToolbarAction) -> Unit)? = null,
+) {
+    if (isVertical) {
+        val hasSpacers = toolbarActionInfos.any { it.toolbarAction in spacerActions }
+        Column(
+            modifier = modifier
+                .fillMaxHeight()
+                .background(MaterialTheme.colors.background)
+                .conditional(!hasSpacers) {
+                    verticalScroll(rememberScrollState())
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+        ) {
+            toolbarActionInfos.forEach { toolbarActionInfo ->
+                val action = toolbarActionInfo.toolbarAction
+                if (action == Spacer1 || action == Spacer2) {
+                    Spacer(modifier = Modifier.weight(1f))
+                } else {
+                    CreateToolbarIcon(
+                        toolbarActionInfo,
+                        spacerWidth = 0.dp,
+                        titleWidth = 0.dp,
+                        onClick,
+                        title,
+                        isIncognito,
+                        tabCount,
+                        onLongClick,
+                        pageInfo,
+                        isVertical = true,
+                    )
+                }
+            }
+        }
+    } else {
+        // Size from the real layout constraints, not Configuration screen dims:
+        // at targetSdk 35+ screenWidthDp includes the system bars, so it can
+        // exceed the bar's usable width (e.g. landscape 3-button navigation).
+        BoxWithConstraints {
+            val barWidth = maxWidth
+            // Loop-invariant: computed once per bar recomposition instead of per icon.
+            val spacerWidth = remember(toolbarActionInfos, barWidth) {
+                calculateSpacerWidth(toolbarActionInfos, barWidth)
+            }
+            val titleWidth = remember(toolbarActionInfos, barWidth) {
+                calculateTitleWidth(toolbarActionInfos, barWidth)
+            }
+            val shouldRowFixed = toolbarActionInfos.any { it.toolbarAction in spacerActions }
+                    && spacerWidth > 5.dp
+
+            Row(
+                modifier = Modifier
+                    .height(50.dp)
+                    .background(MaterialTheme.colors.background)
+                    .conditional(!shouldRowFixed) {
+                        horizontalScroll(
+                            rememberScrollState(),
+                            reverseScrolling = true
+                        )
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                toolbarActionInfos.forEach { toolbarActionInfo ->
+                    CreateToolbarIcon(
+                        toolbarActionInfo,
+                        spacerWidth,
+                        titleWidth,
+                        onClick,
+                        title,
+                        isIncognito,
+                        tabCount,
+                        onLongClick,
+                        pageInfo,
+                        isVertical = false,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CreateToolbarIcon(
+    toolbarActionInfo: ToolbarActionInfo,
+    spacerWidth: Dp,
+    titleWidth: Dp,
+    onClick: (ToolbarAction) -> Unit,
+    title: String,
+    isIncognito: Boolean,
+    tabCount: String,
+    onLongClick: ((ToolbarAction) -> Unit)?,
+    pageInfo: String,
+    isVertical: Boolean = false,
+) {
+    val toolbarAction = toolbarActionInfo.toolbarAction
+
+    if (isVertical) {
+        // In vertical mode: Title becomes a search icon, spacers handled by parent Column
+        when (toolbarAction) {
+            Title -> VerticalTitleIcon(onClick, onLongClick)
+            Spacer1, Spacer2 -> { /* handled in ComposedIconBar */ }
+            Time -> CurrentTimeText(isVertical = true)
+            TabCount -> TabCountIcon(isIncognito, tabCount, onClick, onLongClick)
+            PageInfo -> PageInfoIcon(pageInfo, onClick, onLongClick)
+            else -> ToolbarIcon(
+                toolbarAction,
+                toolbarActionInfo.getCurrentResId(),
+                onClick,
+                onLongClick
+            )
+        }
+    } else {
+        when (toolbarAction) {
+            Title -> ToolbarTitle(
+                Modifier.width(titleWidth), onClick, toolbarAction, title
+            )
+
+            Time -> CurrentTimeText()
+            TabCount -> TabCountIcon(isIncognito, tabCount, onClick, onLongClick)
+            PageInfo -> PageInfoIcon(pageInfo, onClick, onLongClick)
+            Spacer1, Spacer2 -> Spacer(
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(spacerWidth)
+            )
+
+            else -> ToolbarIcon(
+                toolbarAction,
+                toolbarActionInfo.getCurrentResId(),
+                onClick,
+                onLongClick
+            )
+        }
+    }
+}
+
+fun List<Dp>.sumDp(): Dp = this.fold(0.dp) { acc, dp -> acc + dp }
+
+private val spacerActions = setOf(Spacer1, Spacer2)
+
+@Composable
+fun ReorderableComposedIconBar(
+    list: MutableState<List<ToolbarActionInfo>>,
+    title: String,
+    tabCount: String,
+    pageInfo: String,
+    onClick: (ToolbarAction) -> Unit,
+    highlightedAction: ToolbarAction? = null,
+) {
+    // Real constraints, not Configuration screen dims: at targetSdk 35+
+    // screenWidthDp includes the system bars and can exceed the bar's width.
+    BoxWithConstraints {
+        val spacerWidth = calculateSpacerWidth(list.value, maxWidth)
+        val titleWidth = calculateTitleWidth(list.value, maxWidth)
+        ReorderableRow(
+            modifier = Modifier
+                .height(50.dp)
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.background)
+                .horizontalScroll(
+                    rememberScrollState(),
+                    reverseScrolling = true
+                ),
+            list = list.value,
+            onSettle = { fromIndex, toIndex ->
+                list.value = list.value.toMutableList().apply {
+                    add(toIndex, removeAt(fromIndex))
+                }
+            },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) { _, toolbarActionInfo, isDragging ->
+            key(toolbarActionInfo) {
+                val toolbarAction = toolbarActionInfo.toolbarAction
+                val blinkAlpha = rememberBlinkAlpha(toolbarAction == highlightedAction)
+                Box(
+                    modifier = Modifier
+                        .alpha(blinkAlpha)
+                        .longPressDraggableHandle()
+                        .border(
+                            if (isDragging) 1.5.dp else (-1).dp,
+                            MaterialTheme.colors.primary,
+                            RoundedCornerShape(3.dp)
+                        )
+                        .conditional(toolbarAction in listOf(Spacer1, Spacer2, Time)) {
+                            clickable(onClick = { onClick(toolbarAction) })
+                        }
+                ) {
+                    if (toolbarAction in spacerActions) {
+                        Spacer(
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(spacerWidth)
+                                .dashedBorder(1.dp, 8.dp, color = MaterialTheme.colors.primary)
+                        )
+                    } else {
+                        CreateToolbarIcon(
+                            toolbarActionInfo,
+                            spacerWidth,
+                            titleWidth,
+                            onClick,
+                            title,
+                            false,
+                            tabCount,
+                            null,
+                            pageInfo,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ReorderableComposedIconColumn(
+    list: MutableState<List<ToolbarActionInfo>>,
+    title: String,
+    tabCount: String,
+    pageInfo: String,
+    onClick: (ToolbarAction) -> Unit,
+    highlightedAction: ToolbarAction? = null,
+) {
+    // Real constraints, not Configuration screen dims: at targetSdk 35+
+    // screenHeightDp includes the system bars and overshoots the column height.
+    BoxWithConstraints {
+        ReorderableComposedIconColumnContent(
+            list, title, tabCount, pageInfo, onClick, highlightedAction,
+            spacerHeight = calculateSpacerHeight(list.value, maxHeight),
+        )
+    }
+}
+
+@Composable
+private fun ReorderableComposedIconColumnContent(
+    list: MutableState<List<ToolbarActionInfo>>,
+    title: String,
+    tabCount: String,
+    pageInfo: String,
+    onClick: (ToolbarAction) -> Unit,
+    highlightedAction: ToolbarAction?,
+    spacerHeight: Dp,
+) {
+    ReorderableColumn(
+        modifier = Modifier
+            .width(50.dp)
+            .fillMaxHeight()
+            .background(MaterialTheme.colors.background)
+            .verticalScroll(rememberScrollState()),
+        list = list.value,
+        onSettle = { fromIndex, toIndex ->
+            list.value = list.value.toMutableList().apply {
+                add(toIndex, removeAt(fromIndex))
+            }
+        },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+    ) { _, toolbarActionInfo, isDragging ->
+        key(toolbarActionInfo) {
+            val toolbarAction = toolbarActionInfo.toolbarAction
+            val isSpacer = toolbarAction in spacerActions
+            val blinkAlpha = rememberBlinkAlpha(toolbarAction == highlightedAction)
+            Box(
+                modifier = Modifier
+                    .alpha(blinkAlpha)
+                    .longPressDraggableHandle()
+                    .border(
+                        if (isDragging) 1.5.dp else (-1).dp,
+                        MaterialTheme.colors.primary,
+                        RoundedCornerShape(3.dp)
+                    )
+                    .conditional(toolbarAction in listOf(Spacer1, Spacer2, Time)) {
+                        clickable(onClick = { onClick(toolbarAction) })
+                    }
+            ) {
+                if (isSpacer) {
+                    Spacer(
+                        modifier = Modifier
+                            .width(40.dp)
+                            .height(spacerHeight)
+                            .dashedBorder(1.dp, 8.dp, color = MaterialTheme.colors.primary)
+                    )
+                } else {
+                    CreateToolbarIcon(
+                        toolbarActionInfo,
+                        spacerWidth = 0.dp,
+                        titleWidth = 0.dp,
+                        onClick,
+                        title,
+                        false,
+                        tabCount,
+                        null,
+                        pageInfo,
+                        isVertical = true,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun rememberBlinkAlpha(isActive: Boolean): Float {
+    val alpha = remember { Animatable(1f) }
+    LaunchedEffect(isActive) {
+        if (isActive) {
+            repeat(3) {
+                alpha.animateTo(0.2f, tween(150))
+                alpha.animateTo(1f, tween(150))
+            }
+        }
+    }
+    return alpha.value
+}
+
+private fun calculateSpacerHeight(list: List<ToolbarActionInfo>, screenHeight: Dp): Dp {
+    val spacerCount = list.count { it.toolbarAction in spacerActions }
+    if (spacerCount == 0) return toolbarIconWidth
+
+    val totalIconHeight = list.filterNot { it.toolbarAction in spacerActions }
+        .map { toolbarIconWidth }.sumDp()
+    val leftHeight = screenHeight - totalIconHeight
+    return (if (leftHeight > 5.dp) leftHeight else 5.dp) / spacerCount
+}
+
+private fun calculateSpacerWidth(list: List<ToolbarActionInfo>, screenWidth: Dp): Dp {
+    val spacerCount = list.count { it.toolbarAction in spacerActions }
+    if (spacerCount == 0) return 0.dp
+
+    val iconWidth = 46.dp
+    if (list.any { it.toolbarAction == Title }) return iconWidth
+
+    val totalActionIconWidth = list.filterNot { it.toolbarAction in spacerActions }
+        .map {
+            if (it.toolbarAction == Time) 55.dp else iconWidth
+        }.sumDp()
+    val leftWidth = screenWidth - totalActionIconWidth
+    val spacerWidth = (if (leftWidth > 5.dp) leftWidth else 5.dp) / spacerCount
+    return spacerWidth
+}
+
+private fun calculateTitleWidth(list: List<ToolbarActionInfo>, screenWidth: Dp): Dp {
+    if (list.none { it.toolbarAction == Title }) return 0.dp
+
+    val iconWidth = 46.dp
+    val totalActionIconWidth =
+        list.filterNot { it.toolbarAction == Title }.map { if (it.toolbarAction == Time) 55.dp else iconWidth }.sumDp()
+    val finalWidth = screenWidth - totalActionIconWidth
+    return if (finalWidth > 100.dp) finalWidth else 100.dp
+}
+
+@Composable
+private fun ToolbarTitle(
+    modifier: Modifier = Modifier,
+    onClick: (ToolbarAction) -> Unit,
+    toolbarAction: ToolbarAction,
+    title: String,
+) {
+    val titleModifier = modifier
+        .padding(start = 2.dp, top = 6.dp, bottom = 6.dp)
+        .fillMaxHeight()
+        .border(
+            0.5.dp,
+            MaterialTheme.colors.primary,
+            RoundedCornerShape(12.dp)
+        )
+        .padding(start = 10.dp, end = 10.dp)
+        .clickable { onClick(toolbarAction) }
+    Row(
+        modifier = titleModifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = title,
+            color = MaterialTheme.colors.onBackground,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun VerticalTitleIcon(
+    onClick: (ToolbarAction) -> Unit,
+    onLongClick: ((ToolbarAction) -> Unit)? = null,
+) {
+    val iconCenterXRef = remember { intArrayOf(-1) }
+    val iconCenterYRef = remember { intArrayOf(-1) }
+
+    Box(
+        modifier = Modifier
+            .size(toolbarIconWidth)
+            .onGloballyPositioned { coordinates ->
+                val pos = coordinates.positionInWindow()
+                iconCenterXRef[0] = (pos.x + coordinates.size.width / 2f).toInt()
+                iconCenterYRef[0] = (pos.y + coordinates.size.height / 2f).toInt()
+            }
+            .combinedClickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = {
+                    ComposeDialogFragment.anchorX = iconCenterXRef[0]
+                    ComposeDialogFragment.anchorY = iconCenterYRef[0]
+                    onClick(Title)
+                },
+                onLongClick = onLongClick?.let { {
+                    ComposeDialogFragment.anchorX = iconCenterXRef[0]
+                    ComposeDialogFragment.anchorY = iconCenterYRef[0]
+                    it.invoke(Title)
+                } },
+            )
+            .padding(6.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Search,
+            contentDescription = stringResource(id = R.string.main_menu_new_tabOpen),
+            tint = MaterialTheme.colors.primary,
+            modifier = Modifier.size(26.dp)
+        )
+    }
+}
+
+// pageInfo
+@Composable
+fun PageInfoIcon(
+    pageInfo: String,
+    onClick: (ToolbarAction) -> Unit,
+    onLongClick: ((ToolbarAction) -> Unit)? = null,
+) {
+    val iconCenterXRef = remember { intArrayOf(-1) }
+    val iconCenterYRef = remember { intArrayOf(-1) }
+
+    Text(
+        text = pageInfo,
+        color = MaterialTheme.colors.onBackground,
+        fontSize = 12.sp,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .padding(2.dp)
+            .defaultMinSize(minWidth = 46.dp)
+            .wrapContentWidth()
+            .onGloballyPositioned { coordinates ->
+                val pos = coordinates.positionInWindow()
+                iconCenterXRef[0] = (pos.x + coordinates.size.width / 2f).toInt()
+                iconCenterYRef[0] = (pos.y + coordinates.size.height / 2f).toInt()
+            }
+            .combinedClickable(
+                onClick = {
+                    ComposeDialogFragment.anchorX = iconCenterXRef[0]
+                    ComposeDialogFragment.anchorY = iconCenterYRef[0]
+                    onClick(PageInfo)
+                },
+                onLongClick = onLongClick?.let { {
+                    ComposeDialogFragment.anchorX = iconCenterXRef[0]
+                    ComposeDialogFragment.anchorY = iconCenterYRef[0]
+                    it.invoke(PageInfo)
+                } },
+            )
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ToolbarIcon(
+    toolbarAction: ToolbarAction,
+    iconResId: Int,
+    onClick: (ToolbarAction) -> Unit,
+    onLongClick: ((ToolbarAction) -> Unit)? = null,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val iconCenterXRef = remember { intArrayOf(-1) }
+    val iconCenterYRef = remember { intArrayOf(-1) }
+
+    val modifier = Modifier
+        .size(toolbarIconWidth)
+        .padding(6.dp)
+        .combinedClickable(
+            indication = null,
+            interactionSource = interactionSource,
+            onClick = {
+                ComposeDialogFragment.anchorX = iconCenterXRef[0]
+                ComposeDialogFragment.anchorY = iconCenterYRef[0]
+                onClick(toolbarAction)
+            },
+            onLongClick = onLongClick?.let { {
+                ComposeDialogFragment.anchorX = iconCenterXRef[0]
+                ComposeDialogFragment.anchorY = iconCenterYRef[0]
+                it.invoke(toolbarAction)
+            } },
+        )
+        .padding(6.dp)
+        .testTag(toolbarAction.name.lowercase())
+
+    Box(
+        modifier = Modifier
+            .padding(top = 3.dp)
+            .onGloballyPositioned { coordinates ->
+                val pos = coordinates.positionInWindow()
+                iconCenterXRef[0] = (pos.x + coordinates.size.width / 2f).toInt()
+                iconCenterYRef[0] = (pos.y + coordinates.size.height / 2f).toInt()
+            }
+    ) {
+        if (pressed) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .background(MaterialTheme.colors.onBackground, shape = CircleShape)
+                    .align(Alignment.TopCenter)
+            )
+        }
+        if (iconResId != 0) {
+            Icon(
+                modifier = modifier,
+                imageVector = ImageVector.vectorResource(id = iconResId),
+                contentDescription = stringResource(id = toolbarAction.titleResId),
+                tint = MaterialTheme.colors.primary
+            )
+        } else {
+            Icon(
+                modifier = modifier,
+                imageVector = toolbarAction.imageVector!!,
+                contentDescription = stringResource(id = toolbarAction.titleResId),
+                tint = MaterialTheme.colors.primary
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun TabCountIcon(
+    isIncognito: Boolean,
+    count: String,
+    onClick: (ToolbarAction) -> Unit,
+    onLongClick: ((ToolbarAction) -> Unit)? = null,
+) {
+    val border = if (isIncognito)
+        Modifier.dashedBorder(1.dp, 7.dp, color = MaterialTheme.colors.primary)
+    else
+        Modifier.ebItemFrame()
+
+    val iconCenterXRef = remember { intArrayOf(-1) }
+    val iconCenterYRef = remember { intArrayOf(-1) }
+
+    val parts = count.split("/")
+    val hasFraction = parts.size == 2
+    val hasLargeNumber = hasFraction && (parts[0].length > 1 || parts[1].length > 1)
+    val fractionFontSize = if (hasLargeNumber) 9.sp else 11.sp
+
+    Box(
+        modifier = Modifier
+            .size(toolbarIconWidth)
+            .onGloballyPositioned { coordinates ->
+                val pos = coordinates.positionInWindow()
+                iconCenterXRef[0] = (pos.x + coordinates.size.width / 2f).toInt()
+                iconCenterYRef[0] = (pos.y + coordinates.size.height / 2f).toInt()
+            }
+            .combinedClickable(
+                onClick = {
+                    ComposeDialogFragment.anchorX = iconCenterXRef[0]
+                    ComposeDialogFragment.anchorY = iconCenterYRef[0]
+                    onClick(TabCount)
+                },
+                onLongClick = onLongClick?.let { {
+                    ComposeDialogFragment.anchorX = iconCenterXRef[0]
+                    ComposeDialogFragment.anchorY = iconCenterYRef[0]
+                    it.invoke(TabCount)
+                } },
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        if (hasFraction) {
+            Box(
+                modifier = Modifier
+                    .height(28.dp)
+                    .width(28.dp)
+                    .then(border),
+            ) {
+                // current tab number — top-left
+                val bothSingleDigit = parts[0].length == 1 && parts[1].length == 1
+                val currentPadStart = when {
+                    bothSingleDigit -> 6.dp
+                    parts[0].length == 1 && parts[1].length > 1 -> 5.dp
+                    else -> 3.dp
+                }
+                val currentPadTop = when {
+                    bothSingleDigit -> 2.dp
+                    parts[0].length == 1 && parts[1].length > 1 -> 2.dp
+                    else -> 1.dp
+                }
+                Text(
+                    text = parts[0],
+                    fontSize = fractionFontSize,
+                    lineHeight = fractionFontSize,
+                    color = MaterialTheme.colors.onBackground,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(start = currentPadStart, top = currentPadTop),
+                )
+                // diagonal slash line
+                val slashColor = MaterialTheme.colors.onBackground
+                Canvas(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(28.dp),
+                ) {
+                    val strokeWidth = 0.5.dp.toPx()
+                    val lineLength = size.minDimension * 0.40f
+                    val centerX = size.width / 2f
+                    val centerY = size.height / 2f
+                    drawLine(
+                        color = slashColor,
+                        start = Offset(
+                            centerX + lineLength / 2f,
+                            centerY - lineLength / 2f,
+                        ),
+                        end = Offset(
+                            centerX - lineLength / 2f,
+                            centerY + lineLength / 2f,
+                        ),
+                        strokeWidth = strokeWidth,
+                    )
+                }
+                // total count — bottom-right
+                val totalPadEnd = if (bothSingleDigit) 6.dp else 3.dp
+                val totalPadBottom = if (bothSingleDigit) 2.dp else 1.dp
+                Text(
+                    text = parts[1],
+                    fontSize = fractionFontSize,
+                    lineHeight = fractionFontSize,
+                    color = MaterialTheme.colors.onBackground,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = totalPadEnd, bottom = totalPadBottom),
+                )
+            }
+        } else {
+            Text(
+                modifier = Modifier
+                    .height(28.dp)
+                    .width(28.dp)
+                    .then(border)
+                    .padding(top = 2.dp),
+                text = count,
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp,
+                color = MaterialTheme.colors.onBackground,
+            )
+        }
+    }
+}
+
+/** Ticking "HH:mm" string, updated on the minute boundary (shared by toolbar and statusbar). */
+@Composable
+fun rememberCurrentTimeText(): String {
+    var currentTime by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+        while (true) {
+            currentTime = format.format(Date())
+            // Sleep to the next minute boundary; a fixed 60s delay from
+            // composition time lags reality by up to 59 seconds.
+            delay(60_000L - System.currentTimeMillis() % 60_000L)
+        }
+    }
+    return currentTime
+}
+
+@Composable
+fun CurrentTimeText(
+    modifier: Modifier = Modifier,
+    isVertical: Boolean = false,
+) {
+    val currentTime = rememberCurrentTimeText()
+
+    // The narrow vertical toolbar isn't wide enough for the full-size "HH:mm", so it
+    // gets ellipsized into something useless. Shrink the hour part while keeping the
+    // minute part at its normal size so the whole label stays readable and fits.
+    val text = if (isVertical && currentTime.contains(":")) {
+        val (hour, minute) = currentTime.split(":", limit = 2)
+        buildAnnotatedString {
+            withStyle(SpanStyle(fontSize = 0.7.em)) { append("$hour:") }
+            append(minute)
+        }
+    } else {
+        AnnotatedString(currentTime)
+    }
+
+    Text(
+        text = text,
+        color = MaterialTheme.colors.onBackground,
+        modifier = modifier
+            .wrapContentWidth()
+            .padding(horizontal = if (isVertical) 2.dp else 6.dp),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        textAlign = TextAlign.Center,
+    )
+}
+
+inline fun Modifier.conditional(
+    condition: Boolean,
+    modifier: Modifier.() -> Modifier,
+): Modifier {
+    return if (condition) {
+        modifier.invoke(this)
+    } else {
+        this
+    }
+}
+
+@Preview
+@Composable
+fun PreviewTabCount() {
+    MyTheme {
+        TabCountIcon(false, "2/5", {}, {})
+    }
+}
+
+@Preview
+@Composable
+fun PreviewTabCountSingle() {
+    MyTheme {
+        TabCountIcon(false, "3", {}, {})
+    }
+}
+
+@Preview
+@Composable
+fun PreviewTabCountLarge() {
+    MyTheme {
+        TabCountIcon(false, "3/12", {}, {})
+    }
+}
+
+@Preview
+@Composable
+fun PreviewTabCountIncognito() {
+    MyTheme {
+        TabCountIcon(true, "2/5", {}, {})
+    }
+}
+
+@Preview
+@Composable
+fun PreviewToolbar() {
+    MyTheme {
+        ComposedIconBar(
+            toolbarActionInfos = ToolbarAction.values().map { ToolbarActionInfo(it, false) },
+            title = "hihi",
+            tabCount = "1",
+            pageInfo = "1/1",
+            isIncognito = true,
+            onClick = { Unit },
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewToolbarLongTitle() {
+    MyTheme {
+        ComposedIconBar(
+            toolbarActionInfos = listOf(
+                ToolbarActionInfo(Bookmark, false),
+                ToolbarActionInfo(Spacer1, false),
+                ToolbarActionInfo(TabCount, false),
+                ToolbarActionInfo(ToolbarAction.InputUrl, false),
+                ToolbarActionInfo(ToolbarAction.IconSetting, false),
+                ToolbarActionInfo(PageInfo, false),
+                ToolbarActionInfo(Spacer2, false),
+                ToolbarActionInfo(Time, false),
+            ),
+            title = "hi 1 2 3 456789",
+            tabCount = "1",
+            pageInfo = "1/1",
+            isIncognito = true,
+            onClick = { Unit },
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewReorderableComposedIconBar() {
+    MyTheme {
+        val list = remember { mutableStateOf(ToolbarAction.values().map { ToolbarActionInfo(it, false) }) }
+        ReorderableComposedIconBar(list, "hihi", "1", "1/1", onClick = { Unit })
+    }
+}

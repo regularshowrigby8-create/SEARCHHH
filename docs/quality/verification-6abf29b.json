@@ -1,0 +1,795 @@
+{
+  "source": "6abf29b57982b93fe929674c70230bb17f6940cf",
+  "production_migration_source": "8c44b274d5065683dfe82213da9c835ec05f2e1b",
+  "overall": "FAILURE: mandatory quality gates remain failing",
+  "exif_migration_issue": "CLOSED: four actual Android regressions pass, 16 orientation comparisons, ExifInterface zero in debug/release; introduced test ComplexCondition removed without weakening assertions",
+  "dependency": "androidx.exifinterface:exifinterface:1.4.2",
+  "baseline": {
+    "source": "c63e25a",
+    "run": 36612274354,
+    "check": 109556416947,
+    "exif_interface_count": 8,
+    "app_lint_errors": 466,
+    "detekt_issues": 2788
+  },
+  "current": {
+    "app_lint_errors": 458,
+    "app_lint_hints": 14,
+    "detekt_issues": 2788
+  },
+  "lanes": {
+    "device": {
+      "run": 36628443911,
+      "check": 109611293978,
+      "job_conclusion": "failure",
+      "url": "https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36628443911",
+      "lint": [
+        {
+          "report": "app/build/reports/lint-results-debug.xml",
+          "groups": [
+            {
+              "id": "MissingTranslation",
+              "severity": "Error",
+              "count": 92,
+              "priority": 8,
+              "file": "app/src/main/res/values/strings.xml",
+              "line": "11"
+            },
+            {
+              "id": "Typos",
+              "severity": "Error",
+              "count": 3,
+              "priority": 7,
+              "file": "app/src/main/res/values-es/strings.xml",
+              "line": "71"
+            },
+            {
+              "id": "UseKtx",
+              "severity": "Error",
+              "count": 83,
+              "priority": 6,
+              "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+              "line": "147"
+            },
+            {
+              "id": "TrimLambda",
+              "severity": "Hint",
+              "count": 5,
+              "priority": 6,
+              "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+              "line": "606"
+            },
+            {
+              "id": "InlinedApi",
+              "severity": "Error",
+              "count": 4,
+              "priority": 6,
+              "file": "app/src/main/java/info/plateaukao/einkbro/activity/BrowserActivity.kt",
+              "line": "1147"
+            },
+            {
+              "id": "NewApi",
+              "severity": "Error",
+              "count": 3,
+              "priority": 6,
+              "file": "app/src/main/res/values-night/styles.xml",
+              "line": "6"
+            }
+          ],
+          "omitted_groups": 28,
+          "draw_allocation_count": 0,
+          "recycle_count": 0,
+          "exif_interface_count": 0
+        },
+        {
+          "report": "ad-filter/build/reports/lint-results-debug.xml",
+          "groups": [
+            {
+              "id": "UseKtx",
+              "severity": "Error",
+              "count": 2,
+              "priority": 6,
+              "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+              "line": "147"
+            },
+            {
+              "id": "OldTargetApi",
+              "severity": "Error",
+              "count": 1,
+              "priority": 6,
+              "file": "adblock-client/build.gradle",
+              "line": "12"
+            },
+            {
+              "id": "GradleDependency",
+              "severity": "Error",
+              "count": 23,
+              "priority": 4,
+              "file": "adblock-client/build.gradle",
+              "line": "71"
+            },
+            {
+              "id": "NewerVersionAvailable",
+              "severity": "Error",
+              "count": 23,
+              "priority": 4,
+              "file": "gradle/libs.versions.toml",
+              "line": "3"
+            },
+            {
+              "id": "AndroidGradlePluginVersion",
+              "severity": "Error",
+              "count": 2,
+              "priority": 4,
+              "file": "gradle/libs.versions.toml",
+              "line": "5"
+            },
+            {
+              "id": "UseTomlInstead",
+              "severity": "Error",
+              "count": 2,
+              "priority": 4,
+              "file": "adblock-client/build.gradle",
+              "line": "71"
+            }
+          ],
+          "omitted_groups": 0,
+          "draw_allocation_count": 0,
+          "recycle_count": 0,
+          "exif_interface_count": 0
+        },
+        {
+          "report": "adblock-client/build/reports/lint-results-debug.xml",
+          "groups": [
+            {
+              "id": "OldTargetApi",
+              "severity": "Error",
+              "count": 1,
+              "priority": 6,
+              "file": "adblock-client/build.gradle",
+              "line": "12"
+            },
+            {
+              "id": "UseKtx",
+              "severity": "Error",
+              "count": 1,
+              "priority": 6,
+              "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+              "line": "147"
+            },
+            {
+              "id": "GradleDependency",
+              "severity": "Error",
+              "count": 23,
+              "priority": 4,
+              "file": "adblock-client/build.gradle",
+              "line": "71"
+            },
+            {
+              "id": "NewerVersionAvailable",
+              "severity": "Error",
+              "count": 23,
+              "priority": 4,
+              "file": "gradle/libs.versions.toml",
+              "line": "3"
+            },
+            {
+              "id": "AndroidGradlePluginVersion",
+              "severity": "Error",
+              "count": 2,
+              "priority": 4,
+              "file": "gradle/libs.versions.toml",
+              "line": "5"
+            },
+            {
+              "id": "UseTomlInstead",
+              "severity": "Error",
+              "count": 2,
+              "priority": 4,
+              "file": "adblock-client/build.gradle",
+              "line": "71"
+            }
+          ],
+          "omitted_groups": 0,
+          "draw_allocation_count": 0,
+          "recycle_count": 0,
+          "exif_interface_count": 0
+        }
+      ],
+      "test_counts": {
+        "passed": 384,
+        "failure": 0,
+        "error": 0,
+        "skipped": 0
+      },
+      "new_tests": [
+        "BrowserMemoryTrimmerTest.foregroundAndUiHiddenDoNotPauseTabsOrDiscardPreloadedView:passed",
+        "BrowserMemoryTrimmerTest.absentActiveTabPausesAllRemainingTabs:passed",
+        "BrowserMemoryTrimmerTest.backgroundAndHigherPauseOnlyInactiveTabsAndReleasePreload:passed",
+        "WebViewSslHandlerTest.invalidCertificatesAreCancelledAndReportedWithoutBypass:passed",
+        "SearchhhRobotsTest.wildcardDelayAndSitemapsRemainAvailable:passed",
+        "SearchhhRobotsTest.namedAgentMatchingKeepsCaseAndLegacyPrefixSemantics:passed",
+        "SearchhhRouteTest.everyRegisteredIdRoundTripsAndHasUniqueSemantics:passed",
+        "SearchhhRouteTest.unknownAndMissingRoutesReturnHome:passed",
+        "ImageCacheTrimPolicyTest.legacyLevelsKeepTheirHistoricalCacheActions:passed",
+        "ImageCacheTrimPolicyTest.modernUiHiddenTrimsAndBackgroundOrHigherEvicts:passed",
+        "SupernoteStorageTest.unavailableTreeDoesNotWriteOrOpenStream:passed",
+        "SupernoteStorageTest.nullOutputStreamDoesNotInvokeWriterOrReturnSuccess:passed",
+        "SupernoteStorageTest.successfulWriteClosesBeforeReturningUriAndPreservesReplacementOrder:passed",
+        "SupernoteStorageTest.simultaneousWriteAndCloseFailuresPreservePrimaryAndSuppressedCause:passed",
+        "SupernoteStorageTest.writeFailureStillClosesAndReachesCaller:passed",
+        "SupernoteStorageTest.closeFailureCannotReturnSuccessfulUri:passed",
+        "SupernoteStorageTest.openFailureReachesCallerWithoutInvokingWriter:passed",
+        "SupernoteStorageTest.failedDocumentCreationDoesNotWriteOrOpenStream:passed",
+        "SupernoteStorageTest.blankMimeUsesOctetStreamAndNewNameDoesNotRequireDeletion:passed",
+        "InternalBackendTest.initializesFromNameAndServesAuthenticatedMcp:passed",
+        "KtorAndroidCompatibilityTest.absentDesktopManagementApisLeaveKtorDebuggerDetectionDisabled:passed",
+        "NavigationBehaviorTest.enteredQuerySurvivesNavigationAndActivityRecreation:passed",
+        "NavigationBehaviorTest.everyRegisteredDestinationChangesSelectionAndBackReturnsHome:passed",
+        "ExifImagePipelineTest.pngRemainsLosslessAndTransparentInBothPipelines:passed",
+        "ExifImagePipelineTest.jpegOrientationsPreserveBothProductionPipelines:passed",
+        "ExifImagePipelineTest.jpegWithoutExifKeepsNormalOrientation:passed",
+        "ExifImagePipelineTest.rejectedInputsDoNotReplaceBackgroundAndKeepWebPassThrough:passed",
+        "ImageCacheBehaviorTest.trimEvictsRealMemoryWithoutDeletingTheDiskCopy:passed",
+        "ImageCacheBehaviorTest.failedDiskWriteLeavesTheMemoryEntryUsable:passed",
+        "EdgeBorderRenderingTest.dashEffectIsReusedAndRecreatedOnlyWhenDensityChanges:passed",
+        "EdgeBorderRenderingTest.renderedPixelsMatchPreFixAcrossStylesDensitySizeAndMirroring:passed",
+        "ComposeDialogWindowTest.panelUsesPublicThemeAndOkDismissesTheActualDialog:passed",
+        "TtsConfigTest.localeScriptAndRegionSurvivePersistence:passed",
+        "TtsConfigTest.legacyLanguageAndUnderscoreLocalesRemainReadable:passed",
+        "PersistenceTest.encryptedPreferencesReopenWithoutPlaintextCredentials:passed"
+      ],
+      "apk_files": [
+        "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+        "app/build/outputs/apk/debug/app-arm64-v8a-debug.apk",
+        "app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk",
+        "app/build/outputs/apk/debug/app-universal-debug.apk",
+        "app/build/outputs/apk/debug/app-x86-debug.apk",
+        "app/build/outputs/apk/debug/app-x86_64-debug.apk"
+      ],
+      "focused_diagnostics": [
+        "2 further chunks are in ci-summary.json and the uploaded log; not all diagnostics fit annotations.",
+        "app/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:108:40: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:114:28: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:115:31: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:116:35: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:121:51: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:121:66: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:136:40: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:141:29: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:142:26: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:143:26: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:146:29: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:147:26: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:147:37: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:148:26: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:151:29: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:152:26: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]",
+        "> Task :failOnUnfinishedCode FAILED\n> Task :ktlintKotlinScriptCheck FAILED\n> Task :ad-filter:ktlintKotlinScriptCheck FAILED\n> Task :ad-filter:ktlintMainSourceSetCheck FAILED\n> Task :ad-filter:ktlintTestSourceSetCheck FAILED\n> Task :adblock-client:ktlintAndroidTestSourceSetCheck FAILED\n> Task :adblock-client:ktlintMainSourceSetCheck FAILED\n> Task :adblock-client:ktlintTestSourceSetCheck FAILED\n> Task :app:ktlintAndroidTestSourceSetCheck FAILED\n> Task :app:ktlintKotlinScriptCheck FAILED\napp/src/androidTest/java/info/plateaukao/einkbro/view/EdgeBorderRenderingTest.kt:116:17: This condition is too complex (6). Defined complexity threshold for conditions is set to '4' [ComplexCondition]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:47:18: The function onDraw is too long (93). The maximum length is 60. [LongMethod]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:47:18: The function onDraw appears to be too complex based on Cyclomatic Complexity (complexity: 18). Defined complexity threshold for methods is set to '15' [CyclomaticComplexMethod]\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:51:22: The caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled. [TooGenericExceptionCaught]\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:76:18: The caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled. [TooGenericExceptionCaught]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:75:28: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:76:32: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:77:30: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:80:82: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:85:78: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:92:25: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:93:41: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:93:51: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]"
+      ]
+    },
+    "release": {
+      "run": 36628443911,
+      "check": 109611294088,
+      "job_conclusion": "failure",
+      "url": "https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36628443911",
+      "lint": [
+        {
+          "report": "app/build/reports/lint-results-release.xml",
+          "groups": [
+            {
+              "id": "MissingTranslation",
+              "severity": "Error",
+              "count": 92,
+              "priority": 8,
+              "file": "app/src/main/res/values/strings.xml",
+              "line": "11"
+            },
+            {
+              "id": "Typos",
+              "severity": "Error",
+              "count": 3,
+              "priority": 7,
+              "file": "app/src/main/res/values-es/strings.xml",
+              "line": "71"
+            },
+            {
+              "id": "UseKtx",
+              "severity": "Error",
+              "count": 83,
+              "priority": 6,
+              "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+              "line": "147"
+            },
+            {
+              "id": "TrimLambda",
+              "severity": "Hint",
+              "count": 5,
+              "priority": 6,
+              "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+              "line": "606"
+            },
+            {
+              "id": "InlinedApi",
+              "severity": "Error",
+              "count": 4,
+              "priority": 6,
+              "file": "app/src/main/java/info/plateaukao/einkbro/activity/BrowserActivity.kt",
+              "line": "1147"
+            },
+            {
+              "id": "NewApi",
+              "severity": "Error",
+              "count": 3,
+              "priority": 6,
+              "file": "app/src/main/res/values-night/styles.xml",
+              "line": "6"
+            }
+          ],
+          "omitted_groups": 28,
+          "draw_allocation_count": 0,
+          "recycle_count": 0,
+          "exif_interface_count": 0
+        }
+      ],
+      "test_counts": {
+        "passed": 336,
+        "failure": 0,
+        "error": 0,
+        "skipped": 0
+      },
+      "new_tests": [
+        "BrowserMemoryTrimmerTest.foregroundAndUiHiddenDoNotPauseTabsOrDiscardPreloadedView:passed",
+        "BrowserMemoryTrimmerTest.absentActiveTabPausesAllRemainingTabs:passed",
+        "BrowserMemoryTrimmerTest.backgroundAndHigherPauseOnlyInactiveTabsAndReleasePreload:passed",
+        "WebViewSslHandlerTest.invalidCertificatesAreCancelledAndReportedWithoutBypass:passed",
+        "SearchhhRobotsTest.wildcardDelayAndSitemapsRemainAvailable:passed",
+        "SearchhhRobotsTest.namedAgentMatchingKeepsCaseAndLegacyPrefixSemantics:passed",
+        "SearchhhRouteTest.everyRegisteredIdRoundTripsAndHasUniqueSemantics:passed",
+        "SearchhhRouteTest.unknownAndMissingRoutesReturnHome:passed",
+        "ImageCacheTrimPolicyTest.legacyLevelsKeepTheirHistoricalCacheActions:passed",
+        "ImageCacheTrimPolicyTest.modernUiHiddenTrimsAndBackgroundOrHigherEvicts:passed",
+        "SupernoteStorageTest.unavailableTreeDoesNotWriteOrOpenStream:passed",
+        "SupernoteStorageTest.nullOutputStreamDoesNotInvokeWriterOrReturnSuccess:passed",
+        "SupernoteStorageTest.successfulWriteClosesBeforeReturningUriAndPreservesReplacementOrder:passed",
+        "SupernoteStorageTest.simultaneousWriteAndCloseFailuresPreservePrimaryAndSuppressedCause:passed",
+        "SupernoteStorageTest.writeFailureStillClosesAndReachesCaller:passed",
+        "SupernoteStorageTest.closeFailureCannotReturnSuccessfulUri:passed",
+        "SupernoteStorageTest.openFailureReachesCallerWithoutInvokingWriter:passed",
+        "SupernoteStorageTest.failedDocumentCreationDoesNotWriteOrOpenStream:passed",
+        "SupernoteStorageTest.blankMimeUsesOctetStreamAndNewNameDoesNotRequireDeletion:passed",
+        "TtsConfigTest.localeScriptAndRegionSurvivePersistence:passed",
+        "TtsConfigTest.legacyLanguageAndUnderscoreLocalesRemainReadable:passed"
+      ],
+      "apk_files": [],
+      "focused_diagnostics": [
+        "Lint found 458 errors and 14 hints. First failure:\n> Task :app:lintRelease FAILED\nLint found 458 errors, 0 warnings, 14 hints. First failure:\nExecution failed for task ':app:lintRelease'.\n  Lint found 458 errors, 0 warnings, 14 hints. First failure:"
+      ]
+    },
+    "delivery-host": {
+      "run": 36628444279,
+      "check": 109611299996,
+      "job_conclusion": "failure",
+      "url": "https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36628444279",
+      "lint": [
+        {
+          "report": "app/build/reports/lint-results-debug.xml",
+          "groups": [
+            {
+              "id": "MissingTranslation",
+              "severity": "Error",
+              "count": 92,
+              "priority": 8,
+              "file": "app/src/main/res/values/strings.xml",
+              "line": "11"
+            },
+            {
+              "id": "Typos",
+              "severity": "Error",
+              "count": 3,
+              "priority": 7,
+              "file": "app/src/main/res/values-es/strings.xml",
+              "line": "71"
+            },
+            {
+              "id": "UseKtx",
+              "severity": "Error",
+              "count": 83,
+              "priority": 6,
+              "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+              "line": "147"
+            },
+            {
+              "id": "TrimLambda",
+              "severity": "Hint",
+              "count": 5,
+              "priority": 6,
+              "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+              "line": "606"
+            },
+            {
+              "id": "InlinedApi",
+              "severity": "Error",
+              "count": 4,
+              "priority": 6,
+              "file": "app/src/main/java/info/plateaukao/einkbro/activity/BrowserActivity.kt",
+              "line": "1147"
+            },
+            {
+              "id": "NewApi",
+              "severity": "Error",
+              "count": 3,
+              "priority": 6,
+              "file": "app/src/main/res/values-night/styles.xml",
+              "line": "6"
+            }
+          ],
+          "omitted_groups": 28,
+          "draw_allocation_count": 0,
+          "recycle_count": 0,
+          "exif_interface_count": 0
+        },
+        {
+          "report": "ad-filter/build/reports/lint-results-debug.xml",
+          "groups": [
+            {
+              "id": "UseKtx",
+              "severity": "Error",
+              "count": 2,
+              "priority": 6,
+              "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+              "line": "147"
+            },
+            {
+              "id": "OldTargetApi",
+              "severity": "Error",
+              "count": 1,
+              "priority": 6,
+              "file": "adblock-client/build.gradle",
+              "line": "12"
+            },
+            {
+              "id": "GradleDependency",
+              "severity": "Error",
+              "count": 23,
+              "priority": 4,
+              "file": "adblock-client/build.gradle",
+              "line": "71"
+            },
+            {
+              "id": "NewerVersionAvailable",
+              "severity": "Error",
+              "count": 23,
+              "priority": 4,
+              "file": "gradle/libs.versions.toml",
+              "line": "3"
+            },
+            {
+              "id": "AndroidGradlePluginVersion",
+              "severity": "Error",
+              "count": 2,
+              "priority": 4,
+              "file": "gradle/libs.versions.toml",
+              "line": "5"
+            },
+            {
+              "id": "UseTomlInstead",
+              "severity": "Error",
+              "count": 2,
+              "priority": 4,
+              "file": "adblock-client/build.gradle",
+              "line": "71"
+            }
+          ],
+          "omitted_groups": 0,
+          "draw_allocation_count": 0,
+          "recycle_count": 0,
+          "exif_interface_count": 0
+        },
+        {
+          "report": "adblock-client/build/reports/lint-results-debug.xml",
+          "groups": [
+            {
+              "id": "OldTargetApi",
+              "severity": "Error",
+              "count": 1,
+              "priority": 6,
+              "file": "adblock-client/build.gradle",
+              "line": "12"
+            },
+            {
+              "id": "UseKtx",
+              "severity": "Error",
+              "count": 1,
+              "priority": 6,
+              "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+              "line": "147"
+            },
+            {
+              "id": "GradleDependency",
+              "severity": "Error",
+              "count": 23,
+              "priority": 4,
+              "file": "adblock-client/build.gradle",
+              "line": "71"
+            },
+            {
+              "id": "NewerVersionAvailable",
+              "severity": "Error",
+              "count": 23,
+              "priority": 4,
+              "file": "gradle/libs.versions.toml",
+              "line": "3"
+            },
+            {
+              "id": "AndroidGradlePluginVersion",
+              "severity": "Error",
+              "count": 2,
+              "priority": 4,
+              "file": "gradle/libs.versions.toml",
+              "line": "5"
+            },
+            {
+              "id": "UseTomlInstead",
+              "severity": "Error",
+              "count": 2,
+              "priority": 4,
+              "file": "adblock-client/build.gradle",
+              "line": "71"
+            }
+          ],
+          "omitted_groups": 0,
+          "draw_allocation_count": 0,
+          "recycle_count": 0,
+          "exif_interface_count": 0
+        }
+      ],
+      "test_counts": {
+        "passed": 360,
+        "failure": 0,
+        "error": 0,
+        "skipped": 0
+      },
+      "new_tests": [
+        "BrowserMemoryTrimmerTest.foregroundAndUiHiddenDoNotPauseTabsOrDiscardPreloadedView:passed",
+        "BrowserMemoryTrimmerTest.absentActiveTabPausesAllRemainingTabs:passed",
+        "BrowserMemoryTrimmerTest.backgroundAndHigherPauseOnlyInactiveTabsAndReleasePreload:passed",
+        "WebViewSslHandlerTest.invalidCertificatesAreCancelledAndReportedWithoutBypass:passed",
+        "SearchhhRobotsTest.wildcardDelayAndSitemapsRemainAvailable:passed",
+        "SearchhhRobotsTest.namedAgentMatchingKeepsCaseAndLegacyPrefixSemantics:passed",
+        "SearchhhRouteTest.everyRegisteredIdRoundTripsAndHasUniqueSemantics:passed",
+        "SearchhhRouteTest.unknownAndMissingRoutesReturnHome:passed",
+        "ImageCacheTrimPolicyTest.legacyLevelsKeepTheirHistoricalCacheActions:passed",
+        "ImageCacheTrimPolicyTest.modernUiHiddenTrimsAndBackgroundOrHigherEvicts:passed",
+        "SupernoteStorageTest.unavailableTreeDoesNotWriteOrOpenStream:passed",
+        "SupernoteStorageTest.nullOutputStreamDoesNotInvokeWriterOrReturnSuccess:passed",
+        "SupernoteStorageTest.successfulWriteClosesBeforeReturningUriAndPreservesReplacementOrder:passed",
+        "SupernoteStorageTest.simultaneousWriteAndCloseFailuresPreservePrimaryAndSuppressedCause:passed",
+        "SupernoteStorageTest.writeFailureStillClosesAndReachesCaller:passed",
+        "SupernoteStorageTest.closeFailureCannotReturnSuccessfulUri:passed",
+        "SupernoteStorageTest.openFailureReachesCallerWithoutInvokingWriter:passed",
+        "SupernoteStorageTest.failedDocumentCreationDoesNotWriteOrOpenStream:passed",
+        "SupernoteStorageTest.blankMimeUsesOctetStreamAndNewNameDoesNotRequireDeletion:passed",
+        "TtsConfigTest.localeScriptAndRegionSurvivePersistence:passed",
+        "TtsConfigTest.legacyLanguageAndUnderscoreLocalesRemainReadable:passed"
+      ],
+      "apk_files": [],
+      "focused_diagnostics": [
+        "Lint found 53 errors. First failure:\n> Task :ad-filter:lintDebug FAILED\nLint found 52 errors. First failure:\n> Task :adblock-client:lintDebug FAILED\nLint found 458 errors and 14 hints. First failure:\n> Task :app:lintDebug FAILED\nLint found 458 errors, 0 warnings, 14 hints. First failure:\nExecution failed for task ':ad-filter:lintDebug'.\n  Lint found 53 errors. First failure:\nExecution failed for task ':adblock-client:lintDebug'.\n  Lint found 52 errors. First failure:\nExecution failed for task ':app:lintDebug'.\n  Lint found 458 errors, 0 warnings, 14 hints. First failure:"
+      ]
+    },
+    "host": {
+      "run": 36628443911,
+      "check": 109611294295,
+      "job_conclusion": "failure",
+      "url": "https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36628443911",
+      "test_counts": {
+        "passed": 0,
+        "failure": 0,
+        "error": 0,
+        "skipped": 0
+      },
+      "new_tests": [],
+      "apk_files": [],
+      "focused_diagnostics": []
+    },
+    "delivery-device": {
+      "run": 36628444279,
+      "check": 109611299564,
+      "job_conclusion": "failure",
+      "url": "https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36628444279",
+      "test_counts": {
+        "passed": 0,
+        "failure": 0,
+        "error": 0,
+        "skipped": 0
+      },
+      "new_tests": [],
+      "apk_files": [],
+      "focused_diagnostics": []
+    },
+    "delivery-release": {
+      "run": 36628444279,
+      "check": 109611299821,
+      "job_conclusion": "failure",
+      "url": "https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36628444279",
+      "lint": [
+        {
+          "report": "app/build/reports/lint-results-release.xml",
+          "groups": [
+            {
+              "id": "MissingTranslation",
+              "severity": "Error",
+              "count": 92,
+              "priority": 8,
+              "file": "app/src/main/res/values/strings.xml",
+              "line": "11"
+            },
+            {
+              "id": "Typos",
+              "severity": "Error",
+              "count": 3,
+              "priority": 7,
+              "file": "app/src/main/res/values-es/strings.xml",
+              "line": "71"
+            },
+            {
+              "id": "UseKtx",
+              "severity": "Error",
+              "count": 83,
+              "priority": 6,
+              "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+              "line": "147"
+            },
+            {
+              "id": "TrimLambda",
+              "severity": "Hint",
+              "count": 5,
+              "priority": 6,
+              "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+              "line": "606"
+            },
+            {
+              "id": "InlinedApi",
+              "severity": "Error",
+              "count": 4,
+              "priority": 6,
+              "file": "app/src/main/java/info/plateaukao/einkbro/activity/BrowserActivity.kt",
+              "line": "1147"
+            },
+            {
+              "id": "NewApi",
+              "severity": "Error",
+              "count": 3,
+              "priority": 6,
+              "file": "app/src/main/res/values-night/styles.xml",
+              "line": "6"
+            }
+          ],
+          "omitted_groups": 28,
+          "draw_allocation_count": 0,
+          "recycle_count": 0,
+          "exif_interface_count": 0
+        }
+      ],
+      "test_counts": {
+        "passed": 336,
+        "failure": 0,
+        "error": 0,
+        "skipped": 0
+      },
+      "new_tests": [
+        "BrowserMemoryTrimmerTest.foregroundAndUiHiddenDoNotPauseTabsOrDiscardPreloadedView:passed",
+        "BrowserMemoryTrimmerTest.absentActiveTabPausesAllRemainingTabs:passed",
+        "BrowserMemoryTrimmerTest.backgroundAndHigherPauseOnlyInactiveTabsAndReleasePreload:passed",
+        "WebViewSslHandlerTest.invalidCertificatesAreCancelledAndReportedWithoutBypass:passed",
+        "SearchhhRobotsTest.wildcardDelayAndSitemapsRemainAvailable:passed",
+        "SearchhhRobotsTest.namedAgentMatchingKeepsCaseAndLegacyPrefixSemantics:passed",
+        "SearchhhRouteTest.everyRegisteredIdRoundTripsAndHasUniqueSemantics:passed",
+        "SearchhhRouteTest.unknownAndMissingRoutesReturnHome:passed",
+        "ImageCacheTrimPolicyTest.legacyLevelsKeepTheirHistoricalCacheActions:passed",
+        "ImageCacheTrimPolicyTest.modernUiHiddenTrimsAndBackgroundOrHigherEvicts:passed",
+        "SupernoteStorageTest.unavailableTreeDoesNotWriteOrOpenStream:passed",
+        "SupernoteStorageTest.nullOutputStreamDoesNotInvokeWriterOrReturnSuccess:passed",
+        "SupernoteStorageTest.successfulWriteClosesBeforeReturningUriAndPreservesReplacementOrder:passed",
+        "SupernoteStorageTest.simultaneousWriteAndCloseFailuresPreservePrimaryAndSuppressedCause:passed",
+        "SupernoteStorageTest.writeFailureStillClosesAndReachesCaller:passed",
+        "SupernoteStorageTest.closeFailureCannotReturnSuccessfulUri:passed",
+        "SupernoteStorageTest.openFailureReachesCallerWithoutInvokingWriter:passed",
+        "SupernoteStorageTest.failedDocumentCreationDoesNotWriteOrOpenStream:passed",
+        "SupernoteStorageTest.blankMimeUsesOctetStreamAndNewNameDoesNotRequireDeletion:passed",
+        "TtsConfigTest.localeScriptAndRegionSurvivePersistence:passed",
+        "TtsConfigTest.legacyLanguageAndUnderscoreLocalesRemainReadable:passed"
+      ],
+      "apk_files": [],
+      "focused_diagnostics": [
+        "Lint found 458 errors and 14 hints. First failure:\n> Task :app:lintRelease FAILED\nLint found 458 errors, 0 warnings, 14 hints. First failure:\nExecution failed for task ':app:lintRelease'.\n  Lint found 458 errors, 0 warnings, 14 hints. First failure:"
+      ]
+    },
+    "format": {
+      "run": 36628443911,
+      "check": 109611294128,
+      "job_conclusion": "failure",
+      "url": "https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36628443911",
+      "test_counts": {
+        "passed": 0,
+        "failure": 0,
+        "error": 0,
+        "skipped": 0
+      },
+      "new_tests": [],
+      "apk_files": [],
+      "focused_diagnostics": [
+        "app/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:123:30 Expected a newline\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:123:30 Missing { ... }\nExecution failed for task ':ad-filter:ktlintKotlinScriptCheck'.\nExecution failed for task ':ktlintKotlinScriptCheck'.\nExecution failed for task ':ad-filter:ktlintTestSourceSetCheck'.\nExecution failed for task ':adblock-client:ktlintAndroidTestSourceSetCheck'.\nExecution failed for task ':ad-filter:ktlintMainSourceSetCheck'.\nExecution failed for task ':adblock-client:ktlintMainSourceSetCheck'.\nExecution failed for task ':adblock-client:ktlintTestSourceSetCheck'.\nExecution failed for task ':app:ktlintKotlinScriptCheck'.\nExecution failed for task ':app:ktlintAndroidTestSourceSetCheck'.\nExecution failed for task ':app:ktlintTestSourceSetCheck'.\nExecution failed for task ':app:ktlintMainSourceSetCheck'.",
+        "> Task :ad-filter:ktlintKotlinScriptCheck FAILED\n> Task :ktlintKotlinScriptCheck FAILED\n> Task :ad-filter:ktlintTestSourceSetCheck FAILED\n> Task :adblock-client:ktlintAndroidTestSourceSetCheck FAILED\n> Task :ad-filter:ktlintMainSourceSetCheck FAILED\n> Task :adblock-client:ktlintMainSourceSetCheck FAILED\n> Task :adblock-client:ktlintTestSourceSetCheck FAILED\n> Task :app:ktlintKotlinScriptCheck FAILED\n> Task :app:ktlintAndroidTestSourceSetCheck FAILED\n> Task :app:ktlintTestSourceSetCheck FAILED\n> Task :app:ktlintMainSourceSetCheck FAILED\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:21:1 Class body should not start with blank line\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:44:24 Newline expected after opening parenthesis\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:44:42 Parameter should start on a newline\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:44:51 Newline expected before closing parenthesis\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:67:32 Missing newline after '{'\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:67:45 Missing newline after ';'\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:67:53 Missing newline before '}'\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:22:27 Expected newline before annotation\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:22:41 Expected newline after last annotation\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:27:1 Class body should not start with blank line\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:58:28 Expected a newline\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:58:28 Missing { ... }\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:59:18 Expected a newline\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:59:18 Missing { ... }\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:62:19 Newline expected after opening parenthesis\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:62:29 Parameter should start on a newline\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:62:44 Parameter should start on a newline\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:62:74 Newline expected before closing parenthesis\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:122:29 A multiline expression should start on a new line\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:122:51 Expected a newline\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:122:51 Missing { ... }\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:123:1 Unexpected indentation (24) (should be 20)"
+      ]
+    },
+    "detekt": {
+      "run": 36628443911,
+      "check": 109611294158,
+      "job_conclusion": "failure",
+      "url": "https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/36628443911",
+      "test_counts": {
+        "passed": 0,
+        "failure": 0,
+        "error": 0,
+        "skipped": 0
+      },
+      "new_tests": [],
+      "apk_files": [],
+      "focused_diagnostics": [
+        "app/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:115:31: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:116:35: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:121:51: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:121:66: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:136:40: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:141:29: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:142:26: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:143:26: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:146:29: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:147:26: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:147:37: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:148:26: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:151:29: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:152:26: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:152:37: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\n> Task :detekt FAILED\nExecution failed for task ':detekt'.\n> Analysis failed with 2788 weighted issues.",
+        "app/src/androidTest/java/info/plateaukao/einkbro/view/EdgeBorderRenderingTest.kt:116:17: This condition is too complex (6). Defined complexity threshold for conditions is set to '4' [ComplexCondition]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:47:18: The function onDraw is too long (93). The maximum length is 60. [LongMethod]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:47:18: The function onDraw appears to be too complex based on Cyclomatic Complexity (complexity: 18). Defined complexity threshold for methods is set to '15' [CyclomaticComplexMethod]\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:51:22: The caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled. [TooGenericExceptionCaught]\napp/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt:76:18: The caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled. [TooGenericExceptionCaught]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:75:28: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:76:32: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:77:30: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:80:82: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:85:78: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:92:25: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:93:41: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:93:51: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:108:40: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]\napp/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt:114:28: This expression contains a magic number. Consider defining it to a well named constant. [MagicNumber]"
+      ]
+    }
+  },
+  "images": [
+    {
+      "file": "docs/quality/exif-6abf29b/complete.txt",
+      "bytes": 109,
+      "sha256": "ae45b0bb58de11d6a4a75ce4fb0797d3b6c3c6ec1ec571b854653cf758a8d998",
+      "identical_to_first_run": true
+    },
+    {
+      "file": "docs/quality/exif-6abf29b/current-background.png",
+      "bytes": 1997,
+      "sha256": "f83dbb36b9673db2480a1070bd86664c62bd65529296da6c9c2a9e3df925ccbe",
+      "identical_to_first_run": true,
+      "dimensions": [
+        128,
+        160
+      ],
+      "png_crc_valid": true
+    },
+    {
+      "file": "docs/quality/exif-6abf29b/current-web.png",
+      "bytes": 2732,
+      "sha256": "70e1c701d4fc3899a9b0dae3977390266b7242b4badbb248ad901fdc34d01aed",
+      "identical_to_first_run": true,
+      "dimensions": [
+        128,
+        160
+      ],
+      "png_crc_valid": true
+    },
+    {
+      "file": "docs/quality/exif-6abf29b/reference-background.png",
+      "bytes": 1997,
+      "sha256": "f83dbb36b9673db2480a1070bd86664c62bd65529296da6c9c2a9e3df925ccbe",
+      "identical_to_first_run": true,
+      "dimensions": [
+        128,
+        160
+      ],
+      "png_crc_valid": true
+    },
+    {
+      "file": "docs/quality/exif-6abf29b/reference-web.png",
+      "bytes": 2732,
+      "sha256": "70e1c701d4fc3899a9b0dae3977390266b7242b4badbb248ad901fdc34d01aed",
+      "identical_to_first_run": true,
+      "dimensions": [
+        128,
+        160
+      ],
+      "png_crc_valid": true
+    }
+  ],
+  "failed_attempts": {
+    "standalone_host": "Zero reported tests/no lint reports. Available failure annotation ends with Caused by: java.util.zip.ZipException: Ar; archive and complete cause unavailable. Not counted as passing. Independent same-SHA delivery host supplies 360 passing results.",
+    "delivery_device": "Shell exit 1, zero reported tests; not counted as passing. Standalone same-SHA device supplies 384 combined passing results."
+  },
+  "limitations": [
+    "Counts overlap; combined device lane includes JVM results. Do not add lane totals.",
+    "References independently reconstruct previous orientation semantics, not old-APK/full-screen screenshots. Tone reference reuses existing processing code.",
+    "Background mirrors intentionally remain unsupported; web retains all eight orientations.",
+    "API 35 emulator only; no API 24/OEM-photo/all-format or performance certification.",
+    "Private emulator APKs are evidence only, not approved release assets. Delivery release-build, release-smoke and publish-release-apk skipped.",
+    "No new EXIF-file findings in retrieved focused formatting/Detekt diagnostics; global gates remain failing."
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "accessibility-labels-touch-targets": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "all-drawer-routes": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "back-navigation": {
+    "action": "Click each registered tab, then dispatch Back",
+    "route": "SearchhhRoute.entries",
+    "source": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "state": "Selected destination and visible screen change; Back selects home",
+    "test_class": "info.plateaukao.einkbro.searchhh.NavigationBehaviorTest",
+    "test_file": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/NavigationBehaviorTest.kt",
+    "test_method": "everyRegisteredDestinationChangesSelectionAndBackReturnsHome"
+  },
+  "browser-back-forward": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "browser-open-url": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "browser-reload-close": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "disabled-control-explanation": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "drawer-open-close": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "duplicate-results": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "empty-state": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "error-retry": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "expired-results": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "history-route": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "https-default-http-approval": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "invalid-tls-cancelled": {
+    "action": "Deliver untrusted, expired and mismatched TLS certificates",
+    "route": "BrowserActivity",
+    "source": "app/src/main/java/info/plateaukao/einkbro/browser/WebViewSslHandler.kt",
+    "state": "Handler cancelled before visible feedback; proceed never called",
+    "test_class": "info.plateaukao.einkbro.browser.WebViewSslHandlerTest",
+    "test_file": "app/src/test/java/info/plateaukao/einkbro/browser/WebViewSslHandlerTest.kt",
+    "test_method": "invalidCertificatesAreCancelledAndReportedWithoutBypass"
+  },
+  "inventory-manual-closure": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "live-search-route": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "loading-state": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "material3-theme": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "native-bridge-origin-safety": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "offline-recovery": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "performance-baseline": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "result-details-preserve-id": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "rotation-restoration": {
+    "action": "Enter a query, navigate, recreate the Activity, return home",
+    "route": "SearchhhRoute.entries",
+    "source": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "state": "Settings selection and typed query survive recreation",
+    "test_class": "info.plateaukao.einkbro.searchhh.NavigationBehaviorTest",
+    "test_file": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/NavigationBehaviorTest.kt",
+    "test_method": "enteredQuerySurvivesNavigationAndActivityRecreation"
+  },
+  "save-restart-persistence": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "search-filters": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "search-start": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "search-stop-cancels": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "theme-persistence": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "unknown-route-safe": {
+    "action": "Resolve unknown and absent destination identifiers",
+    "route": "unknown/missing",
+    "source": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhRoute.kt",
+    "state": "Falls back to Discover",
+    "test_class": "info.plateaukao.einkbro.searchhh.SearchhhRouteTest",
+    "test_file": "app/src/test/java/info/plateaukao/einkbro/searchhh/SearchhhRouteTest.kt",
+    "test_method": "unknownAndMissingRoutesReturnHome"
+  },
+  "unsupported-url-rejected": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-browser": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-drawer": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-empty": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-error": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-filter": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-home-dark": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-home-light": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-loading": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-results": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-saved": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  },
+  "visual-settings": {
+    "blocker": "Not yet linked to complete executed behavior evidence"
+  }
+}

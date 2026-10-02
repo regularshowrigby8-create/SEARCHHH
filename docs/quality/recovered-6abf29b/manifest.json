@@ -1,0 +1,621 @@
+{
+  "schema": 1,
+  "report_source": "6abf29b57982b93fe929674c70230bb17f6940cf",
+  "recovery": {
+    "run": 36635551405,
+    "conclusion": "success",
+    "source": "0778e6847b1b9629feab18892c9ec4737e956151",
+    "checks": {
+      "format": [
+        109635174494,
+        109635174590,
+        109635174648,
+        109635174687,
+        109635174784
+      ],
+      "release": [
+        109635174636
+      ],
+      "host": [
+        109635174689
+      ],
+      "source": [
+        109635174702
+      ],
+      "detekt": [
+        109635174714,
+        109635174783
+      ]
+    }
+  },
+  "transport_status": "CLOSED: all five bundles decoded with full integrity and provenance validation",
+  "overall_quality": "FAILURE: original verifier gates remain failing",
+  "s00_status": "PARTIAL: full raw occurrence export available; semantic ownership and cross-report deduplication unfinished",
+  "dataset": {
+    "path": "docs/quality/recovered-6abf29b/occurrences.json",
+    "bytes": 5581252,
+    "sha256": "ac56e5439859682cd248e5426d11c18e3e5a0e9ebc8aecc4e8d406c169c5e3a6",
+    "raw_record_count": 17890,
+    "not_unique_bug_count": true
+  },
+  "exporter": {
+    "path": "tools/quality/report_inventory.py",
+    "sha256": "926d7e57be1ad44a907fd5829529a54515bacaabe3ff80875dbc75f5b49086f2"
+  },
+  "raw_counts": {
+    "lint": 1049,
+    "detekt": 2788,
+    "ktlint": 13875,
+    "unfinished": 178
+  },
+  "reports": [
+    {
+      "id": "detekt:build/reports/detekt/detekt.xml",
+      "tool": "detekt",
+      "path": "build/reports/detekt/detekt.xml",
+      "sha256": "53efe35f88efaaa60b4f767fa715220c9fb833582c3e072a64e8c445935e3488",
+      "bytes": 575331,
+      "original_run": 36628444279,
+      "count": 2788,
+      "severity_counts": {
+        "warning": 2788
+      },
+      "rule_counts": {
+        "detekt.ClassNaming": 1,
+        "detekt.ComplexCondition": 11,
+        "detekt.ConstructorParameterNaming": 8,
+        "detekt.CyclomaticComplexMethod": 67,
+        "detekt.EmptyCatchBlock": 2,
+        "detekt.EmptyElseBlock": 3,
+        "detekt.EmptyFunctionBlock": 2,
+        "detekt.EmptyIfBlock": 3,
+        "detekt.EmptyKtFile": 2,
+        "detekt.ExplicitItLambdaParameter": 1,
+        "detekt.ForEachOnRange": 1,
+        "detekt.ForbiddenComment": 1,
+        "detekt.FunctionNaming": 228,
+        "detekt.FunctionParameterNaming": 5,
+        "detekt.ImplicitDefaultLocale": 1,
+        "detekt.InstanceOfCheckForException": 1,
+        "detekt.IteratorNotThrowingNoSuchElementException": 1,
+        "detekt.LargeClass": 3,
+        "detekt.LongMethod": 92,
+        "detekt.LongParameterList": 94,
+        "detekt.LoopWithTooManyJumpStatements": 11,
+        "detekt.MagicNumber": 1058,
+        "detekt.MatchingDeclarationName": 5,
+        "detekt.MaxLineLength": 472,
+        "detekt.MayBeConst": 2,
+        "detekt.NestedBlockDepth": 27,
+        "detekt.NewLineAtEndOfFile": 93,
+        "detekt.PrintStackTrace": 18,
+        "detekt.ReturnCount": 131,
+        "detekt.SwallowedException": 78,
+        "detekt.ThrowsCount": 6,
+        "detekt.TooGenericExceptionCaught": 155,
+        "detekt.TooGenericExceptionThrown": 20,
+        "detekt.TooManyFunctions": 73,
+        "detekt.UnusedParameter": 16,
+        "detekt.UnusedPrivateMember": 21,
+        "detekt.UnusedPrivateProperty": 16,
+        "detekt.UseCheckOrError": 1,
+        "detekt.UtilityClassWithPublicConstructor": 1,
+        "detekt.VariableNaming": 3,
+        "detekt.WildcardImport": 54
+      }
+    },
+    {
+      "id": "format:ad-filter/build/reports/ktlint/ktlintKotlinScriptCheck/ktlintKotlinScriptCheck.txt",
+      "tool": "ktlint",
+      "path": "ad-filter/build/reports/ktlint/ktlintKotlinScriptCheck/ktlintKotlinScriptCheck.txt",
+      "sha256": "acdfcbb678df94300303eb7403afa4ff6d701d52b5fe3cc397146c50c599b56a",
+      "bytes": 443,
+      "original_run": 36628443911,
+      "count": 2,
+      "severity_counts": {
+        "violation": 2
+      },
+      "rule_counts": {
+        "standard:trailing-comma-on-call-site": 2
+      }
+    },
+    {
+      "id": "format:ad-filter/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt",
+      "tool": "ktlint",
+      "path": "ad-filter/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt",
+      "sha256": "65b01d3c21dde9fe3d175f854460f62dfb2c74a8180771c26db6d46cf55ace7d",
+      "bytes": 51044,
+      "original_run": 36628443911,
+      "count": 224,
+      "severity_counts": {
+        "violation": 224
+      },
+      "rule_counts": {
+        "standard:backing-property-naming": 1,
+        "standard:blank-line-before-declaration": 15,
+        "standard:chain-method-continuation": 7,
+        "standard:class-signature": 16,
+        "standard:comment-spacing": 6,
+        "standard:condition-wrapping": 1,
+        "standard:enum-wrapping": 6,
+        "standard:final-newline": 17,
+        "standard:function-expression-body": 6,
+        "standard:function-signature": 95,
+        "standard:if-else-wrapping": 2,
+        "standard:multiline-expression-wrapping": 18,
+        "standard:multiline-if-else": 4,
+        "standard:no-blank-line-before-rbrace": 1,
+        "standard:no-consecutive-blank-lines": 2,
+        "standard:no-empty-first-line-in-class-body": 13,
+        "standard:no-wildcard-imports": 1,
+        "standard:spacing-between-declarations-with-comments": 1,
+        "standard:trailing-comma-on-call-site": 6,
+        "standard:trailing-comma-on-declaration-site": 6
+      }
+    },
+    {
+      "id": "format:ad-filter/build/reports/ktlint/ktlintTestSourceSetCheck/ktlintTestSourceSetCheck.txt",
+      "tool": "ktlint",
+      "path": "ad-filter/build/reports/ktlint/ktlintTestSourceSetCheck/ktlintTestSourceSetCheck.txt",
+      "sha256": "936c83f15f5a94afc0c278146b9289b3ba9182094fc299e37abf54ffbf3fd10e",
+      "bytes": 875,
+      "original_run": 36628443911,
+      "count": 3,
+      "severity_counts": {
+        "violation": 3
+      },
+      "rule_counts": {
+        "standard:multiline-expression-wrapping": 1,
+        "standard:no-empty-first-line-in-class-body": 2
+      }
+    },
+    {
+      "id": "format:adblock-client/build/reports/ktlint/ktlintAndroidTestSourceSetCheck/ktlintAndroidTestSourceSetCheck.txt",
+      "tool": "ktlint",
+      "path": "adblock-client/build/reports/ktlint/ktlintAndroidTestSourceSetCheck/ktlintAndroidTestSourceSetCheck.txt",
+      "sha256": "26328a99d615bc39b37d5ba24c8e9288923feb45216b0a04385a1efa0b5e640b",
+      "bytes": 1704,
+      "original_run": 36628443911,
+      "count": 6,
+      "severity_counts": {
+        "violation": 6
+      },
+      "rule_counts": {
+        "standard:function-signature": 1,
+        "standard:multiline-expression-wrapping": 2,
+        "standard:no-empty-first-line-in-class-body": 1,
+        "standard:string-template-indent": 2
+      }
+    },
+    {
+      "id": "format:adblock-client/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt",
+      "tool": "ktlint",
+      "path": "adblock-client/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt",
+      "sha256": "4c5919a52ac9cb96340bface1a9a63ea5bed887e080d1c11a80dde6dc0b7d680",
+      "bytes": 50199,
+      "original_run": 36628443911,
+      "count": 201,
+      "severity_counts": {
+        "violation": 201
+      },
+      "rule_counts": {
+        "standard:argument-list-wrapping": 80,
+        "standard:blank-line-before-declaration": 1,
+        "standard:chain-wrapping": 1,
+        "standard:class-signature": 7,
+        "standard:condition-wrapping": 2,
+        "standard:final-newline": 2,
+        "standard:function-signature": 58,
+        "standard:if-else-wrapping": 5,
+        "standard:multiline-expression-wrapping": 8,
+        "standard:multiline-if-else": 4,
+        "standard:no-blank-line-before-rbrace": 1,
+        "standard:no-blank-line-in-list": 2,
+        "standard:no-consecutive-blank-lines": 2,
+        "standard:no-empty-first-line-in-class-body": 6,
+        "standard:no-trailing-spaces": 1,
+        "standard:no-wildcard-imports": 1,
+        "standard:statement-wrapping": 12,
+        "standard:trailing-comma-on-call-site": 2,
+        "standard:trailing-comma-on-declaration-site": 6
+      }
+    },
+    {
+      "id": "format:adblock-client/build/reports/ktlint/ktlintTestSourceSetCheck/ktlintTestSourceSetCheck.txt",
+      "tool": "ktlint",
+      "path": "adblock-client/build/reports/ktlint/ktlintTestSourceSetCheck/ktlintTestSourceSetCheck.txt",
+      "sha256": "49ef1e46cc08c63b74c1b3676ae04df0e000a3e5ae742d601385f4de03364d2b",
+      "bytes": 2180,
+      "original_run": 36628443911,
+      "count": 8,
+      "severity_counts": {
+        "violation": 8
+      },
+      "rule_counts": {
+        "standard:argument-list-wrapping": 5,
+        "standard:chain-method-continuation": 1,
+        "standard:max-line-length": 1,
+        "standard:no-empty-first-line-in-class-body": 1
+      }
+    },
+    {
+      "id": "format:app/build/reports/ktlint/ktlintAndroidTestSourceSetCheck/ktlintAndroidTestSourceSetCheck.txt",
+      "tool": "ktlint",
+      "path": "app/build/reports/ktlint/ktlintAndroidTestSourceSetCheck/ktlintAndroidTestSourceSetCheck.txt",
+      "sha256": "cec85f1d5fcf70badbd755a1baf6c530a8ebe923c3ef15dc85165a3888198479",
+      "bytes": 62856,
+      "original_run": 36628443911,
+      "count": 269,
+      "severity_counts": {
+        "violation": 269
+      },
+      "rule_counts": {
+        "standard:argument-list-wrapping": 61,
+        "standard:binary-expression-wrapping": 2,
+        "standard:blank-line-before-declaration": 11,
+        "standard:chain-method-continuation": 77,
+        "standard:function-literal": 16,
+        "standard:function-signature": 20,
+        "standard:import-ordering": 4,
+        "standard:keyword-spacing": 1,
+        "standard:max-line-length": 8,
+        "standard:multiline-expression-wrapping": 9,
+        "standard:no-blank-line-before-rbrace": 1,
+        "standard:no-wildcard-imports": 8,
+        "standard:parameter-list-wrapping": 4,
+        "standard:spacing-between-declarations-with-annotations": 2,
+        "standard:statement-wrapping": 27,
+        "standard:try-catch-finally-spacing": 13,
+        "standard:wrapping": 5
+      }
+    },
+    {
+      "id": "format:app/build/reports/ktlint/ktlintKotlinScriptCheck/ktlintKotlinScriptCheck.txt",
+      "tool": "ktlint",
+      "path": "app/build/reports/ktlint/ktlintKotlinScriptCheck/ktlintKotlinScriptCheck.txt",
+      "sha256": "1596aecd494670456ceee0f0eef1d555bc98b1314659e1917cdcc3a5abb68041",
+      "bytes": 11034,
+      "original_run": 36628443911,
+      "count": 54,
+      "severity_counts": {
+        "violation": 54
+      },
+      "rule_counts": {
+        "standard:argument-list-wrapping": 28,
+        "standard:chain-method-continuation": 3,
+        "standard:class-signature": 1,
+        "standard:comment-spacing": 1,
+        "standard:condition-wrapping": 4,
+        "standard:multiline-expression-wrapping": 8,
+        "standard:trailing-comma-on-call-site": 7,
+        "standard:wrapping": 2
+      }
+    },
+    {
+      "id": "format:app/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt",
+      "tool": "ktlint",
+      "path": "app/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt",
+      "sha256": "a09b66c8382f243fb4104cabad0200a64bbf5863fae41b7b087ee043f74a8e90",
+      "bytes": 2848760,
+      "original_run": 36628443911,
+      "count": 12422,
+      "severity_counts": {
+        "violation": 12422
+      },
+      "rule_counts": {
+        "standard:annotation": 15,
+        "standard:annotation-spacing": 2,
+        "standard:argument-list-wrapping": 1672,
+        "standard:binary-expression-wrapping": 130,
+        "standard:blank-line-before-declaration": 489,
+        "standard:chain-method-continuation": 877,
+        "standard:chain-wrapping": 31,
+        "standard:class-naming": 1,
+        "standard:class-signature": 486,
+        "standard:colon-spacing": 9,
+        "standard:comment-spacing": 29,
+        "standard:comment-wrapping": 1,
+        "standard:condition-wrapping": 55,
+        "standard:curly-spacing": 4,
+        "standard:enum-wrapping": 84,
+        "standard:filename": 4,
+        "standard:final-newline": 74,
+        "standard:function-expression-body": 60,
+        "standard:function-literal": 371,
+        "standard:function-naming": 228,
+        "standard:function-return-type-spacing": 2,
+        "standard:function-signature": 1741,
+        "standard:if-else-bracing": 28,
+        "standard:if-else-wrapping": 355,
+        "standard:import-ordering": 79,
+        "standard:indent": 642,
+        "standard:keyword-spacing": 16,
+        "standard:max-line-length": 217,
+        "standard:modifier-list-spacing": 1,
+        "standard:multiline-expression-wrapping": 1568,
+        "standard:multiline-if-else": 320,
+        "standard:multiline-loop": 1,
+        "standard:no-blank-line-before-rbrace": 22,
+        "standard:no-blank-line-in-list": 9,
+        "standard:no-consecutive-blank-lines": 76,
+        "standard:no-consecutive-comments": 2,
+        "standard:no-empty-file": 2,
+        "standard:no-empty-first-line-in-class-body": 73,
+        "standard:no-empty-first-line-in-method-block": 6,
+        "standard:no-line-break-after-else": 1,
+        "standard:no-multi-spaces": 13,
+        "standard:no-semi": 7,
+        "standard:no-single-line-block-comment": 2,
+        "standard:no-trailing-spaces": 29,
+        "standard:no-unused-imports": 75,
+        "standard:no-wildcard-imports": 40,
+        "standard:op-spacing": 8,
+        "standard:parameter-list-spacing": 1,
+        "standard:parameter-list-wrapping": 116,
+        "standard:paren-spacing": 4,
+        "standard:property-naming": 14,
+        "standard:property-wrapping": 5,
+        "standard:spacing-between-declarations-with-annotations": 42,
+        "standard:spacing-between-declarations-with-comments": 27,
+        "standard:statement-wrapping": 618,
+        "standard:string-template": 3,
+        "standard:string-template-indent": 112,
+        "standard:trailing-comma-on-call-site": 933,
+        "standard:trailing-comma-on-declaration-site": 72,
+        "standard:try-catch-finally-spacing": 109,
+        "standard:wrapping": 409
+      }
+    },
+    {
+      "id": "format:app/build/reports/ktlint/ktlintTestSourceSetCheck/ktlintTestSourceSetCheck.txt",
+      "tool": "ktlint",
+      "path": "app/build/reports/ktlint/ktlintTestSourceSetCheck/ktlintTestSourceSetCheck.txt",
+      "sha256": "4df0cc3718e0a3de0b770d24d6f2303fbd381fbbafc1a44d36ac54c316d29095",
+      "bytes": 160588,
+      "original_run": 36628443911,
+      "count": 675,
+      "severity_counts": {
+        "violation": 675
+      },
+      "rule_counts": {
+        "standard:argument-list-wrapping": 150,
+        "standard:binary-expression-wrapping": 2,
+        "standard:blank-line-before-declaration": 33,
+        "standard:chain-method-continuation": 27,
+        "standard:comma-spacing": 5,
+        "standard:function-literal": 12,
+        "standard:function-signature": 110,
+        "standard:if-else-wrapping": 3,
+        "standard:import-ordering": 1,
+        "standard:indent": 3,
+        "standard:max-line-length": 15,
+        "standard:multiline-expression-wrapping": 100,
+        "standard:multiline-if-else": 3,
+        "standard:no-empty-first-line-in-class-body": 33,
+        "standard:no-unused-imports": 2,
+        "standard:no-wildcard-imports": 8,
+        "standard:op-spacing": 4,
+        "standard:parameter-list-wrapping": 13,
+        "standard:property-wrapping": 2,
+        "standard:spacing-between-declarations-with-annotations": 23,
+        "standard:statement-wrapping": 49,
+        "standard:string-template-indent": 9,
+        "standard:trailing-comma-on-call-site": 52,
+        "standard:try-catch-finally-spacing": 4,
+        "standard:wrapping": 12
+      }
+    },
+    {
+      "id": "format:build/reports/ktlint/ktlintKotlinScriptCheck/ktlintKotlinScriptCheck.txt",
+      "tool": "ktlint",
+      "path": "build/reports/ktlint/ktlintKotlinScriptCheck/ktlintKotlinScriptCheck.txt",
+      "sha256": "4c14b2773421ce6dce2a5c98981b47bde75d179b50dff5c05ec6bb75538fc561",
+      "bytes": 2404,
+      "original_run": 36628443911,
+      "count": 11,
+      "severity_counts": {
+        "violation": 11
+      },
+      "rule_counts": {
+        "standard:argument-list-wrapping": 9,
+        "standard:chain-method-continuation": 1,
+        "standard:no-consecutive-blank-lines": 1
+      }
+    },
+    {
+      "id": "host:ad-filter/build/reports/lint-results-debug.xml",
+      "tool": "lint",
+      "path": "ad-filter/build/reports/lint-results-debug.xml",
+      "sha256": "743c9bbd7e199d6610bebdda3047ace08ea6337dcc61347de4553c19b3e75312",
+      "bytes": 49822,
+      "original_run": 36628444279,
+      "count": 53,
+      "severity_counts": {
+        "Error": 53
+      },
+      "rule_counts": {
+        "AndroidGradlePluginVersion": 2,
+        "GradleDependency": 23,
+        "NewerVersionAvailable": 23,
+        "OldTargetApi": 1,
+        "UseKtx": 2,
+        "UseTomlInstead": 2
+      }
+    },
+    {
+      "id": "host:adblock-client/build/reports/lint-results-debug.xml",
+      "tool": "lint",
+      "path": "adblock-client/build/reports/lint-results-debug.xml",
+      "sha256": "afb9870a7457573bdcf537e384bfbbe34a5d8734c359259d6c32f107ea3fa845",
+      "bytes": 48940,
+      "original_run": 36628444279,
+      "count": 52,
+      "severity_counts": {
+        "Error": 52
+      },
+      "rule_counts": {
+        "AndroidGradlePluginVersion": 2,
+        "GradleDependency": 23,
+        "NewerVersionAvailable": 23,
+        "OldTargetApi": 1,
+        "UseKtx": 1,
+        "UseTomlInstead": 2
+      }
+    },
+    {
+      "id": "host:app/build/reports/lint-results-debug.xml",
+      "tool": "lint",
+      "path": "app/build/reports/lint-results-debug.xml",
+      "sha256": "ee35f0fa3bcc47688b319a96adaa36f4370d01b7f0ef532cefd7dc1d453f0539",
+      "bytes": 577094,
+      "original_run": 36628444279,
+      "count": 472,
+      "severity_counts": {
+        "Error": 458,
+        "Hint": 14
+      },
+      "rule_counts": {
+        "AndroidGradlePluginVersion": 2,
+        "AppBundleLocaleChanges": 1,
+        "AppLinkUrlError": 3,
+        "AutoboxingStateCreation": 9,
+        "AutoboxingStateValueProperty": 8,
+        "ChromeOsAbiSupport": 1,
+        "ClickableViewAccessibility": 2,
+        "ComposableNaming": 3,
+        "ConstantLocale": 1,
+        "DataExtractionRules": 1,
+        "DiscouragedApi": 3,
+        "GradleDependency": 27,
+        "InlinedApi": 4,
+        "InsecureBaseConfiguration": 1,
+        "IntentFilterUniqueDataAttributes": 2,
+        "LocaleFolder": 1,
+        "LogNotTimber": 127,
+        "MissingTranslation": 92,
+        "ModifierParameter": 13,
+        "NewApi": 3,
+        "NewerVersionAvailable": 30,
+        "OldTargetApi": 2,
+        "PictureInPictureIssue": 1,
+        "PluralsCandidate": 2,
+        "RtlHardcoded": 3,
+        "SetJavaScriptEnabled": 3,
+        "StaticFieldLeak": 1,
+        "TrimLambda": 5,
+        "Typos": 3,
+        "UnusedResources": 15,
+        "UseKtx": 83,
+        "UseTomlInstead": 15,
+        "VectorPath": 3,
+        "ViewConstructor": 2
+      }
+    },
+    {
+      "id": "release:app/build/reports/lint-results-release.xml",
+      "tool": "lint",
+      "path": "app/build/reports/lint-results-release.xml",
+      "sha256": "ee35f0fa3bcc47688b319a96adaa36f4370d01b7f0ef532cefd7dc1d453f0539",
+      "bytes": 577094,
+      "original_run": 36628444279,
+      "count": 472,
+      "severity_counts": {
+        "Error": 458,
+        "Hint": 14
+      },
+      "rule_counts": {
+        "AndroidGradlePluginVersion": 2,
+        "AppBundleLocaleChanges": 1,
+        "AppLinkUrlError": 3,
+        "AutoboxingStateCreation": 9,
+        "AutoboxingStateValueProperty": 8,
+        "ChromeOsAbiSupport": 1,
+        "ClickableViewAccessibility": 2,
+        "ComposableNaming": 3,
+        "ConstantLocale": 1,
+        "DataExtractionRules": 1,
+        "DiscouragedApi": 3,
+        "GradleDependency": 27,
+        "InlinedApi": 4,
+        "InsecureBaseConfiguration": 1,
+        "IntentFilterUniqueDataAttributes": 2,
+        "LocaleFolder": 1,
+        "LogNotTimber": 127,
+        "MissingTranslation": 92,
+        "ModifierParameter": 13,
+        "NewApi": 3,
+        "NewerVersionAvailable": 30,
+        "OldTargetApi": 2,
+        "PictureInPictureIssue": 1,
+        "PluralsCandidate": 2,
+        "RtlHardcoded": 3,
+        "SetJavaScriptEnabled": 3,
+        "StaticFieldLeak": 1,
+        "TrimLambda": 5,
+        "Typos": 3,
+        "UnusedResources": 15,
+        "UseKtx": 83,
+        "UseTomlInstead": 15,
+        "VectorPath": 3,
+        "ViewConstructor": 2
+      }
+    },
+    {
+      "id": "source:unfinished.json",
+      "tool": "unfinished",
+      "path": "unfinished.json",
+      "sha256": "7e70103065f47d8df8bd92899d3572fab16aaea6cf88af53565ad6f986caf47b",
+      "bytes": 42037,
+      "original_run": 36628444279,
+      "count": 178,
+      "severity_counts": {
+        "review-candidate": 178
+      },
+      "rule_counts": {
+        "constant-return-review": 13,
+        "empty-action": 73,
+        "empty-function-review": 21,
+        "silent-catch": 63,
+        "unfinished-marker": 8
+      }
+    }
+  ],
+  "source_snapshot": {
+    "unfinished_scanned_files": 542,
+    "interaction_candidates": 617,
+    "declared_contracts": 9,
+    "required_scenarios": 42,
+    "declared_scenarios_with_blocker": 38,
+    "execution_adjudicated": false
+  },
+  "scope_limitations": [
+    "Report source 6abf29b; recovery/helper commits do not certify a new APK. Application/build source diff from report source to recovery source is empty.",
+    "Raw occurrences retain variant/module overlap; occurrence addresses are immutable-report positions, NOT stable root-cause ticket IDs.",
+    "Configured reports: app debug/release and library debug lint; independent library release lint not executed by these lanes.",
+    "Compiler extraction retains emitted w:/e:/missing-class and failed-task lines; zero matching lines is not proof of all Java/Gradle warnings absent. Full original log hashes and recovery annotations are retained.",
+    "Interaction contract presence and scanner candidate counts are not proof of working controls or actual defects.",
+    "Full root-cause ticket ownership, collision-aware identity, duplicate mapping and risk reprioritization remain required before S00 closes."
+  ],
+  "failed_recoveries": [
+    {
+      "run": 36634426459,
+      "reason": "Messages cut at 4096 characters; format artifact had no report."
+    },
+    {
+      "run": 36634666703,
+      "reason": "Detekt cut at 50 job annotations; format artifact had no report."
+    },
+    {
+      "run": 36634913699,
+      "reason": "Formatting required report missing; other four groups reconstructed."
+    },
+    {
+      "run": 36635060669,
+      "reason": "Original delivery formatter failed before ktlint: Detekt plugin resolution at build.gradle.kts:3."
+    },
+    {
+      "run": 36635365329,
+      "reason": "Executed standalone formatting artifact exceeds old 80-page transport budget."
+    }
+  ]
+}

@@ -1,0 +1,1102 @@
+[
+  {
+    "id": "opportunitydesk",
+    "name": "Opportunity Desk",
+    "url": "https://opportunitydesk.org/feed/",
+    "format": "feed",
+    "category": "Global opportunities",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://opportunitydesk.org/feed/"
+  },
+  {
+    "id": "youthop",
+    "name": "Youth Opportunities",
+    "url": "https://www.youthop.com/",
+    "format": "html",
+    "category": "Global youth opportunities",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.youthop.com/"
+  },
+  {
+    "id": "opportunitiescorners",
+    "name": "Opportunities Corners",
+    "url": "https://opportunitiescorners.com/feed/",
+    "format": "feed",
+    "category": "Scholarships and training",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://opportunitiescorners.com/feed/"
+  },
+  {
+    "id": "opportunitiescircle",
+    "name": "Opportunities Circle",
+    "url": "https://www.opportunitiescircle.com/feed/",
+    "format": "feed",
+    "category": "Global opportunities",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.opportunitiescircle.com/feed/"
+  },
+  {
+    "id": "scholars4dev",
+    "name": "Scholars4Dev",
+    "url": "https://www.scholars4dev.com/feed/",
+    "format": "feed",
+    "category": "International scholarships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.scholars4dev.com/feed/"
+  },
+  {
+    "id": "scholarshippositions",
+    "name": "Scholarship Positions",
+    "url": "https://scholarship-positions.com/feed/",
+    "format": "feed",
+    "category": "International scholarships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://scholarship-positions.com/feed/"
+  },
+  {
+    "id": "fundsforngos",
+    "name": "Funds for NGOs",
+    "url": "https://www2.fundsforngos.org/feed/",
+    "format": "feed",
+    "category": "Grants and calls",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www2.fundsforngos.org/feed/"
+  },
+  {
+    "id": "oyaop",
+    "name": "OYA Opportunities",
+    "url": "https://oyaop.com/feed/",
+    "format": "feed",
+    "category": "Global youth opportunities",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://oyaop.com/feed/"
+  },
+  {
+    "id": "unu",
+    "name": "United Nations University Opportunities",
+    "url": "https://unu.edu/about/unu-services/human-resources",
+    "format": "html",
+    "category": "International academic careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://unu.edu/about/unu-services/human-resources"
+  },
+  {
+    "id": "armacad",
+    "name": "ARMACAD",
+    "url": "https://armacad.info/",
+    "format": "html",
+    "category": "Academic opportunities",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://armacad.info/"
+  },
+  {
+    "id": "profellow",
+    "name": "ProFellow",
+    "url": "https://www.profellow.com/feed/",
+    "format": "feed",
+    "category": "Fellowships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.profellow.com/feed/"
+  },
+  {
+    "id": "youthbreakboundaries",
+    "name": "Youth Break the Boundaries",
+    "url": "https://youthbreaktheboundaries.com/feed/",
+    "format": "feed",
+    "category": "Youth programmes",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://youthbreaktheboundaries.com/feed/"
+  },
+  {
+    "id": "globalchangemakers",
+    "name": "Global Changemakers",
+    "url": "https://www.global-changemakers.net/",
+    "format": "html",
+    "category": "Youth grants and programmes",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.global-changemakers.net/"
+  },
+  {
+    "id": "oneyoungworld",
+    "name": "One Young World",
+    "url": "https://www.oneyoungworld.com/scholarships",
+    "format": "html",
+    "category": "Global scholarships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.oneyoungworld.com/scholarships"
+  },
+  {
+    "id": "youthassembly",
+    "name": "The Youth Assembly",
+    "url": "https://www.youthassembly.org/",
+    "format": "html",
+    "category": "Youth programmes",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.youthassembly.org/"
+  },
+  {
+    "id": "unvolunteers",
+    "name": "UN Volunteers",
+    "url": "https://www.unv.org/become-volunteer",
+    "format": "html",
+    "category": "Volunteer applications",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.unv.org/become-volunteer"
+  },
+  {
+    "id": "uncareers",
+    "name": "UN Careers",
+    "url": "https://careers.un.org/",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://careers.un.org/"
+  },
+  {
+    "id": "unjobs",
+    "name": "UNjobs",
+    "url": "https://unjobs.org/",
+    "format": "html",
+    "category": "International vacancies",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://unjobs.org/"
+  },
+  {
+    "id": "impactpool",
+    "name": "Impactpool",
+    "url": "https://www.impactpool.org/",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.impactpool.org/"
+  },
+  {
+    "id": "reliefweb",
+    "name": "ReliefWeb",
+    "url": "https://reliefweb.int/jobs",
+    "format": "html",
+    "category": "Humanitarian vacancies",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://reliefweb.int/jobs"
+  },
+  {
+    "id": "idealist",
+    "name": "Idealist",
+    "url": "https://www.idealist.org/",
+    "format": "html",
+    "category": "Nonprofit opportunities",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.idealist.org/"
+  },
+  {
+    "id": "unicef",
+    "name": "UNICEF Careers",
+    "url": "https://jobs.unicef.org/en-us/listing/",
+    "format": "html",
+    "category": "International internships and jobs",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://jobs.unicef.org/en-us/listing/"
+  },
+  {
+    "id": "undp",
+    "name": "UNDP Careers",
+    "url": "https://www.undp.org/careers",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.undp.org/careers"
+  },
+  {
+    "id": "unesco",
+    "name": "UNESCO Fellowships",
+    "url": "https://www.unesco.org/en/fellowships",
+    "format": "html",
+    "category": "International fellowships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.unesco.org/en/fellowships"
+  },
+  {
+    "id": "who",
+    "name": "WHO Careers",
+    "url": "https://www.who.int/careers",
+    "format": "html",
+    "category": "Global health careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.who.int/careers"
+  },
+  {
+    "id": "fao",
+    "name": "FAO Employment",
+    "url": "https://www.fao.org/employment/home/en/",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.fao.org/employment/home/en/"
+  },
+  {
+    "id": "wfp",
+    "name": "WFP Careers",
+    "url": "https://www.wfp.org/careers",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.wfp.org/careers"
+  },
+  {
+    "id": "ifad",
+    "name": "IFAD Careers",
+    "url": "https://www.ifad.org/en/careers",
+    "format": "html",
+    "category": "Development careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.ifad.org/en/careers"
+  },
+  {
+    "id": "ilo",
+    "name": "ILO Jobs",
+    "url": "https://jobs.ilo.org/",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://jobs.ilo.org/"
+  },
+  {
+    "id": "unhcr",
+    "name": "UNHCR Careers",
+    "url": "https://www.unhcr.org/careers",
+    "format": "html",
+    "category": "Humanitarian careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.unhcr.org/careers"
+  },
+  {
+    "id": "iom",
+    "name": "IOM Careers",
+    "url": "https://www.iom.int/careers",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.iom.int/careers"
+  },
+  {
+    "id": "worldbank",
+    "name": "World Bank Careers",
+    "url": "https://www.worldbank.org/en/about/careers",
+    "format": "html",
+    "category": "Development programmes",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.worldbank.org/en/about/careers"
+  },
+  {
+    "id": "imf",
+    "name": "IMF Careers",
+    "url": "https://www.imf.org/en/About/Recruitment",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.imf.org/en/About/Recruitment"
+  },
+  {
+    "id": "oecd",
+    "name": "OECD Careers",
+    "url": "https://www.oecd.org/en/about/careers.html",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.oecd.org/en/about/careers.html"
+  },
+  {
+    "id": "wto",
+    "name": "WTO Careers",
+    "url": "https://www.wto.org/english/thewto_e/vacan_e/vacan_e.htm",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.wto.org/english/thewto_e/vacan_e/vacan_e.htm"
+  },
+  {
+    "id": "wipo",
+    "name": "WIPO Careers",
+    "url": "https://www.wipo.int/jobs/en/",
+    "format": "html",
+    "category": "International careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.wipo.int/jobs/en/"
+  },
+  {
+    "id": "iaea",
+    "name": "IAEA Employment",
+    "url": "https://www.iaea.org/about/employment",
+    "format": "html",
+    "category": "Research and careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.iaea.org/about/employment"
+  },
+  {
+    "id": "icrc",
+    "name": "ICRC Careers",
+    "url": "https://careers.icrc.org/",
+    "format": "html",
+    "category": "Humanitarian careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://careers.icrc.org/"
+  },
+  {
+    "id": "ifrc",
+    "name": "IFRC Careers",
+    "url": "https://www.ifrc.org/jobs",
+    "format": "html",
+    "category": "Humanitarian careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.ifrc.org/jobs"
+  },
+  {
+    "id": "greenclimate",
+    "name": "Green Climate Fund Careers",
+    "url": "https://www.greenclimate.fund/about/careers",
+    "format": "html",
+    "category": "Climate careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.greenclimate.fund/about/careers"
+  },
+  {
+    "id": "daad",
+    "name": "DAAD Scholarship Database",
+    "url": "https://www.daad.de/en/studying-in-germany/scholarships/daad-scholarships/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.daad.de/en/studying-in-germany/scholarships/daad-scholarships/"
+  },
+  {
+    "id": "erasmus",
+    "name": "Erasmus Mundus",
+    "url": "https://erasmus-plus.ec.europa.eu/opportunities/opportunities-for-individuals/students/erasmus-mundus-joint-masters",
+    "format": "html",
+    "category": "International scholarships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://erasmus-plus.ec.europa.eu/opportunities/opportunities-for-individuals/students/erasmus-mundus-joint-masters"
+  },
+  {
+    "id": "chevening",
+    "name": "Chevening",
+    "url": "https://www.chevening.org/scholarships/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.chevening.org/scholarships/"
+  },
+  {
+    "id": "commonwealth",
+    "name": "Commonwealth Scholarships",
+    "url": "https://cscuk.fcdo.gov.uk/scholarships/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://cscuk.fcdo.gov.uk/scholarships/"
+  },
+  {
+    "id": "fulbright",
+    "name": "Fulbright Foreign Student Program",
+    "url": "https://foreign.fulbrightonline.org/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://foreign.fulbrightonline.org/"
+  },
+  {
+    "id": "studyinjapan",
+    "name": "Study in Japan Scholarships",
+    "url": "https://www.studyinjapan.go.jp/en/planning/scholarships/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.studyinjapan.go.jp/en/planning/scholarships/"
+  },
+  {
+    "id": "studyinkorea",
+    "name": "Study in Korea",
+    "url": "https://www.studyinkorea.go.kr/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.studyinkorea.go.kr/"
+  },
+  {
+    "id": "studyinsweden",
+    "name": "Study in Sweden Scholarships",
+    "url": "https://studyinsweden.se/scholarships/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://studyinsweden.se/scholarships/"
+  },
+  {
+    "id": "swedishinstitute",
+    "name": "Swedish Institute Scholarships",
+    "url": "https://si.se/en/apply/scholarships/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://si.se/en/apply/scholarships/"
+  },
+  {
+    "id": "studyinfinland",
+    "name": "Study in Finland Scholarships",
+    "url": "https://www.studyinfinland.fi/scholarships",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.studyinfinland.fi/scholarships"
+  },
+  {
+    "id": "studyinnorway",
+    "name": "Study in Norway",
+    "url": "https://studyinnorway.no/",
+    "format": "html",
+    "category": "International study opportunities",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://studyinnorway.no/"
+  },
+  {
+    "id": "studyinnl",
+    "name": "Study in NL Finances",
+    "url": "https://www.studyinnl.org/finances",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.studyinnl.org/finances"
+  },
+  {
+    "id": "campusfrance",
+    "name": "Campus France",
+    "url": "https://www.campusfrance.org/en/bursaries-foreign-students",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.campusfrance.org/en/bursaries-foreign-students"
+  },
+  {
+    "id": "educanada",
+    "name": "EduCanada Scholarships",
+    "url": "https://www.educanada.ca/scholarships-bourses/index.aspx?lang=eng",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.educanada.ca/scholarships-bourses/index.aspx?lang=eng"
+  },
+  {
+    "id": "australiaawards",
+    "name": "Australia Awards",
+    "url": "https://www.dfat.gov.au/people-to-people/australia-awards",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.dfat.gov.au/people-to-people/australia-awards"
+  },
+  {
+    "id": "manaki",
+    "name": "Manaaki New Zealand Scholarships",
+    "url": "https://www.nzscholarships.govt.nz/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.nzscholarships.govt.nz/"
+  },
+  {
+    "id": "turkiyeburslari",
+    "name": "Türkiye Scholarships",
+    "url": "https://www.turkiyeburslari.gov.tr/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.turkiyeburslari.gov.tr/"
+  },
+  {
+    "id": "stipendium",
+    "name": "Stipendium Hungaricum",
+    "url": "https://stipendiumhungaricum.hu/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://stipendiumhungaricum.hu/"
+  },
+  {
+    "id": "schwarzman",
+    "name": "Schwarzman Scholars",
+    "url": "https://www.schwarzmanscholars.org/admissions/",
+    "format": "html",
+    "category": "Global scholarships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.schwarzmanscholars.org/admissions/"
+  },
+  {
+    "id": "rhodes",
+    "name": "Rhodes Trust",
+    "url": "https://www.rhodeshouse.ox.ac.uk/scholarships/applications/",
+    "format": "html",
+    "category": "Global scholarships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.rhodeshouse.ox.ac.uk/scholarships/applications/"
+  },
+  {
+    "id": "gatescambridge",
+    "name": "Gates Cambridge",
+    "url": "https://www.gatescambridge.org/apply/",
+    "format": "html",
+    "category": "Global scholarships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.gatescambridge.org/apply/"
+  },
+  {
+    "id": "knighthennessy",
+    "name": "Knight-Hennessy Scholars",
+    "url": "https://knight-hennessy.stanford.edu/admission",
+    "format": "html",
+    "category": "Global scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://knight-hennessy.stanford.edu/admission"
+  },
+  {
+    "id": "rotary",
+    "name": "Rotary Peace Fellowships",
+    "url": "https://www.rotary.org/en/our-programs/peace-fellowships",
+    "format": "html",
+    "category": "Global fellowships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.rotary.org/en/our-programs/peace-fellowships"
+  },
+  {
+    "id": "jointjapan",
+    "name": "Asian Development Bank Scholarships",
+    "url": "https://www.adb.org/work-with-us/careers/japan-scholarship-program",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.adb.org/work-with-us/careers/japan-scholarship-program"
+  },
+  {
+    "id": "isdb",
+    "name": "IsDB Scholarships",
+    "url": "https://www.isdb.org/scholarships",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.isdb.org/scholarships"
+  },
+  {
+    "id": "mastercardfoundation",
+    "name": "Mastercard Foundation Scholars",
+    "url": "https://mastercardfdn.org/all/scholars/",
+    "format": "html",
+    "category": "International scholarships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://mastercardfdn.org/all/scholars/"
+  },
+  {
+    "id": "wellcome",
+    "name": "Wellcome Funding",
+    "url": "https://wellcome.org/research-funding",
+    "format": "html",
+    "category": "Research grants",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://wellcome.org/research-funding"
+  },
+  {
+    "id": "gatesfoundation",
+    "name": "Gates Foundation Grant Opportunities",
+    "url": "https://www.gatesfoundation.org/about/how-we-work/grant-opportunities",
+    "format": "html",
+    "category": "Global grants",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.gatesfoundation.org/about/how-we-work/grant-opportunities"
+  },
+  {
+    "id": "fordfoundation",
+    "name": "Ford Foundation Grants",
+    "url": "https://www.fordfoundation.org/work/our-grants/",
+    "format": "html",
+    "category": "Global grants",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.fordfoundation.org/work/our-grants/"
+  },
+  {
+    "id": "opensociety",
+    "name": "Open Society Grants",
+    "url": "https://www.opensocietyfoundations.org/grants",
+    "format": "html",
+    "category": "Grants and fellowships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.opensocietyfoundations.org/grants"
+  },
+  {
+    "id": "macfound",
+    "name": "MacArthur Foundation Grants",
+    "url": "https://www.macfound.org/grants/",
+    "format": "html",
+    "category": "Global grants",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.macfound.org/grants/"
+  },
+  {
+    "id": "rockefeller",
+    "name": "Rockefeller Foundation",
+    "url": "https://www.rockefellerfoundation.org/",
+    "format": "html",
+    "category": "Grants and programmes",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.rockefellerfoundation.org/"
+  },
+  {
+    "id": "nationalgeographic",
+    "name": "National Geographic Grants",
+    "url": "https://www.nationalgeographic.org/society/grants-and-investments/",
+    "format": "html",
+    "category": "Exploration grants",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.nationalgeographic.org/society/grants-and-investments/"
+  },
+  {
+    "id": "rufford",
+    "name": "Rufford Foundation",
+    "url": "https://www.rufford.org/",
+    "format": "html",
+    "category": "Conservation grants",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.rufford.org/"
+  },
+  {
+    "id": "conservationleadership",
+    "name": "Conservation Leadership Programme",
+    "url": "https://www.conservationleadershipprogramme.org/grants/",
+    "format": "html",
+    "category": "Conservation grants",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.conservationleadershipprogramme.org/grants/"
+  },
+  {
+    "id": "ashoka",
+    "name": "Ashoka",
+    "url": "https://www.ashoka.org/en-us/programs",
+    "format": "html",
+    "category": "Social entrepreneurship",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.ashoka.org/en-us/programs"
+  },
+  {
+    "id": "echoinggreen",
+    "name": "Echoing Green Fellowship",
+    "url": "https://echoinggreen.org/fellowship/",
+    "format": "html",
+    "category": "Global fellowships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://echoinggreen.org/fellowship/"
+  },
+  {
+    "id": "acumen",
+    "name": "Acumen Academy",
+    "url": "https://acumenacademy.org/",
+    "format": "html",
+    "category": "Fellowships and training",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://acumenacademy.org/"
+  },
+  {
+    "id": "halcyon",
+    "name": "Halcyon",
+    "url": "https://www.halcyonhouse.org/",
+    "format": "html",
+    "category": "Entrepreneurship fellowships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.halcyonhouse.org/"
+  },
+  {
+    "id": "mit-solve",
+    "name": "MIT Solve",
+    "url": "https://solve.mit.edu/challenges",
+    "format": "html",
+    "category": "Global challenges",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://solve.mit.edu/challenges"
+  },
+  {
+    "id": "challengeworks",
+    "name": "Challenge Works",
+    "url": "https://challengeworks.org/challenges/",
+    "format": "html",
+    "category": "Global challenges",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://challengeworks.org/challenges/"
+  },
+  {
+    "id": "xprize",
+    "name": "XPRIZE",
+    "url": "https://www.xprize.org/prizes",
+    "format": "html",
+    "category": "Global competitions",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.xprize.org/prizes"
+  },
+  {
+    "id": "hultprize",
+    "name": "Hult Prize",
+    "url": "https://www.hultprize.org/",
+    "format": "html",
+    "category": "Global student competitions",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.hultprize.org/"
+  },
+  {
+    "id": "climatelaunchpad",
+    "name": "ClimateLaunchpad",
+    "url": "https://climatelaunchpad.org/",
+    "format": "html",
+    "category": "Climate entrepreneurship",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://climatelaunchpad.org/"
+  },
+  {
+    "id": "climatekic",
+    "name": "Climate KIC",
+    "url": "https://www.climate-kic.org/",
+    "format": "html",
+    "category": "Climate programmes",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.climate-kic.org/"
+  },
+  {
+    "id": "ycombinator",
+    "name": "Y Combinator Apply",
+    "url": "https://www.ycombinator.com/apply",
+    "format": "html",
+    "category": "Startup applications",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.ycombinator.com/apply"
+  },
+  {
+    "id": "techstars",
+    "name": "Techstars Accelerators",
+    "url": "https://www.techstars.com/accelerators",
+    "format": "html",
+    "category": "Global startup programmes",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.techstars.com/accelerators"
+  },
+  {
+    "id": "seedstars",
+    "name": "Seedstars",
+    "url": "https://www.seedstars.com/",
+    "format": "html",
+    "category": "Entrepreneurship programmes",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.seedstars.com/"
+  },
+  {
+    "id": "antler",
+    "name": "Antler",
+    "url": "https://www.antler.co/",
+    "format": "html",
+    "category": "Startup programmes",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.antler.co/"
+  },
+  {
+    "id": "f6s",
+    "name": "F6S",
+    "url": "https://www.f6s.com/programs",
+    "format": "html",
+    "category": "Accelerators and grants",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.f6s.com/programs"
+  },
+  {
+    "id": "mlh",
+    "name": "MLH Fellowship",
+    "url": "https://fellowship.mlh.io/",
+    "format": "html",
+    "category": "Technology fellowships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://fellowship.mlh.io/"
+  },
+  {
+    "id": "outreachy",
+    "name": "Outreachy",
+    "url": "https://www.outreachy.org/apply/",
+    "format": "html",
+    "category": "Open-source internships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.outreachy.org/apply/"
+  },
+  {
+    "id": "gsoc",
+    "name": "Google Summer of Code",
+    "url": "https://summerofcode.withgoogle.com/",
+    "format": "html",
+    "category": "Open-source programmes",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://summerofcode.withgoogle.com/"
+  },
+  {
+    "id": "lfx",
+    "name": "Linux Foundation Mentorship",
+    "url": "https://mentorship.lfx.linuxfoundation.org/",
+    "format": "html",
+    "category": "Open-source mentorship",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://mentorship.lfx.linuxfoundation.org/"
+  },
+  {
+    "id": "processing",
+    "name": "Processing Foundation Fellowships",
+    "url": "https://processingfoundation.org/fellowships",
+    "format": "html",
+    "category": "Creative technology fellowships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://processingfoundation.org/fellowships"
+  },
+  {
+    "id": "mozilla",
+    "name": "Mozilla Foundation Fellowships",
+    "url": "https://www.mozillafoundation.org/en/fellowships/",
+    "format": "html",
+    "category": "Technology fellowships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.mozillafoundation.org/en/fellowships/"
+  },
+  {
+    "id": "internetgovernance",
+    "name": "Internet Governance Forum",
+    "url": "https://www.intgovforum.org/en",
+    "format": "html",
+    "category": "Internet governance programmes",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.intgovforum.org/en"
+  },
+  {
+    "id": "internetsociety",
+    "name": "Internet Society Fellowships",
+    "url": "https://www.internetsociety.org/fellowships/",
+    "format": "html",
+    "category": "Internet fellowships",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.internetsociety.org/fellowships/"
+  },
+  {
+    "id": "icann",
+    "name": "ICANN Fellowship",
+    "url": "https://www.icann.org/fellowshipprogram",
+    "format": "html",
+    "category": "Internet governance fellowships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.icann.org/fellowshipprogram"
+  },
+  {
+    "id": "ripe",
+    "name": "RIPE NCC Fellowship",
+    "url": "https://www.ripe.net/participate/meetings/ripe-meetings/fellowship/",
+    "format": "html",
+    "category": "Networking fellowships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.ripe.net/participate/meetings/ripe-meetings/fellowship/"
+  },
+  {
+    "id": "cern",
+    "name": "CERN Careers",
+    "url": "https://careers.cern/",
+    "format": "html",
+    "category": "International research careers",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://careers.cern/"
+  },
+  {
+    "id": "ictp",
+    "name": "ICTP Opportunities",
+    "url": "https://www.ictp.it/opportunities",
+    "format": "html",
+    "category": "Research and training",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.ictp.it/opportunities"
+  },
+  {
+    "id": "twas",
+    "name": "TWAS Opportunities",
+    "url": "https://twas.org/opportunities",
+    "format": "html",
+    "category": "Research fellowships and grants",
+    "default": true,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://twas.org/opportunities"
+  },
+  {
+    "id": "embo",
+    "name": "EMBO Funding",
+    "url": "https://www.embo.org/funding/",
+    "format": "html",
+    "category": "Research fellowships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.embo.org/funding/"
+  },
+  {
+    "id": "hfsp",
+    "name": "Human Frontier Science Program",
+    "url": "https://www.hfsp.org/funding",
+    "format": "html",
+    "category": "Research grants and fellowships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.hfsp.org/funding"
+  },
+  {
+    "id": "msca",
+    "name": "Marie Skłodowska-Curie Actions",
+    "url": "https://marie-sklodowska-curie-actions.ec.europa.eu/",
+    "format": "html",
+    "category": "Research fellowships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://marie-sklodowska-curie-actions.ec.europa.eu/"
+  },
+  {
+    "id": "avh",
+    "name": "Alexander von Humboldt Foundation",
+    "url": "https://www.humboldt-foundation.de/en/apply/sponsorship-programmes",
+    "format": "html",
+    "category": "Research fellowships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.humboldt-foundation.de/en/apply/sponsorship-programmes"
+  },
+  {
+    "id": "fulbright-scholar",
+    "name": "Fulbright Scholar Program",
+    "url": "https://fulbrightscholars.org/",
+    "format": "html",
+    "category": "Research fellowships",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://fulbrightscholars.org/"
+  },
+  {
+    "id": "findaphd",
+    "name": "FindAPhD",
+    "url": "https://www.findaphd.com/",
+    "format": "html",
+    "category": "Doctoral opportunities",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://www.findaphd.com/"
+  },
+  {
+    "id": "academicpositions",
+    "name": "Academic Positions",
+    "url": "https://academicpositions.com/",
+    "format": "html",
+    "category": "International academic vacancies",
+    "default": false,
+    "scope": "International; programme-specific eligibility",
+    "evidence": "https://academicpositions.com/"
+  }
+]

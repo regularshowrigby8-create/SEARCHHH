@@ -1,0 +1,5 @@
+• Per-site WebView dark-mode and page-height overrides
+• AI answers render rich Markdown, including images and Mermaid diagrams
+• WebView tabs recover automatically if the renderer dies
+• Faster, smaller ad blocker with stronger protection against malformed filter data
+• Fixes for closed-tab focus, Reader-mode lead images, EPUB titles, and redirected favicons
