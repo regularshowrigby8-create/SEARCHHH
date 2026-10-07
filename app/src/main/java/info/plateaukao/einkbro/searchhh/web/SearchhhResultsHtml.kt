@@ -99,7 +99,9 @@ object SearchhhResultsHtml {
             "<a class=\"button secondary\" href=\"searchhh://$saveAction/${result.id.escapeHtml()}\">$saveLabel</a>"
         return buildString {
             appendLine("<article class=\"card\" data-result-id=\"${result.id.escapeHtml()}\">")
-            appendLine("<div class=\"card-top\"><span class=\"kind\">${result.kind.escapeHtml()}</span><span class=\"score\">${result.score}/100</span></div>")
+            appendLine(
+                "<div class=\"card-top\"><span class=\"kind\">${result.kind.escapeHtml()}</span><span class=\"score\">${result.score}/100</span></div>",
+            )
             appendLine("<h2>${result.title.escapeHtml()}</h2>")
             appendLine("<p>${result.description.escapeHtml()}</p>")
             appendLine(metadata)
