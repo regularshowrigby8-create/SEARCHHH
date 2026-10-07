@@ -22,8 +22,11 @@ concurrency:
 jobs:
   quality:
     uses: ./.github/workflows/android-verification.yml
+    # contents: read is the ceiling for every job inside the reusable workflow; the called
+    # workflow declares read too, so the whole quality chain now runs without write access
+    # to the repository. The formatting lane used to push commits from here.
     permissions:
-      contents: write
+      contents: read
       actions: read
   framework:
     needs: quality

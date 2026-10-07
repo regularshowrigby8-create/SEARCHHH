@@ -34,8 +34,11 @@ jobs:
           name: source-quality-${{ github.run_id }}
           path: build/reports/searchhh/
   android-host:
+    # Read-only: the only step that ever needed a write here was the formatting lane's
+    # auto-push, which this workflow no longer contains. The release publisher keeps its
+    # own contents: write in the caller.
     permissions:
-      contents: write
+      contents: read
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
