@@ -1,0 +1,113 @@
+name: Android SDK provisioning diagnostic
+# Throwaway diagnostic from CI Lane A step A7. It answers one question: does the
+# ubuntu-latest image already carry platform 36 and build-tools 35.0.0, or does
+# "Provision required Android SDK packages" in android-verification.yml have to
+# download them on every single job?
+#
+# This workflow gates nothing and can never fail a build: every branch ends in `echo`, so the
+# step exits 0 whether or not the packages exist.
+#
+# Trigger shape, and why it is not dispatch-only as originally specified: registration of an
+# Actions workflow is lazy, and a workflow that has neither a file on the default branch nor a
+# single run is absent from the registry, so dispatch has no endpoint to hit. Measured here:
+# `gh workflow run android-sdk-provisioning-diagnostic.yml` returned HTTP 404 while
+# `GET /actions/workflows` listed the other 7 workflows but not this one; after the first run
+# below it became `active` (id 377047595) and dispatch now resolves. A dispatch-only probe living
+# on a feature branch therefore cannot answer its own question - it needs a trigger that can fire
+# from the branch first.
+# A path-scoped `pull_request` trigger is therefore added so the very PR that introduces the probe
+# can produce the answer; `workflow_dispatch` is kept for use after the file reaches the default
+# branch. No push ever pays for it, and the path filter keeps unrelated PRs off it too.
+#
+# The provisioning step in android-verification.yml is NOT removed by this file and must stay
+# until a run of this diagnostic shows both packages present. Delete this workflow once that
+# answer is recorded.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/android-sdk-provisioning-diagnostic.yml
+      - .github/workflows/android-verification.yml
+      - build.gradle.kts
+      - app/build.gradle.kts
+      - gradle/libs.versions.toml
+      - gradle/wrapper/gradle-wrapper.properties
+permissions:
+  contents: read
+jobs:
+  inspect-image:
+    name: Inspect preinstalled SDK
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      platform_present: ${{ steps.probe.outputs.platform_present }}
+      build_tools_present: ${{ steps.probe.outputs.build_tools_present }}
+    steps:
+      - name: Report the image and its Android SDK
+        id: probe
+        shell: bash
+        run: |
+          set -uo pipefail
+          {
+            echo "## Preinstalled Android SDK probe"
+            echo
+            echo "| Item | Value |"
+            echo "|---|---|"
+            echo "| Image | \`${ImageOS:-unknown} ${ImageVersion:-unknown}\` |"
+            echo "| Runner OS | $(uname -sr) |"
+            echo "| ANDROID_HOME | \`${ANDROID_HOME:-unset}\` |"
+            echo "| ANDROID_SDK_ROOT | \`${ANDROID_SDK_ROOT:-unset}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          root="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          if [ -z "$root" ]; then
+            for candidate in /usr/local/lib/android/sdk /opt/android-sdk /usr/lib/android-sdk; do
+              if [ -d "$candidate" ]; then root="$candidate"; break; fi
+            done
+          fi
+          echo "resolved SDK root: ${root:-none}"
+          {
+            echo
+            echo '### Existing platforms'
+            echo
+            echo '```text'
+            ls -1 "$root/platforms" 2>&1 || true
+            echo '```'
+            echo
+            echo '### Existing build-tools'
+            echo
+            echo '```text'
+            ls -1 "$root/build-tools" 2>&1 || true
+            echo '```'
+            echo
+            echo '### adb on PATH'
+            echo
+            echo '```text'
+            (adb version 2>&1 || "$root/platform-tools/adb" version 2>&1 || echo "adb not found") | head -3
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          platform=no; buildtools=no
+          if [ -d "$root/platforms/android-36" ]; then platform=yes; fi
+          if [ -d "$root/build-tools/35.0.0" ]; then buildtools=yes; fi
+          echo "platform_present=$platform" >> "$GITHUB_OUTPUT"
+          echo "build_tools_present=$buildtools" >> "$GITHUB_OUTPUT"
+          {
+            echo
+            echo '### Verdict for the quality workflow provisioning step'
+            echo
+            echo "- \`platforms;android-36\` preinstalled: **$platform**"
+            echo "- \`build-tools;35.0.0\` preinstalled: **$buildtools**"
+            if [ "$platform" = yes ] && [ "$buildtools" = yes ]; then
+              echo "- Both required packages already exist, so the setup-android step is"
+              echo "  redundant on this image. It is still kept in this run: removing it needs"
+              echo "  the owner's agreement, and the runner image is GitHub's to change."
+            else
+              echo "- At least one package is missing, so the provisioning step must stay."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "platform 36 present: $platform"
+          echo "build-tools 35.0.0 present: $buildtools"
+          # Also surface the verdict as a check annotation. Raw job logs are not retrievable for
+          # this repository (blob-storage EOF), so without this line the probe would run, pass,
+          # and remain unreadable - which is the only reason it is not just printed to the log.
+          counts="platforms=$(ls -1 "$root/platforms" 2>/dev/null | wc -l),build_tools=$(ls -1 "$root/build-tools" 2>/dev/null | wc -l)"
+          echo "::notice title=Android SDK probe::platform36=$platform build_tools_35_0_0=$buildtools root=${root:-none} image=${ImageOS:-unknown}-${ImageVersion:-unknown} $counts"

@@ -6,13 +6,21 @@
     const originalCreateObjectURL = URL.createObjectURL.bind(URL);
     URL.createObjectURL = function (blob) {
         const url = originalCreateObjectURL(blob);
-        try { window.__einkbroBlobRegistry.set(url, blob); } catch (e) {}
+        try {
+            window.__einkbroBlobRegistry.set(url, blob);
+        } catch (e) {
+            console.error('einkbro blob download hook: could not register blob in __einkbroBlobRegistry', e);
+        }
         return url;
     };
 
     const originalRevokeObjectURL = URL.revokeObjectURL.bind(URL);
     URL.revokeObjectURL = function (url) {
-        try { window.__einkbroBlobRegistry.delete(url); } catch (e) {}
+        try {
+            window.__einkbroBlobRegistry.delete(url);
+        } catch (e) {
+            console.error('einkbro blob download hook: could not drop blob from __einkbroBlobRegistry', e);
+        }
         return originalRevokeObjectURL(url);
     };
 

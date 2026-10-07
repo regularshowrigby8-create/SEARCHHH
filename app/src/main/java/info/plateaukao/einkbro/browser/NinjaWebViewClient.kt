@@ -547,6 +547,7 @@ class EBWebViewClient(
                 context.startActivity(browseIntent)
                 return true
             } catch (e: Exception) {
+                Log.w("ebWebViewClient", "the resolved activity refused the ${browseIntent.data?.scheme} link", e)
             }
         }
         if (url.startsWith("intent:")) {
@@ -579,6 +580,7 @@ class EBWebViewClient(
         try {
             context.startActivity(browseIntent)
         } catch (e: Exception) {
+            Log.d("ebWebViewClient", "no handler for ${browseIntent.data?.scheme} link", e)
             // ignore
         }
 

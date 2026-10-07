@@ -2,17 +2,35 @@
 name: Searchhh checks and APK
 on:
   push:
-    branches: [arena/01a0ea36-searchhh]
+    # arena/** instead of the stale single-branch name arena/01a0ea36-searchhh, which no
+    # longer matches the branch under work (arena/3674d801-searchhh per BASELINE_VERIFICATION).
+    branches: [arena/**]
+    # Only version tags can start a release chain; a branch push never can.
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
 permissions:
   contents: read
   actions: read
+# One group per branch or pull request, shared with the called verification workflow so a
+# single push produces a single verification chain. Keyed on head_ref for pull_request events
+# and ref_name otherwise; ref_name is a tag name on a tag push, so release chains are not
+# collapsed into the branch they were cut from.
+# One chain per ref *and per event*: repeated pushes to the same branch, or new commits on the
+# same PR, supersede their own kind, which is where the duplicate runs came from. The two events
+# are deliberately kept apart: a `pull_request` run checks out the merge ref, so letting it cancel
+# a branch-`push` run would delete the only exact-SHA evidence `required-quality` is judged on.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 jobs:
   quality:
     uses: ./.github/workflows/android-verification.yml
+    # contents: read is the ceiling for every job inside the reusable workflow; the called
+    # workflow declares read too, so the whole quality chain now runs without write access
+    # to the repository. The formatting lane used to push commits from here.
     permissions:
-      contents: write
+      contents: read
       actions: read
   framework:
     needs: quality
@@ -183,10 +201,39 @@ jobs:
 
   release-build:
     needs: device-smoke
-    if: github.event_name == 'push' && github.ref == 'refs/heads/arena/01a0ea36-searchhh'
+    # A release is an explicit act: a pushed v* tag or a manual dispatch. It used to be
+    # conditioned on a hard-coded branch push, and in 127 completed caller runs these three
+    # jobs executed 0 times (89 had them, all skipped), so every push carried three dead
+    # job definitions into the sequential chain. Signing inputs and the signature
+    # verification step are untouched by this change.
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
+    outputs:
+      release_version: ${{ steps.resolve-version.outputs.release_version }}
+      apk_name: ${{ steps.resolve-version.outputs.apk_name }}
     steps:
       - uses: actions/checkout@v6
+      - name: Resolve release version from versionName
+        id: resolve-version
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The tag and artifact name come from the build file, never from a literal here.
+          # tools/quality/release_apk.py separately pins the expected versionName/versionCode
+          # of the signed APK, so bumping app/build.gradle.kts must update that pin too.
+          version="$(python3 - <<'PY'
+          import pathlib, re
+          text = pathlib.Path('app/build.gradle.kts').read_text()
+          match = re.search(r'^[ \t]*versionName[ \t]*=[ \t]*"([^"]+)"', text, re.M)
+          if match is None:
+              raise SystemExit('versionName is not a string literal in app/build.gradle.kts; refusing to invent a release tag')
+          print(match.group(1))
+          PY
+          )"
+          {
+            echo "release_version=$version"
+            echo "apk_name=Searchhh-$version.apk"
+          } >> "$GITHUB_OUTPUT"
       - uses: actions/setup-java@v5
         with: {distribution: zulu, java-version: '17'}
       - uses: gradle/actions/setup-gradle@v4
@@ -230,8 +277,15 @@ jobs:
           "$signer" verify --verbose --print-certs "$apk" > release-checks/certificate.txt
           "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" manifest print "$apk" > release-checks/manifest.xml
           python3 tools/quality/release_apk.py --manifest release-checks/manifest.xml --certificate release-checks/certificate.txt --fingerprint "$EXPECTED_CERTIFICATE"
-          cp "$apk" release-delivery/Searchhh-0.4.1.apk
-          (cd release-delivery && sha256sum Searchhh-0.4.1.apk > SHA256SUMS)
+      - name: Stage the versioned release APK and checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Name derived from versionName above; the old literal "Searchhh-0.4.1.apk" would
+          # have shipped a 0.4.2 build under a 0.4.1 file name.
+          cp app/build/outputs/apk/release/app-universal-release.apk "release-delivery/${{ steps.resolve-version.outputs.apk_name }}"
+          cd release-delivery
+          sha256sum "${{ steps.resolve-version.outputs.apk_name }}" > SHA256SUMS
       - uses: actions/upload-artifact@v7
         with:
           name: searchhh-release-apk
@@ -250,7 +304,10 @@ jobs:
 
   release-smoke:
     needs: release-build
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
+    env:
+      APK_NAME: ${{ needs.release-build.outputs.apk_name }}
     steps:
       - uses: actions/download-artifact@v8
         with:
@@ -271,7 +328,10 @@ jobs:
           arch: x86_64
           disable-animations: true
           script: |
-            adb install apk/Searchhh-0.4.1.apk
+            # Fail closed rather than installing "apk/.apk" if the producer output is missing.
+            test -n "$APK_NAME" || { echo '::error::release-build published no apk_name output'; exit 1; }
+            test -f "apk/$APK_NAME" || { echo "::error::expected release artifact apk/${APK_NAME} is absent"; exit 1; }
+            adb install "apk/$APK_NAME"
             adb logcat -c
             adb shell am start -W -n app.searchhh.browser/info.plateaukao.einkbro.searchhh.SearchhhActivity > release-launch.txt
             grep -q 'Status: ok' release-launch.txt
@@ -295,7 +355,8 @@ jobs:
             release-crash.log
 
   publish-release-apk:
-    needs: release-smoke
+    needs: [release-build, release-smoke]
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -308,9 +369,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          RELEASE_VERSION: ${{ needs.release-build.outputs.release_version }}
+          APK_NAME: ${{ needs.release-build.outputs.apk_name }}
         run: |
+          set -euo pipefail
+          # A fixed tag made every later run die on "gh release create"; the tag and the
+          # file name now follow versionName, and a missing/short version fails closed.
+          test -n "$RELEASE_VERSION" || { echo '::error::release-build produced no release_version'; exit 1; }
+          printf '%s' "$RELEASE_VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            || { echo "::error::unexpected versionName '${RELEASE_VERSION}'; refusing to derive a release tag"; exit 1; }
+          test -n "$APK_NAME" || { echo '::error::release-build produced no apk_name'; exit 1; }
+          test -f "apk/$APK_NAME" || { echo "::error::expected release artifact apk/${APK_NAME} is absent"; exit 1; }
           (cd apk && sha256sum --check SHA256SUMS)
-          gh release create v0.4.1 --target "$GITHUB_SHA" \
-            --title 'Searchhh 0.4.1' \
+          gh release create "v${RELEASE_VERSION}" --target "$GITHUB_SHA" \
+            --title "Searchhh ${RELEASE_VERSION}" \
             --notes 'Signed, non-debuggable Searchhh release APK. Repository quality checks and final release launch smoke must pass before this job runs. Tests and diagnostic reports remain separate CI artifacts; they are not release assets. This version label does not claim that every catalogued crawler is an integrated runtime.' \
-            apk/Searchhh-0.4.1.apk apk/SHA256SUMS
+            "apk/${APK_NAME}" apk/SHA256SUMS

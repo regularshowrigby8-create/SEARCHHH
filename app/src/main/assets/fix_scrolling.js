@@ -49,17 +49,27 @@
         if (typeof androidApp === 'undefined') return;
         try {
             androidApp.setTouchOnInnerScrollable(findScrollableParent(e.target) !== null);
-        } catch (ex) {}
+        } catch (ex) {
+            console.error('einkbro fix scrolling: androidApp.setTouchOnInnerScrollable(true) failed', ex);
+        }
     }, true);
 
     document.addEventListener('touchend', function() {
         if (typeof androidApp === 'undefined') return;
-        try { androidApp.setTouchOnInnerScrollable(false); } catch (ex) {}
+        try {
+            androidApp.setTouchOnInnerScrollable(false);
+        } catch (ex) {
+            console.error('einkbro fix scrolling: clearing the touch flag on touchend failed', ex);
+        }
     }, true);
 
     document.addEventListener('touchcancel', function() {
         if (typeof androidApp === 'undefined') return;
-        try { androidApp.setTouchOnInnerScrollable(false); } catch (ex) {}
+        try {
+            androidApp.setTouchOnInnerScrollable(false);
+        } catch (ex) {
+            console.error('einkbro fix scrolling: clearing the touch flag on touchcancel failed', ex);
+        }
     }, true);
 
     window.__einkbroPageScroll = function(direction, offsetPercent, offsetPx) {

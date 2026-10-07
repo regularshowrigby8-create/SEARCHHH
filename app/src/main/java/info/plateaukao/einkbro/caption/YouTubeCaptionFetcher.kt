@@ -351,6 +351,7 @@ class YouTubeCaptionFetcher : KoinComponent {
             val error = json.decodeFromString(GeminiErrorResponse.serializer(), errorBody).error
             error.message.ifBlank { error.status.ifBlank { "unknown error" } }
         } catch (e: Exception) {
+            Timber.w(e, "Could not parse the Gemini caption error body")
             "unknown error"
         }
 

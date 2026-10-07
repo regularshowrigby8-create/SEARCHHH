@@ -1,16 +1,17 @@
 name: Android verification
+# Called workflow: the single push/pull_request entry point is buid-app-workflow.yaml.
+# The direct push and pull_request triggers here ran a second, identical full verification
+# for the same SHA (measured baseline: 4 runs and 3 emulator sessions per push), so they are
+# removed. merge_group stays because a merge queue must gate on this workflow directly.
 on:
-  push:
-  pull_request:
-    types: [opened, synchronize, reopened, edited, ready_for_review]
   merge_group:
   workflow_dispatch:
   workflow_call:
 permissions:
   contents: read
-concurrency:
-  group: android-quality-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# No concurrency block: the caller owns it so that the caller run and this called run share
+# one group. A key on github.ref can never deduplicate a push run against a PR run, because
+# they are refs/heads/<branch> and refs/pull/<n>/merge respectively.
 jobs:
   policy-and-source:
     runs-on: ubuntu-latest
@@ -27,23 +28,37 @@ jobs:
         run: python3 tools/quality/interactions.py --check
       - name: Reject unfinished production and test code
         run: python3 tools/quality/unfinished.py
+      # The release validator pins versionName/versionCode inline; if those two copies of the truth
+      # drift, release_apk.py rejects correct artifacts while the build ships ungate-checked ones.
+      # Reading side-effects fail closed here: an unreadable pin is an error, never a pass.
+      - name: Verify Gradle version and release_apk.py pins agree
+        # if: always() is load-bearing, not decoration: the unfinished-code step above fails on today's
+        # 116 findings, and a step without it is reported "skipped" and never states its own verdict.
+        # Keep it so a version-drift failure is visible while that debt is still open.
+        if: always()
+        run: python3 tools/quality/version_parity.py
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: source-quality-${{ github.run_id }}
           path: build/reports/searchhh/
   android-host:
+    # Read-only: the only step that ever needed a write here was the formatting lane's
+    # auto-push, which this workflow no longer contains. The release publisher keeps its
+    # own contents: write in the caller.
     permissions:
-      contents: write
+      contents: read
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - lane: formatting
-            tasks: ktlintFormat
+          # ktlintCheck joins detekt: both are static source gates over the same three
+          # modules, they share the Gradle configuration, and the findings steps below already
+          # collect both report trees. The former `formatting` lane ran ktlintFormat, forced
+          # `exit 0`, and pushed a `[skip ci]` commit that no lane ever re-checked.
           - lane: detekt
-            tasks: detekt
+            tasks: detekt ktlintCheck
           - lane: release-checks
             tasks: ':app:verifyReleaseRuntimeDependencies :app:testReleaseUnitTest :app:lintRelease :app:minifyReleaseWithR8'
           - lane: build-test-lint
@@ -67,16 +82,6 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          if [ "${{ matrix.lane }}" = "formatting" ]; then
-            # KtLint may report non-autocorrectable findings while still applying
-            # its bounded formatting changes. Preserve the diff for review.
-            set +e
-            ./gradlew --continue ${{ matrix.tasks }} -PuniversalApk --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee quality-${{ matrix.lane }}.log
-            formatter_status=${PIPESTATUS[0]}
-            set -e
-            echo "KtLint formatter exit status: ${formatter_status}"
-            exit 0
-          fi
           ./gradlew --continue ${{ matrix.tasks }} -PuniversalApk --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee quality-${{ matrix.lane }}.log
       - name: Publish compact execution evidence
         if: always()
@@ -107,20 +112,6 @@ jobs:
           for report in "${KTLINT_REPORTS[@]}"; do args+=(--ktlint "$report"); done
           python3 tools/quality/publish_hosted_findings.py "${args[@]}"
           cat build/reports/factory/hosted-findings.md >> "$GITHUB_STEP_SUMMARY"
-      - name: Commit formatting-only repair
-        if: matrix.lane == 'formatting' && success()
-        shell: bash
-        run: |
-          set -euo pipefail
-          files=$(git diff --name-only)
-          if [ -z "$files" ]; then echo "No formatting changes"; exit 0; fi
-          while IFS= read -r file; do
-            case "$file" in *.kt|*.kts) ;; *) echo "Unexpected non-Kotlin change: $file"; exit 1 ;; esac
-          done <<< "$files"
-          git config user.name searchhh-quality-bot
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -- '*.kt' '*.kts'
-          git diff --cached --quiet || (git commit -m 'Apply Gradle KtLint formatting repair [skip ci]' -m 'Searchhh-Quality-Policy: accepted-v1' && git push origin HEAD:${GITHUB_REF_NAME})
       - name: Annotate failure diagnostics
         if: failure()
         env:
@@ -229,4 +220,3 @@ jobs:
         with:
           name: factory-run-summary-${{ github.run_id }}
           path: build/reports/factory/run-summary.json
-

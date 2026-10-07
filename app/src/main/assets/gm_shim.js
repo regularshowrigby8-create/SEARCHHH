@@ -8,7 +8,9 @@ if (typeof globalThis === 'undefined') {
     try {
         (typeof self !== 'undefined' ? self : window).globalThis =
             (typeof self !== 'undefined' ? self : window);
-    } catch (e) {}
+    } catch (e) {
+        console.error('einkbro GM shim: globalThis could not be aliased', e);
+    }
 }
 
 // Scripts that route all network through GM_xmlhttpRequest (Immersive Translate deletes
@@ -27,7 +29,9 @@ if (typeof globalThis === 'undefined') {
                 else super(body, init);
             }
         };
-    } catch (e) { /* keep native Response if subclassing unsupported */ }
+    } catch (e) {
+        console.warn('einkbro GM shim: Response subclassing unsupported, keeping the native Response', e);
+    }
 })();
 
 (function () {
@@ -57,7 +61,7 @@ if (typeof globalThis === 'undefined') {
                     var resp;
                     try { resp = JSON.parse(payload); } catch (e) { resp = {}; }
                     if (cb.responseType === 'json' && typeof resp.responseText === 'string') {
-                        try { resp.response = JSON.parse(resp.responseText); } catch (e2) {}
+                        try { resp.response = JSON.parse(resp.responseText); } catch (e2) { console.error('einkbro GM shim: gmXhr json response could not be parsed', e2); }
                     }
                     try {
                         if (eventName === 'progress') {
@@ -167,41 +171,41 @@ if (typeof globalThis === 'undefined') {
             if (details.onerror) details.onerror({ error: String(e) });
         }
         return {
-            abort: function () { try { bridge.gmAbortXhr(GM_TOKEN, reqId); } catch (e) {} }
+            abort: function () { try { bridge.gmAbortXhr(GM_TOKEN, reqId); } catch (e) { console.error('einkbro GM shim: gmAbortXhr failed', e); } }
         };
     }
 
     function GM_registerMenuCommand(caption, fn) {
         var fnId = SCRIPT_ID + ':menu:' + (++hub.seq);
         hub.menuCallbacks[fnId] = fn;
-        try { bridge.gmRegisterMenuCommand(GM_TOKEN, String(caption), fnId); } catch (e) {}
+        try { bridge.gmRegisterMenuCommand(GM_TOKEN, String(caption), fnId); } catch (e) { console.error('einkbro GM shim: gmRegisterMenuCommand failed', e); }
         return fnId;
     }
 
     function GM_unregisterMenuCommand(fnId) {
         delete hub.menuCallbacks[fnId];
-        try { bridge.gmUnregisterMenuCommand(GM_TOKEN, fnId); } catch (e) {}
+        try { bridge.gmUnregisterMenuCommand(GM_TOKEN, fnId); } catch (e) { console.error('einkbro GM shim: gmUnregisterMenuCommand failed', e); }
     }
 
     function GM_openInTab(url, options) {
         var active = true;
         if (typeof options === 'boolean') active = !options; // legacy: openInBackground
         else if (options && typeof options === 'object') active = options.active !== false;
-        try { bridge.gmOpenInTab(GM_TOKEN, url, active); } catch (e) {}
+        try { bridge.gmOpenInTab(GM_TOKEN, url, active); } catch (e) { console.error('einkbro GM shim: gmOpenInTab failed', e); }
         return { closed: false, close: function () {} };
     }
 
     function GM_setClipboard(text) {
-        try { bridge.gmSetClipboard(GM_TOKEN, String(text)); } catch (e) {}
+        try { bridge.gmSetClipboard(GM_TOKEN, String(text)); } catch (e) { console.error('einkbro GM shim: gmSetClipboard failed', e); }
     }
 
     function GM_log() {
-        try { bridge.gmLog(GM_TOKEN, Array.prototype.join.call(arguments, ' ')); } catch (e) {}
+        try { bridge.gmLog(GM_TOKEN, Array.prototype.join.call(arguments, ' ')); } catch (e) { console.error('einkbro GM shim: the gmLog bridge call itself failed', e); }
     }
 
     function GM_notification(textOrDetails) {
         var text = typeof textOrDetails === 'object' ? textOrDetails.text : textOrDetails;
-        try { bridge.gmNotification(GM_TOKEN, String(text)); } catch (e) {}
+        try { bridge.gmNotification(GM_TOKEN, String(text)); } catch (e) { console.error('einkbro GM shim: gmNotification failed', e); }
     }
 
     function promisify(fn) {
