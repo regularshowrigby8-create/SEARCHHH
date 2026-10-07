@@ -95,3 +95,61 @@ re-executed inside `device-and-evidence`'s own `searchhhVerification` call.
 4. `release-build` / `release-smoke` / `publish-release-apk` executed **0 times in 127
    completed caller runs** (89 had the jobs; all skipped), so they burn no CI minutes today —
    the waste there is latent (a fixed `v0.4.1` tag and file name), not current.
+
+## After — measured on the first hosted run of the reworked chain
+
+Head SHA `1ae2f445fbcc440670c183174fc970823ef51fe3` on `arena/132b2d0f-searchhh`.
+Run [37564054844](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/37564054844)
+(`Searchhh checks and APK`, `pull_request`, 2026-10-07 02:52:22 → 03:03:21 UTC), jobs read
+from the Jobs API with per-step conclusions and check annotations.
+
+| job | min | conclusion |
+|---|---:|---|
+| `quality / policy-and-source` | 0.18 | failure — step 7 `Reject unfinished production and test code` only; steps 4-6 (131 checker tests, acknowledgment, inventory) passed |
+| `quality / android-host (detekt, detekt ktlintCheck)` | 2.55 | failure |
+| `quality / android-host (build-test-lint, …)` | 5.92 | failure — app lint 465 errors + 14 hints, `:ad-filter:lintDebug` 53, `:adblock-client:lintDebug` 52 |
+| `quality / android-host (release-checks, …)` | 10.02 | failure |
+| `quality / device-and-evidence` | 9.12 | failure |
+| `quality / required-quality` | 0.07 | failure (fail-closed, unchanged) |
+| `quality / Quality summary` | 0.12 | success |
+
+Wall clock 10.98 min. Executed runner-minutes 27.97. Seven caller jobs (`framework`,
+`backend-integration`, `android`, `device-smoke`, `release-build`, `release-smoke`,
+`publish-release-apk`) were `skipped`, exactly as in the baseline.
+
+Deltas against the table above, each tied to the step/annotation that shows it:
+
+* **Runs per pushed SHA: 4 → 1.** No `Android verification` run exists for this SHA at all, and
+  the push run [37563976951](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/37563976951)
+  was **cancelled by the caller's new concurrency group** the moment PR #3 opened (02:53:00) —
+  the intended push+PR collapse, observed live rather than argued from config.
+* **Emulator sessions per pushed SHA: 3 executed → 1.**
+* **Host lanes 4 → 3**, and ktlint now bites instead of self-healing: the detekt lane carries
+  `> Task :ktlintKotlinScriptCheck FAILED`, `:ad-filter:ktlintMainSourceSetCheck FAILED`,
+  `:adblock-client:ktlintMainSourceSetCheck FAILED` and fails the job.
+* **No host static check runs inside the emulator session any more.** Baseline device-job
+  diagnostics listed `:failOnUnfinishedCode FAILED`, `:app:ktlintAndroidTestSourceSetCheck FAILED`
+  and `:detekt` "Analysis failed with 2602 weighted issues"; the reworked device job lists only
+  `> Task :verifyInteractionEvidence FAILED`. The split removed duplicated *work*, not coverage:
+  `evidence.py` reads only `app/build/test-results` and `app/build/outputs/androidTest-results`,
+  and the same run still recorded fresh app JVM results beside a live device
+  (`test_counts: {passed: 371, failure: 0, error: 0, skipped: 0}`).
+* **Per-chain runner-minutes went up on this sample (21.0 avg → 27.97)**, driven by
+  `release-checks` 10.0 vs 8.1 avg and `build-test-lint` 5.9 vs 5.3 avg — consistent with a cold
+  Gradle cache on the first run of a new branch and with `ktlintCheck` joining the detekt lane.
+  One sample is not a trend. The saving is in run *count*: ~84 → ~28 runner-minutes per pushed
+  SHA. Re-measure over ≥5 pushes before making any per-run claim.
+* **Nothing was relaxed to get there.** `required-quality` still fails, everything downstream is
+  still skipped, and no baseline, `continue-on-error` or suppression was added.
+
+### Forward consequence of deleting the `formatting` lane (for tickets C and E)
+
+`quality-formatting.log` and `android-formatting-<run_id>` are no longer produced for new runs.
+`quality-report-recovery.yml` is unaffected because its matrix pins historical run ids
+(`android-formatting-36628443911`, `android-detekt-36628444279`) and those artifacts are
+immutable and still downloadable. But from now on a `format`-group recovery of a *new* run must
+read `android-detekt-<run_id>` (`report_transport.selected()` accepts
+`*/build/reports/ktlint/*.txt`), and `report_transport.py`'s console-only fallback — which
+requires a file literally named `quality-formatting.log` plus `format_report_mode:
+console-only-no-machine-report` — can no longer be satisfied. Naming is intentionally untouched
+here; the parser/format decision belongs to ticket E.

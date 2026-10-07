@@ -1,13 +1,21 @@
 # CI speed-up lanes, scope and open defaults
 
-Mirror of the Linear project **SEARCHHH CI speed-up** (six issues, all linked to `SAV-9`).
+Mirror of the Linear project **SEARCHHH CI speed-up** (`e45e48a2-7e78-45eb-a162-5b03005c95d8`,
+team `Savagee`): Lane A = `SAV-12` (In Progress), and `SAV-13`…`SAV-17` = Lanes B…F (Backlog).
+All six are linked to `SAV-9`; `SAV-12` blocks `SAV-13` and `SAV-15`, and `SAV-13` blocks
+`SAV-17`. A "CI speed-up — Lane A (executed)" section was also appended to the Notion page
+`SEARCHHH Execution Plan` (`3f2cc7cc-dade-81d3-935f-c935ebbe47a0`), linking the GitHub runs
+rather than restating their status.
 Kept in-repo because Linear can be unavailable to a reviewer and because `AGENTS.md` requires
 the plan of record to travel with the code. **Only Lane A is executed in this run**; B–F are
 tickets, not work in progress (`AGENTS.md` work-in-progress limit: one root-cause ticket).
+Lane A's implementation and its measured after-state are recorded in
+`docs/ci-plan/baseline.md` ("After" section); its per-fact verification is in
+`docs/ci-plan/fact-check.md`.
 
 | Lane | Scope | Done when | Blockers | State here |
 |---|---|---|---|---|
-| **A** | De-duplicate triggers, move concurrency to the caller, split the device lane, drop the `formatting` lane, gate releases on tag/dispatch, `contents: read`, SDK diagnostic | One push → one verification run and one emulator session | none | **In Progress — executed in this run** |
+| **A** | De-duplicate triggers, move concurrency to the caller, split the device lane, drop the `formatting` lane, gate releases on tag/dispatch, `contents: read`, SDK diagnostic | One push → one verification run and one emulator session | none | **Executed, pushed (`1ae2f44`), measured; `SAV-12` stays In Progress pending owner review** |
 | **B** | Fast PR lane that reports `PARTIAL` and never release approval | Feedback time measured and a target agreed | A | Backlog, not started |
 | **C** | OSV-Scanner + gitleaks on PRs | Both run and findings are reported | none | Backlog, not started |
 | **D** | Trial a nested-virtualization runner for the emulator job only (Depot / Namespace / RunsOn / Blacksmith) | Emulator job time compared before/after | A + baseline timings | Backlog, not started |
