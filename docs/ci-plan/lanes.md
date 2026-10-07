@@ -85,3 +85,29 @@ it, and no push ever does.
 The provisioning step in `android-verification.yml` and its "Verify imported Android SDK" guard
 remain in place regardless of the result; removing them is an owner decision, because the runner
 image is GitHub's to change under us.
+
+### A7 answer, measured (run 37568883439, head `c50011a`)
+
+> `platform36=yes build_tools_35_0_0=yes root=/usr/local/lib/android/sdk image=ubuntu24-20260927.320.1 platforms=18,build_tools=6`
+
+So on the current `ubuntu-latest` image **both packages the quality workflow installs are already
+present**: `platforms;android-36` and `build-tools;35.0.0`, in an SDK root holding 18 platforms
+and 6 build-tools. `Provision required Android SDK packages` (`android-actions/setup-android`, in
+every `android-host` and `device-and-evidence` job) is therefore **redundant today** and is the
+next real candidate for cutting per-chain minutes.
+
+**Not removing it in this lane, deliberately.** Every runner in this chain carries the GitHub
+annotation *"The `ubuntu-latest` label will migrate to Ubuntu 26 beginning **October 19, 2026**"*
+— twelve days from the day this was measured. Preinstalled-SDK dependence is exactly the kind of
+assumption that silently breaks on an image transition, and the failure would land on the release
+gate, not on a cosmetic job: without the provisioning step, a missing `android-36` becomes
+`Execution failed for task ':app:…'` inside lanes that currently fail *for known reasons*, which
+is the worst possible way to lose signal. The step is also cheap next to the Gradle work around
+it. Recommendation for the owner, in priority order:
+
+1. Keep provisioning for now; it is idempotent when the packages exist.
+2. If it is ever removed, keep the "Verify imported Android SDK" guard step (it is three
+   assertions plus `adb version` and turns a missing SDK into a named error instead of a compile
+   failure), and re-run this probe after 2026-10-19 rather than before.
+3. Either way, delete `android-sdk-provisioning-diagnostic.yml` once a decision is recorded — it
+   is a throwaway by design.
