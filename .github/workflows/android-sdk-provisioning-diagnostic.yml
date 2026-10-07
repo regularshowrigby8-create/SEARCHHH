@@ -4,12 +4,31 @@ name: Android SDK provisioning diagnostic
 # "Provision required Android SDK packages" in android-verification.yml have to
 # download them on every single job?
 #
-# This workflow gates nothing: it only reports, and it is dispatch-only so no push or
-# pull request ever pays for it. The provisioning step in android-verification.yml is
-# NOT removed by this file and must stay until a run of this diagnostic shows both
-# packages present. Delete this workflow once that answer is recorded.
+# This workflow gates nothing and can never fail a build: every branch ends in `echo`, so the
+# step exits 0 whether or not the packages exist.
+#
+# Trigger shape, and why it is not dispatch-only as originally specified: GitHub registers a
+# workflow only once its file exists on the default branch, and an unregistered workflow cannot
+# be dispatched. Measured on this repo - `gh workflow run android-sdk-provisioning-diagnostic.yml`
+# returned HTTP 404, and `GET /actions/workflows` lists the other 7 workflows but not this one,
+# so a dispatch-only probe sitting on a branch can never run and can never answer its question.
+# A path-scoped `pull_request` trigger is therefore added so the very PR that introduces the probe
+# can produce the answer; `workflow_dispatch` is kept for use after the file reaches the default
+# branch. No push ever pays for it, and the path filter keeps unrelated PRs off it too.
+#
+# The provisioning step in android-verification.yml is NOT removed by this file and must stay
+# until a run of this diagnostic shows both packages present. Delete this workflow once that
+# answer is recorded.
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/android-sdk-provisioning-diagnostic.yml
+      - .github/workflows/android-verification.yml
+      - build.gradle.kts
+      - app/build.gradle.kts
+      - gradle/libs.versions.toml
+      - gradle/wrapper/gradle-wrapper.properties
 permissions:
   contents: read
 jobs:

@@ -55,3 +55,29 @@ Observations about them are filed as comments on tickets C and F, not as edits:
 * `debug-apk-milestone.yml` and `quality-report-recovery.yml` both use
   `permissions: contents: write` / `actions: read` at workflow level; the milestone workflow
   creates `debug-apk-<sha>` releases on every qualifying push. Left untouched by instruction.
+
+## A7 follow-up: a dispatch-only probe cannot run from a branch
+
+The brief asked for a throwaway **dispatch-only** diagnostic. Implemented that way first, then
+found to be inert by measurement rather than assumption:
+
+* `gh workflow run android-sdk-provisioning-diagnostic.yml --ref arena/132b2d0f-searchhh` →
+  `HTTP 404` from `GET /repos/…/actions/workflows/<file>`.
+* `GET /repos/…/actions/workflows` lists **7** registered workflows — every other file in
+  `.github/workflows/` — and not this one.
+
+GitHub only registers a workflow once its file exists on the **default branch**; an unregistered
+workflow has no dispatch endpoint and no entry in the Actions UI, so a probe that lives solely on
+a feature branch and triggers only on `workflow_dispatch` can never answer its own question.
+
+Resolution, keeping the brief's intent: `workflow_dispatch` stays (it works once the file reaches
+the default branch), and a **path-scoped `pull_request`** trigger is added so the PR that
+introduces the probe produces the answer. Safety properties unchanged: no checkout, no secrets,
+5-minute timeout, `contents: read`, it gates nothing, and every branch of the step ends in
+`echo`, so it exits 0 whether or not the packages exist — it cannot add a red check to a PR.
+The path filter is limited to files that could change the answer, so unrelated PRs never pay for
+it, and no push ever does.
+
+The provisioning step in `android-verification.yml` and its "Verify imported Android SDK" guard
+remain in place regardless of the result; removing them is an owner decision, because the runner
+image is GitHub's to change under us.
