@@ -161,11 +161,34 @@ class PortalCrawler(
         return urls
     }
 
+    private fun extract(
+        source: Source,
+        page: PublicSearch.Page,
+        query: String,
+        mode: String,
+        adapter: CrawlerAdapter,
+    ): List<Opportunity> {
+        val rows =
+            when (adapter.id) {
+                CrawlerAdapters.PHONE_STRUCTURED.id -> {
+                    if (source.format == "feed") emptyList() else StructuredDiscovery.opportunities(source, page.text, query, mode)
+                }
+                CrawlerAdapters.PHONE_ARTICLE.id -> {
+                    PortalParser.page(source, page.text, query, mode)
+                }
+                CrawlerAdapters.PHONE_SELECTOR.id,
+                CrawlerAdapters.PHONE_SCHEDULER.id -> PortalParser.listings(source, page.text, query, mode)
+                else -> error("Unsupported crawler profile: ${adapter.id}")
+            }
+        return rows.map { it.copy(sources = (it.sources + "${adapter.upstreamName} profile").distinct()) }
+    }
+
     suspend fun search(
         query: String,
         sources: List<Source>,
         mode: String,
         crawl: Boolean,
+        adapter: CrawlerAdapter = CrawlerAdapters.default,
     ): PublicSearch.Batch {
         val rows = mutableListOf<Opportunity>()
         val errors = mutableListOf<String>()
@@ -174,7 +197,7 @@ class PortalCrawler(
             try {
                 val base = requireNotNull(source.url)
                 val page = allowedGet(base)
-                val found = PortalParser.listings(source, page.text, query, mode)
+                val found = extract(source, page, query, mode, adapter)
                 rows += found
                 if (crawl && found.isNotEmpty()) {
                     // Read detail pages only on the selected publisher's host. External applications
@@ -191,9 +214,13 @@ class PortalCrawler(
                         } else {
                             val detail = if (seed.url == LocalPolicy.canonical(base)) page else allowedGet(seed.url)
                             val links =
-                                PortalParser
-                                    .page(source.copy(url = seed.url, format = "html"), detail.text, query, mode)
-                                    .map { it.copy(published = it.published ?: seed.published) }
+                                extract(
+                                    source.copy(url = seed.url, format = "html"),
+                                    detail,
+                                    query,
+                                    mode,
+                                    adapter,
+                                ).map { it.copy(published = it.published ?: seed.published) }
                             follow[seed.id] = now() to links
                             if (follow.size > 500) follow.remove(follow.keys.first())
                             rows += links
@@ -204,7 +231,8 @@ class PortalCrawler(
                     if (pages.isNotEmpty()) {
                         val matching = pages.filter { PortalParser.matches(query, it.replace(Regex("[-_/]"), " ")) }.ifEmpty { pages }
                         val url = matching[next("map-page:${source.id}", matching.size)]
-                        rows += PortalParser.page(source.copy(url = url, format = "html"), allowedGet(url).text, query, mode)
+                        val page = allowedGet(url)
+                        rows += extract(source.copy(url = url, format = "html"), page, query, mode, adapter)
                     }
                 }
             } catch (e: CancellationException) {

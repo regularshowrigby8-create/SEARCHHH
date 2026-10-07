@@ -97,6 +97,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".searchhh.web.SearchhhResultsWebViewActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".activity.DictActivity"
             android:exported="true"
             android:launchMode="singleInstance"

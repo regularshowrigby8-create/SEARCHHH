@@ -14,9 +14,21 @@ object SearchhhTestTags {
     const val START_STOP_SEARCH = "start_stop_search_button"
     const val STOP_SEARCH = "stop_search_button"
     const val FILTER_BUTTON = "filter_button"
+    const val SOURCE_FILTER = "source_filter"
     const val RESULT_OPEN = "result_open"
     const val RESULT_SAVE = "result_save"
     const val RESULT_DETAILS = "result_details"
+    const val RESULTS_WEBVIEW = "results_webview"
+    const val SAVED_WEBVIEW = "saved_webview"
+
+    /** Result controls are repeated; append the stable entity ID instead of reusing one tag. */
+    fun resultOpen(id: String) = "$RESULT_OPEN:$id"
+
+    fun resultSave(id: String) = "$RESULT_SAVE:$id"
+
+    fun resultDetails(id: String) = "$RESULT_DETAILS:$id"
+
+    fun sourceFilter(id: String) = "$SOURCE_FILTER:$id"
     const val BROWSER_URL = "browser_url"
     const val BROWSER_BACK = "browser_back"
     const val BROWSER_FORWARD = "browser_forward"

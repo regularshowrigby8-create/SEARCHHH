@@ -1,5 +1,21 @@
 # Next-agent work order: sequential quality repair and construction
 
+## Current handoff — 2026-10-07
+
+Branch: `arena/3674d801-searchhh`. Status: **PARTIAL / BLOCKED; do not claim release completion.**
+
+The current bounded implementation adds an app-owned `SearchhhResultsWebViewActivity` and static escaped result renderer. Searchhh result/source navigation no longer launches EinkBro `BrowserActivity`; crawler results are presented through the Searchhh WebView with result IDs, provenance, evidence, review/deadline excerpts, errors, retry and Room save/remove actions. Four declared Android-native profiles are wired end-to-end through Compose/MCP → `StartRequest.adapter` → `LocalBackend` → `PortalCrawler`: `phone-scheduler`, `phone-article`, `phone-structured`, and `phone-selector`, mapped to catalogue entries 1, 65, 66 and 67. Other catalogue entries remain reference metadata, and arbitrary repository runtimes are not launched.
+
+Latest checks: `python3 -m unittest discover -s tools/quality/tests -v` passed 131 tests; `python3 -m compileall -q backend tools`, `python3 tools/quality/interactions.py --check` (622 candidates / 9 contracts), and `git diff --check` passed. `./gradlew testDebugUnitTest --no-daemon --stacktrace` is blocked before Gradle because Java/JAVA_HOME is absent. New Kotlin tests and all Android/device/release gates are therefore unexecuted. Existing hosted failures remain failures.
+
+Immediate next actions:
+1. Provision JDK 17, Android SDK 36 and an Android 35 emulator, then run `./gradlew --continue searchhhVerification -PuniversalApk` on the exact candidate commit.
+2. Fix all compile/lint/test issues in the new WebView/profile code and run the new `SearchhhCrawlerAndHtmlTest` plus `CrawlerExpansionTest` adapter cases.
+3. Execute WebView public-URL/HTTP preference/mixed-content/invalid-TLS, cancellation, save/remove, retry and result-identity device checks; retain failed evidence.
+4. Reconcile Linear/Notion/GitHub status only with exact check/run IDs; do not convert catalogue metadata or host tests into runtime/release evidence.
+
+Allowed scope: Searchhh WebView, declared adapters, their tests, documentation/inventory and required verification fixes. Non-goals: arbitrary third-party code execution, form submission, robots/rate-limit bypass, certificate bypass, blanket cleartext relaxation, release signing before gates, or branch changes.
+
 **Issued:** 2026-09-29. **Overall status: PARTIAL; release BLOCKED.**
 **User mandate:** resolve issues sequentially before the next Searchhh release; deliver no debug APK or test-report bundle in place of the release.
 

@@ -28,8 +28,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.work.*
 import com.google.gson.Gson
-import info.plateaukao.einkbro.activity.BrowserActivity
 import info.plateaukao.einkbro.searchhh.local.*
+import info.plateaukao.einkbro.searchhh.web.SearchhhResultsWebViewActivity
 import info.plateaukao.einkbro.searchhh.testing.SearchhhTestTags
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
@@ -44,7 +44,7 @@ class SearchhhActivity : ComponentActivity() {
 
     private fun browse(url: String) {
         if (Uri.parse(url).scheme in listOf("https", "http")) {
-            startActivity(Intent(this, BrowserActivity::class.java).setAction(Intent.ACTION_VIEW).setData(Uri.parse(url)))
+            SearchhhResultsWebViewActivity.openUrl(this, url)
         }
     }
 
@@ -72,12 +72,14 @@ class SearchhhActivity : ComponentActivity() {
                         ).toList()
                 }
             val codebases = remember { CodebaseRegistry.load(this@SearchhhActivity) }
+            var selectedAdapterId by rememberSaveable { mutableStateOf(CrawlerAdapters.default.id) }
             var showCodebases by rememberSaveable { mutableStateOf(false) }
             var codebaseQuery by rememberSaveable { mutableStateOf("") }
             val dao = remember { SearchhhDatabase.get(this).saved() }
             val saved by dao.all().collectAsState(initial = emptyList())
             var routeId by rememberSaveable { mutableStateOf(SearchhhRoute.DISCOVER.id) }
             val route = SearchhhRoute.fromId(routeId)
+            val selectedAdapter = CrawlerAdapters.byId(selectedAdapterId) ?: CrawlerAdapters.default
             BackHandler(enabled = route != SearchhhRoute.DISCOVER) {
                 if (route == SearchhhRoute.SOURCES && showCodebases) {
                     showCodebases = false
@@ -234,7 +236,7 @@ class SearchhhActivity : ComponentActivity() {
                         actions = {
                             IconButton(
                                 onClick = { browse("https://opportunitydesk.org") },
-                            ) { Icon(Icons.Outlined.Language, "Open WebView browser") }
+                            ) { Icon(Icons.Outlined.Language, "Open Searchhh WebView") }
                         },
                     )
                 },
@@ -326,6 +328,14 @@ class SearchhhActivity : ComponentActivity() {
                                     style = MaterialTheme.typography.caption,
                                     color = accent,
                                 )
+                                Text(
+                                    "Crawler profile: ${selectedAdapter.label} · ${selectedAdapter.implementation}",
+                                    style = MaterialTheme.typography.caption,
+                                )
+                                TextButton(enabled = !running, onClick = {
+                                    routeId = SearchhhRoute.SOURCES.id
+                                    showCodebases = true
+                                }) { Text("Choose a crawler profile") }
                             }
                             item {
                                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -346,7 +356,7 @@ class SearchhhActivity : ComponentActivity() {
                                                         ConnectionSettings
                                                             .api(
                                                                 this@SearchhhActivity,
-                                                            ).start(StartRequest(query.trim(), mode, selected.toList(), crawl))
+                                                            ).start(StartRequest(query.trim(), mode, selected.toList(), crawl, selectedAdapter.id))
                                                     status = null
                                                     jobId = created.id
                                                     prefs
@@ -418,6 +428,10 @@ class SearchhhActivity : ComponentActivity() {
                                         )
                                         Text("${status?.results?.size ?: 0} results   ·   ${status?.duplicates ?: 0} duplicates removed")
                                         Text(
+                                            "Crawler profile: ${status?.adapter ?: "configured backend"}",
+                                            style = MaterialTheme.typography.caption,
+                                        )
+                                        Text(
                                             "Pass ${status?.round ?: 0} · ${status?.filtered ?: 0} irrelevant / bot results filtered",
                                             style = MaterialTheme.typography.caption,
                                         )
@@ -436,30 +450,20 @@ class SearchhhActivity : ComponentActivity() {
                                 true
                             ) {
                                 item {
+                                    Text(
+                                        "Crawler output is rendered in the Searchhh WebView so every result, evidence link, detail panel and save action shares one consistent document surface.",
+                                        style = MaterialTheme.typography.body2,
+                                    )
+                                    Button(
+                                        modifier = Modifier.testTag(SearchhhTestTags.RESULTS_WEBVIEW),
+                                        onClick = { SearchhhResultsWebViewActivity.openResults(this@SearchhhActivity, status!!.id) },
+                                    ) { Text("View all results in Searchhh WebView") }
+                                }
+                                item {
                                     TextButton(onClick = {
                                         exportContent = gson.toJson(status)
                                         export.launch("searchhh-results.json")
                                     }) { Text("Export results as JSON") }
-                                }
-                            }
-                            items(status?.results ?: emptyList(), key = { it.id }) { result ->
-                                ResultCard(
-                                    result,
-                                    saved.any {
-                                        it.id ==
-                                            result.id
-                                    },
-                                    { browse(result.url) },
-                                ) {
-                                    scope.launch {
-                                        if (saved.any { it.id == result.id }) {
-                                            dao.remove(
-                                                result.id,
-                                            )
-                                        } else {
-                                            dao.save(SavedOpportunity(result.id, gson.toJson(result)))
-                                        }
-                                    }
                                 }
                             }
                             if (status?.results.isNullOrEmpty()) {
@@ -512,9 +516,12 @@ class SearchhhActivity : ComponentActivity() {
                                     Card {
                                         Row(Modifier.fillMaxWidth().padding(8.dp)) {
                                             Checkbox(
-                                                source.id in selected,
-                                                { selected = if (it) selected + source.id else selected - source.id },
+                                                checked = source.id in selected,
+                                                onCheckedChange = { checked ->
+                                                    selected = if (checked) selected + source.id else selected - source.id
+                                                },
                                                 enabled = !running,
+                                                modifier = Modifier.testTag(SearchhhTestTags.sourceFilter(source.id)),
                                             )
                                             ; Column(Modifier.padding(top = 10.dp)) {
                                                 Text(source.name, fontWeight = FontWeight.Bold)
@@ -529,12 +536,12 @@ class SearchhhActivity : ComponentActivity() {
                             } else {
                                 item {
                                     Text(
-                                        "All 100 submitted entries + ${codebases.entries.size - 100} additions. Repository catalogue, not ${codebases.entries.size} installed crawlers. No submitted entry was removed. Parsers, indexes and security tools are labelled separately.",
+                                        "All 100 submitted entries + ${codebases.entries.size - 100} additions remain searchable. Four reviewed capability profiles are executable in this app; other entries stay clearly marked as catalogue references until a safe adapter is implemented.",
                                     )
                                 }
                                 item {
                                     Text(
-                                        "Phone: OkHttp + Jsoup + crawler-commons. Scrapy, Extruct and Trafilatura run in the optional Python backend (with Parsel selectors). Other projects require adapters/runtimes and are not auto-executed by AI.",
+                                        "Phone runtime: bounded scheduler, structured JSON-LD, article evidence and CSS-selector extraction. These are Android-native implementations inspired by the named projects, not untrusted third-party binaries. The optional Python backend separately integrates Scrapy, Extruct, Trafilatura and Parsel.",
                                         style = MaterialTheme.typography.caption,
                                     )
                                 }
@@ -566,7 +573,14 @@ class SearchhhActivity : ComponentActivity() {
                                         style = MaterialTheme.typography.caption,
                                     )
                                 }
-                                items(visible, key = { "codebase:${it.number}" }) { codebase -> CodebaseCard(codebase) }
+                                items(visible, key = { "codebase:${it.number}" }) { codebase ->
+                                    CodebaseCard(codebase) { adapter ->
+                                        selectedAdapterId = adapter.id
+                                        showCodebases = false
+                                        routeId = SearchhhRoute.DISCOVER.id
+                                        message = "Using ${adapter.upstreamName}: ${adapter.description}"
+                                    }
+                                }
                             }
                         }
                         SearchhhRoute.SAVED -> {
@@ -574,10 +588,21 @@ class SearchhhActivity : ComponentActivity() {
                                 Text("Your next chapter.", style = MaterialTheme.typography.h5, fontWeight = FontWeight.Bold)
                                 Text("Saved on this device with Room. Available offline.")
                             }
-                            if (saved.isEmpty()) item { Text("Save an opportunity from Discover to keep it here.") }
-                            items(saved, key = { it.id }) { row ->
-                                val result = gson.fromJson(row.payload, Opportunity::class.java)
-                                ResultCard(result, true, { browse(result.url) }) { scope.launch { dao.remove(row.id) } }
+                            if (saved.isEmpty()) {
+                                item { Text("Save an opportunity from Discover to keep it here.") }
+                            } else {
+                                item {
+                                    Text(
+                                        "Saved results use the same Searchhh WebView document as live crawler output, with offline Room data and remove actions.",
+                                        style = MaterialTheme.typography.body2,
+                                    )
+                                    Button(
+                                        modifier = Modifier.testTag(SearchhhTestTags.SAVED_WEBVIEW),
+                                        onClick = { SearchhhResultsWebViewActivity.openSaved(this@SearchhhActivity) },
+                                    ) {
+                                        Text("Open saved results in Searchhh WebView")
+                                    }
+                                }
                             }
                         }
                         SearchhhRoute.SETTINGS -> {
@@ -678,7 +703,10 @@ class SearchhhActivity : ComponentActivity() {
         }
     }
 
-    @Composable private fun CodebaseCard(entry: CodebaseEntry) {
+    @Composable private fun CodebaseCard(
+        entry: CodebaseEntry,
+        onUseAdapter: (CrawlerAdapter) -> Unit,
+    ) {
         var expanded by rememberSaveable(entry.number) { mutableStateOf(false) }
         Card(shape = RoundedCornerShape(14.dp), elevation = 0.dp) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -709,6 +737,14 @@ class SearchhhActivity : ComponentActivity() {
                     entry.configurationSupport.forEach { (key, value) -> Text("$key: $value", style = MaterialTheme.typography.caption) }
                     if (entry.description.isNotBlank()) Text(entry.description, style = MaterialTheme.typography.caption)
                 }
+                CrawlerAdapters.forEntry(entry)?.let { adapter ->
+                    Text("Available in this app: ${adapter.implementation}", color = MaterialTheme.colors.primary)
+                    Text(adapter.description, style = MaterialTheme.typography.caption)
+                    OutlinedButton(onClick = { onUseAdapter(adapter) }) { Text("Use ${adapter.label}") }
+                } ?: Text(
+                    "Catalogue reference only; no executable adapter is bundled for this entry.",
+                    style = MaterialTheme.typography.caption,
+                )
                 entry.codeLink()?.let { url -> TextButton(onClick = { browse(url) }) { Text("Open source code ↗") } }
                 if (entry.codeLink() ==
                     null
@@ -719,42 +755,4 @@ class SearchhhActivity : ComponentActivity() {
         }
     }
 
-    @Composable private fun ResultCard(
-        result: Opportunity,
-        saved: Boolean,
-        open: () -> Unit,
-        save: () -> Unit,
-    ) {
-        Card(shape = RoundedCornerShape(14.dp), elevation = 0.dp) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(result.kind.uppercase(), style = MaterialTheme.typography.overline, color = MaterialTheme.colors.primary)
-                Text(result.title, style = MaterialTheme.typography.h6)
-                Text(result.description, maxLines = 5, style = MaterialTheme.typography.body2)
-                Text(result.url, maxLines = 2, style = MaterialTheme.typography.caption)
-                result.evidenceUrl?.let { evidence ->
-                    TextButton(onClick = { browse(evidence) }) { Text("View source evidence ↗") }
-                }
-                result.checkedAt?.let { Text("Last checked: $it", style = MaterialTheme.typography.caption) }
-                result.review?.let { review ->
-                    Text("AI relevance ${review.relevance}/100 · ${review.model}", style = MaterialTheme.typography.caption)
-                    Text(review.summary, style = MaterialTheme.typography.body2)
-                    Text("Evidence: “${review.quote}”", style = MaterialTheme.typography.caption)
-                    review.deadlineQuote?.let { Text("Deadline excerpt: $it", style = MaterialTheme.typography.caption) }
-                    review.eligibilityQuote?.let { Text("Eligibility excerpt: $it", style = MaterialTheme.typography.caption) }
-                    Text("AI-assisted judgment; confirm conditions with the official programme.", style = MaterialTheme.typography.caption)
-                }
-                Text(
-                    "${result.sources.joinToString(" · ")}\n${result.published?.take(10) ?: "Date unknown"} · Application unverified",
-                    style = MaterialTheme.typography.caption,
-                )
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    TextButton(onClick = open) { Text("Open in browser ↗") }
-                    TextButton(onClick = save) {
-                        Icon(if (saved) Icons.Outlined.Bookmark else Icons.Outlined.BookmarkBorder, null)
-                        Text(if (saved) "Saved" else "Save")
-                    }
-                }
-            }
-        }
-    }
 }

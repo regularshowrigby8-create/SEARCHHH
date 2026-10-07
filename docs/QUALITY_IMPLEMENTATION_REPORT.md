@@ -1,5 +1,15 @@
 # Quality implementation report
 
+## Current checkpoint — 2026-10-07
+
+**Status: PARTIAL / BLOCKED — no release approval.** On `arena/3674d801-searchhh`, the Searchhh result presentation now uses the non-exported, app-owned `SearchhhResultsWebViewActivity` rather than EinkBro `BrowserActivity`. The Compose Discover and Saved routes open one complete escaped result document in that WebView; the document preserves result identity, provenance, evidence, review/deadline excerpts, save/remove actions, retry and source errors. External navigation is HTTPS-first, public-URL checked, mixed-content blocked and TLS-fail-closed, with no JavaScript bridge.
+
+The crawler catalogue remains honest metadata. Four reviewed Android-native adapters are executable and selectable: `phone-scheduler` (entry 1), `phone-article` (65), `phone-structured` (66), and `phone-selector` (67). `StartRequest.adapter` is wired through Compose and MCP to `LocalBackend`; unknown IDs fail closed. Detail and sitemap extraction use the selected profile too. Native third-party runtimes are not silently launched; the optional Python backend remains the execution boundary for Scrapy, Extruct, Trafilatura and Parsel.
+
+Current evidence: Python quality tests 131/131 passed, Python syntax check passed, interaction inventory check passed at 622 candidates / 9 contracts, and `git diff --check` passed. `./gradlew testDebugUnitTest --no-daemon --stacktrace` is blocked before Gradle because no Java/JAVA_HOME exists. Kotlin compilation, Android tests, lint, Detekt, device WebView/security checks, screenshots, release/R8, signing and release smoke remain unexecuted. Existing hosted failures remain failures. Do not call this a release.
+
+The following historical report entries describe earlier factory work and are retained as history; this checkpoint is the current source/evidence interpretation.
+
 Date: 2026-09-30. **Status: PARTIAL — required quality gates still fail.**
 
 ## Latest FACTORY-002 result — 2026-09-30

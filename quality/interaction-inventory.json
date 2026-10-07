@@ -46,112 +46,112 @@
     "screen": "AdBlockSettingActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/AdBlockSettingActivity.kt",
-    "line": 129
+    "line": 131
   },
   {
     "id": "UI-86d448725c7f",
     "screen": "AdBlockSettingActivity",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/AdBlockSettingActivity.kt",
-    "line": 132
+    "line": 134
   },
   {
     "id": "UI-72c825f26f4b",
     "screen": "AdBlockSettingActivity",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/AdBlockSettingActivity.kt",
-    "line": 159
+    "line": 162
   },
   {
     "id": "UI-156adab9281a",
     "screen": "AdBlockSettingActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/AdBlockSettingActivity.kt",
-    "line": 160
+    "line": 163
   },
   {
-    "id": "UI-5c10d3ab9286",
+    "id": "UI-6dc6a243bbe4",
     "screen": "AdBlockSettingActivity",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/AdBlockSettingActivity.kt",
-    "line": 161
+    "line": 164
   },
   {
     "id": "UI-e450fc086742",
     "screen": "AdBlockSettingActivity",
     "control": "Switch",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/AdBlockSettingActivity.kt",
-    "line": 204
+    "line": 210
   },
   {
     "id": "UI-6d921f668107",
     "screen": "AdBlockSettingActivity",
     "control": "onCheckedChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/AdBlockSettingActivity.kt",
-    "line": 206
+    "line": 212
   },
   {
     "id": "UI-130f431ebbb3",
     "screen": "DataListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/DataListActivity.kt",
-    "line": 60
+    "line": 59
   },
   {
     "id": "UI-8211676f9d5d",
     "screen": "DataListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/DataListActivity.kt",
-    "line": 60
+    "line": 59
   },
   {
     "id": "UI-e1f17a65a783",
     "screen": "DataListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/DataListActivity.kt",
-    "line": 72
+    "line": 71
   },
   {
     "id": "UI-8d2c8f02bf83",
     "screen": "DataListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/DataListActivity.kt",
-    "line": 72
+    "line": 71
   },
   {
     "id": "UI-0280381e1279",
     "screen": "DataListActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/DataListActivity.kt",
-    "line": 163
+    "line": 170
   },
   {
     "id": "UI-5320637d351b",
     "screen": "DataListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/DataListActivity.kt",
-    "line": 166
+    "line": 173
   },
   {
     "id": "UI-97a74eb2cd74",
     "screen": "DataListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/DataListActivity.kt",
-    "line": 166
+    "line": 173
   },
   {
     "id": "UI-8f176c346a55",
     "screen": "DictActivity",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/DictActivity.kt",
-    "line": 74
+    "line": 79
   },
   {
     "id": "UI-c18be5d4671e",
     "screen": "DictActivity",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/DictActivity.kt",
-    "line": 83
+    "line": 89
   },
   {
     "id": "UI-ba819565ce22",
@@ -186,273 +186,273 @@
     "screen": "GptActionsActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 212
+    "line": 221
   },
   {
     "id": "UI-173bed16c3b6",
     "screen": "GptActionsActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 260
+    "line": 269
   },
   {
     "id": "UI-4e1142d72070",
     "screen": "GptActionsActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 260
+    "line": 269
   },
   {
     "id": "UI-52f92d619e62",
     "screen": "GptActionsActivity",
     "control": "TextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 319
+    "line": 335
   },
   {
     "id": "UI-604fa9b9cd37",
     "screen": "GptActionsActivity",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 326
+    "line": 343
   },
   {
     "id": "UI-7d8315af6b8f",
     "screen": "GptActionsActivity",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 336
+    "line": 354
   },
   {
     "id": "UI-edf7236921e6",
     "screen": "GptActionsActivity",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 347
+    "line": 366
   },
   {
     "id": "UI-b3aea18ccba0",
     "screen": "GptActionsActivity",
     "control": "TextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 369
+    "line": 388
   },
   {
     "id": "UI-0eaa3c397c9c",
     "screen": "GptActionsActivity",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 376
+    "line": 396
   },
   {
     "id": "UI-9808554dee59",
     "screen": "GptActionsActivity",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 439
+    "line": 463
   },
   {
     "id": "UI-9cd1c23e4891",
     "screen": "GptActionsActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 441
+    "line": 465
   },
   {
     "id": "UI-9e34f3efcfd2",
     "screen": "GptActionsActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 442
+    "line": 466
   },
   {
     "id": "UI-ae2e9e008c2b",
     "screen": "GptActionsActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 483
+    "line": 508
   },
   {
     "id": "UI-6d17326f519e",
     "screen": "GptActionsActivity",
     "control": "TextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 495
+    "line": 520
   },
   {
     "id": "UI-32969e0195a0",
     "screen": "GptActionsActivity",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
-    "line": 497
+    "line": 522
   },
   {
     "id": "UI-8b301c705aa9",
     "screen": "GptQueryListActivity",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptQueryListActivity.kt",
-    "line": 81
+    "line": 85
   },
   {
     "id": "UI-88a56d41cd20",
     "screen": "GptQueryListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptQueryListActivity.kt",
-    "line": 104
+    "line": 108
   },
   {
     "id": "UI-78913eaf5ff8",
     "screen": "GptQueryListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptQueryListActivity.kt",
-    "line": 104
+    "line": 108
   },
   {
     "id": "UI-e15511b24ba0",
     "screen": "GptQueryListActivity",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptQueryListActivity.kt",
-    "line": 224
+    "line": 231
   },
   {
     "id": "UI-8a90ee737ce6",
     "screen": "GptQueryListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptQueryListActivity.kt",
-    "line": 227
+    "line": 234
   },
   {
-    "id": "UI-acd6073d2399",
+    "id": "UI-cdd315e6b527",
     "screen": "GptQueryListActivity",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptQueryListActivity.kt",
-    "line": 228
+    "line": 235
   },
   {
     "id": "UI-25b9357d2394",
     "screen": "GptQueryListActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptQueryListActivity.kt",
-    "line": 271
+    "line": 281
   },
   {
     "id": "UI-b3c52dc168f9",
     "screen": "GptQueryListActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/GptQueryListActivity.kt",
-    "line": 281
+    "line": 292
   },
   {
     "id": "UI-4f538c220e9d",
     "screen": "HighlightsActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 108
+    "line": 114
   },
   {
     "id": "UI-2623302e8b0c",
     "screen": "HighlightsActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 188
+    "line": 204
   },
   {
     "id": "UI-9363853d61e5",
     "screen": "HighlightsActivity",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 211
+    "line": 228
   },
   {
     "id": "UI-a4d79e5514b4",
     "screen": "HighlightsActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 212
+    "line": 229
   },
   {
-    "id": "UI-8ce8e477deec",
+    "id": "UI-1d2af97bef9e",
     "screen": "HighlightsActivity",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 213
+    "line": 230
   },
   {
     "id": "UI-1648009e99a7",
     "screen": "HighlightsActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 224
+    "line": 242
   },
   {
     "id": "UI-d3cfd1d9c4c7",
     "screen": "HighlightsActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 246
+    "line": 267
   },
   {
     "id": "UI-637b0a960ffe",
     "screen": "HighlightsActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 304
+    "line": 327
   },
   {
     "id": "UI-cedf91802154",
     "screen": "HighlightsActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 320
+    "line": 344
   },
   {
     "id": "UI-6d5467ca60ea",
     "screen": "HighlightsActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 331
+    "line": 356
   },
   {
     "id": "UI-8211405fae4b",
     "screen": "HighlightsActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 357
+    "line": 382
   },
   {
     "id": "UI-a3111a7dbf93",
     "screen": "HighlightsActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 357
+    "line": 382
   },
   {
     "id": "UI-d0f4b777ab01",
     "screen": "HighlightsActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 366
+    "line": 391
   },
   {
     "id": "UI-e0f0c7fd5232",
     "screen": "HighlightsActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
-    "line": 366
+    "line": 391
   },
   {
     "id": "UI-12247e9f70ae",
     "screen": "MenuItemHideActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/MenuItemHideActivity.kt",
-    "line": 81
+    "line": 82
   },
   {
     "id": "UI-2dcc5dfc44bb",
     "screen": "MenuItemHideActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/MenuItemHideActivity.kt",
-    "line": 81
+    "line": 82
   },
   {
     "id": "UI-d91d8ecb4096",
@@ -466,126 +466,126 @@
     "screen": "SavedPagesActivity",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SavedPagesActivity.kt",
-    "line": 117
+    "line": 118
   },
   {
     "id": "UI-63ed27518a25",
     "screen": "SavedPagesActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SavedPagesActivity.kt",
-    "line": 118
+    "line": 119
   },
   {
     "id": "UI-b214ff3da426",
     "screen": "SavedPagesActivity",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SavedPagesActivity.kt",
-    "line": 119
+    "line": 120
   },
   {
     "id": "UI-3907add8beb6",
     "screen": "SavedPagesActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SavedPagesActivity.kt",
-    "line": 153
+    "line": 156
   },
   {
     "id": "UI-0b0f8252997a",
     "screen": "SettingActivity",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 239
+    "line": 246
   },
   {
     "id": "UI-5160697af251",
     "screen": "SettingActivity",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 515
+    "line": 539
   },
   {
     "id": "UI-f1a37faad0cd",
     "screen": "SettingActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 621
+    "line": 650
   },
   {
     "id": "UI-b9439cbdc592",
     "screen": "SettingActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 621
+    "line": 650
   },
   {
     "id": "UI-7f3340fd555b",
     "screen": "SettingActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 630
+    "line": 659
   },
   {
     "id": "UI-94b842b32f85",
     "screen": "SettingActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 630
+    "line": 659
   },
   {
     "id": "UI-8b93cad9c1dc",
     "screen": "SettingActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 638
+    "line": 667
   },
   {
     "id": "UI-7723307276b0",
     "screen": "SettingActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 638
+    "line": 667
   },
   {
     "id": "UI-7383d5a5597f",
     "screen": "SettingActivity",
     "control": "TextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 660
+    "line": 689
   },
   {
     "id": "UI-bebfd0675914",
     "screen": "SettingActivity",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 662
+    "line": 691
   },
   {
     "id": "UI-00bc7df0c601",
     "screen": "SettingActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 686
+    "line": 717
   },
   {
     "id": "UI-d18acdd46240",
     "screen": "SettingActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
-    "line": 686
+    "line": 717
   },
   {
     "id": "UI-64be87ed66ad",
     "screen": "SiteRuleListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SiteRuleListActivity.kt",
-    "line": 62
+    "line": 61
   },
   {
     "id": "UI-4c1438f3b80a",
     "screen": "SiteRuleListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/SiteRuleListActivity.kt",
-    "line": 62
+    "line": 61
   },
   {
     "id": "UI-ed58ba33ec24",
@@ -613,329 +613,329 @@
     "screen": "StatusbarConfigActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/StatusbarConfigActivity.kt",
-    "line": 72
+    "line": 71
   },
   {
     "id": "UI-3a758d429f65",
     "screen": "StatusbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/StatusbarConfigActivity.kt",
-    "line": 72
+    "line": 71
   },
   {
     "id": "UI-a70c8aee8a5e",
     "screen": "StatusbarConfigActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/StatusbarConfigActivity.kt",
-    "line": 75
+    "line": 74
   },
   {
     "id": "UI-0af880284e77",
     "screen": "StatusbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/StatusbarConfigActivity.kt",
-    "line": 75
+    "line": 74
   },
   {
     "id": "UI-ba15dc113c9d",
     "screen": "StatusbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/StatusbarConfigActivity.kt",
-    "line": 147
+    "line": 148
   },
   {
-    "id": "UI-c662a0bfb6d7",
+    "id": "UI-4e16f00a79e7",
     "screen": "StatusbarConfigActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/StatusbarConfigActivity.kt",
-    "line": 179
+    "line": 181
   },
   {
     "id": "UI-435011f7d459",
     "screen": "StatusbarConfigActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/StatusbarConfigActivity.kt",
-    "line": 193
+    "line": 199
   },
   {
     "id": "UI-845b7047dbb6",
     "screen": "StatusbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/StatusbarConfigActivity.kt",
-    "line": 193
+    "line": 199
   },
   {
     "id": "UI-01122401dedb",
     "screen": "ToolbarConfigActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 99
+    "line": 97
   },
   {
     "id": "UI-f8f078549b7a",
     "screen": "ToolbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 99
+    "line": 97
   },
   {
     "id": "UI-eeed9f23dd32",
     "screen": "ToolbarConfigActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 104
+    "line": 102
   },
   {
     "id": "UI-7b420c7728d6",
     "screen": "ToolbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 104
+    "line": 102
   },
   {
     "id": "UI-9776d35118db",
     "screen": "ToolbarConfigActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 107
+    "line": 105
   },
   {
     "id": "UI-4b5db508efa0",
     "screen": "ToolbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 107
+    "line": 105
   },
   {
     "id": "UI-103e78c65ebd",
     "screen": "ToolbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 201
+    "line": 203
   },
   {
     "id": "UI-0c678f99d582",
     "screen": "ToolbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 350
+    "line": 358
   },
   {
     "id": "UI-4e494a51bd3c",
     "screen": "ToolbarConfigActivity",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 362
+    "line": 374
   },
   {
     "id": "UI-e3f2d081d2f4",
     "screen": "ToolbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 362
+    "line": 374
   },
   {
-    "id": "UI-94b86a9d0c2a",
+    "id": "UI-23a1f6a16817",
     "screen": "ToolbarConfigActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
-    "line": 413
+    "line": 427
   },
   {
     "id": "UI-6d531e3d68df",
     "screen": "UserScriptListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 131
+    "line": 132
   },
   {
     "id": "UI-3127abaecf7c",
     "screen": "UserScriptListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 131
+    "line": 132
   },
   {
     "id": "UI-825d2beacffe",
     "screen": "UserScriptListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 136
+    "line": 137
   },
   {
     "id": "UI-867df6bc414e",
     "screen": "UserScriptListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 136
+    "line": 137
   },
   {
     "id": "UI-748d734e218e",
     "screen": "UserScriptListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 143
+    "line": 144
   },
   {
     "id": "UI-5211fcfa7eb3",
     "screen": "UserScriptListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 143
+    "line": 144
   },
   {
     "id": "UI-6284845d8277",
     "screen": "UserScriptListActivity",
     "control": "Switch",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 296
+    "line": 302
   },
   {
     "id": "UI-f554cc3737f4",
     "screen": "UserScriptListActivity",
     "control": "onCheckedChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 296
+    "line": 302
   },
   {
     "id": "UI-69bd5cd34f73",
     "screen": "UserScriptListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 303
+    "line": 309
   },
   {
     "id": "UI-3ca5b5612533",
     "screen": "UserScriptListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 303
+    "line": 309
   },
   {
     "id": "UI-7678b7d29c1c",
     "screen": "UserScriptListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 313
+    "line": 319
   },
   {
     "id": "UI-443b2af0a205",
     "screen": "UserScriptListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 313
+    "line": 319
   },
   {
     "id": "UI-e91f9b8dffc6",
     "screen": "UserScriptListActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 316
+    "line": 322
   },
   {
     "id": "UI-d9083464f020",
     "screen": "UserScriptListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 316
+    "line": 322
   },
   {
     "id": "UI-acd7b1ebc519",
     "screen": "UserScriptListActivity",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 368
+    "line": 382
   },
   {
     "id": "UI-cda266c5e784",
     "screen": "UserScriptListActivity",
     "control": "TextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 386
+    "line": 401
   },
   {
     "id": "UI-e5316fdcc47b",
     "screen": "UserScriptListActivity",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 388
+    "line": 403
   },
   {
     "id": "UI-a145590249da",
     "screen": "UserScriptListActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 394
+    "line": 409
   },
   {
     "id": "UI-87a798190251",
     "screen": "UserScriptListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 395
+    "line": 410
   },
   {
     "id": "UI-265ad75f1ac2",
     "screen": "UserScriptListActivity",
     "control": "TextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 403
+    "line": 418
   },
   {
     "id": "UI-9b5b64943cae",
     "screen": "UserScriptListActivity",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 405
+    "line": 420
   },
   {
     "id": "UI-d564f63abc9c",
     "screen": "UserScriptListActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 416
+    "line": 432
   },
   {
     "id": "UI-f69158e26372",
     "screen": "UserScriptListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 416
+    "line": 432
   },
   {
     "id": "UI-f152ff2ceb9f",
     "screen": "UserScriptListActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 418
+    "line": 434
   },
   {
     "id": "UI-86f460ca5c3f",
     "screen": "UserScriptListActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
-    "line": 418
+    "line": 434
   },
   {
     "id": "UI-ac9f21b877b5",
     "screen": "ActionModeDelegate",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/ActionModeDelegate.kt",
-    "line": 206
+    "line": 209
   },
   {
     "id": "UI-ad1c47e81617",
     "screen": "ExternalSearchDelegate",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/ExternalSearchDelegate.kt",
-    "line": 27
+    "line": 26
   },
   {
     "id": "UI-fb056910f327",
     "screen": "IntentDispatchDelegate",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/IntentDispatchDelegate.kt",
-    "line": 220
+    "line": 228
   },
   {
     "id": "UI-6b4d1e82f7d6",
@@ -956,861 +956,896 @@
     "screen": "TranslationDelegate",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TranslationDelegate.kt",
-    "line": 67
+    "line": 63
   },
   {
     "id": "UI-85d93aa0988e",
     "screen": "TranslationDelegate",
     "control": "setOnLongClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TranslationDelegate.kt",
-    "line": 76
+    "line": 72
   },
   {
     "id": "UI-29d992521da0",
     "screen": "NinjaWebViewClient",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
-    "line": 732
+    "line": 785
   },
   {
     "id": "UI-265b65207212",
     "screen": "NinjaWebViewClient",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
-    "line": 745
+    "line": 799
   },
   {
     "id": "UI-2380637bba0e",
     "screen": "NinjaWebViewClient",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
-    "line": 745
+    "line": 799
   },
   {
     "id": "UI-dea6e3387765",
     "screen": "NinjaWebViewClient",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
-    "line": 757
+    "line": 811
   },
   {
     "id": "UI-d394c6d1e2c1",
     "screen": "NinjaWebViewClient",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
-    "line": 757
+    "line": 811
   },
   {
-    "id": "UI-e601d2fa2dbf",
+    "id": "UI-40763968012a",
     "screen": "SearchhhActivity",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 117
+    "line": 149
   },
   {
     "id": "UI-38153c2997aa",
     "screen": "SearchhhActivity",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 121
+    "line": 156
   },
   {
-    "id": "UI-cd5986ff5007",
+    "id": "UI-62517a5e29bc",
     "screen": "SearchhhActivity",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 125
+    "line": 168
   },
   {
-    "id": "UI-87d1ec574541",
+    "id": "UI-5a9edee13fe8",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 125
+    "line": 168
   },
   {
-    "id": "UI-2badfb89a5a8",
+    "id": "UI-041bad106b4c",
     "screen": "SearchhhActivity",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 132
+    "line": 186
   },
   {
-    "id": "UI-32edab246fea",
+    "id": "UI-cbd7bfae3702",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 134
+    "line": 194
   },
   {
-    "id": "UI-39b16367e613",
+    "id": "UI-18d072bc01c1",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 134
+    "line": 194
   },
   {
-    "id": "UI-36778ab4cfb4",
+    "id": "UI-7041600bbdde",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 141
+    "line": 221
   },
   {
-    "id": "UI-efeb14d20109",
+    "id": "UI-925496e33a2b",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 141
+    "line": 221
   },
   {
-    "id": "UI-c3c06e55c2b0",
+    "id": "UI-3f80c639ebb8",
     "screen": "SearchhhActivity",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 146
+    "line": 237
   },
   {
-    "id": "UI-29ba5bee8073",
+    "id": "UI-1b5f230d8fd8",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 146
+    "line": 238
   },
   {
     "id": "UI-58a450356e54",
     "screen": "SearchhhActivity",
     "control": "BottomNavigationItem",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 151
+    "line": 248
   },
   {
     "id": "UI-4bbaab025811",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 154
+    "line": 251
   },
   {
-    "id": "UI-ba7dcc7d6cb0",
+    "id": "UI-fa97fc0d3a28",
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 169
+    "line": 288
   },
   {
-    "id": "UI-2a71e5da45c3",
+    "id": "UI-30cda7ec2632",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 169
+    "line": 289
   },
   {
-    "id": "UI-d9f288e77b29",
+    "id": "UI-1572fa843fb2",
     "screen": "SearchhhActivity",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 172
+    "line": 307
   },
   {
-    "id": "UI-c340569fb297",
+    "id": "UI-b9074c3c2f74",
     "screen": "SearchhhActivity",
     "control": "Checkbox",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 173
+    "line": 315
   },
   {
-    "id": "UI-46f85c7e4e9a",
-    "screen": "SearchhhActivity",
-    "control": "Button",
-    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 176
-  },
-  {
-    "id": "UI-a5887cca8a66",
-    "screen": "SearchhhActivity",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 176
-  },
-  {
-    "id": "UI-96e05b5b0dcb",
-    "screen": "SearchhhActivity",
-    "control": "OutlinedButton",
-    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 186
-  },
-  {
-    "id": "UI-578cfe10d924",
-    "screen": "SearchhhActivity",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 186
-  },
-  {
-    "id": "UI-b6541cc871ea",
+    "id": "UI-8ce35df33e08",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 202
+    "line": 335
   },
   {
-    "id": "UI-8d93a579a1de",
+    "id": "UI-ad2b981d8ce5",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 202
+    "line": 335
+  },
+  {
+    "id": "UI-508f6a1b5979",
+    "screen": "SearchhhActivity",
+    "control": "Button",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 342
+  },
+  {
+    "id": "UI-256d4dc1fd7c",
+    "screen": "SearchhhActivity",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 351
+  },
+  {
+    "id": "UI-e58de27c4803",
+    "screen": "SearchhhActivity",
+    "control": "OutlinedButton",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 384
+  },
+  {
+    "id": "UI-1f47b5eadcfa",
+    "screen": "SearchhhActivity",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 390
+  },
+  {
+    "id": "UI-4b0efd10e978",
+    "screen": "SearchhhActivity",
+    "control": "Button",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 457
+  },
+  {
+    "id": "UI-c5f40d009b59",
+    "screen": "SearchhhActivity",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 459
+  },
+  {
+    "id": "UI-f7102f40edf2",
+    "screen": "SearchhhActivity",
+    "control": "TextButton",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 463
+  },
+  {
+    "id": "UI-ccc59aaa4cf7",
+    "screen": "SearchhhActivity",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 463
   },
   {
     "id": "UI-26adb61ccfed",
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 211
+    "line": 483
   },
   {
     "id": "UI-0eb088351923",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 211
+    "line": 483
   },
   {
     "id": "UI-ae1e92526a10",
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 212
+    "line": 484
   },
   {
     "id": "UI-fe7aa5a5eb5c",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 212
+    "line": 484
   },
   {
-    "id": "UI-91e661112b57",
+    "id": "UI-e2c41332bdac",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 216
+    "line": 494
   },
   {
-    "id": "UI-7b228feb165c",
+    "id": "UI-70a0237c5727",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 216
+    "line": 494
   },
   {
-    "id": "UI-349b34063d65",
+    "id": "UI-1a146750990b",
     "screen": "SearchhhActivity",
     "control": "Checkbox",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 217
+    "line": 518
   },
   {
-    "id": "UI-4aade09de8c3",
+    "id": "UI-9aa638b142c2",
+    "screen": "SearchhhActivity",
+    "control": "onCheckedChange",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 520
+  },
+  {
+    "id": "UI-a949b0dac3f3",
     "screen": "SearchhhActivity",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 221
+    "line": 549
   },
   {
-    "id": "UI-57ff751a45c9",
+    "id": "UI-5f71afac3924",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 223
+    "line": 564
   },
   {
-    "id": "UI-7330ba5ed53d",
+    "id": "UI-967329caeddf",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 223
+    "line": 564
   },
   {
-    "id": "UI-fd75c3668d0c",
+    "id": "UI-77290f426771",
     "screen": "SearchhhActivity",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 242
+    "line": 599
   },
   {
-    "id": "UI-0c57d4067029",
+    "id": "UI-a728c540ffa4",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 242
+    "line": 601
   },
   {
-    "id": "UI-2f9487e75a6f",
+    "id": "UI-15ece7179369",
+    "screen": "SearchhhActivity",
+    "control": "Button",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 624
+  },
+  {
+    "id": "UI-3fd87605f5a1",
+    "screen": "SearchhhActivity",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 624
+  },
+  {
+    "id": "UI-d19b5940cef1",
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 243
+    "line": 628
   },
   {
-    "id": "UI-f8d5b5723429",
+    "id": "UI-d66269b767d9",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 243
+    "line": 628
   },
   {
-    "id": "UI-2307b2996067",
+    "id": "UI-da45fb596d34",
     "screen": "SearchhhActivity",
     "control": "Checkbox",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 245
+    "line": 638
   },
   {
     "id": "UI-a004da02e2c0",
     "screen": "SearchhhActivity",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 247
+    "line": 660
   },
   {
     "id": "UI-857703f031c5",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 247
+    "line": 660
   },
   {
-    "id": "UI-5fcd32de52d4",
+    "id": "UI-1b6c17e26af7",
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 248
+    "line": 662
   },
   {
-    "id": "UI-1145ecc40218",
+    "id": "UI-5179c52530b3",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 248
+    "line": 662
   },
   {
-    "id": "UI-32705ea56115",
+    "id": "UI-aa3c97789e2f",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 254
+    "line": 694
   },
   {
-    "id": "UI-9949598cdb62",
+    "id": "UI-7f5822866d36",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 254
+    "line": 694
   },
   {
     "id": "UI-bb6b96fed4e6",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 273
+    "line": 732
   },
   {
     "id": "UI-a5744e85ad4a",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 273
+    "line": 732
+  },
+  {
+    "id": "UI-5a7c0ecf5c79",
+    "screen": "SearchhhActivity",
+    "control": "OutlinedButton",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 743
+  },
+  {
+    "id": "UI-65e07251a35c",
+    "screen": "SearchhhActivity",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 743
   },
   {
     "id": "UI-208bf344b193",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 281
+    "line": 748
   },
   {
     "id": "UI-6bfa62c5a145",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 281
+    "line": 748
   },
   {
-    "id": "UI-d2b516792f2f",
-    "screen": "SearchhhActivity",
-    "control": "TextButton",
-    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 294
-  },
-  {
-    "id": "UI-ca26e1896c15",
-    "screen": "SearchhhActivity",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 294
-  },
-  {
-    "id": "UI-5ccb085fb965",
-    "screen": "SearchhhActivity",
-    "control": "TextButton",
-    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 307
-  },
-  {
-    "id": "UI-a080bcd5f8c2",
-    "screen": "SearchhhActivity",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 307
-  },
-  {
-    "id": "UI-b511a75d4366",
-    "screen": "SearchhhActivity",
-    "control": "TextButton",
-    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 308
-  },
-  {
-    "id": "UI-be252f2ac7dd",
-    "screen": "SearchhhActivity",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 308
-  },
-  {
-    "id": "UI-cd71ad3d8285",
+    "id": "UI-a32776f67327",
     "screen": "AiSettingsCard",
     "control": "Switch",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 48
+    "line": 58
   },
   {
     "id": "UI-060dc0f0ca0a",
     "screen": "AiSettingsCard",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 57
+    "line": 77
   },
   {
     "id": "UI-2541e4b2bdfc",
     "screen": "AiSettingsCard",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 57
+    "line": 77
   },
   {
-    "id": "UI-002be45d63d7",
+    "id": "UI-b3dceb831007",
     "screen": "AiSettingsCard",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 58
+    "line": 79
   },
   {
-    "id": "UI-3b3cb028328f",
+    "id": "UI-3a32e7244ae0",
     "screen": "AiSettingsCard",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 58
+    "line": 79
   },
   {
     "id": "UI-3d715ef1e9b1",
     "screen": "AiSettingsCard",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 76
+    "line": 100
   },
   {
     "id": "UI-0d9548e6db36",
     "screen": "AiSettingsCard",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 79
+    "line": 105
   },
   {
     "id": "UI-4d78b4808a77",
     "screen": "AiSettingsCard",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 79
+    "line": 105
   },
   {
     "id": "UI-7c5cede2ee7e",
     "screen": "AiSettingsCard",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 81
+    "line": 107
   },
   {
     "id": "UI-21cf31501f1d",
     "screen": "AiSettingsCard",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 81
+    "line": 107
   },
   {
     "id": "UI-bc18b49e3ac4",
     "screen": "AiSettingsCard",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 82
+    "line": 108
   },
   {
     "id": "UI-9c1912ae73e6",
     "screen": "AiSettingsCard",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 82
+    "line": 108
   },
   {
-    "id": "UI-400c5e49e324",
+    "id": "UI-d7f80534ac9f",
     "screen": "AiSettingsCard",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 85
+    "line": 114
   },
   {
-    "id": "UI-e4cdec3877c0",
+    "id": "UI-c3eb8ad26286",
     "screen": "AiSettingsCard",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 85
+    "line": 114
   },
   {
-    "id": "UI-50fc4b8901ed",
+    "id": "UI-df87d8d15ed8",
     "screen": "AiSettingsCard",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 96
+    "line": 144
   },
   {
-    "id": "UI-bb86b7b1248d",
+    "id": "UI-4766f9aa3962",
     "screen": "AiSettingsCard",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 96
+    "line": 145
   },
   {
-    "id": "UI-ab48a51d53d6",
+    "id": "UI-6920d153692e",
     "screen": "AiSettingsCard",
     "control": "DropdownMenuItem",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 98
+    "line": 150
   },
   {
-    "id": "UI-40f89f3c08ac",
+    "id": "UI-17d5020e048b",
     "screen": "AiSettingsCard",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 98
+    "line": 150
   },
   {
-    "id": "UI-edbfa973c9fd",
+    "id": "UI-36784e805b16",
     "screen": "AiSettingsCard",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 101
+    "line": 157
   },
   {
-    "id": "UI-7392d4621774",
+    "id": "UI-bc3bb80f8f93",
     "screen": "AiSettingsCard",
     "control": "Checkbox",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 102
+    "line": 161
   },
   {
     "id": "UI-e6d74f0ab13e",
     "screen": "AiSettingsCard",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 106
+    "line": 169
   },
   {
     "id": "UI-c7d90d2af706",
     "screen": "AiSettingsCard",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 106
+    "line": 169
   },
   {
-    "id": "UI-8486ea2251a7",
+    "id": "UI-72b9c39b2f63",
     "screen": "AiSettingsCard",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 112
+    "line": 182
   },
   {
-    "id": "UI-7d06b0ad0491",
+    "id": "UI-1d6aac63acd3",
     "screen": "AiSettingsCard",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
-    "line": 112
+    "line": 182
   },
   {
-    "id": "UI-2a5e41133db0",
+    "id": "UI-eb4bfd250e38",
     "screen": "InternalBackendService",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/InternalBackendService.kt",
-    "line": 29
+    "line": 72
+  },
+  {
+    "id": "UI-29d7edb8edb3",
+    "screen": "SearchhhResultsWebViewActivity",
+    "control": "Button",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/web/SearchhhResultsWebViewActivity.kt",
+    "line": 101
+  },
+  {
+    "id": "UI-c8cec50cda0e",
+    "screen": "SearchhhResultsWebViewActivity",
+    "control": "Button",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/web/SearchhhResultsWebViewActivity.kt",
+    "line": 113
   },
   {
     "id": "UI-e6cdf36161d5",
     "screen": "GesturePickerScreen",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/GesturePickerScreen.kt",
-    "line": 78
+    "line": 80
   },
   {
     "id": "UI-ce1c2e47f780",
     "screen": "GesturePickerScreen",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/GesturePickerScreen.kt",
-    "line": 93
+    "line": 95
   },
   {
     "id": "UI-1814b0b09b9c",
     "screen": "GesturePickerScreen",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/GesturePickerScreen.kt",
-    "line": 106
+    "line": 108
   },
   {
     "id": "UI-2da520466b09",
     "screen": "GesturePickerScreen",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/GesturePickerScreen.kt",
-    "line": 114
+    "line": 116
   },
   {
     "id": "UI-d21eaaf99c84",
     "screen": "GesturePickerScreen",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/GesturePickerScreen.kt",
-    "line": 159
+    "line": 171
   },
   {
     "id": "UI-557d01255a30",
     "screen": "GesturePickerScreen",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/GesturePickerScreen.kt",
-    "line": 190
+    "line": 202
   },
   {
     "id": "UI-c2c971aa26d9",
     "screen": "SettingComposeUi",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 109
+    "line": 108
   },
   {
     "id": "UI-c7d7d6f6f715",
     "screen": "SettingComposeUi",
     "control": "Switch",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 228
+    "line": 244
   },
   {
     "id": "UI-7bee5419217d",
     "screen": "SettingComposeUi",
     "control": "onCheckedChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 230
+    "line": 246
   },
   {
     "id": "UI-c58a350761a4",
     "screen": "SettingComposeUi",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 383
+    "line": 406
   },
   {
     "id": "UI-5b712f5309f3",
     "screen": "SettingComposeUi",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 412
+    "line": 438
   },
   {
     "id": "UI-357a4767fb49",
     "screen": "SettingComposeUi",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 412
+    "line": 438
   },
   {
     "id": "UI-54f07d290a51",
     "screen": "SettingComposeUi",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 420
+    "line": 446
   },
   {
     "id": "UI-36672dac5f5a",
     "screen": "SettingComposeUi",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 420
+    "line": 446
   },
   {
     "id": "UI-b2b4dfd1a42f",
     "screen": "SettingComposeUi",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 493
+    "line": 527
   },
   {
     "id": "UI-4d092e2eea30",
     "screen": "SettingComposeUi",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 500
+    "line": 535
   },
   {
     "id": "UI-e1c500eec39a",
     "screen": "SettingComposeUi",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 507
+    "line": 543
   },
   {
     "id": "UI-f59eb90dd94a",
     "screen": "SettingComposeUi",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 514
+    "line": 551
   },
   {
     "id": "UI-b3d165c884b2",
     "screen": "SettingComposeUi",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 595
+    "line": 649
   },
   {
     "id": "UI-e4843ee92edc",
     "screen": "SettingComposeUi",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 595
+    "line": 649
   },
   {
     "id": "UI-76bac820694a",
     "screen": "SettingComposeUi",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 628
+    "line": 684
   },
   {
     "id": "UI-45ed6ec06f15",
     "screen": "SettingComposeUi",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 663
+    "line": 721
   },
   {
     "id": "UI-5ca3f0adaa09",
     "screen": "SettingComposeUi",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 676
+    "line": 734
   },
   {
     "id": "UI-f75c0c5f787c",
     "screen": "SettingComposeUi",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 682
+    "line": 740
   },
   {
     "id": "UI-8fb28385a8ef",
     "screen": "SettingComposeUi",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 682
+    "line": 740
   },
   {
     "id": "UI-40fc0a7faf69",
     "screen": "SettingComposeUi",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 688
+    "line": 746
   },
   {
     "id": "UI-0770a9756fbb",
     "screen": "SettingComposeUi",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
-    "line": 688
+    "line": 746
   },
   {
     "id": "UI-123be3df904c",
     "screen": "BrowserToolsImpl",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
-    "line": 273
+    "line": 296
   },
   {
     "id": "UI-331d3dd6e47e",
     "screen": "HelperUnit",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
-    "line": 167
+    "line": 180
   },
   {
     "id": "UI-c1564760830d",
     "screen": "HelperUnit",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
-    "line": 263
+    "line": 289
   },
   {
     "id": "UI-ed7149eef055",
     "screen": "IntentUnit",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/unit/IntentUnit.kt",
-    "line": 126
+    "line": 143
   },
   {
     "id": "UI-892c74b024b9",
     "screen": "IntentUnit",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/unit/IntentUnit.kt",
-    "line": 176
+    "line": 214
   },
   {
     "id": "UI-4c3b2eb791f7",
     "screen": "IntentUnit",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/unit/IntentUnit.kt",
-    "line": 185
+    "line": 223
   },
   {
     "id": "UI-9ae420a182b7",
     "screen": "IntentUnit",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/unit/IntentUnit.kt",
-    "line": 194
+    "line": 236
   },
   {
     "id": "UI-b5aaaee3523e",
     "screen": "IntentUnit",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/unit/IntentUnit.kt",
-    "line": 236
+    "line": 282
   },
   {
     "id": "UI-d85c7b980d00",
     "screen": "EBWebView",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
-    "line": 272
+    "line": 296
   },
   {
     "id": "UI-d3e835a646ce",
     "screen": "MultiTouchSwipeRefreshLayout",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/MultiTouchSwipeRefreshLayout.kt",
-    "line": 37
+    "line": 40
   },
   {
     "id": "UI-1449454dfe1e",
@@ -1824,56 +1859,56 @@
     "screen": "AutoCompleteTextField",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/AutoCompleteTextField.kt",
-    "line": 98
+    "line": 99
   },
   {
     "id": "UI-077d531cf7f9",
     "screen": "AutoCompleteTextField",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/AutoCompleteTextField.kt",
-    "line": 99
+    "line": 100
   },
   {
     "id": "UI-793cd0e2f2e2",
     "screen": "AutoCompleteTextField",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/AutoCompleteTextField.kt",
-    "line": 136
+    "line": 138
   },
   {
-    "id": "UI-fa90df2325df",
-    "screen": "AutoCompleteTextField",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/AutoCompleteTextField.kt",
-    "line": 141
-  },
-  {
-    "id": "UI-4736e0ef5e62",
+    "id": "UI-c157788463cd",
     "screen": "AutoCompleteTextField",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/AutoCompleteTextField.kt",
     "line": 143
   },
   {
+    "id": "UI-4736e0ef5e62",
+    "screen": "AutoCompleteTextField",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/AutoCompleteTextField.kt",
+    "line": 146
+  },
+  {
     "id": "UI-ced6739eebdf",
     "screen": "AutoCompleteTextField",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/AutoCompleteTextField.kt",
-    "line": 145
+    "line": 148
   },
   {
-    "id": "UI-ad85d9b4cd8a",
+    "id": "UI-b33cb66d27f1",
     "screen": "AutoCompleteTextField",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/AutoCompleteTextField.kt",
-    "line": 198
+    "line": 202
   },
   {
     "id": "UI-0be845022265",
     "screen": "AutoCompleteTextField",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/AutoCompleteTextField.kt",
-    "line": 263
+    "line": 273
   },
   {
     "id": "UI-499cd6b7be5a",
@@ -1894,189 +1929,189 @@
     "screen": "BrowseHistoryList",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/BrowseHistoryList.kt",
-    "line": 205
+    "line": 208
   },
   {
-    "id": "UI-e8e8146fcd99",
+    "id": "UI-fe871dd80791",
     "screen": "BrowseHistoryList",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/BrowseHistoryList.kt",
-    "line": 210
+    "line": 214
   },
   {
-    "id": "UI-b5c966a464df",
+    "id": "UI-2c8c53647f71",
     "screen": "BrowseHistoryList",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/BrowseHistoryList.kt",
-    "line": 338
+    "line": 349
   },
   {
-    "id": "UI-a852dea6c4f4",
+    "id": "UI-f89ee680bfc7",
     "screen": "BrowseHistoryList",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/BrowseHistoryList.kt",
-    "line": 339
+    "line": 350
   },
   {
     "id": "UI-e1723cdf38c9",
     "screen": "HistoryAndTabs",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 90
+    "line": 85
   },
   {
     "id": "UI-9a1b52d80f38",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 169
+    "line": 165
   },
   {
     "id": "UI-c48df6713514",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 182
+    "line": 178
   },
   {
     "id": "UI-f2b2332f0494",
     "screen": "HistoryAndTabs",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 183
+    "line": 179
   },
   {
     "id": "UI-6b641752a32e",
     "screen": "HistoryAndTabs",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 225
+    "line": 224
   },
   {
     "id": "UI-2ea345470e57",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 228
+    "line": 227
   },
   {
-    "id": "UI-2b944ee1d116",
+    "id": "UI-0765b895411d",
     "screen": "HistoryAndTabs",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 229
+    "line": 228
   },
   {
     "id": "UI-6a71a9eb9427",
     "screen": "HistoryAndTabs",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 260
+    "line": 259
   },
   {
     "id": "UI-2160803fc367",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 263
+    "line": 262
   },
   {
     "id": "UI-c21215f0329d",
     "screen": "HistoryAndTabs",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 264
+    "line": 263
   },
   {
     "id": "UI-71cf6bd1661e",
     "screen": "HistoryAndTabs",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 341
+    "line": 345
   },
   {
-    "id": "UI-543abe005869",
+    "id": "UI-5bc94a720eaa",
     "screen": "HistoryAndTabs",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 375
+    "line": 380
   },
   {
     "id": "UI-b5cb5911a657",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 385
+    "line": 391
   },
   {
     "id": "UI-0b5bd1ad1262",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 387
+    "line": 393
   },
   {
     "id": "UI-cfb26d9db533",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 389
+    "line": 395
   },
   {
     "id": "UI-318fb11529ce",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 390
+    "line": 396
   },
   {
     "id": "UI-e0c43968e4b2",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 391
+    "line": 397
   },
   {
     "id": "UI-1b1868d4f34f",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 394
+    "line": 400
   },
   {
-    "id": "UI-11aa21d31c38",
+    "id": "UI-a4bbe647c51e",
     "screen": "HistoryAndTabs",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 395
+    "line": 401
   },
   {
     "id": "UI-4dfe54ed972f",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 397
+    "line": 403
   },
   {
     "id": "UI-d9e1927a957e",
     "screen": "HistoryAndTabs",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 413
+    "line": 419
   },
   {
     "id": "UI-c2578e35a849",
     "screen": "HistoryAndTabs",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 414
+    "line": 420
   },
   {
-    "id": "UI-a29445455169",
+    "id": "UI-1ce7c94543ab",
     "screen": "HistoryAndTabs",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
-    "line": 415
+    "line": 421
   },
   {
     "id": "UI-32ec80a896b3",
@@ -2097,763 +2132,763 @@
     "screen": "SearchBar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/SearchBar.kt",
-    "line": 52
+    "line": 53
   },
   {
     "id": "UI-9cc433e057ea",
     "screen": "SearchBar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/SearchBar.kt",
-    "line": 53
+    "line": 54
   },
   {
-    "id": "UI-cd36010ecc36",
+    "id": "UI-86a79714ac1f",
     "screen": "SearchBar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/SearchBar.kt",
-    "line": 54
+    "line": 55
   },
   {
     "id": "UI-2cb9ddd92e38",
     "screen": "SearchBar",
     "control": "TextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/SearchBar.kt",
-    "line": 64
+    "line": 68
   },
   {
     "id": "UI-8c91c6f042c8",
     "screen": "SearchBar",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/SearchBar.kt",
-    "line": 74
+    "line": 79
   },
   {
     "id": "UI-671bf53bd82b",
     "screen": "SearchBar",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/SearchBar.kt",
-    "line": 90
+    "line": 96
   },
   {
     "id": "UI-eed52a86fe02",
     "screen": "SelectableItem",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/SelectableItem.kt",
-    "line": 38
+    "line": 37
   },
   {
     "id": "UI-21fbd9eb176a",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 136
+    "line": 132
   },
   {
     "id": "UI-4533c434c723",
     "screen": "Toolbar",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 137
+    "line": 133
   },
   {
     "id": "UI-eb7c0987baaa",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 170
+    "line": 167
   },
   {
     "id": "UI-91be2448e4d9",
     "screen": "Toolbar",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 171
+    "line": 168
   },
   {
     "id": "UI-dbcdf842ec4a",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 200
+    "line": 197
   },
   {
     "id": "UI-135de996532c",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 206
+    "line": 203
   },
   {
     "id": "UI-c25f48df327a",
     "screen": "Toolbar",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 207
+    "line": 204
   },
   {
     "id": "UI-973553bf0bf9",
     "screen": "Toolbar",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 274
+    "line": 273
   },
   {
     "id": "UI-fe3507f6ea49",
     "screen": "Toolbar",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 275
+    "line": 274
   },
   {
     "id": "UI-91574c459a3b",
     "screen": "Toolbar",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 275
+    "line": 274
   },
   {
     "id": "UI-345e695e99eb",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 445
+    "line": 458
   },
   {
     "id": "UI-5c821444680b",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 532
+    "line": 553
   },
   {
     "id": "UI-07a30abc4875",
     "screen": "Toolbar",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 627
+    "line": 663
   },
   {
-    "id": "UI-80b4154123f4",
+    "id": "UI-d4fa6417e096",
     "screen": "Toolbar",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 658
+    "line": 694
   },
   {
     "id": "UI-2da3a9346196",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 661
+    "line": 697
   },
   {
-    "id": "UI-c5021bf7aaf8",
+    "id": "UI-2f758ea434a6",
     "screen": "Toolbar",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 666
+    "line": 702
   },
   {
-    "id": "UI-b348696abe6b",
+    "id": "UI-f0f42482e8c8",
     "screen": "Toolbar",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 708
+    "line": 746
   },
   {
     "id": "UI-3427d22c9ba6",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 709
+    "line": 747
   },
   {
-    "id": "UI-ae668f285ced",
+    "id": "UI-8ea330ef479c",
     "screen": "Toolbar",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 714
+    "line": 752
   },
   {
-    "id": "UI-3d9e97b727a6",
+    "id": "UI-80b4154123f4",
     "screen": "Toolbar",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 739
+    "line": 781
   },
   {
     "id": "UI-c6c20ef9e0cd",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 742
+    "line": 784
   },
   {
-    "id": "UI-5a9317796300",
+    "id": "UI-3233148fdfcc",
     "screen": "Toolbar",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 747
+    "line": 789
   },
   {
-    "id": "UI-aeba9d9def3b",
+    "id": "UI-f4a5c46ec68b",
     "screen": "Toolbar",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 820
+    "line": 868
   },
   {
     "id": "UI-96515ac8c622",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 821
+    "line": 869
   },
   {
-    "id": "UI-23b665639307",
+    "id": "UI-61a473eb4533",
     "screen": "Toolbar",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 826
+    "line": 874
   },
   {
-    "id": "UI-f0c56240137c",
+    "id": "UI-491fd3bfbf1c",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 1017
+    "line": 1078
   },
   {
-    "id": "UI-3b517933ee52",
+    "id": "UI-8f3454f57184",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 1041
+    "line": 1103
   },
   {
-    "id": "UI-60b944cb2515",
+    "id": "UI-4afb45f59df3",
     "screen": "Toolbar",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
-    "line": 1051
+    "line": 1113
   },
   {
     "id": "UI-e7bfd525a436",
     "screen": "BookmarkEditDialog",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 110
+    "line": 114
   },
   {
     "id": "UI-51f2c65080a1",
     "screen": "BookmarkEditDialog",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 112
+    "line": 116
   },
   {
     "id": "UI-32635c69556f",
     "screen": "BookmarkEditDialog",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 120
+    "line": 125
   },
   {
     "id": "UI-f0123f5260e2",
     "screen": "BookmarkEditDialog",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 122
+    "line": 127
   },
   {
     "id": "UI-ad91c1932370",
     "screen": "BookmarkEditDialog",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 145
+    "line": 152
   },
   {
-    "id": "UI-a5bb205ef41a",
+    "id": "UI-52f57d1d4a43",
     "screen": "BookmarkEditDialog",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 147
+    "line": 154
   },
   {
     "id": "UI-94b8badb08a3",
     "screen": "BookmarkEditDialog",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 151
+    "line": 159
   },
   {
     "id": "UI-35b28c1338fa",
     "screen": "BookmarkEditDialog",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 163
+    "line": 173
   },
   {
     "id": "UI-7153b8a8ca6f",
     "screen": "BookmarkEditDialog",
     "control": "DropdownMenuItem",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 166
+    "line": 176
   },
   {
     "id": "UI-2801687f63e8",
     "screen": "BookmarkEditDialog",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 166
+    "line": 176
   },
   {
     "id": "UI-5368112df1d9",
     "screen": "BookmarkEditDialog",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 183
+    "line": 194
   },
   {
     "id": "UI-adb9bb047894",
     "screen": "BookmarkEditDialog",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 209
+    "line": 222
   },
   {
     "id": "UI-cfcf524f5e96",
     "screen": "BookmarkEditDialog",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 209
+    "line": 222
   },
   {
     "id": "UI-27fb685eb4af",
     "screen": "BookmarkEditDialog",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 215
+    "line": 228
   },
   {
     "id": "UI-91596bf58a7e",
     "screen": "BookmarkEditDialog",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/BookmarkEditDialog.kt",
-    "line": 216
+    "line": 229
   },
   {
     "id": "UI-6eb502018379",
     "screen": "DialogManager",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 112
-  },
-  {
-    "id": "UI-e91f86efff01",
-    "screen": "DialogManager",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 143
+    "line": 113
   },
   {
     "id": "UI-302f8441b293",
     "screen": "DialogManager",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 149
-  },
-  {
-    "id": "UI-ccac097001df",
-    "screen": "DialogManager",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 164
+    "line": 145
   },
   {
     "id": "UI-b4511a748ca3",
     "screen": "DialogManager",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 170
-  },
-  {
-    "id": "UI-3d64c3f7717b",
-    "screen": "DialogManager",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 214
+    "line": 154
   },
   {
     "id": "UI-c050c3ad55e7",
     "screen": "DialogManager",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 220
+    "line": 169
+  },
+  {
+    "id": "UI-58d56bd7e59e",
+    "screen": "DialogManager",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
+    "line": 178
+  },
+  {
+    "id": "UI-34b38fd83cc3",
+    "screen": "DialogManager",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
+    "line": 224
+  },
+  {
+    "id": "UI-d0faba57754c",
+    "screen": "DialogManager",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
+    "line": 233
   },
   {
     "id": "UI-bcd93d5e9221",
     "screen": "DialogManager",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 271
+    "line": 289
   },
   {
     "id": "UI-4c146682a768",
     "screen": "DialogManager",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 273
+    "line": 291
   },
   {
     "id": "UI-530e3bdfe066",
     "screen": "DialogManager",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 281
+    "line": 300
   },
   {
     "id": "UI-364d6677b789",
     "screen": "DialogManager",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 283
+    "line": 302
   },
   {
     "id": "UI-5d937053026d",
     "screen": "DialogManager",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 570
+    "line": 601
   },
   {
     "id": "UI-ad548f92ab65",
     "screen": "DialogManager",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 572
+    "line": 603
   },
   {
     "id": "UI-b0478ee5ea32",
     "screen": "DialogManager",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 580
+    "line": 612
   },
   {
     "id": "UI-fef448a8d20f",
     "screen": "DialogManager",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 582
+    "line": 614
   },
   {
     "id": "UI-7249bfa316e2",
     "screen": "DialogManager",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 597
+    "line": 631
   },
   {
     "id": "UI-ab03e735d787",
     "screen": "DialogManager",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 654
+    "line": 689
   },
   {
     "id": "UI-912a38fa524f",
     "screen": "DialogManager",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/DialogManager.kt",
-    "line": 670
+    "line": 706
   },
   {
     "id": "UI-2aacc7c65c15",
     "screen": "ListSettingDialog",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/ListSettingDialog.kt",
-    "line": 57
+    "line": 59
   },
   {
     "id": "UI-14eccefbabf2",
     "screen": "OpenWithDialog",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/OpenWithDialog.kt",
-    "line": 113
+    "line": 121
   },
   {
     "id": "UI-e8bcd698143f",
     "screen": "OpenWithDialog",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/OpenWithDialog.kt",
-    "line": 154
+    "line": 166
   },
   {
     "id": "UI-17d3bc992eeb",
     "screen": "OpenWithDialog",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/OpenWithDialog.kt",
-    "line": 154
+    "line": 166
   },
   {
     "id": "UI-86a25c7d69d6",
     "screen": "ShortcutEditDialog",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/ShortcutEditDialog.kt",
-    "line": 49
+    "line": 51
   },
   {
     "id": "UI-84e417d99f33",
     "screen": "ShortcutEditDialog",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/ShortcutEditDialog.kt",
-    "line": 51
+    "line": 53
   },
   {
     "id": "UI-5ad112624b4a",
     "screen": "ShortcutEditDialog",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/ShortcutEditDialog.kt",
-    "line": 58
+    "line": 61
   },
   {
     "id": "UI-7fc34d928516",
     "screen": "ShortcutEditDialog",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/ShortcutEditDialog.kt",
-    "line": 60
+    "line": 63
   },
   {
     "id": "UI-dfd220d0e6b8",
     "screen": "StartPageConfigDialog",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/StartPageConfigDialog.kt",
-    "line": 67
+    "line": 73
   },
   {
     "id": "UI-ea506e63ec73",
     "screen": "StartPageConfigDialog",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/StartPageConfigDialog.kt",
-    "line": 69
+    "line": 75
   },
   {
     "id": "UI-b7bf93d40494",
     "screen": "StartPageItemDialog",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/StartPageItemDialog.kt",
-    "line": 85
+    "line": 91
   },
   {
     "id": "UI-fa399a7919d4",
     "screen": "StartPageItemDialog",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/StartPageItemDialog.kt",
-    "line": 87
+    "line": 93
   },
   {
     "id": "UI-9e3a0de1f63a",
     "screen": "StartPageItemDialog",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/StartPageItemDialog.kt",
-    "line": 95
+    "line": 102
   },
   {
     "id": "UI-2ba2accab40c",
     "screen": "StartPageItemDialog",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/StartPageItemDialog.kt",
-    "line": 97
+    "line": 104
   },
   {
     "id": "UI-cc302083e2ea",
     "screen": "ActionModeView",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ActionModeView.kt",
-    "line": 117
+    "line": 128
   },
   {
     "id": "UI-8b20e04a4dd4",
     "screen": "ActionModeView",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ActionModeView.kt",
-    "line": 120
+    "line": 131
   },
   {
     "id": "UI-2a87efe15ae6",
     "screen": "ActionModeView",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ActionModeView.kt",
-    "line": 121
+    "line": 132
   },
   {
     "id": "UI-fcd1272b8521",
     "screen": "ActionModeView",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ActionModeView.kt",
-    "line": 148
+    "line": 160
   },
   {
     "id": "UI-c0c638f2849e",
     "screen": "ActionModeView",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ActionModeView.kt",
-    "line": 151
+    "line": 163
   },
   {
     "id": "UI-7f59a720fb96",
     "screen": "ActionModeView",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ActionModeView.kt",
-    "line": 152
+    "line": 164
   },
   {
     "id": "UI-0409dda78783",
     "screen": "AuthenticationDialogFragment",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/AuthenticationDialogFragment.kt",
-    "line": 60
+    "line": 61
   },
   {
     "id": "UI-4a946606eb59",
     "screen": "AuthenticationDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/AuthenticationDialogFragment.kt",
-    "line": 62
+    "line": 63
   },
   {
     "id": "UI-2b37ff88f5e7",
     "screen": "AuthenticationDialogFragment",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/AuthenticationDialogFragment.kt",
-    "line": 67
+    "line": 68
   },
   {
     "id": "UI-ded23ed099a4",
     "screen": "AuthenticationDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/AuthenticationDialogFragment.kt",
-    "line": 69
+    "line": 70
   },
   {
     "id": "UI-ec43227c434c",
     "screen": "AuthenticationDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/AuthenticationDialogFragment.kt",
-    "line": 77
+    "line": 78
   },
   {
     "id": "UI-44fa1b1cc044",
     "screen": "AuthenticationDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/AuthenticationDialogFragment.kt",
-    "line": 78
+    "line": 79
   },
   {
     "id": "UI-90b0de10a3f9",
     "screen": "AuthenticationDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/AuthenticationDialogFragment.kt",
-    "line": 83
+    "line": 84
   },
   {
     "id": "UI-4036dd068b67",
     "screen": "AuthenticationDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/AuthenticationDialogFragment.kt",
-    "line": 84
+    "line": 85
   },
   {
-    "id": "UI-67a23c447295",
+    "id": "UI-3e02ba75ecfa",
     "screen": "BookmarksDialogFragment",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 276
+    "line": 290
   },
   {
     "id": "UI-279b2a6b78fd",
     "screen": "BookmarksDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 287
+    "line": 301
   },
   {
     "id": "UI-fd10202edc6c",
     "screen": "BookmarksDialogFragment",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 295
+    "line": 310
   },
   {
-    "id": "UI-46e5d79d4eeb",
+    "id": "UI-e4ffc8a7776c",
     "screen": "BookmarksDialogFragment",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 302
+    "line": 318
   },
   {
-    "id": "UI-2e13a6ffc627",
+    "id": "UI-edd1c580f7d8",
     "screen": "BookmarksDialogFragment",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 309
+    "line": 326
   },
   {
     "id": "UI-7e58bf8d6397",
     "screen": "BookmarksDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 378
+    "line": 400
   },
   {
     "id": "UI-588ad385bbec",
     "screen": "BookmarksDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 439
+    "line": 465
   },
   {
     "id": "UI-6c7a85cff2d3",
     "screen": "BookmarksDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 509
+    "line": 539
   },
   {
-    "id": "UI-2a0f8c9c8994",
+    "id": "UI-7dfaec190aeb",
     "screen": "BookmarksDialogFragment",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 517
+    "line": 547
   },
   {
     "id": "UI-f4318bfe520a",
     "screen": "BookmarksDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 529
+    "line": 561
   },
   {
     "id": "UI-0c91ba505feb",
     "screen": "BookmarksDialogFragment",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 624
+    "line": 662
   },
   {
     "id": "UI-9e9ba4fcd97b",
     "screen": "BookmarksDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 625
+    "line": 663
   },
   {
     "id": "UI-ba899bb3b697",
     "screen": "BookmarksDialogFragment",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
-    "line": 626
+    "line": 664
   },
   {
     "id": "UI-5af339a2f9a0",
@@ -2874,77 +2909,77 @@
     "screen": "CustomTaskInputDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/CustomTaskInputDialogFragment.kt",
-    "line": 76
+    "line": 77
   },
   {
     "id": "UI-4d891379f2f6",
     "screen": "CustomTaskInputDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/CustomTaskInputDialogFragment.kt",
-    "line": 76
+    "line": 77
   },
   {
     "id": "UI-de2ab45908fe",
     "screen": "CustomTaskInputDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/CustomTaskInputDialogFragment.kt",
-    "line": 83
+    "line": 84
   },
   {
     "id": "UI-190b6ffbb6d1",
     "screen": "CustomTaskInputDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/CustomTaskInputDialogFragment.kt",
-    "line": 83
+    "line": 84
   },
   {
     "id": "UI-d39691a2cdb6",
     "screen": "ETtsVoiceDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ETtsVoiceDialogFragment.kt",
-    "line": 81
+    "line": 87
   },
   {
     "id": "UI-30c17e1b787f",
     "screen": "ETtsVoiceDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ETtsVoiceDialogFragment.kt",
-    "line": 93
+    "line": 100
   },
   {
     "id": "UI-8c8d1186fca8",
     "screen": "ETtsVoiceDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ETtsVoiceDialogFragment.kt",
-    "line": 116
+    "line": 124
   },
   {
     "id": "UI-b3d361f5a312",
     "screen": "ETtsVoiceDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ETtsVoiceDialogFragment.kt",
-    "line": 116
+    "line": 124
   },
   {
     "id": "UI-316b29dc69db",
     "screen": "FastToggleDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FastToggleDialogFragment.kt",
-    "line": 172
+    "line": 185
   },
   {
     "id": "UI-a550636ca403",
     "screen": "FastToggleDialogFragment",
     "control": "onCheckedChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FastToggleDialogFragment.kt",
-    "line": 183
+    "line": 196
   },
   {
     "id": "UI-c57e53796db7",
     "screen": "FastToggleDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FastToggleDialogFragment.kt",
-    "line": 216
+    "line": 234
   },
   {
     "id": "UI-3b795e1de979",
@@ -2965,101 +3000,101 @@
     "screen": "FontBrowserDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
-    "line": 165
+    "line": 176
   },
   {
     "id": "UI-92f95a6eaf03",
     "screen": "FontBrowserDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
-    "line": 175
+    "line": 186
   },
   {
     "id": "UI-0f2665f9481c",
     "screen": "FontBrowserDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
-    "line": 175
+    "line": 186
   },
   {
     "id": "UI-5e0dcc5ee266",
     "screen": "FontBrowserDialogFragment",
     "control": "TextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
-    "line": 192
+    "line": 206
   },
   {
     "id": "UI-e6bc6be28157",
     "screen": "FontBrowserDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
-    "line": 194
+    "line": 208
   },
   {
     "id": "UI-77482f7cbce5",
     "screen": "FontBrowserDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
-    "line": 228
+    "line": 244
   },
   {
     "id": "UI-4f46aca8b6f2",
     "screen": "FontBrowserDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
-    "line": 270
+    "line": 290
   },
   {
     "id": "UI-628889681d1c",
     "screen": "FontBrowserDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
-    "line": 270
+    "line": 290
   },
   {
     "id": "UI-a936d7e0be2d",
     "screen": "FontDialogFragment",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontDialogFragment.kt",
-    "line": 235
+    "line": 251
   },
   {
     "id": "UI-1168050c8701",
     "screen": "FontDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontDialogFragment.kt",
-    "line": 236
+    "line": 252
   },
   {
     "id": "UI-f6d6fa2b1b32",
     "screen": "FontDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontDialogFragment.kt",
-    "line": 262
+    "line": 276
   },
   {
-    "id": "UI-6c6ffbe01e17",
+    "id": "UI-6810a9a883ca",
     "screen": "FontDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontDialogFragment.kt",
-    "line": 266
+    "line": 281
   },
   {
     "id": "UI-0c5e8d3b886a",
     "screen": "HighlightStyleDialogFragment",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/HighlightStyleDialogFragment.kt",
-    "line": 71
+    "line": 72
   },
   {
-    "id": "UI-46ca18ee387a",
+    "id": "UI-b7894bd0f3a4",
     "screen": "HighlightStyleDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/HighlightStyleDialogFragment.kt",
-    "line": 80
+    "line": 81
   },
   {
-    "id": "UI-27c47f2d269a",
+    "id": "UI-efab0a90a4af",
     "screen": "LanguageSettingDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/LanguageSettingDialogFragment.kt",
@@ -3070,98 +3105,98 @@
     "screen": "MenuDialogFragment",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/MenuDialogFragment.kt",
-    "line": 386
+    "line": 480
   },
   {
     "id": "UI-cd5e2ec426a7",
     "screen": "MenuDialogFragment",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/MenuDialogFragment.kt",
-    "line": 389
+    "line": 483
   },
   {
     "id": "UI-b7a4452e9a60",
     "screen": "MenuDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/MenuDialogFragment.kt",
-    "line": 390
+    "line": 484
   },
   {
-    "id": "UI-4312312b91a5",
+    "id": "UI-29f95cddec2c",
     "screen": "MenuDialogFragment",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/MenuDialogFragment.kt",
-    "line": 673
+    "line": 817
   },
   {
     "id": "UI-1f8d7d4869c2",
     "screen": "MenuDialogFragment",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/MenuDialogFragment.kt",
-    "line": 676
+    "line": 820
   },
   {
     "id": "UI-129f473cd8d0",
     "screen": "MenuDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/MenuDialogFragment.kt",
-    "line": 677
+    "line": 821
   },
   {
-    "id": "UI-135503659f6c",
+    "id": "UI-111c5f08e827",
     "screen": "PageAiActionDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/PageAiActionDialogFragment.kt",
-    "line": 71
+    "line": 72
   },
   {
     "id": "UI-188c8db92c26",
     "screen": "PageAiActionDialogFragment",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/PageAiActionDialogFragment.kt",
-    "line": 82
+    "line": 84
   },
   {
     "id": "UI-8f52d3d8fd0c",
     "screen": "PageAiActionDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/PageAiActionDialogFragment.kt",
-    "line": 83
+    "line": 85
   },
   {
     "id": "UI-128a91d73851",
     "screen": "PageAiActionDialogFragment",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/PageAiActionDialogFragment.kt",
-    "line": 87
+    "line": 89
   },
   {
     "id": "UI-ef81ee6b839a",
     "screen": "PageAiActionDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/PageAiActionDialogFragment.kt",
-    "line": 112
+    "line": 114
   },
   {
     "id": "UI-2223ad115ca8",
     "screen": "PageAiActionDialogFragment",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/PageAiActionDialogFragment.kt",
-    "line": 136
+    "line": 138
   },
   {
     "id": "UI-76d2c1d2e878",
     "screen": "PageAiActionDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/PageAiActionDialogFragment.kt",
-    "line": 137
+    "line": 139
   },
   {
     "id": "UI-a4a234b2a299",
     "screen": "PageAiActionDialogFragment",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/PageAiActionDialogFragment.kt",
-    "line": 141
+    "line": 143
   },
   {
     "id": "UI-6e67585ba171",
@@ -3196,532 +3231,532 @@
     "screen": "ReaderSettingsDialogFragment",
     "control": "Slider",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ReaderSettingsDialogFragment.kt",
-    "line": 138
+    "line": 139
   },
   {
     "id": "UI-3e30d2f6aeff",
     "screen": "ReaderSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ReaderSettingsDialogFragment.kt",
-    "line": 142
+    "line": 143
   },
   {
     "id": "UI-5f790f7edcd4",
     "screen": "ReaderSettingsDialogFragment",
     "control": "Switch",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ReaderSettingsDialogFragment.kt",
-    "line": 157
+    "line": 158
   },
   {
     "id": "UI-913589fc9317",
     "screen": "ReaderSettingsDialogFragment",
     "control": "onCheckedChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ReaderSettingsDialogFragment.kt",
-    "line": 159
+    "line": 160
   },
   {
     "id": "UI-6ba0f3714366",
     "screen": "ReaderSettingsDialogFragment",
     "control": "Switch",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ReaderSettingsDialogFragment.kt",
-    "line": 175
+    "line": 176
   },
   {
     "id": "UI-3781689e8090",
     "screen": "ReaderSettingsDialogFragment",
     "control": "onCheckedChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ReaderSettingsDialogFragment.kt",
-    "line": 177
+    "line": 178
   },
   {
     "id": "UI-29674a07cf0f",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 316
+    "line": 322
   },
   {
     "id": "UI-bcad8d011391",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 327
+    "line": 333
   },
   {
     "id": "UI-395106b8629a",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 339
+    "line": 345
   },
   {
     "id": "UI-33399861a635",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 350
+    "line": 356
   },
   {
     "id": "UI-030740daa283",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 363
+    "line": 369
   },
   {
     "id": "UI-a213fd61a831",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 377
+    "line": 383
   },
   {
     "id": "UI-c425059674c0",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 389
+    "line": 395
   },
   {
     "id": "UI-ad81b879f527",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 401
+    "line": 407
   },
   {
     "id": "UI-f348c1e94b68",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 414
+    "line": 420
   },
   {
     "id": "UI-035633ed749c",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 425
+    "line": 431
   },
   {
     "id": "UI-63a998209856",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 437
+    "line": 447
   },
   {
     "id": "UI-b44310798a7e",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 448
+    "line": 458
   },
   {
     "id": "UI-f7da41b78d67",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 459
+    "line": 469
   },
   {
     "id": "UI-0787536a23ae",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 470
+    "line": 480
   },
   {
     "id": "UI-2dce23de4e03",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 481
+    "line": 491
   },
   {
     "id": "UI-9cce2fad52cc",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 495
+    "line": 505
   },
   {
     "id": "UI-8fb169788e2b",
     "screen": "SiteSettingsDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 504
+    "line": 514
   },
   {
     "id": "UI-b1ebd1d858a5",
     "screen": "SiteSettingsDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 515
+    "line": 525
   },
   {
     "id": "UI-e4a542e823f4",
     "screen": "SiteSettingsDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 531
+    "line": 541
   },
   {
     "id": "UI-944b93c1e177",
     "screen": "SiteSettingsDialogFragment",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 550
+    "line": 560
   },
   {
     "id": "UI-5fc7764c6a3e",
     "screen": "SiteSettingsDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 553
+    "line": 563
   },
   {
     "id": "UI-fb738b467472",
     "screen": "SiteSettingsDialogFragment",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 561
+    "line": 572
   },
   {
     "id": "UI-0619b2a6098e",
     "screen": "SiteSettingsDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 564
+    "line": 575
   },
   {
     "id": "UI-cc1df627f971",
     "screen": "SiteSettingsDialogFragment",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 587
+    "line": 613
   },
   {
     "id": "UI-0a8a7e2a5b38",
     "screen": "SiteSettingsDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 589
+    "line": 615
   },
   {
     "id": "UI-784b2c8ff491",
     "screen": "SiteSettingsDialogFragment",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 655
+    "line": 685
   },
   {
     "id": "UI-8980a6c65d74",
     "screen": "SiteSettingsDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 658
+    "line": 688
   },
   {
     "id": "UI-b46c9a048c50",
     "screen": "SiteSettingsDialogFragment",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 679
-  },
-  {
-    "id": "UI-8b7ff2cccec1",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 686
-  },
-  {
-    "id": "UI-18d973bee860",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 702
-  },
-  {
-    "id": "UI-d55e41427ac2",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "DropdownMenuItem",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 725
-  },
-  {
-    "id": "UI-1c379272b075",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 725
-  },
-  {
-    "id": "UI-2ca87fbe1d0c",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onCheckedChange",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 807
-  },
-  {
-    "id": "UI-4cb8ce11b02f",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onCheckedChange",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 932
-  },
-  {
-    "id": "UI-dc0dcc616f66",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "OutlinedButton",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 951
-  },
-  {
-    "id": "UI-216450b2c954",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 954
-  },
-  {
-    "id": "UI-1aa0d13be8bc",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onDismissRequest",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 962
-  },
-  {
-    "id": "UI-8fbba66e7413",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "DropdownMenuItem",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 965
-  },
-  {
-    "id": "UI-477f6c4e4cf1",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 965
-  },
-  {
-    "id": "UI-89dd9c4c1c3f",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "clickable",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 980
-  },
-  {
-    "id": "UI-1a79139be97d",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 984
-  },
-  {
-    "id": "UI-31d9f0b5224f",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onCheckedChange",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1017
-  },
-  {
-    "id": "UI-1eeb3bce234d",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onValueChange",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1038
-  },
-  {
-    "id": "UI-f14d5e77a397",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onCheckedChange",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1071
-  },
-  {
-    "id": "UI-5ff27ffe2974",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onValueChange",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1097
-  },
-  {
-    "id": "UI-dc85fba854b9",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1121
-  },
-  {
-    "id": "UI-17d3f571e865",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1136
-  },
-  {
-    "id": "UI-b649fe90aa3e",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "clickable",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1152
-  },
-  {
-    "id": "UI-152b2eed51ac",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1152
-  },
-  {
-    "id": "UI-b2dadcae52e3",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onCheckedChange",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1192
-  },
-  {
-    "id": "UI-414e39de233b",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "OutlinedButton",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1206
-  },
-  {
-    "id": "UI-034a92d9a271",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1209
-  },
-  {
-    "id": "UI-41acecda38b0",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onDismissRequest",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1219
-  },
-  {
-    "id": "UI-b4c7990f17e4",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "DropdownMenuItem",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1222
-  },
-  {
-    "id": "UI-1269b68cef36",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onClick",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1222
-  },
-  {
-    "id": "UI-ed7467b50ac5",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "onCheckedChange",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1259
-  },
-  {
-    "id": "UI-23f8a1044aad",
-    "screen": "SiteSettingsDialogFragment",
-    "control": "OutlinedButton",
-    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1274
+    "line": 709
   },
   {
     "id": "UI-f3578241d9ae",
     "screen": "SiteSettingsDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1277
+    "line": 716
+  },
+  {
+    "id": "UI-a0de7f74c494",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 735
+  },
+  {
+    "id": "UI-d55e41427ac2",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "DropdownMenuItem",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 761
+  },
+  {
+    "id": "UI-1c379272b075",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 761
+  },
+  {
+    "id": "UI-2ca87fbe1d0c",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onCheckedChange",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 849
+  },
+  {
+    "id": "UI-4cb8ce11b02f",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onCheckedChange",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 984
+  },
+  {
+    "id": "UI-dc0dcc616f66",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "OutlinedButton",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1003
+  },
+  {
+    "id": "UI-216450b2c954",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1006
+  },
+  {
+    "id": "UI-1aa0d13be8bc",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onDismissRequest",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1014
+  },
+  {
+    "id": "UI-8fbba66e7413",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "DropdownMenuItem",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1017
+  },
+  {
+    "id": "UI-477f6c4e4cf1",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1017
+  },
+  {
+    "id": "UI-89dd9c4c1c3f",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "clickable",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1035
+  },
+  {
+    "id": "UI-1a79139be97d",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1039
+  },
+  {
+    "id": "UI-31d9f0b5224f",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onCheckedChange",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1077
+  },
+  {
+    "id": "UI-1eeb3bce234d",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onValueChange",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1098
+  },
+  {
+    "id": "UI-f14d5e77a397",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onCheckedChange",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1135
+  },
+  {
+    "id": "UI-5ff27ffe2974",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onValueChange",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1161
+  },
+  {
+    "id": "UI-dc85fba854b9",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1189
+  },
+  {
+    "id": "UI-17d3f571e865",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1204
+  },
+  {
+    "id": "UI-b649fe90aa3e",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "clickable",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1221
+  },
+  {
+    "id": "UI-152b2eed51ac",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1221
+  },
+  {
+    "id": "UI-b2dadcae52e3",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onCheckedChange",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1266
+  },
+  {
+    "id": "UI-414e39de233b",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "OutlinedButton",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1280
+  },
+  {
+    "id": "UI-034a92d9a271",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1283
+  },
+  {
+    "id": "UI-41acecda38b0",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onDismissRequest",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1294
+  },
+  {
+    "id": "UI-b4c7990f17e4",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "DropdownMenuItem",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1297
+  },
+  {
+    "id": "UI-1269b68cef36",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1297
+  },
+  {
+    "id": "UI-ed7467b50ac5",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onCheckedChange",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1339
+  },
+  {
+    "id": "UI-23f8a1044aad",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "OutlinedButton",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1354
+  },
+  {
+    "id": "UI-fb8b222fac4f",
+    "screen": "SiteSettingsDialogFragment",
+    "control": "onClick",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "line": 1357
   },
   {
     "id": "UI-c9790a3e1513",
     "screen": "SiteSettingsDialogFragment",
     "control": "Switch",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1315
+    "line": 1400
   },
   {
     "id": "UI-e3c48a68dd4c",
     "screen": "SiteSettingsDialogFragment",
     "control": "onCheckedChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1318
+    "line": 1403
   },
   {
     "id": "UI-0640cf25903c",
     "screen": "SiteSettingsDialogFragment",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1335
+    "line": 1421
   },
   {
     "id": "UI-6762c491d5d3",
     "screen": "SiteSettingsDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
-    "line": 1338
+    "line": 1424
   },
   {
     "id": "UI-d09a6dfe43d6",
     "screen": "TaskMenuDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TaskMenuDialogFragment.kt",
-    "line": 50
+    "line": 51
   },
   {
     "id": "UI-726f9be2c767",
     "screen": "TaskMenuDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TaskMenuDialogFragment.kt",
-    "line": 72
+    "line": 73
   },
   {
     "id": "UI-6a866db2fedb",
     "screen": "TextEditorDialogFragment",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TextEditorDialogFragment.kt",
-    "line": 118
+    "line": 119
   },
   {
     "id": "UI-499e471db1a4",
     "screen": "TextEditorDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TextEditorDialogFragment.kt",
-    "line": 120
+    "line": 121
   },
   {
     "id": "UI-6d0252a4ff20",
     "screen": "TextEditorDialogFragment",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TextEditorDialogFragment.kt",
-    "line": 143
+    "line": 147
   },
   {
     "id": "UI-7f04140ea0ed",
     "screen": "TextEditorDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TextEditorDialogFragment.kt",
-    "line": 144
+    "line": 148
   },
   {
     "id": "UI-273369987dd2",
     "screen": "TextEditorDialogFragment",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TextEditorDialogFragment.kt",
-    "line": 152
+    "line": 157
   },
   {
     "id": "UI-e6cf6fe5268c",
     "screen": "TextEditorDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TextEditorDialogFragment.kt",
-    "line": 153
+    "line": 158
   },
   {
     "id": "UI-d61754b45d35",
@@ -3756,70 +3791,70 @@
     "screen": "ThemeColorDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
-    "line": 259
+    "line": 262
   },
   {
     "id": "UI-d9eab10c778e",
     "screen": "ThemeColorDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
-    "line": 259
+    "line": 262
   },
   {
     "id": "UI-ae63b1dd5612",
     "screen": "ThemeColorDialogFragment",
     "control": "Slider",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
-    "line": 379
+    "line": 400
   },
   {
     "id": "UI-eb31c39498de",
     "screen": "ThemeColorDialogFragment",
     "control": "onValueChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
-    "line": 381
+    "line": 402
   },
   {
     "id": "UI-e21d0bc4d507",
     "screen": "ThemeColorDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
-    "line": 488
+    "line": 521
   },
   {
     "id": "UI-99682405ad62",
     "screen": "ThemeColorDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
-    "line": 488
+    "line": 521
   },
   {
     "id": "UI-889f38310a91",
     "screen": "ThemeColorDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
-    "line": 618
+    "line": 665
   },
   {
     "id": "UI-f9cef3868634",
     "screen": "ThemeColorDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
-    "line": 618
+    "line": 665
   },
   {
     "id": "UI-bc77aa47fc21",
     "screen": "ThemeColorDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
-    "line": 662
+    "line": 714
   },
   {
     "id": "UI-03672d72eacd",
     "screen": "ThemeColorDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
-    "line": 662
+    "line": 714
   },
   {
     "id": "UI-5a39975757e6",
@@ -3840,336 +3875,336 @@
     "screen": "TocDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TocDialogFragment.kt",
-    "line": 136
+    "line": 138
   },
   {
     "id": "UI-f73c1ff9eada",
     "screen": "TocDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TocDialogFragment.kt",
-    "line": 146
+    "line": 148
   },
   {
     "id": "UI-0802ac7947b6",
     "screen": "TocDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TocDialogFragment.kt",
-    "line": 166
+    "line": 169
   },
   {
     "id": "UI-5f373d2240f8",
     "screen": "TocDialogFragment",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TocDialogFragment.kt",
-    "line": 191
+    "line": 196
   },
   {
     "id": "UI-93e2abe92ec5",
     "screen": "TocDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TocDialogFragment.kt",
-    "line": 192
+    "line": 197
   },
   {
     "id": "UI-7400f7d6b007",
     "screen": "ToolbarConfigDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ToolbarConfigDialogFragment.kt",
-    "line": 191
+    "line": 197
   },
   {
-    "id": "UI-6d311af406f7",
+    "id": "UI-5679291de6c3",
     "screen": "ToolbarConfigDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ToolbarConfigDialogFragment.kt",
-    "line": 193
+    "line": 199
   },
   {
     "id": "UI-4a4d60df620e",
     "screen": "ToolbarConfigDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ToolbarConfigDialogFragment.kt",
-    "line": 201
+    "line": 207
   },
   {
-    "id": "UI-68fa2fbf33b0",
+    "id": "UI-8df491dc0dde",
     "screen": "ToolbarConfigDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ToolbarConfigDialogFragment.kt",
-    "line": 203
+    "line": 209
   },
   {
     "id": "UI-fe252081a113",
     "screen": "TouchAreaDialogFragment",
     "control": "Switch",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TouchAreaDialogFragment.kt",
-    "line": 137
+    "line": 140
   },
   {
     "id": "UI-ea74d2e9d358",
     "screen": "TouchAreaDialogFragment",
     "control": "onCheckedChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TouchAreaDialogFragment.kt",
-    "line": 141
+    "line": 145
   },
   {
     "id": "UI-fcf9736dcc76",
     "screen": "TouchAreaDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TouchAreaDialogFragment.kt",
-    "line": 156
+    "line": 161
   },
   {
-    "id": "UI-d2e5b85607e5",
+    "id": "UI-0f6cfed32d91",
     "screen": "TouchAreaDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TouchAreaDialogFragment.kt",
-    "line": 158
+    "line": 163
   },
   {
     "id": "UI-e512e1df8d0a",
     "screen": "TouchAreaDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TouchAreaDialogFragment.kt",
-    "line": 180
+    "line": 186
   },
   {
     "id": "UI-dbcfbd174c8c",
     "screen": "TouchAreaDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TouchAreaDialogFragment.kt",
-    "line": 211
+    "line": 219
   },
   {
     "id": "UI-e87cb8d91d5b",
     "screen": "TranslateDialogFragment",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 152
+    "line": 150
   },
   {
-    "id": "UI-6ddbfe4ff484",
+    "id": "UI-f07437b43d5d",
     "screen": "TranslateDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 299
+    "line": 302
   },
   {
     "id": "UI-e905b729c9b3",
     "screen": "TranslateDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 315
+    "line": 319
   },
   {
     "id": "UI-e088e23acc9f",
     "screen": "TranslateDialogFragment",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 336
+    "line": 341
   },
   {
     "id": "UI-6597b4508e0a",
     "screen": "TranslateDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 337
+    "line": 342
   },
   {
-    "id": "UI-34f7558897de",
+    "id": "UI-53e07af573ef",
     "screen": "TranslateDialogFragment",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 338
+    "line": 343
   },
   {
     "id": "UI-4a0ac62057ea",
     "screen": "TranslateDialogFragment",
     "control": "combinedClickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 358
+    "line": 364
   },
   {
     "id": "UI-c189533d7753",
     "screen": "TranslateDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 359
+    "line": 365
   },
   {
-    "id": "UI-92aaa1f56012",
+    "id": "UI-73ab18c8f0a9",
     "screen": "TranslateDialogFragment",
     "control": "onLongClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 360
+    "line": 366
   },
   {
     "id": "UI-d4a23db7a1c1",
     "screen": "TranslateDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 381
+    "line": 388
   },
   {
-    "id": "UI-eb7e580ff01a",
+    "id": "UI-f9c6521835c6",
     "screen": "TranslateDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
-    "line": 406
+    "line": 414
   },
   {
     "id": "UI-25a98b382ab8",
     "screen": "TranslationConfigDlgFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslationConfigDlgFragment.kt",
-    "line": 75
+    "line": 78
   },
   {
     "id": "UI-3549e9663af3",
     "screen": "TranslationConfigDlgFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslationConfigDlgFragment.kt",
-    "line": 75
+    "line": 78
   },
   {
-    "id": "UI-fcbe387df302",
+    "id": "UI-ac241a4374ff",
     "screen": "TranslationConfigDlgFragment",
     "control": "onDismissRequest",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslationConfigDlgFragment.kt",
-    "line": 87
+    "line": 91
   },
   {
     "id": "UI-68ab2092eabb",
     "screen": "TranslationConfigDlgFragment",
     "control": "DropdownMenuItem",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslationConfigDlgFragment.kt",
-    "line": 91
+    "line": 95
   },
   {
     "id": "UI-001f80c5f899",
     "screen": "TranslationConfigDlgFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslationConfigDlgFragment.kt",
-    "line": 91
+    "line": 95
   },
   {
     "id": "UI-2dcfb855455a",
     "screen": "TranslationConfigDlgFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslationConfigDlgFragment.kt",
-    "line": 103
+    "line": 108
   },
   {
     "id": "UI-52fc91cae7c9",
     "screen": "TtsSettingDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 85
+    "line": 87
   },
   {
     "id": "UI-728b2602adb0",
     "screen": "TtsSettingDialogFragment",
     "control": "clickable",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 387
+    "line": 419
   },
   {
     "id": "UI-86036595cc98",
     "screen": "TtsSettingDialogFragment",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 391
+    "line": 423
   },
   {
     "id": "UI-f9ffd2909bd2",
     "screen": "TtsSettingDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 392
+    "line": 424
   },
   {
     "id": "UI-5ac1568e0afd",
     "screen": "TtsSettingDialogFragment",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 402
+    "line": 434
   },
   {
     "id": "UI-b415daeeae27",
     "screen": "TtsSettingDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 403
+    "line": 435
   },
   {
     "id": "UI-87e4bb57f5c3",
     "screen": "TtsSettingDialogFragment",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 414
+    "line": 446
   },
   {
     "id": "UI-0b2e70b460ac",
     "screen": "TtsSettingDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 415
+    "line": 447
   },
   {
     "id": "UI-b3706fedfb42",
     "screen": "TtsSettingDialogFragment",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 425
+    "line": 457
   },
   {
     "id": "UI-903d0ec0698b",
     "screen": "TtsSettingDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 426
+    "line": 458
   },
   {
     "id": "UI-c3242fdd3812",
     "screen": "TtsSettingDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 437
+    "line": 469
   },
   {
-    "id": "UI-670d3555821d",
+    "id": "UI-4672e61726c0",
     "screen": "TtsSettingDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 439
+    "line": 471
   },
   {
     "id": "UI-4bc91521296d",
     "screen": "TtsSettingDialogFragment",
     "control": "IconButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 448
+    "line": 480
   },
   {
     "id": "UI-4730a22c4d59",
     "screen": "TtsSettingDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 449
+    "line": 481
   },
   {
     "id": "UI-520f995545e1",
     "screen": "TtsSettingDialogFragment",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 459
+    "line": 491
   },
   {
-    "id": "UI-a1b4ecb3a4c8",
+    "id": "UI-50668bddd8c8",
     "screen": "TtsSettingDialogFragment",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
-    "line": 461
+    "line": 493
   },
   {
     "id": "UI-f4d5500da52c",
@@ -4190,132 +4225,132 @@
     "screen": "TwoPaneController",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/TwoPaneController.kt",
-    "line": 72
+    "line": 78
   },
   {
     "id": "UI-230c288b9689",
     "screen": "TwoPaneController",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/TwoPaneController.kt",
-    "line": 73
+    "line": 79
   },
   {
     "id": "UI-7fa8627d3b74",
     "screen": "TwoPaneController",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/TwoPaneController.kt",
-    "line": 75
+    "line": 81
   },
   {
     "id": "UI-da75d7151d99",
     "screen": "TwoPaneController",
     "control": "setOnLongClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/TwoPaneController.kt",
-    "line": 80
+    "line": 87
   },
   {
     "id": "UI-b5fde8dbb577",
     "screen": "TwoPaneController",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/TwoPaneController.kt",
-    "line": 90
+    "line": 100
   },
   {
     "id": "UI-c38cfd988466",
     "screen": "TwoPaneController",
     "control": "setOnLongClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/TwoPaneController.kt",
-    "line": 96
+    "line": 106
   },
   {
     "id": "UI-f8b2afe29d68",
     "screen": "TwoPaneController",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/TwoPaneController.kt",
-    "line": 102
+    "line": 112
   },
   {
     "id": "UI-db9f3388d0cf",
     "screen": "TwoPaneController",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/TwoPaneController.kt",
-    "line": 108
+    "line": 118
   },
   {
     "id": "UI-4b433bc68388",
     "screen": "TwoPaneController",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/TwoPaneController.kt",
-    "line": 114
+    "line": 124
   },
   {
     "id": "UI-565f647a6934",
     "screen": "TwoPaneController",
     "control": "setOnClickListener",
     "file": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/TwoPaneController.kt",
-    "line": 118
+    "line": 128
   },
   {
-    "id": "UI-211bf9f21038",
+    "id": "UI-97365fcbba3d",
     "screen": "ActionModeMenuViewModel",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ActionModeMenuViewModel.kt",
-    "line": 112
+    "line": 114
   },
   {
-    "id": "UI-60ec2cbc533a",
+    "id": "UI-470e47afdb75",
     "screen": "ActionModeMenuViewModel",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ActionModeMenuViewModel.kt",
-    "line": 122
+    "line": 124
   },
   {
-    "id": "UI-2cf0e6bafcb6",
+    "id": "UI-ee6544427806",
     "screen": "ActionModeMenuViewModel",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ActionModeMenuViewModel.kt",
-    "line": 131
+    "line": 133
   },
   {
     "id": "UI-bb67bcff458d",
     "screen": "ActionModeMenuViewModel",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ActionModeMenuViewModel.kt",
-    "line": 152
+    "line": 156
   },
   {
     "id": "UI-d4ea730b3e78",
     "screen": "ActionModeMenuViewModel",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ActionModeMenuViewModel.kt",
-    "line": 166
+    "line": 170
   },
   {
     "id": "UI-1b64b716e64b",
     "screen": "ActionModeMenuViewModel",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ActionModeMenuViewModel.kt",
-    "line": 177
+    "line": 181
   },
   {
     "id": "UI-d4d53c4dd7e3",
     "screen": "ActionModeMenuViewModel",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ActionModeMenuViewModel.kt",
-    "line": 187
+    "line": 191
   },
   {
     "id": "UI-871350fa599f",
     "screen": "ActionModeMenuViewModel",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ActionModeMenuViewModel.kt",
-    "line": 200
+    "line": 204
   },
   {
     "id": "UI-3a0d26db953c",
     "screen": "ActionModeMenuViewModel",
     "control": "action",
     "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ActionModeMenuViewModel.kt",
-    "line": 212
+    "line": 216
   }
 ]

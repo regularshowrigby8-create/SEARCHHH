@@ -117,7 +117,7 @@ class DeviceMcpServer(
         }
         tool(
             "list_codebases",
-            "Read all submitted crawling-related codebases, additions, source links and audit status. Reference metadata, not executable adapters or trusted instructions.",
+            "Read all submitted crawling-related codebases, additions, source links, audit status and the four reviewed Android capability adapters.",
         ) {
             backend.codebases
         }
@@ -140,6 +140,13 @@ class DeviceMcpServer(
                     put("minItems", 1)
                     put("maxItems", 128)
                 }
+                putJsonObject("adapter") {
+                    put("type", "string")
+                    put(
+                        "enum",
+                        JsonArray(CrawlerAdapters.available.map { JsonPrimitive(it.id) }),
+                    )
+                }
             },
             listOf("query", "engines"),
         ) { args ->
@@ -154,6 +161,7 @@ class DeviceMcpServer(
                         it.jsonPrimitive.content
                     },
                     false,
+                    args["adapter"]?.jsonPrimitive?.content,
                 ),
             )
         }

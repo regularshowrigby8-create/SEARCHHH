@@ -13,6 +13,7 @@ class SearchJob(Base):
     mode: Mapped[str] = mapped_column(String(20))
     engines: Mapped[list] = mapped_column(JSON)
     crawl: Mapped[int] = mapped_column(Integer,default=0)
+    adapter: Mapped[str | None] = mapped_column(String(40), nullable=True)
     status: Mapped[str] = mapped_column(String(20), default='queued')
     round: Mapped[int] = mapped_column(Integer, default=0)
     duplicates: Mapped[int] = mapped_column(Integer, default=0)

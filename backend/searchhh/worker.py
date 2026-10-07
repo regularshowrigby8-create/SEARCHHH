@@ -20,10 +20,12 @@ def active(job_id):
         job=db.get(SearchJob,job_id)
         return bool(job and job.status in ('queued','running'))
 
-def crawl(seeds,job_id):
+def crawl(seeds,job_id,adapter):
     with tempfile.TemporaryDirectory() as temp:
         output=os.path.join(temp,'links.json')
-        proc=subprocess.Popen([sys.executable,'-m','searchhh.spider',json.dumps(seeds),output],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        environment = os.environ.copy()
+        environment['SEARCHHH_CRAWLER_PROFILE'] = adapter
+        proc=subprocess.Popen([sys.executable,'-m','searchhh.spider',json.dumps(seeds),output],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,env=environment)
         deadline=time.monotonic()+90
         try:
             while proc.poll() is None:
@@ -43,6 +45,7 @@ def run_round(job_id):
         if job.mode=='opportunities': query+=' '+INTENTS[job.round%len(INTENTS)]
         page=1+(job.round//len(INTENTS))%5
         selected=job.engines; mode=job.mode; crawl_enabled=bool(job.crawl)
+        adapter=job.adapter or 'phone-scheduler'
     raw=[]; errors=[]
     try:
         with httpx.Client(timeout=25,trust_env=False) as client:
@@ -56,7 +59,7 @@ def run_round(job_id):
     if crawl_enabled:
         seeds=[r['url'] for r in raw if opportunity(r,'opportunities')][:8]
         if seeds:
-            found,crawl_errors=crawl(seeds,job_id);raw.extend(found);errors.extend(crawl_errors)
+            found,crawl_errors=crawl(seeds,job_id,adapter);raw.extend(found);errors.extend(crawl_errors)
     with Session.begin() as db:
         job=db.scalar(select(SearchJob).where(SearchJob.id==job_id).with_for_update())
         if not job or job.status not in ('queued','running'):return

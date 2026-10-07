@@ -33,6 +33,7 @@ data class StartRequest(
     val mode: String,
     val engines: List<String>,
     val crawl: Boolean,
+    val adapter: String? = null,
 )
 
 data class JobStarted(
@@ -74,6 +75,8 @@ data class JobStatus(
     val filtered: Int,
     val errors: List<String>,
     val results: List<Opportunity>,
+    /** The declared profile used by the local worker; null for older/remote sessions. */
+    val adapter: String? = null,
 )
 
 interface SearchhhApi {

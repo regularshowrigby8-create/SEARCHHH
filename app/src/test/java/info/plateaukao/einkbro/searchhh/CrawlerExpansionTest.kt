@@ -168,6 +168,29 @@ class CrawlerExpansionTest {
             assertEquals(2, calls.size)
         }
 
+    @Test fun selectedCapabilityProfileChangesTheRealExtractionPath(): Unit =
+        runBlocking {
+            val structured =
+                PortalCrawler(
+                    fetch = { url, _ ->
+                        if (url.endsWith("robots.txt")) page("", code = 404) else page(ld)
+                    },
+                    pause = {},
+                ).search("climate fellowship", listOf(source), "opportunities", false, CrawlerAdapters.PHONE_STRUCTURED)
+            assertEquals(1, structured.rows.size)
+            assertTrue(structured.rows.single().sources.contains("Extruct profile"))
+
+            val article =
+                PortalCrawler(
+                    fetch = { url, _ ->
+                        if (url.endsWith("robots.txt")) page("", code = 404) else page("<main><h1>Climate fellowship</h1><p>Students can apply for a fellowship.</p></main>")
+                    },
+                    pause = {},
+                ).search("climate fellowship", listOf(source), "opportunities", false, CrawlerAdapters.PHONE_ARTICLE)
+            assertTrue(article.rows.any { it.title.contains("Climate fellowship") })
+            assertTrue(article.rows.all { it.sources.contains("Trafilatura profile") })
+        }
+
     @Test fun cancellationDuringPolitenessWaitDoesNotFetchPage(): Unit =
         runBlocking {
             val waiting = CompletableDeferred<Unit>()

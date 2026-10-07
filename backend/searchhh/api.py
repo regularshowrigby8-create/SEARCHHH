@@ -10,11 +10,12 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field, field_validator
 from redis import Redis
 from rq import Queue
-from sqlalchemy import select, func, text
+from sqlalchemy import inspect, select, func, text
 from .store import Base, engine, Session, SearchJob, SearchResult
 
 CATALOG = json.loads((Path(__file__).parent.parent/'config/engines.json').read_text())
 ENGINE_IDS = {e['id'] for e in CATALOG}
+ADAPTER_IDS = {'phone-scheduler', 'phone-article', 'phone-structured', 'phone-selector'}
 redis = Redis.from_url(os.getenv('REDIS_URL','redis://localhost:6379/0'))
 queue = Queue('searchhh',connection=redis)
 security = HTTPBearer()
@@ -29,6 +30,12 @@ def authorized(credentials: HTTPAuthorizationCredentials = Depends(security)):
 @asynccontextmanager
 async def lifespan(app):
     Base.metadata.create_all(engine)
+    # Keep deployments created before adapter selection usable without requiring
+    # a migration tool at runtime. This is additive and stores no credentials.
+    with engine.begin() as conn:
+        columns = {column['name'] for column in inspect(conn).get_columns('search_jobs')}
+        if 'adapter' not in columns:
+            conn.execute(text('ALTER TABLE search_jobs ADD COLUMN adapter VARCHAR(40)'))
     yield
 
 app = FastAPI(title='Searchhh',version='0.1.0',lifespan=lifespan,description='Private, keyless public-web discovery. Source keys are not needed; the access token protects your own server.')
@@ -38,6 +45,7 @@ class StartSearch(BaseModel):
     mode: Literal['opportunities','links'] = 'opportunities'
     engines: list[str] = Field(min_length=1,max_length=len(CATALOG))
     crawl: bool = False
+    adapter: str | None = None
     @field_validator('query')
     @classmethod
     def valid_query(cls,value):
@@ -50,13 +58,19 @@ class StartSearch(BaseModel):
         if not set(value)<=ENGINE_IDS:
             raise ValueError('Unknown or credential-requiring source')
         return list(dict.fromkeys(value))
+    @field_validator('adapter')
+    @classmethod
+    def valid_adapter(cls,value):
+        if value is not None and value not in ADAPTER_IDS:
+            raise ValueError('Unknown or unavailable crawler profile')
+        return value
 
 @app.get('/health')
 def health():
     with engine.connect() as conn:
         conn.execute(text('SELECT 1'))
     redis.ping()
-    return {'status':'ok','source_count':len(CATALOG)}
+    return {'status':'ok','source_count':len(CATALOG),'crawler_profiles':sorted(ADAPTER_IDS)}
 
 @app.get('/v1/engines',dependencies=[Depends(authorized)])
 def engines():
@@ -69,7 +83,14 @@ def start(request: StartSearch):
         with Session.begin() as db:
             if db.scalar(select(func.count()).select_from(SearchJob).where(SearchJob.status.in_(['queued','running']))):
                 raise HTTPException(409,'Stop the existing swarm first')
-            job = SearchJob(id=str(uuid4()),query=request.query,mode=request.mode,engines=request.engines,crawl=int(request.crawl))
+            job = SearchJob(
+                id=str(uuid4()),
+                query=request.query,
+                mode=request.mode,
+                engines=request.engines,
+                crawl=int(request.crawl),
+                adapter=request.adapter,
+            )
             db.add(job)
         try:
             queue.enqueue('searchhh.worker.run_round',job.id,job_timeout=240)
@@ -86,7 +107,7 @@ def status(job_id: str):
         if not job: raise HTTPException(404,'Search not found')
         rows=list(db.scalars(select(SearchResult).where(SearchResult.job_id==job_id)))
         results=sorted([r.payload for r in rows],key=lambda r:(r['published'] is not None,r['published'] or '',r['score']),reverse=True)
-        return {'id':job.id,'status':job.status,'round':job.round,'duplicates':job.duplicates,'filtered':job.filtered,'errors':job.errors,'results':results}
+        return {'id':job.id,'status':job.status,'round':job.round,'duplicates':job.duplicates,'filtered':job.filtered,'errors':job.errors,'results':results,'adapter':job.adapter}
 
 @app.post('/v1/jobs/{job_id}/stop',dependencies=[Depends(authorized)])
 def stop(job_id: str):

@@ -68,11 +68,15 @@ class LocalBackend private constructor(
                         catalog.any { it.id == id }
                     },
             ) { "Unknown or empty source selection" }
+            val adapter =
+                CrawlerAdapters.byId(request.adapter)
+                    ?: CrawlerAdapters.default.takeIf { request.adapter == null }
+                    ?: error("Unknown or unavailable crawler profile")
             check(current?.status !in listOf("running", "queued")) { "Stop the current swarm first" }
-            val initial = JobStatus(UUID.randomUUID().toString(), "running", 0, 0, 0, emptyList(), emptyList())
+            val initial = JobStatus(UUID.randomUUID().toString(), "running", 0, 0, 0, emptyList(), emptyList(), adapter.id)
             current = initial
             persist(initial)
-            worker = scope.launch { runPasses(initial.id, request) }
+            worker = scope.launch { runPasses(initial.id, request, adapter) }
             reviewWorker = scope.launch { reviewPasses(initial.id, request.query) }
             JobStarted(initial.id, initial.status)
         }
@@ -107,6 +111,7 @@ class LocalBackend private constructor(
     private suspend fun runPasses(
         id: String,
         config: StartRequest,
+        adapter: CrawlerAdapter,
     ) {
         portals.reset()
         try {
@@ -114,7 +119,7 @@ class LocalBackend private constructor(
             while (currentCoroutineContext().isActive) {
                 val old = current?.takeIf { it.id == id && it.status == "running" } ?: break
                 val selected = chunks[old.round % chunks.size].map { key -> catalog.single { it.id == key } }
-                val batch = portals.search(config.query, selected, config.mode, config.crawl)
+                val batch = portals.search(config.query, selected, config.mode, config.crawl, adapter)
                 currentCoroutineContext().ensureActive()
                 val found = batch.rows
                 val errors = batch.errors
@@ -229,9 +234,10 @@ class LocalBackend private constructor(
             "installationId" to (LocalIdentity.load(app)?.id ?: "not initialized"),
             "catalogSources" to catalog.size,
             "catalogCodebases" to codebases.entries.size,
-            "codebaseExecution" to "Reference catalogue; not installed crawler runtimes",
+            "codebaseExecution" to "Four reviewed Android-native profiles; other catalogue entries are not installed runtimes",
             "searchConnection" to "Direct global portal crawl; no general search engine required",
             "runtime" to "Android/Kotlin/Room",
+            "crawlerProfiles" to CrawlerAdapters.available.map { "${it.id}: ${it.implementation}" },
             "aiModelIncluded" to false,
             "externalAiEnabled" to ai.vault.enabled(),
             "aiStatus" to ai.status,

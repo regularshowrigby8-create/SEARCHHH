@@ -42,6 +42,23 @@ def test_scrapy_adapter_reuses_both_extractors():
     assert any(r['url'] == 'https://forms.cloud.microsoft/r/test' for r in rows)
 
 
+def test_declared_profiles_select_bounded_extraction(monkeypatch):
+    response = HtmlResponse('https://example.org/programme', body=HTML.encode(), encoding='utf-8')
+    spider = OpportunitySpider(seeds=['https://example.org/programme'])
+
+    monkeypatch.setenv('SEARCHHH_CRAWLER_PROFILE', 'phone-structured')
+    structured = list(spider.parse(response))
+    assert [row['engine'] for row in structured] == ['Extruct JSON-LD']
+
+    monkeypatch.setenv('SEARCHHH_CRAWLER_PROFILE', 'phone-article')
+    article = list(spider.parse(response))
+    assert len(article) == 1 and article[0]['engine'] == 'Trafilatura profile'
+
+    monkeypatch.setenv('SEARCHHH_CRAWLER_PROFILE', 'phone-selector')
+    selector = list(spider.parse(response))
+    assert len(selector) == 1 and selector[0]['engine'] == 'Parsel profile'
+
+
 def test_invalid_and_oversized_payloads_and_form_guards():
     assert structured_rows('<script type="application/ld+json">broken</script>', 'https://example.org/') == []
     assert structured_rows(HTML, 'http://127.0.0.1/') == []

@@ -17,7 +17,8 @@ def test_authenticated_start_status_stop_and_dedup():
         assert client.get('/v1/engines',headers={'Authorization':'Bearer invalid'}).status_code==401
         assert len(client.get('/v1/engines',headers=HEADERS).json())==128
         assert client.post('/v1/jobs',headers=HEADERS,json={'query':'hi','engines':['fake']}).status_code==422
-        response=client.post('/v1/jobs',headers=HEADERS,json={'query':'free cohort','engines':['github'],'crawl':False})
+        assert client.post('/v1/jobs',headers=HEADERS,json={'query':'free cohort','engines':['github'],'adapter':'not-a-profile'}).status_code==422
+        response=client.post('/v1/jobs',headers=HEADERS,json={'query':'free cohort','engines':['github'],'crawl':False,'adapter':'phone-structured'})
         assert response.status_code==201
         job_id=response.json()['id'];queue.enqueue.assert_called_once()
         assert client.post('/v1/jobs',headers=HEADERS,json={'query':'other','engines':['github']}).status_code==409
@@ -26,6 +27,7 @@ def test_authenticated_start_status_stop_and_dedup():
             run_round(job_id)
         state=client.get('/v1/jobs/'+job_id,headers=HEADERS).json()
         assert len(state['results'])==1 and state['duplicates']==1 and state['round']==1
+        assert state['adapter']=='phone-structured'
         assert state['errors']==['bing: rate limited']
         assert client.post('/v1/jobs/'+job_id+'/stop',headers=HEADERS).json()['status']=='stopped'
         with patch('searchhh.worker.httpx.Client') as http:

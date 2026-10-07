@@ -45,15 +45,19 @@ class OpportunitySpider(scrapy.Spider):
         if not isinstance(response,scrapy.http.TextResponse): return
         title=response.css('title::text').get('')
         if BOT.search(title): return
+        profile=os.getenv('SEARCHHH_CRAWLER_PROFILE','phone-scheduler')
         description=article_text(response.text) or response.css('meta[name="description"]::attr(content)').get('')
-        yield from structured_rows(response.text, response.url)
-        yield {'url':response.url,'title':title,'content':description,'engine':'Scrapy','publishedDate':response.css('meta[property="article:published_time"]::attr(content)').get()}
-        for a in response.css('a[href]')[:200]:
-            url=response.urljoin(a.attrib['href'])
-            text=' '.join(a.css('::text').getall()).strip()
-            if public_url(url) and (is_form(url) or SIGNALS.search(text+' '+url)):
-                # Discover links without fetching form contents, submitting, or recursive expansion.
-                yield {'url':url,'title':text or 'Application link','content':'Discovered on '+urlsplit(response.url).hostname+'. Application status is unverified.','engine':'Scrapy'}
+        if profile in ('phone-scheduler','phone-structured'):
+            yield from structured_rows(response.text, response.url)
+        if profile in ('phone-scheduler','phone-article'):
+            yield {'url':response.url,'title':title,'content':description,'engine':'Trafilatura profile' if profile == 'phone-article' else 'Scrapy','publishedDate':response.css('meta[property="article:published_time"]::attr(content)').get()}
+        if profile in ('phone-scheduler','phone-selector'):
+            for a in response.css('a[href]')[:200]:
+                url=response.urljoin(a.attrib['href'])
+                text=' '.join(a.css('::text').getall()).strip()
+                if public_url(url) and (is_form(url) or SIGNALS.search(text+' '+url)):
+                    # Discover links without fetching form contents, submitting, or recursive expansion.
+                    yield {'url':url,'title':text or 'Application link','content':'Discovered on '+urlsplit(response.url).hostname+'. Application status is unverified.','engine':'Parsel profile' if profile == 'phone-selector' else 'Scrapy'}
 
 def is_form(url):
     p=urlsplit(url)
