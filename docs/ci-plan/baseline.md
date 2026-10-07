@@ -75,10 +75,19 @@ Across the 12 newest completed runs on the baseline tip, executed (non-skipped) 
 Wall clock per run: **avg 12.1 min**, min 0.3 (cancelled), max 20.6 (CodeQL).
 Verification runs specifically: **10.5–11.3 min**; caller PR run: **10.1–12.4 min**.
 
-Aggregate cost of one push, in runner-minutes: 83.4/9 + 12.1 ≈ **~21 runner-minutes per
-verification run**, ×2 duplicate runs ≈ **~42 runner-minutes per push**, plus the caller's
-nested repeat of the same lanes (≈ +20). `detekt`+`formatting` = 4.2 min of that is
-re-executed inside `device-and-evidence`'s own `searchhhVerification` call.
+Aggregate cost of one push, in runner-minutes. An earlier draft of this line added the *wall
+clock* (12.1) to one job average and produced "~21 min per verification run"; that was wrong —
+wall clock is not a job cost, and the chains overlap. Recomputed properly by summing executed
+job durations per run (`started_at` → `completed_at`, `success`/`failure` only), over 16
+completed `Android verification` runs and 7 completed caller runs on this branch:
+
+* one verification chain = **29.10 runner-min avg** (min 20.63, max 34.53), device job **10.09 avg**;
+* one caller chain (its nested `quality` job plus whatever else executed) = **29.62 avg**;
+* **3 completed chains per pushed SHA** was the steady state on `arena/3674d801-searchhh`
+  (verification push + verification PR + the caller's nested repeat) — the caller had no push run
+  on this branch at all, so the 4th run in the "runs per push" table above was CodeQL, not a chain;
+* ⇒ **≈87 runner-minutes of verification per pushed SHA**, of which `detekt`+`formatting`
+  (4.2 min) are additionally re-executed inside `device-and-evidence`'s own `searchhhVerification`.
 
 ## What this baseline proves about the waste
 
@@ -96,12 +105,17 @@ re-executed inside `device-and-evidence`'s own `searchhhVerification` call.
    completed caller runs** (89 had the jobs; all skipped), so they burn no CI minutes today —
    the waste there is latent (a fixed `v0.4.1` tag and file name), not current.
 
-## After — measured on the first hosted run of the reworked chain
+## After — measured on the reworked chain
 
 Head SHA `1ae2f445fbcc440670c183174fc970823ef51fe3` on `arena/132b2d0f-searchhh`.
 Run [37564054844](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/37564054844)
 (`Searchhh checks and APK`, `pull_request`, 2026-10-07 02:52:22 → 03:03:21 UTC), jobs read
 from the Jobs API with per-step conclusions and check annotations.
+
+**Six completed chains** were measured on the reworked branch, across four head SHAs
+(`1ae2f44`, `a709e01`, `71601d1`, `d743d10`), using the same sum-of-executed-job-durations method
+as the recomputed baseline above: **27.51 runner-min avg** (min 25.88, max 29.83) against
+**29.10** before, and `device-and-evidence` **8.61 min avg** against **10.09** before.
 
 | job | min | conclusion |
 |---|---:|---|
@@ -128,19 +142,20 @@ first run.
 
 Deltas against the table above, each tied to the step/annotation that shows it:
 
-* **Runs per pushed SHA: 4 → 2** (one `push` chain on the exact head SHA + one `pull_request`
-  chain on the merge ref), and **1** for a branch with no open PR. No `Android verification` run
-  exists for this SHA at all, which was the point of A2: the old shape ran that workflow directly
-  *and* through the caller, twice per event.
+* **Completed verification chains per pushed SHA: 3 → 2** (one `push` chain on the exact head SHA
+  + one `pull_request` chain on the merge ref), and **1** for a branch with no open PR. No
+  `Android verification` run exists for any SHA on this branch at all, which was the point of A2:
+  the old shape ran that workflow directly *and* through the caller's nested call.
+  Measured rather than argued: every one of the six sampled baseline SHAs had exactly 3 completed
+  chains; `71601d1` and `d743d10` have exactly 2.
   The first iteration keyed concurrency on `github.workflow` + `head_ref || ref_name` only, and run
   [37563976951](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/37563976951)
   was caught **cancelled by the PR run** the moment PR #3 opened (02:53:00). That is dedupe, but it
   was too much: a `pull_request` run checks out `refs/pull/N/merge`, so cancelling the branch-`push`
   run removes the only evidence recorded against the exact head SHA that `required-quality` is
-  judged on. The event is therefore part of the group key in `a709e01`+ (see the follow-up commit),
-  which keeps the win — repeated pushes to the same ref still supersede their own kind — and leaves
-  the exact-SHA evidence intact. Recorded here because the mistake and its correction are both
-  evidence about the gate.
+  judged on. The event is therefore part of the group key in `71601d1`, which keeps the win —
+  repeated pushes to the same ref still supersede their own kind — and leaves the exact-SHA evidence
+  intact. Recorded here because the mistake and its correction are both evidence about the gate.
 * **Emulator sessions per pushed SHA: 3 executed → 2** while a PR is open (one per surviving
   chain), and 2 → 1 for a branch with no PR. Per chain it is now always exactly 1, and the device
   job's duration is unchanged (9.42 and 8.42 min against a 9.3 min baseline average), i.e. the
@@ -178,3 +193,36 @@ read `android-detekt-<run_id>` (`report_transport.selected()` accepts
 requires a file literally named `quality-formatting.log` plus `format_report_mode:
 console-only-no-machine-report` — can no longer be satisfied. Naming is intentionally untouched
 here; the parser/format decision belongs to ticket E.
+
+## Correction, same day — per-chain cost recomputed; three bullets above are superseded
+
+While assembling the final report I re-derived the numbers instead of trusting my own earlier
+derivation, and found an arithmetic error in this file (already fixed in the "What this baseline
+proves" section): I had added a *wall clock* figure to a *job average* and published "~21
+runner-minutes per verification run". Summing executed job durations per run, over 16 completed
+`Android verification` runs + 7 caller runs before and 6 completed chains after, gives:
+
+| metric | before (measured) | after (measured) | note |
+|---|---:|---:|---|
+| completed chains per pushed SHA | 3 | 2 with an open PR, 1 without | every one of 6 sampled baseline SHAs had exactly 3 |
+| runner-minutes per chain | **29.10** avg (20.63–34.53) | **27.51** avg (25.88–29.83) | **−1.6 min**, not "+6 min" |
+| `device-and-evidence` per chain | 10.09 avg | 8.61 avg | −1.5 min (−15%), from lifting host checks out of the emulator job |
+| executed runner-minutes per pushed SHA | ≈87 | ≈55 | −37%, and it comes from chain count **plus** a slightly cheaper chain |
+| emulator sessions per pushed SHA | 3 | 2 | one per surviving chain, always |
+
+Therefore, superseding what is written above:
+
+1. **"Runs per pushed SHA: 4 → 2"** → the correct unit is *completed chains*: **3 → 2**.
+   "4 runs" counted CodeQL, which is not a verification chain and is out of scope here.
+2. **"the device job's duration is unchanged (9.42 and 8.42 min against a 9.3 min baseline
+   average)"** → against a correctly measured baseline (10.09 min) the device job is
+   **1.5 min faster on average**, which is the point of A3 and is now visible in the data rather
+   than only in the diagnostics.
+3. **"Per-chain runner-minutes went up, and that is not explained away"** → withdrawn. Per chain
+   they went **down** by ~1.6 min; there is no regression to explain. The individual after-samples
+   are 27.97 (`1ae2f44` PR), 29.83 (`a709e01` PR), 27.65 / 25.88 (`71601d1` push / PR) and
+   26.83 / 26.92 (`d743d10` push / PR). Six samples on four SHAs is still not a trend, but it is
+   no longer pointing the wrong way, and `release-checks` variance is not caused by this change.
+
+Same caveat as before, unchanged: **no gate passed**. Every quality lane still fails on
+pre-existing debt, `required-quality` is red, and everything downstream stays `skipped`.
