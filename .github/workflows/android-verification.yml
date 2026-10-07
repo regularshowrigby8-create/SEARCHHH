@@ -28,6 +28,11 @@ jobs:
         run: python3 tools/quality/interactions.py --check
       - name: Reject unfinished production and test code
         run: python3 tools/quality/unfinished.py
+      # The release validator pins versionName/versionCode inline; if those two copies of the truth
+      # drift, release_apk.py rejects correct artifacts while the build ships ungate-checked ones.
+      # Reading side-effects fail closed here: an unreadable pin is an error, never a pass.
+      - name: Verify Gradle version and release_apk.py pins agree
+        run: python3 tools/quality/version_parity.py
       - uses: actions/upload-artifact@v7
         if: always()
         with:
