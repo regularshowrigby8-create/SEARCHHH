@@ -164,7 +164,8 @@ grep for callers). Whether the remaining ~13,844 historical occurrences are most
 **unknown**, not assumed. `.editorconfig` toggles or
 `ktlint_disabled_rules` would suppress, and are therefore **not** available under rule 4.
 
-## 4 · unfinished-code — complete census, 116 findings
+## 4 · unfinished-code — complete census, 116 findings *(as of `f1e07d0`; §10 records what has
+since been fixed for real, and the census below is deliberately left at its measured values)*
 
 `Scanned 590 files; 116 findings; 0 checker errors`, exit 1 (fails closed, unchanged by any work
 in this session). `quality/unfinished-exceptions.json` is **`[]`** — the fingerprinted-exception
@@ -365,7 +366,7 @@ owner can pick from, one cluster per ticket under the WIP limit.
 | C2 | ktlint auto-correctable rules | **unknown** correctable share (both currently-visible findings are marked non-correctable) | `ktlintFormat` in one human-reviewed commit | clears a task only if *every* finding in that source set is correctable |
 | C3 | non-auto-correctable ktlint (`MaxLineLength`, casing) | unknown tail | hand edits, high churn, touches call sites | remaining ktlint tasks |
 | C4 | our injected-script swallows | 25 | mechanical + small behavior review | −25 unfinished findings |
-| C5 | `MissingTranslation` | 99 | mixed (real translations vs `translatable="false"`) | −99 lint errors |
+| C5 | `MissingTranslation` | 99 | **9 keys need a product/translation decision + 90 need bulk translations**; `translatable="false"` is only correct for internal strings, and none of the 99 is internal (see §11) | −99 lint errors, but only via translations |
 | C6 | dependency advisories (`GradleDependency` 46, `NewerVersionAvailable` 46, AGP 4, `UseTomlInstead` 4, `OldTargetApi` 2, plus 3 `UseKtx`) | 105 rows / ≈59 unique | **decision**: upgrade cadence, or the scope of `checkDependencies` / `warningsAsErrors` — the latter is a policy change, not a fix | −105 rows from both library reports |
 | C7 | Android API-shape no-ops (listener defaults 21, constant interface defaults 9, `onBind` 2) | 32 | mostly fingerprinted exceptions (owner+expiry+regression test each); alternative is abstracting the listener bases | −32 unfinished findings without changing behaviour |
 | C8 | Detekt `MagicNumber` etc. | subset of 2,602 weighted | mixed; needs the blocked census first | unblocks `:detekt` only if the whole 2,602 goes to 0 |
@@ -437,3 +438,166 @@ Listed so the totals are not misread as the whole path to green:
    access. Both are small; both touch tool code, so they need their own ticket under the WIP limit.
 6. Should `app/lint-baseline.xml` stay as inert historical evidence (current policy text), or be
    deleted with §6 amended? Either way it is your edit, not mine.
+
+## 10 · Remediation log — what was fixed after this inventory, and what was not
+
+Recorded here so the census above is never mistaken for the current state. Every batch was a real
+code change: no baseline, no `tools:ignore`, no `@SuppressLint`, no `ktlint-disable`, no severity
+edit, and `quality/unfinished-exceptions.json` is still `[]`.
+
+| batch | commit | what | census before → after | lint | how it was verified without a compiler |
+|---|---|---|---:|---|---|
+| A | `6adf92e` | 25 empty `catch` blocks in `app/src/main/assets/*.js` — our injected page scripts | 116 → 91 | unchanged | `node --check` on all 40 asset scripts (0 failures, 0 before as well); token-stream diff proving **0 tokens removed, +25 `console.*` calls only, brace counts identical**, every inserted identifier an existing catch binding |
+| B | `60e3733` | 7 swallowed failures in Kotlin where silence = "the user's action did nothing" (external-link launch ×2, EPUB rollback delete, background WebView teardown, filter-data clear, provider error-body read ×2) | 91 → 84 | unchanged | per-file brace balance net-zero; one added statement per existing `catch`, each using that file's own logger idiom (`Timber.w`, `Log.w`, or `android.util.Log.e` where the file imports no logger), every added line < ktlint's 140 limit; compile + the 371 tests verified by CI only |
+| — | not done | 31 remaining `silent-catch`: fallbacks inside per-item / per-request loops (`BookmarkRenderer` ×3, the ad-block path parse, `BookmarkDao` whose comment states the intent, `ChatWebInterface` which already returns the error to its caller) | 84 | — | **left alone deliberately**: a log line inside those loops converts one real failure into thousands on a device with no log buffer to spare. Needs per-site judgment, i.e. §9 question 3. |
+
+Nothing in the two batches above reduces a *lint* count, which is the point worth being blunt about:
+`required-quality` still fails on 84 unfinished findings + 465 lint errors + 2,602 Detekt issues +
+7 ktlint tasks, so there is still no APK. The code that ships is more debuggable, not greener.
+
+
+## 11 · `MissingTranslation` decomposed — the 99 findings are 9 + 90, and none is fixable mechanically
+
+Computed locally from `app/src/main/res/values*/` (no lint report needed): `654` keys in the default config, **30** locale folders qualify as translations (≥50% key coverage), 4 folders are configuration qualifiers rather than languages (`values-night-v31`, `values-night`, `values-v31`, `values-v34`). The rule fires **once per key**, not once per key×locale — which is why 2528 missing (key, locale) pairs are reported as 99 findings, and it reproduces the `MissingTranslation 99` group of run 37564054844 exactly.
+
+- **9 keys are absent from every translated locale**: added in English only. One decision each.
+- **90 keys are present in most locales and missing from a few**: drift, mostly one new key per locale batch.
+
+### A. The 9 never-localised keys — these are the ones worth deciding first
+
+| key | English text | referenced from | suggested action |
+|---|---|---|---|
+| `error_download_save_failed` | “Downloaded, but saving the file failed” | unit/DownloadHelper.kt | translate (error text shown to the user) |
+| `searchhh_webview_back` | “Back” | searchhh/web/SearchhhResultsWebViewActivity.kt | translate (content description: TalkBack reads it) |
+| `searchhh_webview_reload` | “Reload” | searchhh/web/SearchhhResultsWebViewActivity.kt | translate (content description) |
+| `searchhh_webview_results` | “Searchhh results” | searchhh/web/SearchhhResultsWebViewActivity.kt | translate (content description) |
+| `searchhh_webview_title` | “Searchhh WebView” | searchhh/web/SearchhhResultsWebViewActivity.kt | translate or `translatable="false"` if it is only a debug-screen title |
+| `setting_summary_http` | “Allow insecure HTTP top-level navigation. Keep disabled ” | setting/screens/StartSettings.kt | translate (settings screen summary) |
+| `setting_title_http` | “Allow HTTP pages” | setting/screens/StartSettings.kt | translate (settings screen title) |
+| `site_webview_dark_mode` | “WebView dark mode” | activity/SiteRuleListActivity.kt, view/dialog/compose/SiteSettingsDialogFragment.kt | translate (settings entry title) |
+| `toast_http_blocked` | “HTTP navigation blocked. Enable Allow HTTP pages only fo” | browser/NinjaWebViewClient.kt | translate (it is a toast: user-visible by definition) |
+
+All 9 are read at runtime by the app (nothing here is dead), so **`translatable="false"` is the wrong instrument for most of them** — the honest fix is translations, or `translatable="false"` only where the string is genuinely internal (which the reference column above is meant to show). Marking a user-visible string non-translatable silences the finding and leaves 30 languages showing English: that is suppression with extra steps, so no entry was changed by this inventory.
+
+### B. The 90 drift keys — missing per locale, no decision needed to start
+
+This is a mechanical backlog: each row needs the string added to the listed locale files. Keys are ordered by how many locales lack them.
+
+| key | English text | missing in | n |
+|---|---|---|---:|
+| `backup_category_database_data` | “Database (Highlights, AI Queries, Site Setti” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `changelog_url` | “https://plateaukao.github.io/einkbro/downloa” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rCN | 29 |
+| `default_value_hint` | “default” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `gemini_in_place` | “Gemini in-place” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `go_to` | “Click” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `menu_save_mht` | “Save as MHT” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `openai_in_place` | “OpenAI in-place” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `reset_to_global` | “Reset All to Global” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `search_settings_hint` | “Search settings…” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `setting_section_advanced` | “Advanced” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `setting_section_typography` | “Typography” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `setting_summary_share_long_press` | “Action when long pressing the share icon” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `setting_summary_userscripts` | “Manage Tampermonkey-style userscripts” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `setting_summary_video_autoplay` | “Allow videos to play automatically without u” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `setting_title_share_long_press` | “Share long press action” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `setting_title_userscripts` | “Userscripts” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `setting_title_video_autoplay` | “Allow video autoplay” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `share_long_press_copy_link` | “Copy link” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `share_long_press_last_target` | “Share to last app” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `site_custom_css` | “Custom CSS” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `site_post_load_js` | “Post-Load JavaScript” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `site_settings` | “Site Settings” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `site_settings_overrides_count` | “%1$d override” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `site_settings_overrides_count_plural` | “%1$d overrides” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_add` | “Add userscript” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_browse` | “Find userscripts on Greasy Fork” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_code` | “Userscript code” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_empty` | “No userscripts installed yet. Tap + to add o” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_fetch` | “Fetch” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_install_from_url` | “Install from URL” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_no_update_source` | “No update URL for this script” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_up_to_date` | “Already up to date” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_update` | “Check for update” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_update_failed` | “Update check failed” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `userscript_updated` | “Updated to v%1$s” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi, zh-rTW | 29 |
+| `action_category_ai` | “AI” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_bookmarks` | “Bookmarks & History” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_content` | “Content” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_dialog` | “Dialogs & UI” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_file` | “Files” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_navigation` | “Navigation” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_search` | “Search” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_share` | “Share” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_tab` | “Tabs” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_touch` | “Touch” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_translation` | “Translation” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_tts` | “Text-to-speech” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_category_view` | “View” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_fast_toggle` | “Fast toggle” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_save_web_archive` | “Save web archive” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_selected_label` | “Selected action” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_summarize_content` | “Summarize page” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `action_text_search` | “Text search” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `setting_section_statusbar` | “Info bar” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `setting_section_toolbar` | “Toolbar” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `setting_summary_statusbar_enabled` | “A slim bar with time, page info, battery, wi” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `setting_summary_statusbar_items` | “Choose which items appear and reorder them” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `setting_title_statusbar_enabled` | “Show info bar when toolbar is hidden” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `setting_title_statusbar_items` | “Info bar items” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `setting_title_statusbar_position` | “Info bar position” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `share_receiving` | “Receiving data…” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `statusbar_config_available` | “Available items” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `statusbar_config_available_hint` | “click icon to add it to the info bar” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `statusbar_config_preview` | “Preview” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `statusbar_config_preview_hint` | “click icon to remove; long click to drag and” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `statusbar_item_battery` | “Battery” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `statusbar_item_volume_pagination` | “Volume page turn” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `statusbar_item_wifi` | “Wifi” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `statusbar_position_bottom` | “Bottom” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `statusbar_position_top` | “Top” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `task_custom` | “Custom task…” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `task_custom_desc` | “Describe a multi-step task in natural langua” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `task_custom_hint` | “e.g. open the top 3 story links and give me ” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `task_menu_title` | “Tasks” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `task_read_article_list` | “News anchor” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `task_read_article_list_desc` | “Extract article links from this page, then o” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `task_requires_openai` | “Custom tasks require OpenAI (not Gemini).” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `task_run` | “Run” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `task_unknown` | “Unknown task.” | af, ar, ca, cs, da, de, el, es, fi, fr, hu, in, it, iw, ja, ko, nl, no, pl, pt, ro, ru, sat, sr, sv, tr, uk, vi | 28 |
+| `backup_category_chat_sessions` | “AI Chat Sessions” | sat | 1 |
+| `backup_category_transcripts` | “Video Transcripts” | sat | 1 |
+| `backup_category_userscripts` | “Userscripts” | sat | 1 |
+| `menu_save_archive` | “Save for later” | ru | 1 |
+| `setting_summary_ui_theme` | “Accent color for buttons, borders, and dialo” | sat | 1 |
+| `setting_title_border` | “Border” | sat | 1 |
+| `setting_title_export_userscripts` | “Export userscripts” | sat | 1 |
+| `setting_title_fill` | “Fill” | sat | 1 |
+| `setting_title_import_userscripts` | “Import userscripts” | sat | 1 |
+| `setting_title_ui_theme` | “Theme” | sat | 1 |
+| `theme_section_color` | “Color” | sat | 1 |
+
+### What this changes about the remediation plan
+
+`docs/ci-plan/debt-inventory.md` §6 cluster C5 said “`MissingTranslation` 99, mixed”. Now it is: **9 keys needing a per-key product/translation decision, plus 90 keys needing bulk translation additions**. Neither is a lint-baseline-shaped problem, and both are translation work rather than code work — which is why the count is still 99 and not 0 after the code batches that did land.
+
+
+## 12 · Why no APK exists at this head, stated exactly
+
+`release-build` is unreachable from `required-quality`, and `required-quality` needs all four source
+lanes at zero. The remaining honest path is ordered by what CI can actually verify in this
+environment (no JVM/SDK here, and the Maven/Gradle/Google endpoints refuse connections, so this
+sandbox can never build):
+
+1. `UseKtx` 85 and `TrimLambda` 5 — mechanical, but the **per-site list is unreadable** here (only
+   counts and one sample file are published), so any sweep would be guesswork; needs `ci-summary.json`
+   or the lint XML reachable (§9 question 5). This is why they were not attempted, not because they
+   look hard.
+2. `MissingTranslation` 99 — translation work, §11 gives the exact key list; not code work.
+3. Detekt 2,602 weighted / ktlint 7 tasks — blocked on the same census gap.
+4. `:verifyInteractionEvidence` — 42 required scenarios in `quality/required-scenarios.json`, of
+   which **31 carry only `{"blocker": "Not yet linked to complete executed behavior evidence"}`**.
+   Those need instrumented tests that *execute* on a device and then satisfy `evidence.py`'s
+   contract check (an action followed by an assertion, plus fresh JUnit XML). Writing tests that
+   pattern-match the checker without exercising behaviour is gate-gaming, not evidence, so it was
+   not done. This is Lane B's territory, which I was told not to start.
+
