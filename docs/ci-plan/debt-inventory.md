@@ -327,8 +327,13 @@ has to confirm the intent and either document it as an exception or wire the beh
    up.
 4. Its largest group, `LogNotTimber` (112 of 255 entries), refers to a rule that does not appear in
    the current published groups at all.
+5. And it would not even work as a shortcut: its `UseKtx` coverage is **73 entries against the 85**
+   `UseKtx` errors reported today, so wiring it back up would leave 12 of that one group firing. A
+   baseline is a snapshot of one moment, which is precisely why rule 4 forbids leaning on one.
 
-File facts: 2,805 lines, 255 `<issue>` entries, 31 distinct ids.
+File facts (from the parsed XML, not `grep -c`, which also counts a nested occurrence): 2,805 lines,
+255 `<issue>` elements, 31 distinct ids — top groups `LogNotTimber` 112, `UseKtx` 73,
+`AutoboxingStateValueProperty` 8, `TrimLambda` 5.
 
 **Does `AGENTS.md` rule 4 allow it? No.** Rule 4: *"No blanket baselines, disabled tests, ignored CI
 failures, swallowed exceptions, removal of unfinished markers without resolving the underlying
