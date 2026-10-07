@@ -119,10 +119,19 @@ Wall clock 10.98 min. Executed runner-minutes 27.97. Seven caller jobs (`framewo
 
 Deltas against the table above, each tied to the step/annotation that shows it:
 
-* **Runs per pushed SHA: 4 → 1.** No `Android verification` run exists for this SHA at all, and
-  the push run [37563976951](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/37563976951)
-  was **cancelled by the caller's new concurrency group** the moment PR #3 opened (02:53:00) —
-  the intended push+PR collapse, observed live rather than argued from config.
+* **Runs per pushed SHA: 4 → 2** (one `push` chain on the exact head SHA + one `pull_request`
+  chain on the merge ref), and **1** for a branch with no open PR. No `Android verification` run
+  exists for this SHA at all, which was the point of A2: the old shape ran that workflow directly
+  *and* through the caller, twice per event.
+  The first iteration keyed concurrency on `github.workflow` + `head_ref || ref_name` only, and run
+  [37563976951](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/37563976951)
+  was caught **cancelled by the PR run** the moment PR #3 opened (02:53:00). That is dedupe, but it
+  was too much: a `pull_request` run checks out `refs/pull/N/merge`, so cancelling the branch-`push`
+  run removes the only evidence recorded against the exact head SHA that `required-quality` is
+  judged on. The event is therefore part of the group key in `a709e01`+ (see the follow-up commit),
+  which keeps the win — repeated pushes to the same ref still supersede their own kind — and leaves
+  the exact-SHA evidence intact. Recorded here because the mistake and its correction are both
+  evidence about the gate.
 * **Emulator sessions per pushed SHA: 3 executed → 1.**
 * **Host lanes 4 → 3**, and ktlint now bites instead of self-healing: the detekt lane carries
   `> Task :ktlintKotlinScriptCheck FAILED`, `:ad-filter:ktlintMainSourceSetCheck FAILED`,
