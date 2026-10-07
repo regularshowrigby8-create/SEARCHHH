@@ -2,12 +2,21 @@
 name: Searchhh checks and APK
 on:
   push:
-    branches: [arena/01a0ea36-searchhh]
+    # arena/** instead of the stale single-branch name arena/01a0ea36-searchhh, which no
+    # longer matches the branch under work (arena/3674d801-searchhh per BASELINE_VERIFICATION).
+    branches: [arena/**]
   pull_request:
   workflow_dispatch:
 permissions:
   contents: read
   actions: read
+# One group per branch or pull request, shared with the called verification workflow so a
+# single push produces a single verification chain. Keyed on head_ref for pull_request events
+# and ref_name otherwise; ref_name is a tag name on a tag push, so release chains are not
+# collapsed into the branch they were cut from.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 jobs:
   quality:
     uses: ./.github/workflows/android-verification.yml

@@ -1,16 +1,17 @@
 name: Android verification
+# Called workflow: the single push/pull_request entry point is buid-app-workflow.yaml.
+# The direct push and pull_request triggers here ran a second, identical full verification
+# for the same SHA (measured baseline: 4 runs and 3 emulator sessions per push), so they are
+# removed. merge_group stays because a merge queue must gate on this workflow directly.
 on:
-  push:
-  pull_request:
-    types: [opened, synchronize, reopened, edited, ready_for_review]
   merge_group:
   workflow_dispatch:
   workflow_call:
 permissions:
   contents: read
-concurrency:
-  group: android-quality-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# No concurrency block: the caller owns it so that the caller run and this called run share
+# one group. A key on github.ref can never deduplicate a push run against a PR run, because
+# they are refs/heads/<branch> and refs/pull/<n>/merge respectively.
 jobs:
   policy-and-source:
     runs-on: ubuntu-latest
