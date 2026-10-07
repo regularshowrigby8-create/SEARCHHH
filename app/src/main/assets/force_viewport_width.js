@@ -27,7 +27,9 @@
                 attributes: true,
                 attributeFilter: ['content', 'name']
             });
-        } catch (e) {}
+        } catch (e) {
+            console.error('einkbro force viewport width: the meta viewport observer could not be installed', e);
+        }
     }
 
     if (document.head) {

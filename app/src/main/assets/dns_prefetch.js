@@ -13,6 +13,8 @@
                 link.href = host;
                 document.head.appendChild(link);
             }
-        } catch(e) {}
+        } catch(e) {
+            console.error('einkbro dns prefetch: could not inject a prefetch link', e);
+        }
     }
 })();

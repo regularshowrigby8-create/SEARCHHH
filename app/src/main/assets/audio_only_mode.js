@@ -41,7 +41,9 @@
             } catch(e) {
                 try {
                     player.setPlaybackQualityRange('small', 'small');
-                } catch(e2) {}
+                } catch(e2) {
+                    console.error('einkbro audio-only mode: YouTube setPlaybackQualityRange fallback failed', e2);
+                }
             }
         }
     }
