@@ -1,0 +1,4166 @@
+[
+  {
+    "rule": "broad_catch",
+    "file": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/RelayProbeTest.kt",
+    "line": 30,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/RelayProbeTest.kt",
+    "line": 45,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "marker",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2161,
+    "excerpt": "TODO"
+  },
+  {
+    "rule": "marker",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2220,
+    "excerpt": "XXX"
+  },
+  {
+    "rule": "marker",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2540,
+    "excerpt": "TODO"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 472,
+    "excerpt": "catch (ex) {         // Something went wrong, just return the original:       }"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 590,
+    "excerpt": "catch (e) {       /* ignore exceptions setting the title. */     }"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2946,
+    "excerpt": "catch (e) { /* unparsable src: keep scanning */ }"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 450,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 1045,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 1593,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 1608,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 1615,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 1928,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 1932,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2038,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2058,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2078,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2286,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2295,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2318,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2329,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2559,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2564,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2568,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2575,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2584,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2625,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2634,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2712,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2729,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2734,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2783,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/MozReadability.js",
+    "line": 2864,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/audio_only_mode.js",
+    "line": 44,
+    "excerpt": "catch(e2) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/blob_download_hook.js",
+    "line": 9,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/blob_download_hook.js",
+    "line": 15,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/dns_prefetch.js",
+    "line": 16,
+    "excerpt": "catch(e) {}"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/favicon_probe.js",
+    "line": 22,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/fix_scrolling.js",
+    "line": 52,
+    "excerpt": "catch (ex) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/fix_scrolling.js",
+    "line": 57,
+    "excerpt": "catch (ex) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/fix_scrolling.js",
+    "line": 62,
+    "excerpt": "catch (ex) {}"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/fix_scrolling.js",
+    "line": 4,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/fix_scrolling.js",
+    "line": 27,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/force_viewport_width.js",
+    "line": 30,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/get_remaining_images.js",
+    "line": 16,
+    "excerpt": "catch(e) {}"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/github_include_fragment.js",
+    "line": 33,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/gm_shim.js",
+    "line": 11,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/gm_shim.js",
+    "line": 30,
+    "excerpt": "catch (e) { /* keep native Response if subclassing unsupported */ }"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/gm_shim.js",
+    "line": 60,
+    "excerpt": "catch (e2) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/gm_shim.js",
+    "line": 170,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/gm_shim.js",
+    "line": 177,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/gm_shim.js",
+    "line": 183,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/gm_shim.js",
+    "line": 190,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/gm_shim.js",
+    "line": 195,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/gm_shim.js",
+    "line": 199,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/gm_shim.js",
+    "line": 204,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/jsonld_article.js",
+    "line": 16,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/jsonld_article.js",
+    "line": 31,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/jsonld_article.js",
+    "line": 46,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/jsonld_article.js",
+    "line": 70,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/jsonld_article.js",
+    "line": 100,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/jsonld_article.js",
+    "line": 102,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/jsonld_article.js",
+    "line": 131,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/marked.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/marked.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/marked.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/marked.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/speech_synthesis_polyfill.js",
+    "line": 154,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/speech_synthesis_polyfill.js",
+    "line": 170,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/speech_synthesis_polyfill.js",
+    "line": 176,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/text_node_monitor.js",
+    "line": 12,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/text_node_monitor.js",
+    "line": 28,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/text_node_monitor.js",
+    "line": 46,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/text_node_monitor.js",
+    "line": 101,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/text_node_monitor.js",
+    "line": 104,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/text_node_monitor.js",
+    "line": 106,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 125,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 222,
+    "excerpt": "catch (error) {   }"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 26,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 28,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 43,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 50,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 51,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 53,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 57,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 292,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/assets/translate_by_paragraph.js",
+    "line": 294,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/assets/zoom-text-wrap-reflow.js",
+    "line": 325,
+    "excerpt": "catch (e) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/EinkBroApplication.kt",
+    "line": 254,
+    "excerpt": "catch (_: Exception) {         }"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/EinkBroApplication.kt",
+    "line": 254,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/EpubReaderActivity.kt",
+    "line": 79,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 57,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 61,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 62,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 79,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 97,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 181,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 263,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 273,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 280,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 303,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "line": 306,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
+    "line": 426,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
+    "line": 493,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
+    "line": 507,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "empty_click",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
+    "line": 413,
+    "excerpt": "onClick = { }"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
+    "line": 255,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TabManager.kt",
+    "line": 328,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TabManager.kt",
+    "line": 467,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/BookmarkActionsDelegate.kt",
+    "line": 44,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/FullscreenDelegate.kt",
+    "line": 100,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TaskMenuDelegate.kt",
+    "line": 123,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TaskMenuDelegate.kt",
+    "line": 126,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TaskMenuDelegate.kt",
+    "line": 86,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TaskMenuDelegate.kt",
+    "line": 117,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TaskMenuDelegate.kt",
+    "line": 133,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TranslationDelegate.kt",
+    "line": 238,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TranslationDelegate.kt",
+    "line": 274,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/BaseWebConfig.kt",
+    "line": 60,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/BaseWebConfig.kt",
+    "line": 67,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 154,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 186,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 218,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 229,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 240,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 410,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 598,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 670,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 113,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 121,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 126,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 139,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 160,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 198,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 224,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ChatWebInterface.kt",
+    "line": 235,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EBWebChromeClient.kt",
+    "line": 61,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EBWebChromeClient.kt",
+    "line": 106,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 25,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 27,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 30,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 38,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 57,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 64,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 68,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 70,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 79,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 84,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 125,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 137,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 172,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 177,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/EinkImageInterceptor.kt",
+    "line": 119,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/ImageRequestClassifier.kt",
+    "line": 15,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 256,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 103,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 248,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 254,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 263,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 271,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 279,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 288,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 293,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 302,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 311,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 320,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 329,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 343,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 346,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 349,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/JsWebInterface.kt",
+    "line": 352,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/LongPressGestureListener.kt",
+    "line": 23,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 507,
+    "excerpt": "catch (e: Exception) {             }"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 539,
+    "excerpt": "catch (e: Exception) {             // ignore         }"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 158,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 159,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 171,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 498,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 532,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 560,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 690,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 696,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 698,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 710,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 188,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 407,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 507,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 520,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 530,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 539,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "line": 565,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/StartPageBridge.kt",
+    "line": 34,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/StartPageBridge.kt",
+    "line": 59,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 74,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 75,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 85,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 189,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 192,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 194,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 290,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 181,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 193,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 199,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 29,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 83,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 89,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 95,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 101,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 114,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 232,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 240,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 248,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 260,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 269,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/UserScriptBridge.kt",
+    "line": 277,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/WebContentPostProcessor.kt",
+    "line": 121,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/WebViewSslHandler.kt",
+    "line": 31,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/WebViewSslHandler.kt",
+    "line": 32,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/WebViewSslHandler.kt",
+    "line": 34,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/WebViewSslHandler.kt",
+    "line": 35,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/WebViewSslHandler.kt",
+    "line": 45,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/browser/WebViewSslHandler.kt",
+    "line": 38,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/DualCaptionProcessor.kt",
+    "line": 23,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/DualCaptionProcessor.kt",
+    "line": 26,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/DualCaptionProcessor.kt",
+    "line": 61,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/DualCaptionProcessor.kt",
+    "line": 128,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/YouTubeCaptionFetcher.kt",
+    "line": 167,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/YouTubeCaptionFetcher.kt",
+    "line": 170,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/YouTubeCaptionFetcher.kt",
+    "line": 188,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/YouTubeCaptionFetcher.kt",
+    "line": 291,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/YouTubeCaptionFetcher.kt",
+    "line": 300,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/YouTubeCaptionFetcher.kt",
+    "line": 333,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/caption/YouTubeCaptionFetcher.kt",
+    "line": 377,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/GoogleDriveRepository.kt",
+    "line": 90,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/GoogleDriveRepository.kt",
+    "line": 91,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/GoogleDriveRepository.kt",
+    "line": 92,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/InstapaperRepository.kt",
+    "line": 59,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/InstapaperRepository.kt",
+    "line": 92,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 337,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 153,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 168,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 259,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 321,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 366,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 462,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 520,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 612,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 672,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "line": 721,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/TranslateRepository.kt",
+    "line": 151,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/TranslateRepository.kt",
+    "line": 301,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/TranslateRepository.kt",
+    "line": 306,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/TranslateRepository.kt",
+    "line": 149,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/data/remote/TranslateRepository.kt",
+    "line": 191,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/BookmarkDao.kt",
+    "line": 391,
+    "excerpt": "catch (_: Exception) {                     // Table might not exist in old db \u2014 skip silently                 }"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/BookmarkDao.kt",
+    "line": 472,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/BookmarkDao.kt",
+    "line": 474,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/BookmarkDao.kt",
+    "line": 478,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/BookmarkDao.kt",
+    "line": 480,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/BookmarkDao.kt",
+    "line": 391,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/BookmarkDao.kt",
+    "line": 402,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/DomainConfiguration.kt",
+    "line": 157,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/DomainConfiguration.kt",
+    "line": 179,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/DomainConfiguration.kt",
+    "line": 188,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/DomainConfiguration.kt",
+    "line": 205,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/FaviconInfo.kt",
+    "line": 18,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/RecordRepository.kt",
+    "line": 123,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/database/RecordRepository.kt",
+    "line": 158,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/BookTextMapper.kt",
+    "line": 34,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/BookTextMapper.kt",
+    "line": 35,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/BookTextMapper.kt",
+    "line": 46,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/BookTextMapper.kt",
+    "line": 49,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/BookTextMapper.kt",
+    "line": 50,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/EpubManager.kt",
+    "line": 268,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/EpubManager.kt",
+    "line": 274,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/EpubManager.kt",
+    "line": 122,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/EpubParser.kt",
+    "line": 153,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/EpubParser.kt",
+    "line": 199,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/EpubParser.kt",
+    "line": 204,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/EpubReaderView.kt",
+    "line": 166,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/EpubReaderView.kt",
+    "line": 192,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "marker",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/EpubXMLFileParser.kt",
+    "line": 25,
+    "excerpt": "TODO"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/SelectedTextInfo.kt",
+    "line": 54,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/epub/SelectedTextInfo.kt",
+    "line": 52,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/AlbumInfo.kt",
+    "line": 14,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/ConfigManager.kt",
+    "line": 158,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/ConfigManager.kt",
+    "line": 212,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/ConfigManager.kt",
+    "line": 164,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/ConfigManager.kt",
+    "line": 216,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/CustomFontInfo.kt",
+    "line": 12,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/DomainConfigManager.kt",
+    "line": 52,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/DomainConfigManager.kt",
+    "line": 66,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/DomainConfigManager.kt",
+    "line": 171,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/DomainConfigManager.kt",
+    "line": 183,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/DomainConfigManager.kt",
+    "line": 192,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/DomainConfigManager.kt",
+    "line": 201,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/DomainConfigManager.kt",
+    "line": 212,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/RecentBookmark.kt",
+    "line": 10,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/TabConfig.kt",
+    "line": 41,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/TabConfig.kt",
+    "line": 45,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/preference/TtsConfig.kt",
+    "line": 52,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/search/suggestion/OpenSearchSuggestionsRepository.kt",
+    "line": 28,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/search/suggestion/SearchSuggestionViewModel.kt",
+    "line": 93,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 101,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 167,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "line": 174,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhData.kt",
+    "line": 68,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhData.kt",
+    "line": 111,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiReviewer.kt",
+    "line": 36,
+    "excerpt": "return emptyMap()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiReviewer.kt",
+    "line": 38,
+    "excerpt": "return emptyMap()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiReviewer.kt",
+    "line": 41,
+    "excerpt": "return emptyMap()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiReviewer.kt",
+    "line": 49,
+    "excerpt": "return emptyMap()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiReviewer.kt",
+    "line": 50,
+    "excerpt": "return emptyMap()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiReviewer.kt",
+    "line": 58,
+    "excerpt": "return emptyMap()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiReviewer.kt",
+    "line": 64,
+    "excerpt": "return emptyMap()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiReviewer.kt",
+    "line": 71,
+    "excerpt": "return emptyMap()"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiReviewer.kt",
+    "line": 68,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
+    "line": 90,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/ai/AiSettingsCard.kt",
+    "line": 110,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/DeviceMcpServer.kt",
+    "line": 60,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/InternalBackendService.kt",
+    "line": 47,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/InternalBackendService.kt",
+    "line": 53,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalBackend.kt",
+    "line": 84,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalIdentity.kt",
+    "line": 22,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalIdentity.kt",
+    "line": 22,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalIdentity.kt",
+    "line": 22,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalPolicy.kt",
+    "line": 21,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalPolicy.kt",
+    "line": 37,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalPolicy.kt",
+    "line": 38,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalPolicy.kt",
+    "line": 40,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalPolicy.kt",
+    "line": 42,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalPolicy.kt",
+    "line": 52,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalPolicy.kt",
+    "line": 56,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalPolicy.kt",
+    "line": 67,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalPolicy.kt",
+    "line": 70,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/LocalPolicy.kt",
+    "line": 72,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PortalCrawler.kt",
+    "line": 124,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PortalParser.kt",
+    "line": 19,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PortalParser.kt",
+    "line": 25,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PortalParser.kt",
+    "line": 55,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PortalParser.kt",
+    "line": 72,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicHttp.kt",
+    "line": 26,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicSearch.kt",
+    "line": 69,
+    "excerpt": "catch (_: Exception) { /* discovery only; never rotate after search rate limits */ }"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicSearch.kt",
+    "line": 127,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicSearch.kt",
+    "line": 129,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicSearch.kt",
+    "line": 131,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicSearch.kt",
+    "line": 133,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicSearch.kt",
+    "line": 135,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicSearch.kt",
+    "line": 69,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicSearch.kt",
+    "line": 96,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicSearch.kt",
+    "line": 122,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/RelayEvent.kt",
+    "line": 11,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/RelayEvent.kt",
+    "line": 12,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/RelayEvent.kt",
+    "line": 13,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/StructuredDiscovery.kt",
+    "line": 19,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/StructuredDiscovery.kt",
+    "line": 20,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/StructuredDiscovery.kt",
+    "line": 21,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/StructuredDiscovery.kt",
+    "line": 35,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/StructuredDiscovery.kt",
+    "line": 42,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/local/StructuredDiscovery.kt",
+    "line": 50,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/service/ClearService.kt",
+    "line": 23,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/service/WebSpeechHandler.kt",
+    "line": 70,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/service/WebSpeechHandler.kt",
+    "line": 236,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 344,
+    "excerpt": "catch (_: Exception) {             }"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 426,
+    "excerpt": "catch (_: Exception) {         }"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 73,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 78,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 124,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 166,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 177,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 231,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 250,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 256,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 320,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 336,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 339,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 346,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 92,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 176,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 190,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 200,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 235,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 344,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 389,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/BrowserToolsImpl.kt",
+    "line": 426,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/TaskRunner.kt",
+    "line": 78,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/tasks/ReadArticleListTask.kt",
+    "line": 95,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/tasks/ReadArticleListTask.kt",
+    "line": 108,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/task/tasks/ReadArticleListTask.kt",
+    "line": 119,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/tts/ETts.kt",
+    "line": 98,
+    "excerpt": "catch (e: Throwable)"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 422,
+    "excerpt": "catch (_: IllegalArgumentException) { }"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 84,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 90,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 439,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 585,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 602,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 1176,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 1177,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 377,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 397,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 404,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 470,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 574,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 993,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 1094,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 1119,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt",
+    "line": 1166,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+    "line": 231,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+    "line": 233,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+    "line": 240,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+    "line": 313,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+    "line": 78,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+    "line": 376,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+    "line": 380,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BrowserUnit.kt",
+    "line": 225,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BrowserUnit.kt",
+    "line": 239,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BrowserUnit.kt",
+    "line": 180,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BrowserUnit.kt",
+    "line": 238,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/BrowserUnit.kt",
+    "line": 248,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 500,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 525,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 533,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 536,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 134,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 174,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 311,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 374,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 415,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 422,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 467,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 508,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 538,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 565,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 577,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 625,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 664,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/DownloadHelper.kt",
+    "line": 669,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/EinkImageCache.kt",
+    "line": 73,
+    "excerpt": "catch (_: Exception) {             // Disk write failure is non-fatal         }"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/EinkImageCache.kt",
+    "line": 53,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/EinkImageCache.kt",
+    "line": 73,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/EinkImageProcessor.kt",
+    "line": 218,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/EinkImageProcessor.kt",
+    "line": 223,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/EinkImageProcessor.kt",
+    "line": 230,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/EinkImageProcessor.kt",
+    "line": 181,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconCandidates.kt",
+    "line": 28,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 82,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 85,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 132,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 134,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 148,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 149,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 152,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 168,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 198,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 200,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 201,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 118,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 140,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FaviconFetcher.kt",
+    "line": 209,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/FileHelper.kt",
+    "line": 75,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/GithubUtil.kt",
+    "line": 14,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/GithubUtil.kt",
+    "line": 15,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/GithubUtil.kt",
+    "line": 16,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/GithubUtil.kt",
+    "line": 17,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/GithubUtil.kt",
+    "line": 19,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/GithubUtil.kt",
+    "line": 25,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/GithubUtil.kt",
+    "line": 15,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 97,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 143,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 301,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 302,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 304,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 310,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 363,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 385,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 398,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 402,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 403,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 405,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 190,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 240,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 316,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/HelperUnit.kt",
+    "line": 422,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/IntentUnit.kt",
+    "line": 99,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/IntentUnit.kt",
+    "line": 131,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/IntentUnit.kt",
+    "line": 158,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/PdfMergeUtil.kt",
+    "line": 13,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/PdfMergeUtil.kt",
+    "line": 51,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/PdfMergeUtil.kt",
+    "line": 56,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/PdfMergeUtil.kt",
+    "line": 60,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/ShareUtil.kt",
+    "line": 75,
+    "excerpt": "catch (_: Exception) {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/ShareUtil.kt",
+    "line": 240,
+    "excerpt": "catch (_: Exception) {}"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/ShareUtil.kt",
+    "line": 241,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/ShareUtil.kt",
+    "line": 63,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/ShareUtil.kt",
+    "line": 75,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/ShareUtil.kt",
+    "line": 163,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/ShareUtil.kt",
+    "line": 222,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/ShareUtil.kt",
+    "line": 240,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt",
+    "line": 94,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt",
+    "line": 97,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt",
+    "line": 98,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt",
+    "line": 51,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt",
+    "line": 76,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt",
+    "line": 100,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 52,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 138,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 141,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 143,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 155,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 169,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 239,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 250,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 77,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 160,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 181,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/UrlHelper.kt",
+    "line": 214,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/ViewUnit.kt",
+    "line": 120,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/ViewUnit.kt",
+    "line": 251,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfFile.kt",
+    "line": 367,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 19,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 22,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 40,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 42,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 46,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 47,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 48,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 51,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 74,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 75,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 77,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 79,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 80,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 86,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditor.kt",
+    "line": 87,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UrlMatcher.kt",
+    "line": 13,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UrlMatcher.kt",
+    "line": 26,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UrlMatcher.kt",
+    "line": 46,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UrlMatcher.kt",
+    "line": 50,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UrlMatcher.kt",
+    "line": 35,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UrlMatcher.kt",
+    "line": 67,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UrlMatcher.kt",
+    "line": 77,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptManager.kt",
+    "line": 116,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptManager.kt",
+    "line": 141,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptManager.kt",
+    "line": 142,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptManager.kt",
+    "line": 143,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptManager.kt",
+    "line": 84,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptManager.kt",
+    "line": 108,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptManager.kt",
+    "line": 220,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptManager.kt",
+    "line": 250,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptManager.kt",
+    "line": 265,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptManager.kt",
+    "line": 311,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/userscript/UserScriptMetadata.kt",
+    "line": 81,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/util/PdfDocumentAdapter.kt",
+    "line": 52,
+    "excerpt": "catch (e: Exception) { //            callback?.onWriteFailed(e.message) //        }     }"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/util/PdfDocumentAdapter.kt",
+    "line": 52,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+    "line": 344,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+    "line": 348,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+    "line": 440,
+    "excerpt": "addJavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+    "line": 442,
+    "excerpt": "addJavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+    "line": 443,
+    "excerpt": "addJavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+    "line": 683,
+    "excerpt": "addJavascriptInterface"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/MultiTouchSwipeRefreshLayout.kt",
+    "line": 55,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/MultiTouchSwipeRefreshLayout.kt",
+    "line": 62,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/SwipeTouchListener.kt",
+    "line": 26,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/SwipeTouchListener.kt",
+    "line": 40,
+    "excerpt": "catch (exception: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/TouchAreaHintView.kt",
+    "line": 79,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/TwoPaneLayout.kt",
+    "line": 119,
+    "excerpt": "catch (ex: Exception)"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/WebViewConfigApplier.kt",
+    "line": 212,
+    "excerpt": "catch (e: Exception) {         }"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/WebViewConfigApplier.kt",
+    "line": 212,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/WebViewJsBridge.kt",
+    "line": 38,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/ZoomableFrameLayout.kt",
+    "line": 42,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/ZoomableFrameLayout.kt",
+    "line": 61,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/ZoomableFrameLayout.kt",
+    "line": 78,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "empty_click",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/BrowseHistoryList.kt",
+    "line": 338,
+    "excerpt": "onClick = {}"
+  },
+  {
+    "rule": "empty_click",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
+    "line": 446,
+    "excerpt": "onClick = {}"
+  },
+  {
+    "rule": "empty_click",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
+    "line": 450,
+    "excerpt": "onClick = {}"
+  },
+  {
+    "rule": "empty_click",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
+    "line": 1017,
+    "excerpt": "onClick = { }"
+  },
+  {
+    "rule": "empty_click",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
+    "line": 1041,
+    "excerpt": "onClick = { }"
+  },
+  {
+    "rule": "empty_click",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
+    "line": 1051,
+    "excerpt": "onClick = {}"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/TranslationLanguageDialog.kt",
+    "line": 22,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "empty_click",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
+    "line": 646,
+    "excerpt": "onClick = {}"
+  },
+  {
+    "rule": "empty_click",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
+    "line": 673,
+    "excerpt": "onClick = {}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ComposeDialogFragment.kt",
+    "line": 271,
+    "excerpt": "catch (_: Throwable) {             // Hidden field unavailable; the theme attribute still applies on API 34+.         }"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ComposeDialogFragment.kt",
+    "line": 271,
+    "excerpt": "catch (_: Throwable)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
+    "line": 106,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
+    "line": 118,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
+    "line": 123,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/MarkdownBlocksView.kt",
+    "line": 95,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/MarkdownBlocksView.kt",
+    "line": 107,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/statusbar/Statusbar.kt",
+    "line": 155,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/statusbar/Statusbar.kt",
+    "line": 156,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/view/statusbar/Statusbar.kt",
+    "line": 157,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/TranslationViewModel.kt",
+    "line": 231,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/TranslationViewModel.kt",
+    "line": 499,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "marker",
+    "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/TtsViewModel.kt",
+    "line": 225,
+    "excerpt": "TODO"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/TtsViewModel.kt",
+    "line": 239,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "app/src/main/java/info/plateaukao/einkbro/viewmodel/TtsViewModel.kt",
+    "line": 319,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "app/src/test/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditorTest.kt",
+    "line": 49,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "catch(e){}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "catch(e){}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "catch(err){}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "catch(ex){}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "catch(ex){}"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "catch(__){}"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/assets/adfilter/scriptlets.min.js",
+    "line": 1,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/AdFilterImpl.kt",
+    "line": 119,
+    "excerpt": "addJavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/AdFilterImpl.kt",
+    "line": 120,
+    "excerpt": "addJavascriptInterface"
+  },
+  {
+    "rule": "marker",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/Detector.kt",
+    "line": 122,
+    "excerpt": "TODO"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/Detector.kt",
+    "line": 78,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/Detector.kt",
+    "line": 89,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterDataLoader.kt",
+    "line": 32,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterUpdater.kt",
+    "line": 133,
+    "excerpt": "catch (_: Exception) {             }"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterUpdater.kt",
+    "line": 143,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterUpdater.kt",
+    "line": 205,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterUpdater.kt",
+    "line": 205,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterUpdater.kt",
+    "line": 95,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterUpdater.kt",
+    "line": 127,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterUpdater.kt",
+    "line": 133,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "empty_catch",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterViewModelImpl.kt",
+    "line": 104,
+    "excerpt": "catch (_: Exception) {             // guard against SharedPreferences failures during init         }"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterViewModelImpl.kt",
+    "line": 49,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterViewModelImpl.kt",
+    "line": 104,
+    "excerpt": "catch (_: Exception)"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/script/ElementHiding.kt",
+    "line": 74,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/script/ElementHiding.kt",
+    "line": 99,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "ad-filter/src/main/java/io/github/edsuns/adfilter/script/Scriptlet.kt",
+    "line": 28,
+    "excerpt": "@JavascriptInterface"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/adblockclient-lib.cpp",
+    "line": 217,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/adblockclient-lib.cpp",
+    "line": 235,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/adblockclient-lib.cpp",
+    "line": 248,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/adblockclient-lib.cpp",
+    "line": 268,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/adblockclient-lib.cpp",
+    "line": 288,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/adblockclient-lib.cpp",
+    "line": 308,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/ad-block/context_domain.h",
+    "line": 41,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/ad-block/context_domain.h",
+    "line": 44,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/ad-block/filter.h",
+    "line": 180,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/ad-block/filter.h",
+    "line": 196,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/ad-block/hash_map.h",
+    "line": 126,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/ad-block/hash_map.h",
+    "line": 145,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/ad-block/hash_map.h",
+    "line": 167,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 58,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 73,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 75,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 97,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 101,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 111,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 146,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 150,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 160,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 192,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 196,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 217,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/cpp/third-party/hashset-cpp/hash_set.h",
+    "line": 365,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+    "line": 73,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+    "line": 80,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 65,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 221,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 267,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 270,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 273,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 275,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 282,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 283,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 286,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 288,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 289,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 301,
+    "excerpt": "return false"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 326,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 329,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 344,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 346,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 381,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 438,
+    "excerpt": "return emptyList()"
+  },
+  {
+    "rule": "broad_catch",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/RegexFilterSet.kt",
+    "line": 133,
+    "excerpt": "catch (e: Exception)"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/ResourceType.kt",
+    "line": 69,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/ResourceType.kt",
+    "line": 83,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/ResourceType.kt",
+    "line": 111,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/ResourceType.kt",
+    "line": 158,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "return_candidate",
+    "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/ResourceType.kt",
+    "line": 164,
+    "excerpt": "return null"
+  },
+  {
+    "rule": "js_bridge",
+    "file": "js-tests/helpers/setup.js",
+    "line": 4,
+    "excerpt": "@JavascriptInterface"
+  }
+]

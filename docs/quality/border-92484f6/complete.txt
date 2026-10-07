@@ -1,0 +1,3 @@
+reference_commit=5896283
+pixel_cases=144
+scope=software-rendered-toolbar-border

@@ -1,0 +1,243 @@
+package info.plateaukao.einkbro.browser
+
+import android.app.Activity
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.net.Uri
+import android.os.Build
+import android.os.Message
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.webkit.ConsoleMessage
+import android.webkit.CookieManager
+import android.webkit.GeolocationPermissions
+import android.webkit.PermissionRequest
+import android.webkit.RenderProcessGoneDetail
+import android.webkit.ValueCallback
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebView.WebViewTransport
+import android.webkit.WebViewClient
+import androidx.annotation.RequiresApi
+import info.plateaukao.einkbro.unit.BrowserUnit
+import info.plateaukao.einkbro.unit.GithubUtil
+import info.plateaukao.einkbro.unit.HelperUnit
+import info.plateaukao.einkbro.view.EBWebView
+
+class EBWebChromeClient(
+    private val ebWebView: EBWebView,
+    private val onReceiveFavicon: (Bitmap) -> Unit,
+    private val chromeCallback: WebChromeCallback? = null,
+) : WebChromeClient() {
+    private val TAG: String = "EBWebChromeClient"
+
+    private lateinit var webviewParent: ViewGroup
+
+    override fun onCreateWindow(
+        view: WebView,
+        dialog: Boolean,
+        userGesture: Boolean,
+        resultMsg: Message,
+    ): Boolean {
+        val newWebView = WebView(view.context).apply { initWebView(this) }
+        newWebView.webViewClient =
+            object : WebViewClient() {
+                private var isUrlProcessed = false
+
+                // A dead popup renderer must not take the app down; just drop the popup.
+                @RequiresApi(Build.VERSION_CODES.O)
+                override fun onRenderProcessGone(
+                    view: WebView,
+                    detail: RenderProcessGoneDetail,
+                ): Boolean {
+                    (view.parent as? ViewGroup)?.removeView(view)
+                    view.destroy()
+                    return true
+                }
+
+                override fun shouldOverrideUrlLoading(
+                    view: WebView?,
+                    request: WebResourceRequest?,
+                ): Boolean {
+                    val urlString = request?.url?.toString() ?: return false
+
+                    if (urlString.startsWith("blob:")) {
+                        val activity = ebWebView.context as? Activity ?: return true
+                        val githubRawUrl = GithubUtil.rawUrlForBlobPage(ebWebView.url)
+                        if (githubRawUrl != null) {
+                            val fileName = githubRawUrl.substringAfterLast('/').substringBefore('?')
+                            BrowserUnit.download(
+                                context = activity,
+                                url = githubRawUrl,
+                                contentDisposition = "attachment; filename=\"$fileName\"",
+                                mimeType = "",
+                                webView = ebWebView,
+                            )
+                        } else {
+                            BrowserUnit.download(
+                                context = activity,
+                                url = urlString,
+                                contentDisposition = "",
+                                mimeType = "",
+                                webView = ebWebView,
+                            )
+                        }
+                        view?.post { webviewParent.removeView(view) }
+                        return true
+                    }
+
+                    // handle login requests
+                    return if (isGoogleLoginUrl(urlString) || isFacebookLoginUrl(urlString)) {
+                        view?.loadUrl(urlString)
+                        true
+                    } else if (!isUrlProcessed) {
+                        request.url?.let {
+                            handleWebViewLinks(urlString)
+                            isUrlProcessed = true
+                        } // you can get your target url here
+                        false
+                    } else {
+                        false
+                    }
+                }
+            }
+        newWebView.webChromeClient =
+            object : WebChromeClient() {
+                override fun onCloseWindow(window: WebView?) {
+                    webviewParent.removeView(window)
+                }
+            }
+        if (ebWebView.parent == null) return false
+        webviewParent = ebWebView.parent as ViewGroup
+        webviewParent.addView(newWebView)
+
+        val transport = resultMsg.obj as WebViewTransport
+        transport.webView = newWebView
+        resultMsg.sendToTarget()
+        return true
+    }
+
+    private fun isGoogleLoginUrl(url: String): Boolean = url.contains("accounts.google.com")
+
+    private fun isFacebookLoginUrl(url: String): Boolean = url.contains("facebook") && !url.contains("story") && !url.contains("l.php")
+
+    @Suppress("DEPRECATION")
+    private fun initWebView(webView: WebView) {
+        val webSettings = webView.settings
+        val defaultUserAgent = webSettings.userAgentString
+
+        webSettings.userAgentString =
+            defaultUserAgent
+                .replace("wv", "")
+                .replace(Regex("Version/\\d+\\.\\d+\\s"), "")
+        webSettings.cacheMode = WebSettings.LOAD_DEFAULT
+        // Popups only ever host web login windows, so a popup that ends up on file://
+        // must never be able to read local files or other origins (no opt-in here, unlike
+        // the main WebView's "Remote content" setting).
+        webSettings.allowFileAccessFromFileURLs = false
+        webSettings.allowUniversalAccessFromFileURLs = false
+        webSettings.domStorageEnabled = true
+        webSettings.databaseEnabled = true
+        webSettings.javaScriptEnabled = true
+        webSettings.javaScriptCanOpenWindowsAutomatically = true
+        // Login/pop-up WebViews inherit the same HTTPS-only subresource policy.
+        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+        val manager = CookieManager.getInstance()
+        manager.setAcceptThirdPartyCookies(webView, true)
+
+        webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH)
+    }
+
+    override fun onCloseWindow(window: WebView?) {
+        (ebWebView.parent as ViewGroup).removeView(window)
+    }
+
+    private fun handleWebViewLinks(url: String) = chromeCallback?.addNewTab(url)
+
+    override fun onProgressChanged(
+        view: WebView,
+        progress: Int,
+    ) {
+        super.onProgressChanged(view, progress)
+        ebWebView.update(progress)
+    }
+
+    override fun onReceivedTitle(
+        view: WebView,
+        title: String,
+    ) {
+        super.onReceivedTitle(view, title)
+        // prevent setting title for data: contents
+        if (!title.startsWith("data:text")) {
+            ebWebView.update(title)
+        }
+    }
+
+    override fun onShowCustomView(
+        view: View,
+        callback: CustomViewCallback,
+    ) {
+        chromeCallback?.onShowCustomView(view, callback)
+        super.onShowCustomView(view, callback)
+    }
+
+    override fun onHideCustomView() {
+        chromeCallback?.onHideCustomView()
+        super.onHideCustomView()
+    }
+
+    override fun onShowFileChooser(
+        webView: WebView,
+        filePathCallback: ValueCallback<Array<Uri>>,
+        fileChooserParams: FileChooserParams,
+    ): Boolean {
+        chromeCallback?.showFileChooser(filePathCallback)
+        return true
+    }
+
+    override fun onPermissionRequest(request: PermissionRequest?) {
+        if (request?.resources?.contains("android.webkit.resource.AUDIO_CAPTURE") == true) {
+            HelperUnit.grantPermissionsMicrophone(ebWebView.context as Activity)
+            request.grant(request.resources)
+        } else {
+            super.onPermissionRequest(request)
+        }
+    }
+
+    override fun onGeolocationPermissionsShowPrompt(
+        origin: String,
+        callback: GeolocationPermissions.Callback,
+    ) {
+        val activity = ebWebView.context as Activity
+        // Don't grant before ACCESS_FINE_LOCATION is settled: a grant while the
+        // permission is still missing makes the WebView's geolocation stack start
+        // permissionless and keep failing until the process restarts (#391).
+        HelperUnit.requestLocationPermission(activity) { granted ->
+            callback.invoke(origin, granted, false)
+        }
+    }
+
+    override fun onConsoleMessage(message: ConsoleMessage): Boolean {
+        Log.d(TAG, message.message())
+        return true
+    }
+
+    private val posterBitmap =
+        Bitmap
+            .createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+            .apply { setPixel(0, 0, Color.argb(0, 255, 255, 255)) }
+
+    override fun getDefaultVideoPoster(): Bitmap? = posterBitmap
+
+    override fun onReceivedIcon(
+        view: WebView?,
+        icon: Bitmap?,
+    ) {
+        super.onReceivedIcon(view, icon)
+        val bitmap = icon ?: return
+        onReceiveFavicon(bitmap)
+    }
+}

@@ -1,0 +1,571 @@
+package info.plateaukao.einkbro.viewmodel
+
+import android.view.View
+import androidx.compose.ui.text.AnnotatedString
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import info.plateaukao.einkbro.data.remote.ApiResult
+import info.plateaukao.einkbro.data.remote.ChatMessage
+import info.plateaukao.einkbro.data.remote.ChatRole
+import info.plateaukao.einkbro.data.remote.ImageTranslateResult
+import info.plateaukao.einkbro.data.remote.OpenAiRepository
+import info.plateaukao.einkbro.data.remote.TranslateRepository
+import info.plateaukao.einkbro.database.BookmarkManager
+import info.plateaukao.einkbro.database.ChatGptQuery
+import info.plateaukao.einkbro.preference.ChatGPTActionInfo
+import info.plateaukao.einkbro.preference.ConfigManager
+import info.plateaukao.einkbro.preference.GptActionScope
+import info.plateaukao.einkbro.preference.GptActionType
+import info.plateaukao.einkbro.task.TaskProgress
+import info.plateaukao.einkbro.unit.HelperUnit
+import info.plateaukao.einkbro.unit.ViewUnit
+import info.plateaukao.einkbro.util.TranslationLanguage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.TextNode
+
+class TranslationViewModel(
+    private val config: ConfigManager,
+    private val bookmarkManager: BookmarkManager,
+) : ViewModel() {
+    private val translateRepository = TranslateRepository()
+
+    private lateinit var openAiRepository: OpenAiRepository
+    var gptActionInfo =
+        config.ai.gptActionForExternalSearch ?: config.ai.gptActionList.firstOrNull()
+            ?: ChatGPTActionInfo()
+
+    private val _responseMessage = MutableStateFlow(AnnotatedString(""))
+    val responseMessage: StateFlow<AnnotatedString> = _responseMessage.asStateFlow()
+
+    private val _inputMessage = MutableStateFlow("")
+    val inputMessage: StateFlow<String> = _inputMessage.asStateFlow()
+
+    private val _messageWithContext = MutableStateFlow("")
+    val messageWithContext: StateFlow<String> = _messageWithContext.asStateFlow()
+
+    private val _translationLanguage = MutableStateFlow(config.translation.translationLanguage)
+    val translationLanguage: StateFlow<TranslationLanguage> = _translationLanguage.asStateFlow()
+
+    private val _rotateResultScreen = MutableStateFlow(false)
+    val rotateResultScreen: StateFlow<Boolean> = _rotateResultScreen.asStateFlow()
+
+    private val _translateMethod = MutableStateFlow(config.ai.externalSearchMethod)
+    val translateMethod: StateFlow<TRANSLATE_API> = _translateMethod.asStateFlow()
+
+    private val _showEditDialogWithIndex = MutableStateFlow(-1)
+    val showEditDialogWithIndex: StateFlow<Int> = _showEditDialogWithIndex.asStateFlow()
+
+    private val _scrollSignal = MutableSharedFlow<Boolean>()
+    val scrollSignal: SharedFlow<Boolean> = _scrollSignal.asSharedFlow()
+
+    var url: String = ""
+    var pageTitle: String = ""
+
+    private var toBeSavedResponseString = ""
+
+    // Raw markdown behind [responseMessage] for AI answers (empty for the plain
+    // translators), so the dialog can pick out images an AnnotatedString can't show.
+    private val _responseMarkdown = MutableStateFlow("")
+    val responseMarkdown: StateFlow<String> = _responseMarkdown.asStateFlow()
+
+    /**
+     * While a task stream is driving [_responseMessage], any default GPT / translate
+     * action should be suppressed. [TranslateDialogFragment.onCreateView] unconditionally
+     * calls [translate] when the popup opens, which would otherwise fire an LLM request
+     * with empty input and overwrite the task progress with the LLM's "please provide
+     * text" fallback response.
+     */
+    private var isTaskMode: Boolean = false
+
+    fun updateRotateResultScreen(rotate: Boolean) {
+        _rotateResultScreen.value = rotate
+    }
+
+    fun updateTranslateMethod(translateApi: TRANSLATE_API) {
+        _translateMethod.value = translateApi
+        config.ai.externalSearchMethod = translateApi
+    }
+
+    fun hasOpenAiApiKey(): Boolean = config.ai.gptApiKey.isNotBlank()
+
+    fun updateMessageWithContext(userMessage: String) {
+        _messageWithContext.value = HelperUnit.unescapeJava(userMessage)
+    }
+
+    fun updateInputMessage(userMessage: String) {
+        _inputMessage.value = HelperUnit.unescapeJava(userMessage)
+        _responseMessage.value = AnnotatedString("...")
+        _responseMarkdown.value = ""
+    }
+
+    fun updateTranslationLanguage(language: TranslationLanguage) {
+        _translationLanguage.value = language
+    }
+
+    fun updateTranslationLanguageAndGo(language: TranslationLanguage) {
+        updateTranslationLanguage(language)
+        _responseMessage.value = AnnotatedString("...")
+        _responseMarkdown.value = ""
+        when (_translateMethod.value) {
+            TRANSLATE_API.GOOGLE -> callGoogleTranslate()
+            TRANSLATE_API.DEEPL -> callDeepLTranslate()
+            else -> Unit
+        }
+    }
+
+    fun translate(
+        translateApi: TRANSLATE_API = _translateMethod.value,
+        userMessage: String? = null,
+    ) {
+        // The translate popup is reused for task progress; in that mode a task stream
+        // already owns _responseMessage and we must not wipe it or fire a default LLM
+        // query with empty input.
+        if (isTaskMode) return
+        _translateMethod.value = translateApi
+        config.ai.externalSearchMethod = translateApi
+        _responseMessage.value = AnnotatedString("...")
+        _responseMarkdown.value = ""
+
+        if (userMessage != null) {
+            _inputMessage.value = userMessage
+        }
+
+        when (translateApi) {
+            TRANSLATE_API.GOOGLE -> callGoogleTranslate()
+            TRANSLATE_API.LLM -> queryLlm()
+            TRANSLATE_API.DEEPL -> callDeepLTranslate()
+            TRANSLATE_API.GEMINI -> Unit
+            TRANSLATE_API.OPENAI -> Unit
+        }
+    }
+
+    fun getGptActionList(): List<ChatGPTActionInfo> = config.ai.gptActionList
+
+    fun cancel() {
+        if (this::openAiRepository.isInitialized) {
+            openAiRepository.cancel()
+        }
+    }
+
+    /**
+     * Shows the popup with a status note without firing any LLM/translate query.
+     * [TranslateDialogFragment.onCreateView] unconditionally calls [translate] when
+     * the popup opens; the task-mode flag suppresses it until the real action's
+     * [setupGptAction] takes over.
+     */
+    fun setupStatusMessage(text: String) {
+        taskStreamJob?.cancel()
+        taskStreamJob = null
+        isTaskMode = true
+        _inputMessage.value = ""
+        _responseMessage.value = AnnotatedString(text)
+    }
+
+    fun setupGptAction(gptAction: ChatGPTActionInfo) {
+        // A task-stream collector may still be feeding progress into _responseMessage
+        // from a prior task run; cancel it before this GPT action takes over the popup.
+        taskStreamJob?.cancel()
+        taskStreamJob = null
+        isTaskMode = false
+        updateTranslateMethod(TRANSLATE_API.LLM)
+        gptActionInfo = gptAction
+    }
+
+    /**
+     * Bridges a TaskRunner progress stream into the translation popup. Each progress
+     * update is rendered as markdown in [responseMessage] so the existing popup UI can
+     * display it without new components.
+     */
+    private var taskStreamJob: kotlinx.coroutines.Job? = null
+
+    fun setupTaskStream(progressFlow: StateFlow<TaskProgress?>) {
+        isTaskMode = true
+        updateTranslateMethod(TRANSLATE_API.LLM)
+        _inputMessage.value = ""
+        _responseMessage.value = AnnotatedString("…")
+        _responseMarkdown.value = ""
+        taskStreamJob?.cancel()
+        taskStreamJob =
+            viewModelScope.launch {
+                progressFlow.collect { progress ->
+                    if (progress == null) return@collect
+                    val progressMarkdown = renderProgress(progress)
+                    _responseMarkdown.value = progressMarkdown
+                    _responseMessage.value = HelperUnit.parseMarkdown(progressMarkdown)
+                }
+            }
+    }
+
+    private fun renderProgress(progress: TaskProgress): String {
+        val sb = StringBuilder()
+        sb.append("**").append(progress.taskName).append("** — ")
+        sb
+            .append(
+                when (progress.status) {
+                    TaskProgress.Status.Running -> "running…"
+                    TaskProgress.Status.Done -> "done"
+                    TaskProgress.Status.Cancelled -> "cancelled"
+                    TaskProgress.Status.Failed -> "failed"
+                },
+            ).append("\n\n")
+        progress.steps.forEach { step ->
+            val marker =
+                when (step.kind) {
+                    TaskProgress.StepLine.Kind.Info -> "- "
+                    TaskProgress.StepLine.Kind.Tool -> "- [tool] "
+                    TaskProgress.StepLine.Kind.Error -> "- [error] "
+                }
+            sb.append(marker).append(step.text).append("\n")
+        }
+        progress.finalMarkdown?.let {
+            sb.append("\n---\n\n").append(it)
+        }
+        return sb.toString()
+    }
+
+    fun setupTextSummary(text: String): Boolean {
+        if (!hasOpenAiApiKey()) return false
+
+        updateInputMessage(text)
+        setupGptAction(
+            ChatGPTActionInfo(
+                systemMessage = config.ai.gptUserPromptForWebPage,
+                actionType = config.ai.gptForSummary,
+                model = config.ai.getGptTypeModelMap()[config.ai.gptForSummary] ?: config.ai.gptModel,
+            ),
+        )
+
+        return true
+    }
+
+    private fun callGoogleTranslate() {
+        val message = _inputMessage.value
+        viewModelScope.launch(Dispatchers.IO) {
+            val result =
+                translateRepository.gTranslateWithApi(
+                    message,
+                    targetLanguage = config.translation.translationLanguage.value,
+                )
+            if (result.isNullOrEmpty()) {
+                emitTranslationError("Google")
+            } else {
+                _responseMessage.value = AnnotatedString(result)
+            }
+        }
+    }
+
+    private fun callDeepLTranslate() {
+        val message = _inputMessage.value
+        viewModelScope.launch(Dispatchers.IO) {
+            val result =
+                translateRepository.deepLTranslate(
+                    message,
+                    targetLanguage = config.translation.translationLanguage,
+                )
+            if (result.isNullOrEmpty()) {
+                emitTranslationError("DeepL")
+            } else {
+                _responseMessage.value = AnnotatedString(result)
+            }
+        }
+    }
+
+    private fun emitTranslationError(provider: String) {
+        val text = "$provider translation failed — check connection or switch provider"
+        _responseMessage.value = AnnotatedString(text)
+        viewModelScope.launch { _errorFlow.emit(text) }
+    }
+
+    suspend fun translateWebView(
+        view: View,
+        sourceLanguage: TranslationLanguage,
+        targetLanguage: TranslationLanguage,
+    ): String? {
+        val bitmap = ViewUnit.captureDrawingCache(view)
+        val result =
+            translateRepository.translateBitmap(
+                bitmap,
+                sourceLanguage.value,
+                targetLanguage.value,
+                true,
+            )
+        return result?.renderedImage
+    }
+
+    suspend fun translateImage(
+        referer: String,
+        url: String,
+        sourceLanguage: TranslationLanguage,
+        targetLanguage: TranslationLanguage,
+    ): ImageTranslateResult? =
+        translateRepository.translateImageFromUrl(
+            referer,
+            url,
+            sourceLanguage.value,
+            targetLanguage.value,
+            true,
+        )
+
+    fun showEditGptActionDialog(gptActionInfoIndex: Int) {
+        _showEditDialogWithIndex.value = gptActionInfoIndex
+    }
+
+    fun resetEditDialogIndex() {
+        _showEditDialogWithIndex.value = -1
+    }
+
+    suspend fun saveTranslationResult() {
+        val isWholePage = gptActionInfo.scope == GptActionScope.WholePage
+        if (_translateMethod.value != TRANSLATE_API.LLM) {
+            bookmarkManager.addChatGptQuery(
+                ChatGptQuery(
+                    date = System.currentTimeMillis(),
+                    url = url,
+                    model = _translateMethod.value.name,
+                    selectedText = _inputMessage.value,
+                    result = _responseMessage.value.text,
+                ),
+            )
+        } else {
+            val (_, selectedText) = getSelectedTextAndPromptPrefix()
+            val model =
+                gptActionInfo.model.ifEmpty {
+                    when (gptActionInfo.actionType) {
+                        GptActionType.OpenAi -> config.ai.gptModel
+                        GptActionType.Gemini -> config.ai.geminiModel
+                        GptActionType.SelfHosted -> config.ai.alternativeModel
+                        GptActionType.Default -> config.ai.getDefaultActionModel()
+                    }
+                }
+            bookmarkManager.addChatGptQuery(
+                ChatGptQuery(
+                    date = System.currentTimeMillis(),
+                    url = url,
+                    model = "${gptActionInfo.name} $model",
+                    selectedText = if (isWholePage) pageTitle else selectedText,
+                    result = toBeSavedResponseString,
+                ),
+            )
+        }
+        toBeSavedResponseString = ""
+        _responseMarkdown.value = ""
+    }
+
+    private fun queryLlm() {
+        if (!this::openAiRepository.isInitialized) {
+            openAiRepository = OpenAiRepository()
+        }
+
+        _translateMethod.value = TRANSLATE_API.LLM
+        config.ai.gptActionForExternalSearch = gptActionInfo
+
+        val messages = mutableListOf<ChatMessage>()
+        if (gptActionInfo.systemMessage.isNotBlank()) {
+            messages.add(gptActionInfo.systemMessage.toSystemMessage())
+        }
+
+        val (promptPrefix, selectedText) = getSelectedTextAndPromptPrefix()
+        messages.add("$promptPrefix$selectedText".toUserMessage())
+
+        viewModelScope.launch(Dispatchers.IO) {
+            // need to preprocess gptActionInfo so that it does not have default type
+            queryLlm(messages, getExactActionInfo(gptActionInfo))
+        }
+    }
+
+    private fun getExactActionInfo(gptActionInfo: ChatGPTActionInfo): ChatGPTActionInfo =
+        if (gptActionInfo.actionType == GptActionType.Default) {
+            ChatGPTActionInfo(
+                actionType = config.ai.getDefaultActionType(),
+                model = config.ai.getDefaultActionModel(),
+                name = gptActionInfo.name,
+                userMessage = gptActionInfo.userMessage,
+                systemMessage = gptActionInfo.systemMessage,
+            )
+        } else {
+            gptActionInfo
+        }
+
+    suspend fun queryLlm(
+        messages: MutableList<ChatMessage>,
+        gptActionInfo: ChatGPTActionInfo,
+    ) {
+        if (config.ai.enableOpenAiStream) {
+            queryWithStream(messages, gptActionInfo)
+            return
+        }
+
+        if (gptActionInfo.actionType == GptActionType.Gemini) {
+            queryGemini(messages, gptActionInfo)
+            return
+        }
+
+        val chatCompletion = openAiRepository.chatCompletion(messages, gptActionInfo)
+        if (chatCompletion == null || chatCompletion.choices.isEmpty()) {
+            _responseMessage.value = AnnotatedString("Something went wrong.")
+            return
+        } else {
+            val responseContent =
+                chatCompletion.choices
+                    .firstOrNull { it.message.role == ChatRole.Assistant }
+                    ?.message
+                    ?.content
+                    ?: "Something went wrong."
+            // to remove think content from qwen3-style responses
+            toBeSavedResponseString = responseContent
+            _responseMarkdown.value =
+                responseContent
+                    .replace(Regex("""<think>[\s\S]*?</think>\s*"""), "")
+            _responseMessage.value = AnnotatedString(toBeSavedResponseString)
+        }
+    }
+
+    private suspend fun queryGemini(
+        messages: MutableList<ChatMessage>,
+        gptActionInfo: ChatGPTActionInfo,
+    ) {
+        when (val result = openAiRepository.queryGemini(messages, gptActionInfo)) {
+            is ApiResult.Success -> {
+                toBeSavedResponseString = result.value
+                _responseMarkdown.value = result.value
+                _responseMessage.value = AnnotatedString(result.value)
+            }
+            is ApiResult.Failure -> emitFailure(result)
+        }
+    }
+
+    private fun queryWithStream(
+        messages: MutableList<ChatMessage>,
+        gptActionInfo: ChatGPTActionInfo,
+    ) {
+        var responseString = ""
+        openAiRepository.chatStream(
+            messages,
+            gptActionInfo,
+            appendResponseAction = {
+                if (_responseMessage.value.text == "...") {
+                    responseString = it
+                } else {
+                    responseString += it
+                }
+                toBeSavedResponseString = responseString.unescape()
+                _responseMarkdown.value = responseString.unescape()
+                _responseMessage.value = HelperUnit.parseMarkdown(toBeSavedResponseString)
+            },
+            doneAction = { Unit },
+            failureAction = { failure -> emitFailure(failure) },
+            thinkingAction = {
+                // Distinguish "model is reasoning" from the plain waiting dots, but
+                // never overwrite answer text a late thinking chunk might race with.
+                if (responseString.isEmpty()) {
+                    _responseMessage.value = AnnotatedString(THINKING_STATUS)
+                }
+            },
+        )
+    }
+
+    private fun emitFailure(failure: ApiResult.Failure) {
+        val text =
+            when (failure.kind) {
+                ApiResult.Kind.MissingKey -> failure.message
+                ApiResult.Kind.RateLimited ->
+                    failure.retryAfterSeconds
+                        ?.let { "Rate limited — retry after ${it}s" }
+                        ?: "Rate limited — try again in a moment"
+                ApiResult.Kind.Network -> "Network error — check connection"
+                ApiResult.Kind.ServerError, ApiResult.Kind.Parse, ApiResult.Kind.Unknown ->
+                    "AI request failed: ${failure.message}"
+            }
+        toBeSavedResponseString = text
+        _responseMarkdown.value = text
+        _responseMessage.value = AnnotatedString(text)
+        viewModelScope.launch { _errorFlow.emit(text) }
+    }
+
+    private val _errorFlow = MutableSharedFlow<String>(extraBufferCapacity = 4)
+    val errorFlow: SharedFlow<String> = _errorFlow.asSharedFlow()
+
+    private fun getSelectedTextAndPromptPrefix(): Pair<String, String> {
+        val promptPrefix = gptActionInfo.userMessage
+        val selectedText =
+            if (promptPrefix.contains("<<") &&
+                promptPrefix.contains(">>") &&
+                _messageWithContext.value.contains("<<") &&
+                _messageWithContext.value.contains(">>")
+            ) {
+                _messageWithContext.value
+            } else {
+                _inputMessage.value
+            }
+        return Pair(promptPrefix, selectedText)
+    }
+
+    private fun Element.hasUnwantedParent(): Boolean {
+        if (this.tagName().lowercase() in listOf("img", "button", "head", "code")) {
+            return true
+        }
+
+        var parent = this.parent()
+        while (parent != null) {
+            if (parent.tagName().lowercase() in listOf("img", "button", "head", "code")) {
+                return true
+            }
+            parent = parent.parent()
+        }
+        return false
+    }
+
+    private fun TextNode.hasUnwantedParent(): Boolean {
+        val parentElement: Element? = this.parent() as? Element
+        return parentElement?.hasUnwantedParent() ?: false
+    }
+
+    fun String.toUserMessage() =
+        ChatMessage(
+            role = ChatRole.User,
+            content = this,
+        )
+
+    fun String.toSystemMessage() =
+        ChatMessage(
+            role = ChatRole.System,
+            content = this,
+        )
+
+    fun emitScrollEvent(isUp: Boolean) {
+        viewModelScope.launch {
+            _scrollSignal.emit(isUp)
+        }
+    }
+}
+
+enum class TRANSLATE_API {
+    GOOGLE,
+    LLM,
+    DEEPL,
+    OPENAI,
+    GEMINI,
+}
+
+// Status text shown while the model is reasoning, before any answer arrives.
+// Hardcoded English like the other status strings in this ViewModel.
+internal const val THINKING_STATUS = "Thinking…"
+
+fun String.unescape(): String =
+    this
+        .replace("\\\\n", "\n")
+        .replace("\\n", "\n")
+        .replace("\\t", "\t")
+        .replace("\\\"", "\"")
+        .replace("\\'", "'")
+        .replace("\\\\", "\\")
+        .replace("\\u003c", "<")
+        .replace("\\u003e", ">")

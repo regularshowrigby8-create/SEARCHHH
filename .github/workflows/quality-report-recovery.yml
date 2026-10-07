@@ -1,0 +1,135 @@
+name: Recover existing quality reports
+on:
+  push:
+    branches: [arena/01a0ea36-searchhh]
+    paths:
+      - .github/workflows/quality-report-recovery.yml
+      - tools/quality/report_transport.py
+      - tools/quality/tests/test_report_transport.py
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - group: host
+            artifact: android-build-test-lint-36628444279
+            original_run: '36628444279'
+            shard: 0
+            shards: 1
+          - group: release
+            artifact: android-release-checks-36628444279
+            original_run: '36628444279'
+            shard: 0
+            shards: 1
+          - group: detekt
+            artifact: android-detekt-36628444279
+            original_run: '36628444279'
+            shard: 0
+            shards: 2
+          - group: detekt
+            artifact: android-detekt-36628444279
+            original_run: '36628444279'
+            shard: 1
+            shards: 2
+          - group: format
+            artifact: android-formatting-36628443911
+            original_run: '36628443911'
+            shard: 0
+            shards: 5
+          - group: format
+            artifact: android-formatting-36628443911
+            original_run: '36628443911'
+            shard: 1
+            shards: 5
+          - group: format
+            artifact: android-formatting-36628443911
+            original_run: '36628443911'
+            shard: 2
+            shards: 5
+          - group: format
+            artifact: android-formatting-36628443911
+            original_run: '36628443911'
+            shard: 3
+            shards: 5
+          - group: format
+            artifact: android-formatting-36628443911
+            original_run: '36628443911'
+            shard: 4
+            shards: 5
+          - group: source
+            artifact: source-quality-36628444279
+            original_run: '36628444279'
+            shard: 0
+            shards: 1
+    env:
+      SOURCE_SHA: 6abf29b57982b93fe929674c70230bb17f6940cf
+      ORIGINAL_RUN: ${{ matrix.original_run }}
+      RECOVERY_SHARD: ${{ matrix.shard }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v6
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.11'}
+      - name: Verify transport including rejection fixtures
+        run: python3 -m unittest discover -s tools/quality/tests -v
+      - name: Download pinned original reports without running a build
+        env:
+          ARTIFACT_NAME: ${{ matrix.artifact }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ORIGINAL_RUN" > /tmp/original-run.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ORIGINAL_RUN/artifacts?per_page=100" > /tmp/original-artifacts.json
+          gh run download "$ORIGINAL_RUN" -n "$ARTIFACT_NAME" -D /tmp/recovered-reports
+          mkdir -p /tmp/recovered-reports/snapshots
+          for file in interaction-inventory.json interaction-contracts.json required-scenarios.json; do
+            git show "$SOURCE_SHA:quality/$file" > "/tmp/recovered-reports/snapshots/$file"
+          done
+          git show "$SOURCE_SHA:gradle/libs.versions.toml" > /tmp/recovered-reports/snapshots/libs.versions.toml
+          git show "$SOURCE_SHA:gradle/wrapper/gradle-wrapper.properties" > /tmp/recovered-reports/snapshots/gradle-wrapper.properties
+      - name: Transport complete static reports with provenance and integrity checks
+        env:
+          ARTIFACT_NAME: ${{ matrix.artifact }}
+          REPORT_GROUP: ${{ matrix.group }}
+        run: |
+          python3 tools/quality/report_transport.py pack \
+            --root /tmp/recovered-reports --run /tmp/original-run.json \
+            --artifacts /tmp/original-artifacts.json --artifact-name "$ARTIFACT_NAME" \
+            --source "$SOURCE_SHA" --group "$REPORT_GROUP" --recovery-source "$GITHUB_SHA" \
+            --pages-output /tmp/report-pages.json --shards "${{ matrix.shards }}"
+      - name: Publish bounded report page batch 1 for this shard
+        env:
+          REPORT_GROUP: ${{ matrix.group }}
+        run: |
+          python3 tools/quality/report_transport.py emit --pages-input /tmp/report-pages.json \
+            --batch "$((RECOVERY_SHARD * 5 + 0))" --source "$SOURCE_SHA" --group "$REPORT_GROUP"
+      - name: Publish bounded report page batch 2 for this shard
+        env:
+          REPORT_GROUP: ${{ matrix.group }}
+        run: |
+          python3 tools/quality/report_transport.py emit --pages-input /tmp/report-pages.json \
+            --batch "$((RECOVERY_SHARD * 5 + 1))" --source "$SOURCE_SHA" --group "$REPORT_GROUP"
+      - name: Publish bounded report page batch 3 for this shard
+        env:
+          REPORT_GROUP: ${{ matrix.group }}
+        run: |
+          python3 tools/quality/report_transport.py emit --pages-input /tmp/report-pages.json \
+            --batch "$((RECOVERY_SHARD * 5 + 2))" --source "$SOURCE_SHA" --group "$REPORT_GROUP"
+      - name: Publish bounded report page batch 4 for this shard
+        env:
+          REPORT_GROUP: ${{ matrix.group }}
+        run: |
+          python3 tools/quality/report_transport.py emit --pages-input /tmp/report-pages.json \
+            --batch "$((RECOVERY_SHARD * 5 + 3))" --source "$SOURCE_SHA" --group "$REPORT_GROUP"
+      - name: Publish bounded report page batch 5 for this shard
+        env:
+          REPORT_GROUP: ${{ matrix.group }}
+        run: |
+          python3 tools/quality/report_transport.py emit --pages-input /tmp/report-pages.json \
+            --batch "$((RECOVERY_SHARD * 5 + 4))" --source "$SOURCE_SHA" --group "$REPORT_GROUP"

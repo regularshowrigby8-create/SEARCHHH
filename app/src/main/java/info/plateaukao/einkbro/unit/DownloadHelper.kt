@@ -1,0 +1,757 @@
+package info.plateaukao.einkbro.unit
+
+import android.app.Activity
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.ContentValues
+import android.content.Context
+import android.content.Context.DOWNLOAD_SERVICE
+import android.content.Intent
+import android.content.Intent.ACTION_VIEW
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
+import android.webkit.CookieManager
+import android.webkit.URLUtil
+import android.webkit.WebSettings
+import androidx.activity.result.ActivityResultLauncher
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import info.plateaukao.einkbro.R
+import info.plateaukao.einkbro.unit.HelperUnit.needGrantStoragePermission
+import info.plateaukao.einkbro.util.Constants
+import info.plateaukao.einkbro.view.EBToast
+import info.plateaukao.einkbro.view.EBToast.showShort
+import info.plateaukao.einkbro.view.EBWebView
+import info.plateaukao.einkbro.view.dialog.DialogManager
+import info.plateaukao.einkbro.view.dialog.TextInputDialog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.IOException
+import java.io.OutputStream
+import java.lang.ref.WeakReference
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLDecoder
+import java.util.Base64
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+
+object DownloadHelper {
+    var downloadFileId = -1L
+
+    private const val SUPERNOTE_DOCUMENT_DIR = "Document"
+    private const val MAX_BLOB_BASE64_LENGTH = 64 * 1024 * 1024
+    private const val BLOB_SESSION_TTL_MS = 5 * 60 * 1000L
+
+    private data class PendingBlobDownload(
+        val activityRef: WeakReference<Activity>,
+        val fileName: String,
+        val fallbackMimeType: String,
+        val createdAt: Long = System.currentTimeMillis(),
+        val base64Data: StringBuffer = StringBuffer(),
+    ) {
+        val activity: Activity? get() = activityRef.get()
+    }
+
+    private val pendingBlobDownloads = ConcurrentHashMap<String, PendingBlobDownload>()
+
+    private fun pruneStaleBlobSessions() {
+        val now = System.currentTimeMillis()
+        val iter = pendingBlobDownloads.entries.iterator()
+        while (iter.hasNext()) {
+            val entry = iter.next()
+            val pending = entry.value
+            if (pending.activity == null || now - pending.createdAt > BLOB_SESSION_TTL_MS) {
+                iter.remove()
+            }
+        }
+    }
+
+    private fun publicDownloadDirName(context: Context): String =
+        if (HelperUnit.isSupernoteDocumentInstalled(context)) {
+            SUPERNOTE_DOCUMENT_DIR
+        } else {
+            Environment.DIRECTORY_DOWNLOADS
+        }
+
+    private fun publicDownloadDir(context: Context): File = Environment.getExternalStoragePublicDirectory(publicDownloadDirName(context))
+
+    private fun useSupernoteStorage(context: Context): Boolean = HelperUnit.isSupernoteDocumentInstalled(context)
+
+    /**
+     * MediaStore normalizes DISPLAY_NAME against the given MIME type and appends
+     * the canonical extension when they disagree (e.g. `skin.cskin` +
+     * `application/zip` becomes `skin.cskin.zip`). Derive the MIME from the
+     * extension instead, falling back to octet-stream (no canonical extension,
+     * so unknown extensions are kept verbatim).
+     */
+    private fun mediaStoreMime(fileName: String): String {
+        val ext = fileName.substringAfterLast('.', "").lowercase()
+        return android.webkit.MimeTypeMap
+            .getSingleton()
+            .getMimeTypeFromExtension(ext)
+            ?: "application/octet-stream"
+    }
+
+    /**
+     * Stream a new file into the public Download folder. On API 29+ this must go
+     * through MediaStore.Downloads: scoped storage denies raw `File` writes on
+     * Android 10 (EACCES) and the manifest caps WRITE_EXTERNAL_STORAGE at API 28,
+     * so there is no permission left to request. Pre-29 keeps the direct write,
+     * guarded by the runtime prompt in [needGrantStoragePermission]. Throws on
+     * failure; a partially written MediaStore row is deleted before rethrowing.
+     */
+    private fun writeToPublicDownloads(
+        context: Context,
+        fileName: String,
+        write: (OutputStream) -> Unit,
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver = context.contentResolver
+            val values =
+                ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                    put(MediaStore.MediaColumns.MIME_TYPE, mediaStoreMime(fileName))
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                    put(MediaStore.MediaColumns.IS_PENDING, 1)
+                }
+            val uri =
+                resolver.insert(
+                    MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                    values,
+                ) ?: throw IOException("MediaStore insert failed for $fileName")
+            try {
+                (
+                    resolver.openOutputStream(uri)
+                        ?: throw IOException("openOutputStream failed for $uri")
+                ).use(write)
+                values.clear()
+                values.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                resolver.update(uri, values, null, null)
+            } catch (e: IOException) {
+                resolver.delete(uri, null, null)
+                throw e
+            } catch (e: SecurityException) {
+                resolver.delete(uri, null, null)
+                throw e
+            } catch (e: IllegalArgumentException) {
+                resolver.delete(uri, null, null)
+                throw e
+            }
+        } else {
+            File(publicDownloadDir(context), fileName).outputStream().use(write)
+        }
+    }
+
+    private fun guessMime(
+        fileName: String,
+        fallback: String,
+    ): String {
+        if (fallback.isNotBlank()) return fallback
+        val ext = fileName.substringAfterLast('.', "").lowercase()
+        return android.webkit.MimeTypeMap
+            .getSingleton()
+            .getMimeTypeFromExtension(ext) ?: "application/octet-stream"
+    }
+
+    /**
+     * Write [bytes] into the granted Supernote `Document/` tree. Prompts for SAF
+     * permission on first use. Reports completion / failure via toast.
+     */
+    private fun writeBytesViaSupernote(
+        activity: Activity,
+        fileName: String,
+        mimeType: String,
+        bytes: ByteArray,
+    ) {
+        SupernoteStorage.ensureTreeUri { treeUri ->
+            if (treeUri == null) {
+                showShort(activity, R.string.error_download_link_invalid)
+                return@ensureTreeUri
+            }
+            try {
+                val saved =
+                    SupernoteStorage.write(
+                        activity,
+                        treeUri,
+                        fileName,
+                        guessMime(fileName, mimeType),
+                    ) { it.write(bytes) }
+                if (saved == null) {
+                    showShort(activity, R.string.error_download_link_invalid)
+                } else {
+                    showShort(activity, R.string.toast_downloadComplete)
+                }
+            } catch (e: Exception) {
+                Log.w("browser", "Supernote write failed: $e")
+                showShort(activity, R.string.error_download_link_invalid)
+            }
+        }
+    }
+
+    @JvmStatic
+    fun download(
+        context: Context,
+        url: String,
+        contentDisposition: String,
+        mimeType: String,
+        webView: EBWebView? = null,
+    ) {
+        val activity = context as Activity
+        if (needGrantStoragePermission(activity)) {
+            return
+        }
+
+        if (url.startsWith("data:")) {
+            saveDataUrl(activity, url, mimeType)
+            return
+        }
+
+        val filename = Uri.decode(guessFilename(url, contentDisposition, mimeType, webView?.url))
+
+        if (url.startsWith("blob:")) {
+            if (webView == null) {
+                showShort(activity, R.string.error_download_link_invalid)
+                return
+            }
+            val githubRawUrl = GithubUtil.rawUrlForBlobPage(webView.url)
+            if (githubRawUrl != null) {
+                internalDownload(activity, githubRawUrl, mimeType, filename)
+                return
+            }
+            // Blob URLs never carry a real filename; the page URL is unreliable too.
+            // Always confirm the name with the user before saving (unless the server
+            // provided an explicit Content-Disposition).
+            if (hasExactFilename(contentDisposition)) {
+                downloadBlobUrl(activity, webView, url, filename, mimeType)
+            } else {
+                val title = context.getString(R.string.dialog_title_download)
+                (activity as LifecycleOwner).lifecycleScope.launch {
+                    val modifiedFilename =
+                        TextInputDialog(
+                            context,
+                            "",
+                            title,
+                            filename,
+                        ).show()
+
+                    modifiedFilename?.let { downloadBlobUrl(activity, webView, url, it, mimeType) }
+                }
+            }
+            return
+        }
+
+        if (hasExactFilename(contentDisposition)) {
+            internalDownload(activity, url, mimeType, filename)
+        } else {
+            val title = context.getString(R.string.dialog_title_download)
+            (activity as LifecycleOwner).lifecycleScope.launch {
+                val modifiedFilename =
+                    TextInputDialog(
+                        context,
+                        "",
+                        title,
+                        filename,
+                    ).show()
+
+                modifiedFilename?.let { internalDownload(activity, url, mimeType, it) }
+            }
+        }
+    }
+
+    private fun downloadBlobUrl(
+        activity: Activity,
+        webView: EBWebView,
+        blobUrl: String,
+        filename: String,
+        mimeType: String,
+    ) {
+        pruneStaleBlobSessions()
+        val downloadId = UUID.randomUUID().toString()
+        pendingBlobDownloads[downloadId] =
+            PendingBlobDownload(
+                activityRef = WeakReference(activity),
+                fileName = sanitizeFilename(filename),
+                fallbackMimeType = mimeType,
+            )
+        showShort(activity, R.string.toast_start_download)
+        webView.jsBridge.downloadBlobUrl(blobUrl, mimeType, downloadId)
+    }
+
+    fun beginBlobDownload(
+        activity: Activity,
+        fileName: String,
+        mimeType: String,
+    ): String {
+        pruneStaleBlobSessions()
+        val downloadId = UUID.randomUUID().toString()
+        pendingBlobDownloads[downloadId] =
+            PendingBlobDownload(
+                activityRef = WeakReference(activity),
+                fileName = sanitizeFilename(fileName),
+                fallbackMimeType = mimeType,
+            )
+        showShort(activity, R.string.toast_start_download)
+        return downloadId
+    }
+
+    private fun saveDataUrl(
+        activity: Activity,
+        dataUrl: String,
+        fallbackMimeType: String,
+    ) {
+        try {
+            val header = dataUrl.substring(dataUrl.indexOf(":") + 1, dataUrl.indexOf(","))
+            val dataMimeType =
+                if (header.contains(";")) {
+                    header.substring(0, header.indexOf(";"))
+                } else {
+                    header
+                }
+            val isBase64 = header.contains("base64", ignoreCase = true)
+            val rawData = dataUrl.substring(dataUrl.indexOf(",") + 1)
+
+            val effectiveMimeType = dataMimeType.ifEmpty { fallbackMimeType }
+            val ext =
+                android.webkit.MimeTypeMap
+                    .getSingleton()
+                    .getExtensionFromMimeType(effectiveMimeType) ?: "bin"
+            val filename = "download_${System.currentTimeMillis()}.$ext"
+
+            val bytes =
+                if (isBase64) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        Base64.getDecoder().decode(rawData)
+                    } else {
+                        android.util.Base64.decode(rawData, android.util.Base64.DEFAULT)
+                    }
+                } else {
+                    java.net.URLDecoder
+                        .decode(rawData, "UTF-8")
+                        .toByteArray()
+                }
+
+            if (useSupernoteStorage(activity)) {
+                writeBytesViaSupernote(activity, filename, effectiveMimeType, bytes)
+            } else {
+                writeToPublicDownloads(activity, filename) { it.write(bytes) }
+                showShort(activity, R.string.toast_downloadComplete)
+            }
+        } catch (e: Exception) {
+            Log.w("browser", "Failed to save data URL: $e")
+            showShort(activity, R.string.error_download_link_invalid)
+        }
+    }
+
+    fun appendBlobDownloadChunk(
+        downloadId: String,
+        base64Chunk: String,
+    ) {
+        val pending = pendingBlobDownloads[downloadId]
+        if (pending == null) {
+            Log.w("browser", "Missing blob download session for chunk: $downloadId")
+            return
+        }
+        val activity = pending.activity
+        if (activity == null) {
+            pendingBlobDownloads.remove(downloadId)
+            Log.w("browser", "Activity gone for blob download: $downloadId")
+            return
+        }
+        if (pending.base64Data.length + base64Chunk.length > MAX_BLOB_BASE64_LENGTH) {
+            pendingBlobDownloads.remove(downloadId)
+            Log.w("browser", "Blob download exceeded supported size: $downloadId")
+            showShort(activity, R.string.error_download_link_invalid)
+            return
+        }
+        pending.base64Data.append(base64Chunk)
+    }
+
+    fun completeBlobDownload(
+        downloadId: String,
+        mimeType: String,
+    ) {
+        val pending = pendingBlobDownloads.remove(downloadId)
+        if (pending == null) {
+            Log.w("browser", "Missing blob download session on completion: $downloadId")
+            return
+        }
+        val activity = pending.activity
+        if (activity == null) {
+            Log.w("browser", "Activity gone before blob download completion: $downloadId")
+            return
+        }
+
+        val effectiveMimeType = mimeType.ifBlank { pending.fallbackMimeType }
+        val encodedData = pending.base64Data.toString()
+        (activity as LifecycleOwner).lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val bytes =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        Base64.getDecoder().decode(encodedData)
+                    } else {
+                        android.util.Base64.decode(encodedData, android.util.Base64.DEFAULT)
+                    }
+                if (useSupernoteStorage(activity)) {
+                    withContext(Dispatchers.Main) {
+                        writeBytesViaSupernote(
+                            activity,
+                            pending.fileName,
+                            effectiveMimeType,
+                            bytes,
+                        )
+                    }
+                } else {
+                    writeToPublicDownloads(activity, pending.fileName) { it.write(bytes) }
+                    withContext(Dispatchers.Main) {
+                        showShort(activity, R.string.toast_downloadComplete)
+                    }
+                }
+            } catch (e: Exception) {
+                // The link already delivered its bytes at this point — only the local
+                // save can fail here, so don't blame the download link.
+                Log.w("browser", "Failed to complete blob download: $e")
+                withContext(Dispatchers.Main) {
+                    showShort(activity, R.string.error_download_save_failed)
+                }
+            }
+        }
+    }
+
+    fun failBlobDownload(
+        downloadId: String,
+        message: String?,
+    ) {
+        val pending = pendingBlobDownloads.remove(downloadId) ?: return
+        Log.w("browser", "Blob download failed: $message")
+        pending.activity?.let { showShort(it, R.string.error_download_link_invalid) }
+    }
+
+    private fun hasExactFilename(contentDisposition: String): Boolean = parseContentDispositionFilename(contentDisposition) != null
+
+    private fun internalDownload(
+        activity: Activity,
+        url: String,
+        mimeType: String,
+        filename: String,
+    ) {
+        val cookie = CookieManager.getInstance().getCookie(url)
+        val userAgent = WebSettings.getDefaultUserAgent(activity)
+        if (Uri.parse(url).host == null) {
+            showShort(activity, R.string.error_download_link_invalid)
+            return
+        }
+        try {
+            val request =
+                DownloadManager.Request(Uri.parse(url)).apply {
+                    if (cookie != null) addRequestHeader("Cookie", cookie)
+                    addRequestHeader("User-Agent", userAgent)
+                    setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    setTitle(filename)
+                    setMimeType(mimeType)
+                    try {
+                        setDestinationInExternalPublicDir(publicDownloadDirName(activity), filename)
+                    } catch (e: IllegalStateException) {
+                        setDestinationUri(Uri.fromFile(File(publicDownloadDir(activity), filename)))
+                    }
+                }
+            val manager = activity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            downloadFileId = manager.enqueue(request)
+            showShort(activity, R.string.toast_start_download)
+        } catch (e: Exception) {
+            Log.w("browser", "DownloadManager failed, falling back to direct download: $e")
+            directDownload(activity, url, cookie, userAgent, filename, mimeType)
+        }
+    }
+
+    private fun directDownload(
+        activity: Activity,
+        url: String,
+        cookie: String?,
+        userAgent: String,
+        filename: String,
+        mimeType: String,
+    ) {
+        showShort(activity, R.string.toast_start_download)
+        (activity as LifecycleOwner).lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val connection = URL(url).openConnection() as HttpURLConnection
+                connection.instanceFollowRedirects = true
+                connection.addRequestProperty("User-Agent", userAgent)
+                if (cookie != null) connection.addRequestProperty("Cookie", cookie)
+                connection.connectTimeout = 15000
+                connection.readTimeout = 30000
+                connection.connect()
+
+                if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+                    withContext(Dispatchers.Main) {
+                        showShort(activity, R.string.error_download_link_invalid)
+                    }
+                    return@launch
+                }
+
+                if (useSupernoteStorage(activity)) {
+                    val bytes = connection.inputStream.use { it.readBytes() }
+                    withContext(Dispatchers.Main) {
+                        writeBytesViaSupernote(activity, filename, mimeType, bytes)
+                    }
+                } else {
+                    writeToPublicDownloads(activity, filename) { output ->
+                        connection.inputStream.use { input -> input.copyTo(output) }
+                    }
+                    withContext(Dispatchers.Main) {
+                        showShort(activity, R.string.toast_downloadComplete)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w("browser", "Direct download also failed: $e")
+                withContext(Dispatchers.Main) {
+                    showShort(activity, R.string.error_download_link_invalid)
+                }
+            }
+        }
+    }
+
+    fun guessFilename(
+        url: String,
+        contentDisposition: String,
+        mimeType: String,
+        fallbackUrl: String? = null,
+    ): String {
+        val cdFilename = parseContentDispositionFilename(contentDisposition)
+        if (cdFilename != null) return sanitizeFilename(cdFilename)
+
+        if (url.startsWith("blob:")) {
+            val fallbackFilename = fallbackUrl?.let { extractFilenameFromUrl(it, mimeType) }
+            if (fallbackFilename != null) return sanitizeFilename(fallbackFilename)
+        }
+
+        val urlFilename = extractFilenameFromUrl(url, mimeType)
+        if (urlFilename != null) return sanitizeFilename(urlFilename)
+
+        val fallbackFilename = fallbackUrl?.let { extractFilenameFromUrl(it, mimeType) }
+        if (fallbackFilename != null) return sanitizeFilename(fallbackFilename)
+
+        return sanitizeFilename(URLUtil.guessFileName(url, contentDisposition, mimeType))
+    }
+
+    private fun parseContentDispositionFilename(contentDisposition: String): String? {
+        if (contentDisposition.isBlank()) return null
+
+        // RFC 5987: filename*=UTF-8''percent-encoded-name (takes priority per RFC 6266)
+        val extValuePattern = Regex("""filename\*\s*=\s*[^']*'[^']*'(.+?)(?:\s*;|$)""", RegexOption.IGNORE_CASE)
+        extValuePattern.find(contentDisposition)?.let { match ->
+            val encoded = match.groupValues[1].trim()
+            return try {
+                URLDecoder.decode(encoded, "UTF-8")
+            } catch (e: IllegalArgumentException) {
+                encoded
+            }
+        }
+
+        // Quoted: filename="name"
+        val quotedPattern = Regex("""filename\s*=\s*"([^"]+)"""", RegexOption.IGNORE_CASE)
+        quotedPattern.find(contentDisposition)?.let { match ->
+            return match.groupValues[1]
+        }
+
+        // Unquoted: filename=name
+        val unquotedPattern = Regex("""filename\s*=\s*([^\s;]+)""", RegexOption.IGNORE_CASE)
+        unquotedPattern.find(contentDisposition)?.let { match ->
+            return match.groupValues[1]
+        }
+
+        return null
+    }
+
+    private fun extractFilenameFromUrl(
+        url: String,
+        mimeType: String,
+    ): String? {
+        // Strip query string and fragment first; only the path itself becomes the filename.
+        // Decode after stripping so URLDecoder's `+` -> space rule (form-encoding) does not
+        // corrupt path characters like `1.0+rc1.apk`.
+        val cleanUrl = url.substringBefore('?').substringBefore('#')
+        if (cleanUrl.endsWith("/")) return null
+
+        val lastSegment = cleanUrl.substringAfterLast('/')
+        if (lastSegment.isBlank()) return null
+
+        val decodedSegment =
+            try {
+                // URLDecoder treats plus as a form-encoded space. Escape it first
+                // because this value came from a URL path, not a query/form body.
+                URLDecoder.decode(lastSegment.replace("+", "%2B"), "UTF-8")
+            } catch (e: IllegalArgumentException) {
+                lastSegment
+            }
+
+        // If it has a recognizable file extension, use it
+        if (decodedSegment.contains('.')) return decodedSegment
+
+        // No extension -- try to derive one from mimeType
+        val ext =
+            android.webkit.MimeTypeMap
+                .getSingleton()
+                .getExtensionFromMimeType(mimeType)
+        return if (ext != null) "$decodedSegment.$ext" else null
+    }
+
+    private fun sanitizeFilename(filename: String): String =
+        filename
+            .replace(Regex("[/\\\\]"), "_")
+            .replace(Regex("[\\x00-\\x1f]"), "")
+            .trim()
+            .ifBlank { "download" }
+
+    // True when this build declares REQUEST_INSTALL_PACKAGES (the playRelease
+    // manifest strips it). Declared is enough: with the permission in the
+    // manifest the system installer takes over, including the one-time
+    // "install unknown apps" grant flow on API 26+.
+    private fun hasInstallPackagesPermission(context: Context): Boolean =
+        try {
+            context.packageManager
+                .getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
+                .requestedPermissions
+                ?.contains(android.Manifest.permission.REQUEST_INSTALL_PACKAGES) == true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+
+    private fun downloadedLocalUri(
+        manager: DownloadManager,
+        id: Long,
+    ): String? =
+        try {
+            manager.query(DownloadManager.Query().setFilterById(id))?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
+                } else {
+                    null
+                }
+            }
+        } catch (e: IllegalArgumentException) {
+            Log.w("browser", "Failed to query downloaded file uri: $e")
+            null
+        } catch (e: android.database.sqlite.SQLiteException) {
+            Log.w("browser", "Failed to query downloaded file uri: $e")
+            null
+        }
+
+    fun createDownloadReceiver(activity: Activity): BroadcastReceiver {
+        return object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context,
+                intent: Intent,
+            ) {
+                if (activity.isFinishing || downloadFileId == -1L) return
+
+                val downloadManager = activity.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+                val mostRecentDownload: Uri =
+                    downloadManager.getUriForDownloadedFile(downloadFileId) ?: return
+                val mimeType: String? = downloadManager.getMimeTypeForDownloadedFile(downloadFileId)
+                val localUri = downloadedLocalUri(downloadManager, downloadFileId)
+                downloadFileId = -1L
+                val isApk =
+                    mimeType == Constants.MIME_TYPE_APK ||
+                        localUri?.endsWith(".apk", ignoreCase = true) == true
+                val fileIntent =
+                    when {
+                        // The system installer handles the rest, including walking the
+                        // user through the per-app "install unknown apps" grant.
+                        isApk && hasInstallPackagesPermission(activity) ->
+                            Intent(ACTION_VIEW).apply {
+                                // force the APK mime type: servers often send octet-stream
+                                setDataAndType(mostRecentDownload, Constants.MIME_TYPE_APK)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                        // Without REQUEST_INSTALL_PACKAGES (stripped from the Play build),
+                        // the package installer silently ignores install intents from this
+                        // app. Hand APKs to the system Downloads UI instead, so the Files
+                        // app the user taps the APK in becomes the install source.
+                        isApk ->
+                            Intent(DownloadManager.ACTION_VIEW_DOWNLOADS).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                        else ->
+                            Intent(ACTION_VIEW).apply {
+                                setDataAndType(mostRecentDownload, mimeType)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                    }
+                DialogManager(activity).showOkCancelDialog(
+                    messageResId = R.string.toast_downloadComplete,
+                    okAction = {
+                        try {
+                            activity.startActivity(fileIntent)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            EBToast.show(activity, R.string.toast_error)
+                        }
+                    },
+                )
+            }
+        }
+    }
+
+    /**
+     * Download [url] under [fileName] without prompting. For data:image URLs (Android O+),
+     * defer to the SAF picker via [imagePickerLauncher]. For regular URLs, enqueue a
+     * DownloadManager request straight to the public Downloads directory.
+     */
+    fun saveFileWithName(
+        activity: Activity,
+        url: String,
+        fileName: String,
+        imagePickerLauncher: ActivityResultLauncher<Intent>,
+    ) {
+        if (url.startsWith("data:image")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                BrowserUnit.saveImageFromUrl(url, imagePickerLauncher)
+            } else {
+                EBToast.show(activity, "Not supported dataUrl")
+            }
+            return
+        }
+        if (needGrantStoragePermission(activity)) return
+        val cookie = CookieManager.getInstance().getCookie(url)
+        val userAgent = WebSettings.getDefaultUserAgent(activity)
+        try {
+            val request =
+                DownloadManager.Request(Uri.parse(url)).apply {
+                    if (cookie != null) addRequestHeader("Cookie", cookie)
+                    addRequestHeader("User-Agent", userAgent)
+                    setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    try {
+                        setDestinationInExternalPublicDir(publicDownloadDirName(activity), fileName)
+                    } catch (e: Exception) {
+                        setDestinationUri(Uri.fromFile(File(publicDownloadDir(activity), fileName)))
+                    }
+                }
+            (activity.getSystemService(DOWNLOAD_SERVICE) as DownloadManager).enqueue(request)
+        } catch (e: Exception) {
+            // DownloadManager rejects custom public dirs (e.g. Supernote's "Document"),
+            // fall back to a direct HTTP download into the resolved folder.
+            Log.w("browser", "DownloadManager rejected destination, falling back: $e")
+            directDownload(activity, url, cookie, userAgent, fileName, "")
+        }
+        ViewUnit.hideKeyboard(activity)
+    }
+
+    fun openDownloadFolder(activity: Activity) {
+        val uri = Uri.parse(publicDownloadDir(activity).toString())
+        val intent =
+            Intent(Intent.ACTION_GET_CONTENT).apply { setDataAndType(uri, "resource/folder") }
+        activity.startActivity(
+            Intent.createChooser(intent, activity.getString(R.string.dialog_title_download)),
+        )
+    }
+}

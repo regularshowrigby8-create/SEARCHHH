@@ -1,0 +1,1320 @@
+### 16.7.0
+#### Features
+* Site settings: override WebView dark mode and reserve page height for individual sites
+* AI responses render rich Markdown, including inline images and Mermaid diagrams
+* AI: configure a dedicated Gemini model and thinking setting for YouTube transcript requests
+* Downloads: non-Play builds can hand downloaded APKs to the system package installer again; the Play build continues to open Downloads to comply with Play policy
+
+#### Improvements
+* Ad blocking: native CSS `:has()` support replaces the ExtendedCss JavaScript library, improving speed and reducing APK size
+* Theming: remaining dialogs, buttons, and checkboxes consistently use themed borders and colors
+* Performance: reduce memory use, speed up page loading, and shrink the APK
+
+#### Fixes
+* WebView: rebuild a tab after its renderer dies instead of losing the tab
+* Tabs: keep focus synchronized after closing a tab
+* Reader mode: restore a lead image when it sits outside the article container (#635)
+* EPUB: avoid pruning valid titles
+* Favicons remain attached to bookmarks across cross-host redirects
+* Blocked image requests receive transparent responses instead of broken-image placeholders
+* Ad blocking: harden the native/JNI parser against corrupt or hostile filter data
+* Theming: remove the built-in AlertDialog border added by Boox firmware
+* Translation: remove the no-longer-supported Naver and Papago providers
+
+---
+
+### 16.6.0
+#### Features
+* Site settings: per-site Images switch — turn image loading off for just one site, resolved through the same path → host → global rule chain and applied on every navigation within the site (#634)
+* Site settings: per-site on/off switches for custom CSS and post-load JavaScript
+* Theming: the toolbar's page-facing edge is drawn as a real themed border (stamp perforations and sketch wobble show the page through them), and the load-progress line renders the theme's separator pattern in the accent color
+* Theming: dividers inside dialogs follow the theme's border style (dashed, double rule, perforation, hand-drawn wobble…), with a little more breathing room around dialog content
+
+#### Improvements
+* Menu dialog: section subtitle labels are removed — the themed dividers already separate the groups
+
+#### Fixes
+* Security: the translation JS bridge is gated behind a native per-session token, so untrusted pages can no longer call it to spend your OpenAI/Gemini API key
+* Favicons are fetched from the document itself and stored under the correct host, so an icon can no longer end up on another site's bookmarks, history, tabs or start page; bookmark long-press gains "Refresh icon"
+* Long-press menus (bookmarks, links/images, text selection) open above the finger instead of underneath it
+* Bookmarks: the edit dialog renders in the themed window, so it shows the selected border style
+* Bookmarks: the dialog no longer grows past the screen height, keeping the bottom action bar visible
+
+---
+
+### 16.5.0
+#### Features
+* Theming: choose an accent color (7 presets or a custom color picked on a hue wheel), a border style (classic, round, sharp, paper, dashed, postage stamp, hand-drawn sketch, certificate, sticker, or none), and a fill (tonal, gradient with an adjustable direction/level dial, or subtle stripe/dot/graph/ruled/crosshatch patterns) - every combination applies live to dialogs, panels, settings, and the toolbar, with an Invert colors mode for a colored dark look
+* Theming: the Android 12+ system splash screen and the built-in start page (background, fill pattern, search bar, wordmark, and tiles) follow the selected theme; settings screens tint the status bar to match their header
+
+#### Improvements
+* Touch area page-turn hints are drawn with rounded corners instead of a dashed box
+
+---
+
+### 16.4.1
+#### Features
+* Site settings: rules can now be scoped to a URL path (e.g. example.com/docs) as well as a whole host, with the most specific rule winning field by field; the editor shows where each inherited value comes from, and Settings > Site Settings gains a "Configured sites" list to review, edit or remove every rule in one place
+
+#### Fixes
+* Security: the userscript bridge's GM_openInTab only opens http/https URLs, and file:// pages can no longer read other local files or other origins by default (the "Remote content" setting now defaults to off). Defense in depth for GHSA-rcv7-662w-4gvr; the reported navigation vector was already closed in 16.3.2
+* Site settings: rules restored from a backup are merged into existing ones instead of being skipped, and take effect without restarting the app
+* Site settings: same-document navigations (pushState, hash changes, redirects) re-apply the rules for the new path
+
+### 16.4.0
+#### Improvements
+* App size: the arm64 APK shrinks from 6.2 MB to 4.4 MB (−29%) by dropping the Material Components, WorkManager and AppCompat libraries and packaging only the 31 languages the app is translated into
+* Ad-block engine: the native library is 77% smaller (1.1 MB → 267 KB per ABI) and regex filter rules are now matched, so lists that use them block more
+* Ad-block filter lists: a freshly downloaded list takes effect immediately instead of after the next app restart, updating a list you had switched off keeps it off, and a download interrupted by the app being killed resumes on the next launch
+
+#### Fixes
+* Bookmark dialog no longer appears as a small empty panel and then slides into place when opened
+* E-ink image cache now really honours its 16 MB budget (it used to count images, not bytes) and is shared across tabs; oversized intercepted images no longer risk out-of-memory
+
+### 16.3.2
+#### Fixes
+* Userscripts: the GM bridge is now reachable only by installed userscripts — ordinary web pages can no longer invoke native GM functions such as writing to the clipboard
+
+### 16.3.1
+#### Fixes
+* Hide-statusbar mode: the url input bar no longer bounces up and down above the keyboard on Android 10 and older devices
+
+### 16.3.0
+#### Features
+* Vertical toolbar mode now shows the tab bar, in its own horizontal strip beside the toolbar
+
+#### Improvements
+* Translating a page paragraph by paragraph starts almost immediately — a long article used to sit for seconds before the first translated line appeared
+* Translated pages stay responsive on sites that keep loading content (ads, infinite scroll, live tickers)
+
+#### Fixes
+* Starting paragraph translation no longer shifts the page sideways or changes the text size
+* Vertical toolbar mode: the tab strip is hidden along with the toolbar when entering fullscreen or opening the keyboard
+* A single subresource served over broken TLS can no longer navigate the whole tab away from the page you are reading
+* Android 10: downloads to the public Download folder work again instead of failing with "Download link is not valid"
+* AI: calls are routed to the right OpenAI endpoint per model, fixing agent tasks failing on the first turn with gpt-5.6 models and gpt-4.1 actions breaking on a non-default reasoning effort
+
+### 16.2.2
+#### Fixes
+* Android 8.x: long-pressing an image no longer freezes the entire device — the system drag WebView 131+ starts on image long-press (a known unfixable WebView regression on Android 8) is now blocked (#629)
+* Reader mode / translated pages: the custom font size option in the font dialog opens the size input again instead of the custom font picker (#631)
+* Finished APK downloads open the system Files app instead of failing to launch the package installer
+
+### 16.2.1
+#### Features
+* Restoring a backup (from Google Drive or a zip) now merges into local data instead of replacing it: bookmarks, site settings, userscripts, AI query results, chat sessions, video transcripts, highlights, and saved pages are appended — locally created data is never deleted, and restoring the same backup twice adds no duplicates
+
+#### Fixes
+* Android 15+: the address bar input no longer opens hidden behind the keyboard (#628)
+* Start page: scrolling the search suggestion list no longer accidentally opens the item under the finger
+* Android 15+: toolbar and tab bar spacing no longer miscounts the system bar sizes, and the toolbar settings screen stays clear of the 3-button navigation bar
+* Android 16: rotation lock and fullscreen video orientation keep working on large-screen devices
+* intent:// links from web pages are launched with browser-standard safety restrictions
+
+### 16.2.0
+#### Features
+* Start page: tap the title to rename the heading or set a background image picked from your device
+* Start page: follows the app's dark mode, and a background image picks the light/dark theme from its brightness
+* Start page: the background image anchors to the bottom of the screen
+
+#### Fixes
+* Android 15+: web pages, settings screens, and the toolbar no longer extend under the system status/navigation bars — with classic 3-button navigation the toolbar is tappable again; the start page keeps its full-screen background while its content stays clear of the status bar
+* Text field dialogs show the keyboard and caret when opened
+* Reader mode: titles no longer fall back to URLs from page metadata, and a link to the original page sits next to the reading time
+
+### 16.1.1
+#### Features
+* Toolbar and tab bar hide automatically while the keyboard is up for web content, so the page keeps the remaining room; they return when the keyboard closes
+
+#### Fixes
+* Start page: the keyboard is no longer dismissed the moment the search box is focused on Android 17 devices
+
+### 16.1.0
+#### Features
+* Built-in start page: a search box with the browser's own autosuggestions and a user-curated tile grid — add sites from bookmarks or by hand, tiles show the sites' favicons; available as a new-tab behavior option and the default homepage
+
+#### Improvements
+* All builds now target Android 16 (API 36)
+
+#### Fixes
+* Menus stay readable on big screens
+
+### 16.0.0
+#### Features
+* AI agent can organize bookmarks: new agent tools add bookmarks and folders, and large bookmark lists are filed page-by-page so the agent stays reliable
+* Custom AI agent tasks can now run on Gemini via its OpenAI-compatible API
+* Thinking (reasoning) effort setting for AI, configurable globally and per AI action
+* Translate dialog and Chat with Web show a live thinking status while the model reasons
+* Audio-only mode can invert video canvas colors
+* What's New in Settings opens the online changelog
+
+#### Changes
+* All in-app self-update features are removed to comply with Google Play policy; the About screen keeps What's New and Contributors
+
+#### Fixes
+* Reopening an AI chat session restores its full conversation context, not just the visible messages
+* Agent task transcripts no longer appear in Chat with Web history
+* Transcription failures are reported clearly, Gemini streaming is parsed correctly, and a connection test was added to provider settings
+* Download-complete dialog shows again on Android 14+
+
+### 15.19.0
+#### Features
+* AI on YouTube: Page AI, Chat with Web, and summarize now work on the video's caption transcript; videos without captions are transcribed with Gemini (when a Gemini API key is configured), and transcripts are cached so each video is only transcribed once
+* Userscripts can be exported/imported as a zip compatible with other userscript managers, and are now included in app-data backup and Google Drive sync
+* AI chat sessions are stored in the app database, survive WebView storage clearing, and are included in backup/restore and Drive sync together with video transcripts; backup and restore dialogs show per-category sizes
+* Web pages with their own read-aloud buttons now speak through the app's TTS engine (system, Edge-TTS, or OpenAI) via a Web Speech API polyfill
+* Paragraph translations are cached for 7 days, so revisited pages translate instantly
+* Bookmarks grid: long press shows the context menu and lets the finger slide onto an action, triggering it on lift (with "1 touch to url action" enabled)
+
+#### Fixes
+* Reader mode no longer blanks the page after following a link from a reader-mode page
+* Site stylesheets are disabled while reader mode is showing, fixing collapsed layouts on some sites
+* Settings rows and menu cells grow with larger system font sizes instead of clipping text
+* Pages no longer freeze with unloaded content after returning to the app while "continue playing media" was toggled
+* About screen no longer shows a stale build timestamp
+
+### 15.18.0
+#### Features
+* Sync with Google Drive: back up and restore app data from Backup settings; sign-in runs entirely in the browser, no Play Services required
+* Site Settings dialog: per-site AdBlock, Cookies, JavaScript, and desktop mode overrides for the current site; whitelist entries can be edited by tapping; full-screen layout on phones
+* Vertical (CJK) reading mode overhaul: reliable toggle on/off, page turns snap to line boundaries, tate-chu-yoko and better CJK typography, and reader layout settings now apply in vertical mode
+* Reader layout settings dialog on long-press of the reader mode icon: live page margin, line spacing, two-column landscape, font shortcut; reader mode options consolidated there
+* E-ink image optimization: fast CSS-filter mode and a live preview dialog in settings
+* Editing a search result URL prefills just the search query, for all built-in engines and custom ones
+
+#### Improvements
+* Font and style changes apply immediately without reloading the page
+* Renamed "GPT Settings" to "Gen AI", "Statusbar" to "Info bar", and "Start Control" to "Site Settings" in all languages
+
+#### Fixes
+* Clear-on-exit now really clears cookies and site storage
+* Desktop mode presents a complete desktop Chrome fingerprint, so sites no longer serve the mobile/app-jump page
+* Fullscreen video respects the system rotation lock
+* Location prompt waits for the Android permission dialog, so geolocation no longer breaks until restart
+* Translation: fixed a freeze on pages with many visible paragraphs, dropdown menus no longer get corrupted, on-screen content translates first, and the Google widget's "Original text" popup is suppressed
+* Reader mode keeps code blocks whose identifiers are hyperlinks
+* Keyboard opens again in the save-file and Instapaper dialogs
+
+### 15.17.0
+#### Features
+* AI agent tool upgrade: the LLM agent can now read a page's real HTML source, run JavaScript on the live page, search the web, and export multi-chapter EPUBs
+* Double-click a volume key to go back (opt-in gesture setting; single tap still turns the page, long-press still adjusts volume)
+
+#### Improvements
+* Compose performance pass: far fewer recompositions in the toolbar, tab overview, context menu, TTS dialog, GPT query list, and adblock list; favicon bitmaps are cached
+* Config screens share a common scaffold and follow the app locale
+
+#### Fixes
+* In-place translation no longer requests each paragraph twice
+* "Allow video autoplay" setting now actually blocks autoplay on feed sites
+* Fullscreen on Android 11+: system bars swipe in transiently and restore symmetrically when leaving fullscreen
+* Fixed three WebView lifecycle leaks; background tab WebViews are detached and hidden properly
+* Closing all tabs is now a single batch operation
+* In-progress edits in config screens survive rotation; GPT action dialog no longer wipes typed fields
+* Two-pane layout keeps its arrangement and split ratio across orientation changes
+* Toolbar and status-bar clocks tick once per minute, aligned to the minute
+* Highlights export no longer mixes up article IDs
+* Hardware Enter in the URL bar no longer submits twice; D-pad focus navigation works when page-turn keys are off
+* HTTP-auth dialog masks the password field
+* Font boldness slider no longer lags one step behind; FAB position no longer gets wiped in portrait
+* Many other small UI fixes from a full audit (suggestion row height, auto-hide-toolbar scroll threshold, tab focus border, drag smoothness)
+
+### 15.16.0
+#### Features
+* Save as PDF: every saved page gets a table-of-contents (outline) entry, and pages can be appended to an existing PDF — collect articles into one document with a navigable TOC
+* Faster startup: tabs restore lazily with persisted titles
+* GPT settings reorganized into a hub with per-provider sub-pages
+* Userscript UI: browse-scripts link and quick access to settings
+* Volume-key page-turn toggle in gesture settings
+* Side-by-side test build (.a application id) attached to releases
+
+#### Fixes
+* Settings screen stays in the browser task instead of opening a separate one (#612)
+* Backup/Restore works across application ids, so the .a build can share data
+* Offline error page: reload re-fetches the real URL and auto-recovers; connectivity polling removed to save battery
+* Toolbar clock no longer ellipsizes in vertical mode
+
+### 15.15.0
+#### Features
+* Userscript support: a Tampermonkey-style engine to install and run userscripts, with GM_* APIs and per-script menu commands
+* Userscripts update themselves from their @updateURL / @downloadURL
+* Toggle for pull-to-refresh in Behavior settings
+
+#### Fixes
+* Fixed several crashes on specific Android API levels
+
+### 15.14.0
+#### Features
+* Redesigned Site Settings dialog with pinned Reset/OK buttons
+* Per-site override to force desktop viewport width
+* Supernote: dedicated reader for saved EPUB/PDF files and downloads routed to Document/
+* In-process open-file chooser replaces system picker
+* Live FAB position switching without activity restart
+* Pick toolbar position from a tablet diagram dialog
+* Mirrored toolbar side and full-height preview in toolbar config
+* Newly inserted toolbar icons appear in the middle and blink
+* PDF print zoom scales from page layout width
+* Long-press Share icon replays the last-used share target
+* Favicon-grid mode for address bar history
+
+#### Fixes
+* Blob-based downloads now work
+* Paragraph translation no longer breaks page layout or hits caching errors
+* Bookmarks dialog stays open across layout changes
+* Supernote saves routed through SAF to avoid scoped-storage crash
+* Open-with dialog shown on the main thread
+* YouTube caption capture hardened; cleared on SPA route changes
+* EPUB image fetch hardened
+* PDF saved via SAF picker without going through the system print spooler
+* Multitouch swipe handler no longer crashes on pointerIndex
+* Captions only move vertically in audio-only mode
+* AI chat pages excluded from history
+* Translation semaphore always released on error
+* GPT_SETTINGS not overwritten when ALL_PREFERENCES is selected for restore
+
+---
+
+### 15.13.0
+#### Features
+* Per-domain custom CSS and post-load JavaScript overrides
+* Agent tools that persist JS/CSS DOM patches per domain
+* Hide seldom-used items from the main menu
+* Cross-row drag with bottom-first menu layout
+* Center YouTube captions in audio-only mode
+* URL suggestions extended to Bing/Ecosia/Startpage/Yandex (capped at 4)
+
+#### Improvements
+* Faster menu dialog open via Compose prewarm (drops 300ms alpha-hide)
+* Long-press Share icon to copy link (replaces dedicated copy-link tiles)
+* Page AI Actions replaces "Chat With Web" tile in the menu
+* Touch-area toggles moved into Gestures settings; text labels removed
+* Manual promoted to its own settings row
+* Translation observer pulls viewport content earlier (rootMargin 150px → 400px)
+* Migrated EPUB engine from unmaintained epublib to epub4j
+* Renamed dialog labels: "More Settings" and "Enable Pagination"
+* Dropped per-site "As Page Up/Down key" feature
+
+#### Fixes
+* Dark mode visibility for AI Task dialog and About update progress
+* Duplicate tab when connecting/disconnecting a Bluetooth keyboard
+* Pull-to-refresh suppressed when finger lands on inner CSS-scrollable areas
+* In-place translation survives SPA re-renders and lazy hydration
+* App launcher icon used as bookmark favicon fallback
+* Reader mode scopes to the correct article container via JSON-LD
+* In-place translation no longer mangles page layout
+* Restore gesture bindings lost to obfuscated or trimmed action ids
+* Preserve BrowserAction sealed-class hierarchy under R8
+
+---
+
+### 15.12.0
+#### Features
+* News anchor TTS template that reads full articles aloud
+* Task runner for multi-step browser workflows
+* Free-form agent integrated into chat-with-web for follow-up conversations
+* Task runner surfaced as the first item in the Page AI action menu
+* Expose all BrowserActions as gesture bindings
+* Configurable statusbar for fullscreen / no-toolbar mode
+* Per-site translation mode with streamlined translation config dialog
+* Per-site configuration for display settings
+* Apply locale change without restarting the app (preserves WebView tabs)
+* Search functionality in Settings — supports English search terms regardless of app locale
+* "Save as MHT" menu item to save web content as a single .mht file
+* Elegant offline error page with retry button and a horse jump game
+* Center-expanded progress bar for vertical toolbar mode
+
+#### Improvements
+* Avoid main-thread hop on every subresource in ad-filter (perf)
+* Security, error visibility, listener leak fixes, and API modernization pass
+* Decompose BrowserController god interface and introduce typed action dispatch
+* Architecture cleanup — remove runBlocking, coroutinize BaseWebConfig, eliminate static singleton, introduce BrowserState
+* Extract BrowserConfig, TabConfig, UiConfig from ConfigManager
+* Extract DisplayConfigDelegate and split BrowserActivity.onCreate
+* Replace WebView data backup with database backup; show receive progress hint
+* Group toolbar/statusbar settings into sections
+* Trim gesture action catalog and flatten single-item categories
+
+#### Fixes
+* Keep hero images in reader mode when wrapped in figure/picture or marked aria-hidden
+* Null pointer crash in adblock cosmetic filter lookup
+* Prevent gesture settings from resetting on release upgrades
+* Force-clear dsd-pending attribute so filter-broken hydration doesn't leave pages blank
+* Restore EPUB opening broken by delegate refactor
+* WebView collapse and stuck progress bar on vertical toolbar
+* Remove divider above the first category in settings search results
+* Restore "Select Text" context menu and dismiss action mode before ebook pagination
+* Error-page game requires explicit start and pauses when the tab/app is hidden
+
+#### Translations
+* zh-rTW translations for the gesture action catalog
+* zh-rTW translations for statusbar strings
+
+---
+
+### 15.11.1
+#### Features
+* Ebook touch mode — tap to turn pages directly in WebView with native touch interception
+* WebView login data (cookies & storage) included in backup/restore
+* OpenAI/Gemini in-place translation support
+* Auto-hiding top header with history/menu buttons in chat UI
+* Improved web content loading speed with caching optimizations
+* Faster app startup and WebView creation performance
+
+#### Improvements
+* Major architecture overhaul — extract delegates from BrowserActivity, fix DI, migrate DB, split interfaces
+* Break up BrowserUnit and HelperUnit into focused helpers
+* Extract 5 sub-configs from ConfigManager (1135 → 811 lines)
+* Extract WebViewJsBridge from EBWebView
+* Move ebook touch pagination from JS injection to native view interception
+* Simplify update progress UI to show only percentage
+* Move repositories from service/ to data/remote/
+
+#### Fixes
+* Chat with web uses correct webview reference after creating new tab
+* Migrate data from old Ninja4.db to Room on upgrade
+* Crash on launch due to uninitialized ebWebView in TabManager
+* Crash on startup due to Kotlin init order in BaseWebConfig
+* Restore long-press text selection when ebook touch pagination is disabled
+* Show touch pagination state icon in menu dialog
+* Remove animations from menu dialog resize and bookmark dialog navigation
+* Hide bookmark dialog window during folder navigation to reduce flicker
+* Harden video autoplay blocking with multi-layer approach
+* Prevent screen power cycling when starting TTS on E-ink devices
+* Snapshot update stuck state, install screen not showing, and extraction progress
+* Simulate click on non-link elements in Ebook long-press
+
+---
+
+### 15.10.0
+#### Features
+* Share/receive app data over local network
+* Selective backup/restore with category chooser
+* Video autoplay toggle in Behavior Settings
+* E-ink image optimization for web resources (JPEG/PNG/WebP)
+* Vertical toolbar mode (left/right side positioning)
+* Font folder browser with preview and search
+* Anchor toolbar dialogs horizontally near the clicked icon
+* Preserve code snippet styling in reader mode when keepExtraContent is on
+* Option to preserve MathJax/KaTeX math in reader mode
+* Make e-reader toolbar actions configurable, separate from browser toolbar
+* GPT type icon indicator in context menu for GPT actions
+* Ad-block scriptlet injection with crash guards
+
+#### Improvements
+* Redesign GPT result history UI with card-style layout
+* Group behavior settings into logical sections with dividers
+* Show vertical preview in toolbar config when in vertical mode
+* Use landscape toolbar config for vertical toolbar mode
+* Improve tab count icon with Canvas slash, support 10+ tabs
+* Convert BookmarkEditDialog to ComposeDialogFragment
+* Remove deprecated translation modes (Onyx, Google Text, Papago Text/URL/Dual)
+* Remove bookmark sync URL feature
+
+#### Fixes
+* Show audio-only button on YouTube SPA navigations
+* Preserve dark detail in e-ink image processing
+* Fix e-ink image processing broken on Instagram and CDN-served images
+* Make progress bar thinner (2dp) in vertical toolbar mode
+* Reposition progress bar to match toolbar position in vertical mode
+* Prevent ConstraintSet crash in vertical toolbar mode
+* Reload toolbar icons when position changes
+* Improve download reliability with User-Agent, cookie auth, and data URL support
+* Wrap injected touch-tracking JS in IIFE to fix libbyapp.com
+
+#### Translations
+* Add translations for backup/share strings across all 30 locales
+* Add missing translations for all 30 locales to 100% coverage
+
+---
+
+### 15.9.0
+#### Features
+* Audio-only mode to hide video while keeping audio and captions
+* Read-it-later feature replacing save-as-archive
+* MediaStyle notification with play/pause/stop/close for TTS
+* Add EinkBro identifier to saved EPUBs and editable TOC with drag-and-drop
+* Cache translated images to disk and skip delay for cached results
+* Long-click translate icon to batch translate all remaining images
+* Show translated image as overlay on top of original image
+
+#### Improvements
+* Combine open/save EPUB menu items into single tabbed dialog
+* Use GPT icon for Page AI toolbar action to avoid confusion with EPUB
+* Compact BookmarkEditDialog title field and inline folder row
+* Enhance TwoPaneLayout divider with elegant pill-shaped drag handle
+* Remove all remaining layout XMLs, convert to Compose/programmatic views
+* Remove all AbstractComposeView wrapper classes
+* Update README with organized features and fresh screenshots
+
+#### Fixes
+* Detect video sites by URL so audio-only icon shows on first load
+* Tab list border now correctly highlights only the active tab
+* Remove redundant setTimeout and MutationObserver from audio-only mode
+* Improve dual caption reliability with proper cookies and User-Agent
+* Prevent pull-to-refresh from intercepting two-finger swipe gestures
+* Crash due to ComposeView refactoring
+* Prevent content shift during translate by paragraph
+* Toolbar position switching crash when moving to top
+* Remove error toast when image translation fails
+* Improve text translation observer robustness and JS escaping
+* Exclude img alt text from paragraph translation
+* Fix grammar in Settings -> Behaviour
+
+---
+
+### 15.8.0
+#### Fixes
+* Page info and jump-to-top for inner scroll containers
+* Generic JS-based pagination for inner scroll containers
+* Crash when opening EPUB3 files from file explorer
+* Pull-to-refresh only triggers at top of page
+* Prevent pull-to-refresh from intercepting two-finger gestures
+* Polyfill GitHub's include-fragment for older WebView versions
+* Improve download filename parsing with proper RFC 5987/6266 support
+* Skip filename dialog when content-disposition provides exact name
+* Handle NPE in setDestinationInExternalPublicDir for downloads
+* Sort history URLs newest-first in URL bar suggestions
+* Request persistent write permission for EPUB file URIs
+* Update Edge TTS to use Chromium 143 headers and MUID cookie
+
+---
+
+### 15.7.0
+#### Features
+* Pull-to-refresh support for WebView
+* Long press volume key to temporarily disable page turn for 5 seconds
+* Support more than 4 items per row in bookmark grid mode
+* Drag and drop support in bookmarks grid mode
+* Settings icon in page AI action dialog
+
+#### Improvements
+* More elegant recent bookmarks page
+* Position translate dialog at 1/3 window height in whole page mode
+* More compact bullet rendering in chat with web
+* Page AI action dialog positioned closer to toolbar
+
+---
+
+### 15.6.0
+#### Features
+* Support grid mode in bookmarks UI
+* Support Page AI toolbar action
+* Support item reordering in GPT action definition list
+* Support translation dialog pagination by volume key
+* Save web title when saving Page AI generated content
+
+#### Fixes
+* Page AI not working when opened in split screen or new tab
+* Hide translate actions in translate dialog when invoked from Page AI actions
+* Remove overly long model list for OpenAI
+
+---
+
+### 15.5.0
+#### Features
+* Support zoom feature in fullscreen mode
+* Add translation cache for short terms
+* Add input URL option in gesture action
+* Use model list picker instead of manual model name entry
+* Long pressing volume key (while using it for page navigation) now shows volume adjustment UI
+
+#### Fixes
+* Use `none` reasoning value for GenAI API calls
+* thenewslens.com reader mode conversion
+* Improve translate-by-paragraph text node algorithm (group consecutive inline elements; respect block boundaries)
+* More web pages can now use translate-by-paragraph correctly
+* Snapshot/latest version install progress now displays correctly
+* Context menu dialog fragment attach crash
+* Change default Gemini model to 2.5-flash (1.5-flash deprecated)
+
+---
+
+### 15.4.0
+#### Features
+* Opera-style text wrap/reflow to fit visible viewport (#538)
+* Setting to toggle text wrap reflow feature (#537)
+* Custom font setting in font dialog (#530)
+* DuckDuckGo search suggestions
+
+#### Fixes
+* Keyboard overlapping WebView content in fullscreen on some Android versions
+* Use `coroutine context.IO` to prevent UI blocking when handling intents (#545)
+* Long press crash (#533)
+
+---
+
+### 15.3.0
+#### Features
+* Google search suggestions (#531)
+* Append button in URL input auto-suggestion
+* Move context menu URL to bottom for easier reach
+* Fine-tuned search suggestion logic
+
+---
+
+### 15.2.0
+#### Features
+* Long-click URL bar and drag to context menu item to trigger it (#524)
+* Progress indicator when updating to latest version
+* Pressed dot visual effect on toolbar buttons
+
+#### Fixes
+* Static cursor in text input field when empty (#529, #528)
+* Dark mode dot color in context menu dialog (#526)
+* Custom floating button position
+
+---
+
+### 15.0.0
+#### Features
+* Instapaper: add URL support with toolbar/menu integration
+* Long-click action configuration for floating button
+* New shortcut to disable adblock on launch (allows re-downloading filter data)
+* Support ChatGPT actions in remote query across different devices
+
+#### Fixes
+* Removed Pocket service integration
+* Prevent Google Maps website from hijacking intents to open Maps app
+* Do not leave fullscreen mode when adding new tab
+* Fixed menu items missing icons
+
+---
+
+### 14.9.0
+#### Features
+* Open URL in chat web now correctly opens a new tab
+* Switching chat sessions no longer auto-scrolls to bottom
+
+#### Fixes
+* ReadAloud TTS issue
+
+---
+
+### 14.8.0
+#### Features
+* Chat history: save, restore and manage past chat sessions
+* Summarize web content for links in context menu
+* Use YouTube captions as chat-with-web content when available
+* Enhanced input history behavior
+
+#### Fixes
+* GPT-5 support with minimal reasoning tokens
+* Chat history title and URL now saved correctly
+* Do not save empty (0-message) sessions
+* Fixed leaving dict activity behavior (#501)
+
+---
+
+### 14.7.0
+#### Features
+* 16KB page size support
+
+#### Fixes
+* Spanish translation update (#499, #503)
+* Use F-Droid system env for reproducible builds (#496)
+* Chat HTML parsing error
+
+---
+
+### 14.6.0
+#### Features
+* Message history in chat-with-web
+* Input message history for chat-with-web
+
+#### Fixes
+* Gemini stream mode `done` action handling
+* GenAI output line return formatting
+* Disabled GFM markdown in chat-with-web
+* Chat input box shrinks correctly when space is limited
+
+---
+
+### 14.5.0
+#### Features
+* Chat with web for text selections (split screen support)
+* Stream mode for chat-with-web
+* Select different LLM providers for chat-with-web and summarization
+* Long-press chat button opens AI UI in split screen
+* Toolbar action for chat-with-web
+* EPUB reader: port parser from noveldokusha with image support
+* EPUB reader: navigate multi-part TOC entries
+* Select text and start TTS read-aloud from that sentence
+
+#### Fixes
+* Chat scroll-to-bottom behavior
+* Split screen control button position in chat-with-web mode
+* Remove `think` tag output when using Qwen3 on Ollama
+* EPUB reader navigation in vertical content
+* ReadAloud now works in EPUB reader activity
+
+---
+
+### 14.4.0
+#### Features
+* Support OpenAI / Gemini for translate-by-paragraph
+* OpenAI TTS: different model settings; instructions for `gpt-4o-mini-tts`
+* Use cheaper `gpt-4o-mini-tts` audio generation model
+* Updated MozReadability to latest version (adds footnote support) (#473)
+* Replace Wenkai with Iansui font for traditional Chinese characters
+
+#### Fixes
+* ReadAloud speed below 100% now works (#484)
+* Newly added bookmarks placed at end of list on wide screen (#475)
+* EPUB reader activity is now single instance (#474)
+* Invert color and share link from toolbar uses correct WebView (#466)
+* Bookmark drag-and-drop from/to index calculation (#443)
+* Hide search panel when new tab is created (#343)
+* Create empty tab after all tabs are closed (#456)
+* Simplified adblock filter download flow
+
+---
+
+### 14.2.0
+#### Features
+* Vertical reader mode: handle year/month/day and Chinese date expressions
+* Vertical reader mode: process digits and single English characters with dots
+* Enhanced `ol` list label handling in vertical reading mode
+* Add padding configuration for reader mode (#33)
+* Enlarged history and bookmark font size (#447)
+
+#### Fixes
+* Vertical reader mode: image ratio, body height, alignment
+* Dark mode icon color in action mode menu
+* Incognito mode no longer affects save-history setting after toggling
+
+---
+
+### 14.1.0
+#### Features
+* Vertical reader mode fine-tuning: digit rotation, inline element alignment, line interval
+
+#### Fixes
+* Korean and Japanese minute translation in reader mode
+* Do not rotate digits twice in vertical mode
+* Disable prerelease updates for "Update to Latest Release" button (#441)
+
+---
+
+### 14.0.0
+#### Features
+* New adblock system (rewrote filter download and management; removed Apache Commons Text dependency)
+* Invert color toolbar action
+* Save EPUB / share link toolbar actions
+* Use web title as file/book name
+* Add post-notification permission
+* Scriptlet support (experimental)
+
+#### Fixes
+* Text selection from second WebView when split screen is active (#440)
+* Toolbar title width calculation
+* Download snapshot binary with correct arm64-v8a CPU model
+
+---
+
+### 10.5.0
+* Reader mode font configuration (not stable yet)
+* Support reading subtitle format srt file.
+* Support Android monochrome App icon
+
+### 10.4.0
+## Feature
+* separate reader mode font setting from normal browsing (beta)
+* translate web content only when content is visible in "translate by paragraph" mode
+## Fix
+* crash in inputting url address
+* import bookmarks failure
+* page info divide by zero
+* bookmark manager crash
+* gesture setting is gone
+
+### 10.3.0
+* Support paragraph-by-paragraph translation
+* Add popular translation method to toolbar actions
+
+### 10.2.0
+* Add Translate feature in text selection dialog.
+* Fix when long click on text field, the paste function is not available.
+
+|Figure 1| Figure 2|
+|--|--|
+|![image](https://user-images.githubusercontent.com/4084738/232300452-46b1a867-30b8-4006-9491-66fd180865de.png)|![image](https://user-images.githubusercontent.com/4084738/232300518-9a051d63-01c0-4e59-9a16-6c954851a285.png)|
+
+### 10.1.0
+## Feature
+1. Integrate ChatGPT feature (If API key is setup in Settings > ChatGPT integration, after text selection, it will show a `ChatGPT` icon)
+2. New menu style after text selection (can be turned off in Settings > UI)
+3.  If Pocket app is installed, its UI will be used.
+4. Add Indonesian language support (thanks to amsitlab)
+5. New UI for touch area dialog
+
+|Feature 1, 2| Feature 1|
+|-|-|
+| ![image](https://user-images.githubusercontent.com/4084738/232273619-70c61d22-b1a2-4dcf-ad0e-bd5969d161a5.png) | ![image](https://user-images.githubusercontent.com/4084738/232273671-9bc73340-35b2-4799-880c-66cb9b2cd772.png) |
+|Feature 5|Feature 1|
+|![image](https://user-images.githubusercontent.com/4084738/232273758-c88e4f65-6f2e-4da8-b733-4c2e4978f651.png)|![image](https://user-images.githubusercontent.com/4084738/232274383-2c59bffd-89ab-40a2-ba91-2b5209451bc5.png)|
+
+## Fix 
+* Enter/back fullscreen mode won't cause screen too big.
+* Remove beta feature: image adjustment
+
+### 10.0.0
+* Feature: Add Pocket support. Now you can add web url to pocket from menu.
+* UI: fold menu items to make it not so frightening. Users can expand it if they use some functions more often.
+* Fix: now the whitelist for adblock domains, and Javascript are working.
+* Fix: update page info when scrolling web content.
+
+![image](https://user-images.githubusercontent.com/4084738/231217539-0669eb49-3e29-4968-a15a-bafb17cf7514.png)
+
+![image](https://user-images.githubusercontent.com/4084738/231217595-3f984520-c29d-4d01-af0c-f7984af2bbd9.png)
+
+![image](https://user-images.githubusercontent.com/4084738/231217653-ca65f447-f415-44b2-a62b-6c58863dbfd2.png)
+
+### 9.23.0
+* click on tab to scroll to top
+* click on tab again to reload
+
+### 9.22.0
+* Enhance user agent setting. You could use to configure proper user agent strings so that it can pass cloudflare captcha check.
+For example, input following string: `Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.50 Mobile Safari/537.36`
+* Add page info feature to toolbar (you can add it in toolbar configuration)
+
+### 9.21.0
+* Add client certificate authentication support
+* Fine tune black text feature
+* Modify manual link
+* Add an option to show "no more history" and do not close current tab
+* Fix: pagedown overscroll issue
+* Fix: if url parameters are without value, it should be kept as is.
+
+### 9.20.0
+* Support maestro to run automation scripts.
+* Add an option to set all text color in black.
+* Add image adjustment in quick setting
+* UI: do not scroll screen when using multi-touch gesture.
+* UI: fix accidentally trigger input address bar.
+* Support bookmark sync feature with Google Drive through system file picker.
+* Support saving web content to .mht file. It keeps the original web layout.
+* Refactor menu handler, toolbar handler, gesture handler.
+
+### 9.19.0
+* Backup now works with file save location feature.
+* Manual is available now in Settings > About.
+* Fix: new created web size is wrong.
+* Fix: save tabs feature now works with lazy loading tabs.
+* Enhance font customization dialog.
+* Hide tab bar is it's in epub reading mode.
+
+### 9.18.0
+* All files are in kotlin language.
+* Use adblock hosts from github link.
+* Add settings for adblock: auto-update, trigger update, modify adblock content url.
+
+### 9.17.0
+* Support playing video in fullscreen automatically when start playing.
+* Support picture-in-picture mode if video playing is in fullscreen, and leave EinkBro
+* Refactor UI for whitelists
+* Fix search engine setting error
+
+### 9.16.0
+* re-write whole setting UI with jetpack compose
+
+### 9.15.0
+* optimize link context menu position
+
+### 9.14.0
+* Add text-to-speech feature (**Read Content** in menu, Figure 1)
+* Add text-to-speech action in toolbar configuration
+* Long click text-to-speech button on toolbar to adjust voice speed or open voice setting. (Figure 2)
+
+### Figure 1
+<img src=https://user-images.githubusercontent.com/4084738/202916340-40d9fea9-9f79-4a78-a646-f1b037e8b10b.png width=400>
+
+### Figure 2
+<img src=https://user-images.githubusercontent.com/4084738/202916456-ad25af6d-c673-4dbf-93fa-ac69a6731dad.png width=200>
+
+### 9.13.0
+* Enhance context menu UI when long pressing a link
+
+<img src=https://user-images.githubusercontent.com/4084738/202330956-4e0805b2-dbe0-420b-9d94-0c978fa58f2a.png width=400>
+
+### 9.12.0
+* UI: show tab count in floating button
+* Support devices that does not have microphone or gps
+
+### 9.11.0
+* Fix: after opening new tab, the javascript on current tab may not work
+* Feature: add a new mode for Floating button, so that it's possible to customize its position
+* Feature: support opening Menu as gesture action.
+
+### 9.10.0
+* Add + button on Tab bar
+* Support editing homepage url in Settings
+* Support new tab behavior: focus on url, show recent bookmarks, show homepage
+* Fix dark mode issues on some devices
+
+### 9.9.0
+* Add a pen icon in front of web title, so that new users know where to touch for editing url.
+* Remove font configurstion button from default toolbar and put "add tab" icon instead.
+* fix: go to bookmark root folder after any bookmark item is clicked.
+
+![image](https://user-images.githubusercontent.com/4084738/194693275-46a51cb6-63f0-43ef-ba9c-c9f76f8e4fe2.png)
+
+### 9.8.0
+* support microphone permission request, when web content need to record audio
+* support basic username / password authentication
+* add a button to duplicate current tab
+* fix download crash issue
+
+### 9.7.0
+* support stripping url tracking parameters
+* fixed tab bar support. can be turned on in Settings > Behavior/UI
+* enhance menu icon ordering
+
+### 9.6.0
+* Fix title width
+* Enhance text input: make sure text area can be displayed.
+https://stackoverflow.com/a/21860837/1265915
+
+### 9.5.0
+* enable website zooming
+* fix toolbar title color in dark mode
+* use drag handle in toolbar configuration
+* enhance facebook browsing
+* enhance twitter browsing
+* add refresh action in gesture configuration
+* now it's possible to turn on WebView debug in settings > start controls
+
+### 9.4.0
+* combine font size and font type dialog
+* add bookmark adding hint when it's empty
+* save image when long pressed on images
+
+<img src=https://user-images.githubusercontent.com/4084738/179558766-d06ad7aa-7651-4c8f-8c2f-b0cf39d719d2.png width=300 />
+
+### 9.3.0
+* UI: rewrite touch area config dialog
+* UI: rewrite search bar
+* UI: rewrite menu dialog
+* UI: rewrite input url bar
+* Setting: add an option to disable auto fill form
+* Setting: add an option to auto trim input url
+
+### 9.2.0
+* fix dialog shadow
+* add SSL exception handling dialog
+* enhance incognito mode icon effect
+* refactor setting UI, touch area dialog to compose
+
+### 9.1.0
+## Apk size for this version is much larger, due to adopting Jetpack Compose
+
+It'll be easier to add new features in the future; however, the size increase sucks.
+
+## Changes
+* a lot of code refactoring to adopt Jetpack Compose for existing dialogs
+* add copy link in context menu
+* add an option to disable loading background tab in Settings / Behavior
+* fix: keyboard shortcut for font size change
+* now Reader Mode should be available for more websites!
+* toolbar is scrollable again!   
+
+### 9.0.0
+#### Feature
+* Add javascript toggle in Quick Toggle setting screen
+* Enhance Quick Toggle setting screen
+* Add favicon to Bookmark list
+* Enhance Tab Preview bottom bar
+* Enhance Bookmark list UI
+
+### 8.36.0
+#### Enhancement
+* Support Sharing link between two EinkBro App in different devices
+
+#### Issue fix
+* Crash when loading a long web page
+
+### Feature
+* **Receive data** and **Send link**
+!(https://user-images.githubusercontent.com/4084738/169814052-6de1f7c4-7c86-4ce9-8eec-9f4449e1b9f9.png)
+Receive data can receive data from another EinkBro or Sharik APP on another device that is also refactored by me https://github.com/plateaukao/sharik
+
+### 8.35.0
+#### Enhancement
+* Add recently used bookmark items in new tab (can be enabled in Settings)
+* Support installing app after downloading apk file
+
+### 8.34.1
+#### Issue fix
+Fixed bluetooth up/down key page navigation fail issue
+
+#### Feature
+* Add navigation back icon on Setting screen
+
+### 8.34.0
+#### Issue fix
+* Crash when epub file cannot be opened
+
+#### Feat: 
+* Add file size to epub list in open save epub dialogs
+
+## something wrong with previous app-release.apk, so I re-compiled it and uploaded again.
+
+### 8.33.0
+#### Enhancement
+* Long press font size button to configure font type
+* Update string translation
+* Pause WebView logic when App is not in foreground
+
+### 8.32.0
+#### Translation
+* Update Chinese translations (Thanks to @xBcai)
+
+#### Enhancement
+* Update user-agent handlings to have newer browser version
+* Hide dark mode configuration for lower version
+* Open last article when opening an epub file that's just saved a new article
+* Long press on font size button on toolbar to configure font type
+
+#### Contributors
+!(https://avatars.githubusercontent.com/u/66826351?s=64&v=4) xBcai
+
+### 8.31.0
+#### Feature
+* Support toolbar on top (option in Settings -> Behavior/UI)
+* Enable VI key bindings (option in Settings -> Bhavior/UI)
+
+### 8.30.1
+#### Enhancement
+* Hand made white background active icon
+* Two finger gesture co-work with zooming feature
+
+#### Issue fix
+* Hide toolbar when reading an epub file
+
+#### Feature
+* Add desktop mode button in toolbar
+
+### 8.30.0
+#### Feature
+* Support non http/https url to be opened by system
+* Add quick toggle icon in menu
+
+#### Enhancement
+* Enhance bold font icon
+* Enhance white background icon
+
+### 8.29.2
+#### Issue fixing
+* Fix sometimes touch area not working
+* Fix crash when epub file can't be opened sometimes
+
+#### Enhancement
+* Put bookmark list icon in default toolbar actions
+* Now multi-touch gesture can work after configure it in Settings
+
+### 8.29.1
+#### Issue fix
+* Long press on link, no pupup window is displayed.
+
+### 8.29.0
+#### Feature
+* Better tab count button UI
+* Finetune epub reader TOC list UI
+
+#### Issue fixing
+
+* Fix touch area hint always displayed when changing configuration
+* Fix saved tab list does not have up-to-date url
+
+### 8.28.0
+#### Feature
+* Add local font support in Setting -> Font -> Font Type
+* Add **show bookmark** action in gesture
+* Fine tune translation dialog logic
+* Separate toolbar configuration for portrait and landscape
+* Open epub file in EinkBro
+
+### 8.27.1
+#### Fix
+* Long press click not working, when two finger touch is enabled...
+
+### 8.27.0
+#### enhancement
+* improve save epub process: now you can select previously saved epub file easily.
+* remove unused resources: now EinkBro is even smaller!
+* add open epub button in menu: possible to open previously saved epub
+* two finger swipe gesture is supported now! Find it in Setting -> Gestures
+
+### 8.26.0
+#### issue fix
+* tab preview title would be correct even if bold font is set.
+* fix memory leak
+* fix back button behavior: don't close tab if there's no previous page
+
+#### enhancement
+* improve new tab loading performance (preload webview)
+
+### 8.25.0
+#### Feature
+* Add configuration to hide touch area dot line when keyboard is displayed (access from touch config dialog)
+* Add configuration to switch touch area actions (page down to page up, and vice versa)
+* Add better translate feature: Google in Place
+* Add shortcut to long press App icon, to launch only favorite url (when sometimes saved tabs have problem)
+* Add Translate button in menu, for easier access
+
+#### Fix
+* fix search keyword parsing issue
+* fix bold font feature causes tab preview title becomes blank.
+
+
+### 8.16.0
+#### enhancement
+* much faster web loading performance!!
+* purge histories older than 2 weeks
+
+#### features
+* add folder button in Bookmark edit dialog
+
+#### issue fixes
+* fix translation sync button status
+* fix incognito icon status
+
+### 8.15.1
+
+#### issue fixes
+* fix long press on web content, the dialog is popup too even it's text
+
+### 8.15.0
+#### features
+* long press back button to show recent history
+* add hide button on url address bar
+* hide translation control buttons when scrolling
+* remember translation orientation
+* support Adblock site addition (long press on Ad images)
+
+#### enhancement
+* Improve web loading performance by using cache
+
+#### issue fixes
+* fix desktop issue
+
+### 8.14.0
+- Much improved the web content loading speed by removing saving screenshot feature.
+
+### 8.13.1
+- fine tune touch area hint dash line
+- make translation buttons transparent so they won't overlap on web content.
+
+### 8.13.0
+- support opening a new Activity, so that original Activity can continue play video or audio.
+- add google and papago translate feature for url format.
+- add scroll sync when scrolling on translation panel (only works in some websites)
+- fix layout issue when larger font is used.
+
+### 8.12.1
+- remove safeBrowsingEnabled since it's enabled by default.
+
+### 8.12.0
+
+- Add keep awake option in settings
+- Add vertical translation option
+- Add download file name edit dialog
+- Add touch area option: middle on two sides
+- Fix preview tab refresh issue
+
+### 8.11.0
+
+- Change tab preview image to list to improve web loading performance
+- Support resizable two pane layout for translation
+- Support font size change in translation panel
+- Show bookmark dialog when saving a new bookmark
+
+### 8.10.0
+
+- Add translation icon in Toolbar configuration
+- Long press translation icon to configure which website to use
+- Pagination design for text translation
+- Toolbar refactoring: when adding too many icons, it can be scrolled horizontally
+- Support for new a incognito tab (from tab preview screen)
+- UI improvement: add separators in Menu, better touch effect in preference settings, clear button in address bar
+
+### 8.9.1
+
+- Fix full text translation issue
+
+### 8.9.0
+
+- Better rendering performance
+- Support web content translation in some Eink devices
+- Setting icon in Toolbar configuration is not changeable now
+
+### 8.8.2
+
+- Fix issues:
+ - fix saving epub crash
+ - fix reopen App crash
+
+- Feature:
+ - modify Tab Preview Layout
+ - long press tab count icon to turn on incognito mode
+
+### 8.8.0
+
+- support dark mode (if you want to use EinkBro in normal phones/tablets)
+- add incognito mode in quick toggle dialog (long press 3 dot icon)
+- add rotate screen action in tool bar configuration dialog
+
+### 8.7.6
+
+- Fix crash on Android OS5 when opening toolbar setting dialog
+- When sharing text with EinkBro, it will remove prefix before launching url
+- Export bookmark file as text file, instead of json extension
+- Update strings for zh-rCN
+
+### 8.7.5
+
+- Support creating folder in bookmarks (click on 3 dot when bookmark list is displayed)
+- Support backup and restore bookmark data
+- Support Android OS 5 (SDK level 21)
+
+
+### 8.7.4
+
+- Add web navigation forward action. You can add it by configure toolbar customization.
+- Add option to save current browsing tabs, so that next time, all the tabs are created automatically (in Setting -> UI, bottom par)
+- Fix Onyx device crash issue when spliting screens.
+
+### 8.7.3
+
+- add font increase/decrease action to toolbar actions. Add them from toolbar configuration dialog
+- add fullscreen action to toolbar actions.
+- now it's possible to disable volume key turning pages. Long press setting button, and click on Volume icon with label "page"
+- enhance toolbar configuration dialog layout
+
+### 8.7.2
+
+- enhance dialog layout
+
+### 8.7.1
+
+- fix another saving image issue in epub file
+
+### 8.7.0
+
+- fix saving image issue in epub file
+
+### 8.6.7
+
+- keep fixing images in epub saving
+- add version info to About dialog
+
+### 8.6.6
+
+- fix saving to existing epub, sometimes images cannot be saved.
+(still, if the image downloading needs authentication, it still can't be saved)
+
+### 8.6.5
+
+- now shortcut really works, and don't need to choose browser
+- fix launch app, sometimes extra tab is created
+
+### 8.6.4
+
+- fix launch blan screen issue
+
+### 8.6.3
+
+- fix save history toggleing default value to true
+- add description of why each permissions are used in full description in fastlane
+
+### 8.6.2
+
+- fix crash issues
+
+### 8.6.0
+
+- Support saving web page to an epub file, either creating a new one, or adding to an existing one.
+- Hide status bar when toolbar is hidden
+
+### 8.5.1
+
+- Use Mozilla readerview for Reader Mode. much better results.
+
+### 8.4.2
+
+- Add page turn reserve height configuration
+- Fix issues
+- Make font bold and more readable (in Settings -> Behavior/UI)
+- Add bold font style to toolbar setting
+- Add options to set default printed pdf paper size
+- Add font style (serif) support from webfont in Settings -> Beavior/UI
+
+
+
+### 8.3.1
+
+- fix crash issue when clicking on some links
+- add reader mode (beta)
+
+### 8.3
+
+- Add touch area configuration for page Up/Down (long press on the finger icon on toolbar)
+- Improve UI for quick toggle setting dialog
+
+### 8.2
+
+- Now toolbar actions can be customized. Go to Settings -> Behavior/UI -> Icons on toolbar and configure.
+- Add touch area hint when turning on page-turn feature by touching on screen. You can also long click on the button to keep area hint always on.
+- Add labels to quick toggle settings for easier knowing what these icons are for
+- Now it's possible to keep playing audio when EinkBro is in the background. (the media should be played in current tab). This can be turned on in quick toggle settings (long click on three dot button on tool bar)
+- Long press on left touch area will scroll the webpage to top. (only work when touch feature turned on)
+
+### 8.1
+- Add Chinese translation
+- Use website favicon as shortcut Icon
+- Add a gesture button on toolbar to allow tap screen right/left side to turn pages
+
+### 8.0
+- Support assigning gestures pageUp / pageDown for tool bar and navigation button
+- Make navigation button more visible no matter the webpage background color
+- Remove button press visual feedback
+- Re-layout menu items for easier access in different resolution devices
+- Support Android SDK level 19
+- Change package id from original one to info.plateaukao.einkbro
+- Support Vi key bindings when using physical keyboard
+b : open bookmarks
+d : remove current tab
+gg : go to top
+j : page down
+k : page up
+h : go back
+l : go forward
+o : focus on url bar
+t : new a tab
+vi : zoom in font
+vo : zoom out font
+/ : search in page
+G : go to bottom
+J : show next tab
+K : show previous tab
+
+
+### 7.2
+- Re-organize menu items so that they can be accessed without switching between tabs.
+- Add font size configuration in first layer setting.
+- Refactor overview popup, so that it's no longer BottomSheetDialog, which shows un-necessary show/hide animations.
+- Remove gray mask when overview pop up. (This is not necessary in E-ink device)
+- Remove wv from useragent string, so that Google Login works.
+- Modify floating action button design, so that it only outlines the button without blocking underlying content.
+- Add Multi-Window support
+- When adding a new tab, by default, keyboard will popup, so that users can start input the search keyword, or input the url directly.
+- Heavily refactoring BrowserActivity; adopt Kotlin for better coding. Reduce BrowserActivity codes from 2500 lines to 1900 lines.
+
+### 7.1
+- support using volume key for pageUp/pageDown.
+
+### v7.0
+- Add pageUp / pageDown / Back button in bottom function bar
+- Add Desktop mode feature
+- Make all icons in high contrast colors
+- Add WebView count in bottom function bar

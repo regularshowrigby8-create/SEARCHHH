@@ -1,0 +1,763 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-09-29",
+  "scope": "Published official docs and public endpoint metadata; no account creation, key validation, authenticated catalog, inference, or signup tests. Group dispositions cover all 100 original entry numbers; they do not certify every original model ID or specification. This is research data, not runtime configuration.",
+  "sources": {
+    "google_pricing": "https://ai.google.dev/gemini-api/docs/pricing",
+    "google_limits": "https://ai.google.dev/gemini-api/docs/rate-limits",
+    "google_lifecycle": "https://ai.google.dev/gemini-api/docs/deprecations",
+    "gemma_api": "https://ai.google.dev/gemma/docs/core/gemma_on_gemini_api",
+    "groq_models": "https://console.groq.com/docs/models",
+    "groq_limits": "https://console.groq.com/docs/rate-limits",
+    "groq_retired": "https://console.groq.com/docs/deprecations",
+    "cf_models": "https://developers.cloudflare.com/workers-ai/models/",
+    "cf_pricing": "https://developers.cloudflare.com/workers-ai/platform/pricing/",
+    "cf_limits": "https://developers.cloudflare.com/workers-ai/platform/limits/",
+    "nvidia": "https://docs.api.nvidia.com/nim/docs/faq",
+    "cerebras_models": "https://inference-docs.cerebras.ai/models/overview",
+    "cerebras_limits": "https://inference-docs.cerebras.ai/support/rate-limits",
+    "mistral_pricing": "https://mistral.ai/pricing/",
+    "mistral_signup": "https://docs.mistral.ai/getting-started/quickstarts/studio/activate-and-generate-api-key.md",
+    "mistral_plan": "https://docs.mistral.ai/admin/billing-usage/subscriptions.md",
+    "mistral_models": "https://docs.mistral.ai/models",
+    "mistral_8b": "https://docs.mistral.ai/models/ministral-3-8b-25-12",
+    "cohere_limits": "https://docs.cohere.com/docs/rate-limits",
+    "cohere_models": "https://docs.cohere.com/docs/models",
+    "openrouter_limits": "https://openrouter.ai/docs/api_reference/limits",
+    "openrouter_free": "https://openrouter.ai/docs/guides/routing/model-variants/free",
+    "aion_models": "https://www.aionlabs.ai/docs/models/",
+    "aion_limits": "https://www.aionlabs.ai/docs/rate-limits/",
+    "bigmodel_47": "https://docs.bigmodel.cn/cn/guide/models/free/glm-4.7-flash",
+    "bigmodel_45": "https://docs.bigmodel.cn/cn/guide/models/free/glm-4.5-flash",
+    "bigmodel_46v": "https://docs.bigmodel.cn/cn/guide/models/free/glm-4.6v-flash",
+    "zai_pricing": "https://docs.z.ai/guides/overview/pricing",
+    "deepseek": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "novita": "https://docs.novita.ai/guides/introduction",
+    "hf": "https://huggingface.co/docs/inference-providers/pricing",
+    "venice": "https://docs.venice.ai/overview/about-venice",
+    "ddg": "https://duckduckgo.com/duckduckgo-help-pages/duckai/duckai",
+    "siliconflow_legacy": "https://docs.siliconflow.com/quickstart/models",
+    "siliconflow_current": "https://docs.siliconflow.com/en/userguide/introduction"
+  },
+  "original_groups": [
+    {
+      "original_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "provider": "Google Gemini / Gemma",
+      "status": "documented_free_tier",
+      "decision": "Keep as free-tier candidates, not unlimited/permanent promises. Standard input/output pricing is free for the listed Gemini Flash/Flash-Lite/2.5 Pro and hosted Gemma 4 families. Quotas vary by project and model; the blanket 15 RPM / 1,500 RPD claim is not verified. Gemma hosted IDs are gemma-4-31b-it and gemma-4-26b-a4b-it. Do not generalize context/output caps across families.",
+      "verification_scope": "Pricing/model-family docs and lifecycle; no authenticated account/catalog or inference test.",
+      "sources": [
+        "google_pricing",
+        "google_limits",
+        "google_lifecycle",
+        "gemma_api"
+      ]
+    },
+    {
+      "original_numbers": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "provider": "Groq",
+      "status": "retired_from_public_free_use",
+      "decision": "Replace the entire supplied Groq roster. Llama 3.3 70B versatile and Llama 3.1 8B instant ended Free/Developer support on 2026-08-16 (Enterprise is separate); the other ten listed IDs have earlier retirement notices. Use the current GPT-OSS models; Qwen 3.8 27B is a preview candidate.",
+      "verification_scope": "Official deprecation notices and current catalog; no key or inference test.",
+      "sources": [
+        "groq_retired",
+        "groq_models",
+        "groq_limits"
+      ]
+    },
+    {
+      "original_numbers": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42
+      ],
+      "provider": "Cloudflare Workers AI",
+      "status": "shared_allowance_model_checks_required",
+      "decision": "Keep provider, not a blanket approval of all twenty IDs. 10,000 neurons/day is a shared account allowance, resetting at 00:00 UTC; Workers Free stops at its limit, Workers Paid can charge excess. Some models require Workers Paid. Check individual model eligibility. #40–42 are image/speech/embedding specialists, not text reviewers. Legacy/LoRA entries need exact catalog and protocol checks.",
+      "verification_scope": "Provider pricing/limits and current catalog; not every original model has a completed per-model eligibility check.",
+      "sources": [
+        "cf_pricing",
+        "cf_limits",
+        "cf_models"
+      ]
+    },
+    {
+      "original_numbers": [
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49
+      ],
+      "provider": "NVIDIA hosted NIM",
+      "status": "trial",
+      "decision": "Exclude from the recurring-free default pool. Hosted API access is described in terms of trial API credits; the claimed renewing 1,000 calls/month was not established. Open weights or self-hosting do not make NVIDIA-hosted inference free.",
+      "verification_scope": "Provider-level terms; individual supplied model IDs not all revalidated.",
+      "sources": [
+        "nvidia"
+      ]
+    },
+    {
+      "original_numbers": [
+        50,
+        51,
+        52,
+        53
+      ],
+      "provider": "Cerebras",
+      "status": "card_required_expiring_trial",
+      "decision": "Exclude. Official FAQ explicitly says no permanently renewing free tier: $5 credits, expire after 30 days, verified payment method required; API stays inactive without it. The current shared catalog lists gpt-oss-120b and qwen-3.8-27b rather than the four supplied IDs. Trial quotas of 1M TPD do not make it an always-free plan.",
+      "verification_scope": "Current model overview and explicit trial FAQ.",
+      "sources": [
+        "cerebras_models",
+        "cerebras_limits"
+      ]
+    },
+    {
+      "original_numbers": [
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62
+      ],
+      "provider": "Mistral",
+      "status": "recurring_monthly_credits",
+      "decision": "Keep only as a separately labelled credit-funded free-plan option: Free mode has no-card API access and $10/month API credits. This contradicts the list header’s no-credits/unlimited promise. Keep PAYG off. #57 calls an 8B model by the 3B ID duplicated at #59; documented 8B version is ministral-8b-2512. latest aliases are not fixed version/parameter guarantees.",
+      "verification_scope": "Current pricing/signup/subscription docs and model overview; not every supplied alias authenticated.",
+      "sources": [
+        "mistral_pricing",
+        "mistral_signup",
+        "mistral_plan",
+        "mistral_models",
+        "mistral_8b"
+      ]
+    },
+    {
+      "original_numbers": [
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71
+      ],
+      "provider": "Cohere",
+      "status": "evaluation_trial",
+      "decision": "Separate evaluation-only pool, not default production-free inference. Trial keys are documented at 1,000 calls/month. Newer Command models exist, but evaluation access does not imply production entitlement; confirm each exact model/account.",
+      "verification_scope": "Provider key/limits terms plus current catalog; no production entitlement test.",
+      "sources": [
+        "cohere_limits",
+        "cohere_models"
+      ]
+    },
+    {
+      "original_numbers": [
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80
+      ],
+      "provider": "OpenRouter",
+      "status": "no_public_endpoints_observed",
+      "decision": "All nine supplied IDs returned metadata with endpoints: [] from their public endpoint APIs during this audit. Do not mark them ready on that evidence. This is a dated public discovery observation, not an authenticated inference test or proof of permanent removal. No-purchase free-model limit is 50 requests/day and up to 20/minute; 1,000/day is purchase-dependent. Free variant must really exist and have explicit zero pricing.",
+      "verification_scope": "Nine public model-endpoint JSON responses, plus official free-variant and quota docs.",
+      "sources": [
+        "openrouter_limits",
+        "openrouter_free"
+      ]
+    },
+    {
+      "original_numbers": [
+        81,
+        82,
+        83,
+        84
+      ],
+      "provider": "Aion Labs",
+      "status": "zero_cost_entitlement_unresolved",
+      "decision": "The four IDs are documented, but their model table lists nonzero token prices. A Free rate-limit tier (15 RPM, 20K TPM/TPD) is not sufficient proof that inference is unbilled. Hold out of the guaranteed-zero-cost pool until billing entitlement is documented.",
+      "verification_scope": "Model pricing and rate-limit pages; unresolved billing semantics.",
+      "sources": [
+        "aion_models",
+        "aion_limits"
+      ]
+    },
+    {
+      "original_numbers": [
+        85,
+        86,
+        87
+      ],
+      "provider": "Zhipu BigModel China / Z.AI international",
+      "status": "separate_realms_and_retirement",
+      "decision": "China docs describe GLM-4.7-Flash and GLM-4.6V-Flash as free. China GLM-4.5-Flash notice says retirement on 2026-01-30 and automatic routing to 4.7, not retiring soon. International Z.AI pricing separately lists all three Flash models as free. Do not interchange keys/endpoints or count a redirect as another model. Paid tools are excluded.",
+      "verification_scope": "Both realm-specific pricing/model docs; no account or inference test.",
+      "sources": [
+        "bigmodel_47",
+        "bigmodel_45",
+        "bigmodel_46v",
+        "zai_pricing"
+      ]
+    },
+    {
+      "original_numbers": [
+        88,
+        89
+      ],
+      "provider": "DeepSeek",
+      "status": "consumer_web_not_free_api",
+      "decision": "Remove from API-free count. Free consumer chat does not grant free developer API inference; the official API pricing is token-billed.",
+      "verification_scope": "Provider API pricing; no signup or web automation test.",
+      "sources": [
+        "deepseek"
+      ]
+    },
+    {
+      "original_numbers": [
+        90,
+        91
+      ],
+      "provider": "Novita",
+      "status": "credit_required",
+      "decision": "Hold out of recurring-free pool. Official introduction requires a valid API key and available credit; no renewing zero-cost allowance for the supplied IDs was established.",
+      "verification_scope": "Provider-level docs, not a complete individual-model catalog audit.",
+      "sources": [
+        "novita"
+      ]
+    },
+    {
+      "original_numbers": [
+        92,
+        93,
+        94,
+        95,
+        96,
+        97
+      ],
+      "provider": "Hugging Face Inference Providers",
+      "status": "small_recurring_credits",
+      "decision": "Free users receive $0.10 monthly credits, subject to change. This is not unlimited serverless LLM inference. A Hub model repository does not establish an available hosted provider route or free entitlement. Keep separate from zero-priced models.",
+      "verification_scope": "Provider credit policy; individual hosted routes remain to be checked.",
+      "sources": [
+        "hf"
+      ]
+    },
+    {
+      "original_numbers": [
+        98
+      ],
+      "provider": "Venice",
+      "status": "paid_or_staking_funded",
+      "decision": "Exclude from unconditional $0 pool. API uses purchased credits, staking-linked allowance or per-request payment. A consumer default selection is not a verified concrete model ID.",
+      "verification_scope": "Official API funding overview; supplied alias not validated.",
+      "sources": [
+        "venice"
+      ]
+    },
+    {
+      "original_numbers": [
+        99,
+        100
+      ],
+      "provider": "DuckDuckGo Duck.ai",
+      "status": "unofficial_consumer_endpoint",
+      "decision": "Exclude from supported API-key pool. These were supplied as unofficial/no-key consumer-chat endpoints, not documented developer API offerings. The fetched help URL resolved to general consumer content, not an API contract. No endpoint bypass or scraping tested.",
+      "verification_scope": "No official developer API evidence obtained; do not interpret this as proof no future API can exist.",
+      "sources": [
+        "ddg"
+      ]
+    }
+  ],
+  "additions": [
+    {
+      "id": "A01",
+      "provider": "google",
+      "model_id": "gemini-3.8-flash",
+      "model_family": "gemini-3.8-flash",
+      "role": "text_review_candidate",
+      "status": "documented_free_tier",
+      "sources": [
+        "google_pricing",
+        "google_lifecycle"
+      ],
+      "note": "Free Standard input/output; project-specific quotas and data-use terms. New adapter required.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A02",
+      "provider": "groq",
+      "model_id": "openai/gpt-oss-120b",
+      "model_family": "gpt-oss-120b",
+      "role": "text_review_candidate",
+      "status": "current_catalog_free_plan_candidate",
+      "sources": [
+        "groq_models",
+        "groq_limits"
+      ],
+      "note": "Replacement for retired Groq routes; verify account entitlement and quota. Current production catalog.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A03",
+      "provider": "groq",
+      "model_id": "openai/gpt-oss-20b",
+      "model_family": "gpt-oss-20b",
+      "role": "text_review_candidate",
+      "status": "current_catalog_free_plan_candidate",
+      "sources": [
+        "groq_models",
+        "groq_limits"
+      ],
+      "note": "Replacement for retired Groq routes; verify account entitlement and quota. Current production catalog.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A04",
+      "provider": "groq",
+      "model_id": "qwen/qwen3.8-27b",
+      "model_family": "qwen3.8-27b",
+      "role": "text_review_candidate",
+      "status": "current_catalog_free_plan_candidate",
+      "sources": [
+        "groq_models",
+        "groq_limits"
+      ],
+      "note": "Replacement for retired Groq routes; verify account entitlement and quota. Preview: not a production stability promise.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A05",
+      "provider": "cloudflare",
+      "model_id": "@cf/openai/gpt-oss-20b",
+      "model_family": "gpt-oss-20b",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A06",
+      "provider": "cloudflare",
+      "model_id": "@cf/meta/llama-3.2-1b-instruct",
+      "model_family": "llama-3.2-1b-instruct",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A07",
+      "provider": "cloudflare",
+      "model_id": "@cf/meta/llama-3.2-3b-instruct",
+      "model_family": "llama-3.2-3b-instruct",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A08",
+      "provider": "cloudflare",
+      "model_id": "@cf/meta/llama-3.2-11b-vision-instruct",
+      "model_family": "llama-3.2-11b-vision-instruct",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A09",
+      "provider": "cloudflare",
+      "model_id": "@cf/google/gemma-3-12b-it",
+      "model_family": "gemma-3-12b-it",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A10",
+      "provider": "cloudflare",
+      "model_id": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "model_family": "qwen3-30b-a3b",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A11",
+      "provider": "cloudflare",
+      "model_id": "@cf/qwen/qwq-32b",
+      "model_family": "qwq-32b",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A12",
+      "provider": "cloudflare",
+      "model_id": "@cf/qwen/qwen2.5-coder-32b-instruct",
+      "model_family": "qwen2.5-coder-32b-instruct",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A13",
+      "provider": "cloudflare",
+      "model_id": "@cf/ibm-granite/granite-4.0-h-micro",
+      "model_family": "granite-4.0-h-micro",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A14",
+      "provider": "cloudflare",
+      "model_id": "@cf/aisingapore/gemma-sea-lion-v4-27b-it",
+      "model_family": "gemma-sea-lion-v4-27b-it",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A15",
+      "provider": "cloudflare",
+      "model_id": "@cf/qwen/qwen3.8-27b",
+      "model_family": "qwen3.8-27b",
+      "role": "text_review_candidate",
+      "status": "shared_allowance_candidate",
+      "sources": [
+        "cf_models",
+        "cf_pricing",
+        "cf_limits"
+      ],
+      "note": "Catalog/pricing candidate, not blanket free-plan approval. Check individual model Paid restrictions and Workers Free account before activation. Shared 10,000 neurons/day; no per-model multiplication.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A16",
+      "provider": "siliconflow",
+      "model_id": "Qwen/Qwen2-7B-Instruct",
+      "model_family": "qwen2-7b-instruct",
+      "role": "text_review_candidate",
+      "status": "legacy_free_listing_needs_live_check",
+      "sources": [
+        "siliconflow_legacy",
+        "siliconflow_current"
+      ],
+      "note": "Official Chinese model page explicitly labels this free under rate limits. It is an older roster; current regional endpoint, account access, exact catalog membership and billing must be checked. Do not infer international entitlement from the Chinese page.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A17",
+      "provider": "siliconflow",
+      "model_id": "Qwen/Qwen2-1.5B-Instruct",
+      "model_family": "qwen2-1.5b-instruct",
+      "role": "text_review_candidate",
+      "status": "legacy_free_listing_needs_live_check",
+      "sources": [
+        "siliconflow_legacy",
+        "siliconflow_current"
+      ],
+      "note": "Official Chinese model page explicitly labels this free under rate limits. It is an older roster; current regional endpoint, account access, exact catalog membership and billing must be checked. Do not infer international entitlement from the Chinese page.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A18",
+      "provider": "siliconflow",
+      "model_id": "Qwen/Qwen1.5-7B-Chat",
+      "model_family": "qwen1.5-7b-chat",
+      "role": "text_review_candidate",
+      "status": "legacy_free_listing_needs_live_check",
+      "sources": [
+        "siliconflow_legacy",
+        "siliconflow_current"
+      ],
+      "note": "Official Chinese model page explicitly labels this free under rate limits. It is an older roster; current regional endpoint, account access, exact catalog membership and billing must be checked. Do not infer international entitlement from the Chinese page.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A19",
+      "provider": "siliconflow",
+      "model_id": "THUDM/glm-4-9b-chat",
+      "model_family": "glm-4-9b-chat",
+      "role": "text_review_candidate",
+      "status": "legacy_free_listing_needs_live_check",
+      "sources": [
+        "siliconflow_legacy",
+        "siliconflow_current"
+      ],
+      "note": "Official Chinese model page explicitly labels this free under rate limits. It is an older roster; current regional endpoint, account access, exact catalog membership and billing must be checked. Do not infer international entitlement from the Chinese page.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A20",
+      "provider": "siliconflow",
+      "model_id": "THUDM/chatglm3-6b",
+      "model_family": "chatglm3-6b",
+      "role": "text_review_candidate",
+      "status": "legacy_free_listing_needs_live_check",
+      "sources": [
+        "siliconflow_legacy",
+        "siliconflow_current"
+      ],
+      "note": "Official Chinese model page explicitly labels this free under rate limits. It is an older roster; current regional endpoint, account access, exact catalog membership and billing must be checked. Do not infer international entitlement from the Chinese page.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A21",
+      "provider": "siliconflow",
+      "model_id": "internlm/internlm2_5-7b-chat",
+      "model_family": "internlm2_5-7b-chat",
+      "role": "text_review_candidate",
+      "status": "legacy_free_listing_needs_live_check",
+      "sources": [
+        "siliconflow_legacy",
+        "siliconflow_current"
+      ],
+      "note": "Official Chinese model page explicitly labels this free under rate limits. It is an older roster; current regional endpoint, account access, exact catalog membership and billing must be checked. Do not infer international entitlement from the Chinese page.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    },
+    {
+      "id": "A22",
+      "provider": "siliconflow",
+      "model_id": "mistralai/Mistral-7B-Instruct-v0.2",
+      "model_family": "mistral-7b-instruct-v0.2",
+      "role": "text_review_candidate",
+      "status": "legacy_free_listing_needs_live_check",
+      "sources": [
+        "siliconflow_legacy",
+        "siliconflow_current"
+      ],
+      "note": "Official Chinese model page explicitly labels this free under rate limits. It is an older roster; current regional endpoint, account access, exact catalog membership and billing must be checked. Do not infer international entitlement from the Chinese page.",
+      "runtime_enabled": false,
+      "inference_tested": false
+    }
+  ],
+  "openrouter_endpoint_observations": [
+    {
+      "model_id": "meta-llama/llama-3.1-8b-instruct:free",
+      "url": "https://openrouter.ai/api/v1/models/meta-llama/llama-3.1-8b-instruct:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": true,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "google/gemma-2-9b-it:free",
+      "url": "https://openrouter.ai/api/v1/models/google/gemma-2-9b-it:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": true,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "deepseek/deepseek-r1:free",
+      "url": "https://openrouter.ai/api/v1/models/deepseek/deepseek-r1:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": true,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "deepseek/deepseek-chat:free",
+      "url": "https://openrouter.ai/api/v1/models/deepseek/deepseek-chat:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": true,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "mistralai/mistral-7b-instruct:free",
+      "url": "https://openrouter.ai/api/v1/models/mistralai/mistral-7b-instruct:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": true,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "qwen/qwen-2.5-72b-instruct:free",
+      "url": "https://openrouter.ai/api/v1/models/qwen/qwen-2.5-72b-instruct:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": true,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "microsoft/phi-3-mini-128k-instruct:free",
+      "url": "https://openrouter.ai/api/v1/models/microsoft/phi-3-mini-128k-instruct:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": true,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "nousresearch/nous-hermes-2-mixtral-8x7b-dpo:free",
+      "url": "https://openrouter.ai/api/v1/models/nousresearch/nous-hermes-2-mixtral-8x7b-dpo:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": true,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "meta-llama/llama-3.2-3b-instruct:free",
+      "url": "https://openrouter.ai/api/v1/models/meta-llama/llama-3.2-3b-instruct:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": true,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "openai/gpt-oss-120b:free",
+      "url": "https://openrouter.ai/api/v1/models/openai/gpt-oss-120b:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": false,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "openai/gpt-oss-20b:free",
+      "url": "https://openrouter.ai/api/v1/models/openai/gpt-oss-20b:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": false,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "google/gemma-3-27b-it:free",
+      "url": "https://openrouter.ai/api/v1/models/google/gemma-3-27b-it:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": false,
+      "verification": "public_endpoint_metadata_only"
+    },
+    {
+      "model_id": "qwen/qwen3-4b:free",
+      "url": "https://openrouter.ai/api/v1/models/qwen/qwen3-4b:free/endpoints",
+      "observed_endpoints": [],
+      "part_of_supplied_nine": false,
+      "verification": "public_endpoint_metadata_only"
+    }
+  ]
+}

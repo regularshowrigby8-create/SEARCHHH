@@ -1,0 +1,50 @@
+// Audio-only mode: hide video elements, force lowest quality, keep captions visible
+(function() {
+    if (window.__audioOnlyModeActive) return;
+    window.__audioOnlyModeActive = true;
+
+    // Add CSS to hide video elements but keep captions
+    var style = document.createElement('style');
+    style.id = 'audio-only-mode-css';
+    style.textContent = [
+        'video { opacity: 0 !important; }',
+        // Invert the now-empty video canvas for e-ink: the player paints a black
+        // backdrop behind the hidden video; flip it to white and render captions
+        // black-on-white. !important beats YouTube's inline caption styling.
+        '#movie_player, .html5-video-player { background-color: #fff !important; }',
+        '.ytp-caption-window-container .caption-window { background: transparent !important; }',
+        '.ytp-caption-segment { background: #fff !important; color: #000 !important; text-shadow: none !important; }',
+        'video::cue { background-color: #fff !important; color: #000 !important; }',
+        // Keep YouTube caption containers visible
+        '.ytp-caption-window-container { opacity: 1 !important; z-index: 999 !important; }',
+        '.caption-window { opacity: 1 !important; }',
+        '.captions-text { opacity: 1 !important; }',
+        // Only move caption vertically to the center; leave x-axis and width
+        // alone so YouTube's natural horizontal positioning and width remain.
+        '.ytp-caption-window-container .caption-window {',
+        '    top: 50% !important;',
+        '    bottom: auto !important;',
+        '    transform: translateY(-50%) !important;',
+        '}',
+        // Keep the player controls visible
+        '.ytp-chrome-bottom { opacity: 1 !important; }',
+        '.ytp-progress-bar-container { opacity: 1 !important; }'
+    ].join('\n');
+    document.head.appendChild(style);
+
+    // Try to set lowest quality on YouTube
+    function setLowestQuality() {
+        var player = document.querySelector('#movie_player');
+        if (player && typeof player.setPlaybackQualityRange === 'function') {
+            try {
+                player.setPlaybackQualityRange('tiny', 'tiny');
+            } catch(e) {
+                try {
+                    player.setPlaybackQualityRange('small', 'small');
+                } catch(e2) {}
+            }
+        }
+    }
+
+    setLowestQuality();
+})();

@@ -1,0 +1,1032 @@
+[
+  {
+    "path": "CHANGELOG.md",
+    "lines": 1320,
+    "sha256": "d3f03f81e3170467935ecf8a6c0b5a0e70047e8e69713cdc6592d5ba678120e4"
+  },
+  {
+    "path": "CLAUDE.md",
+    "lines": 155,
+    "sha256": "c981a5d2b249933d427e42c033e52e02cb2600e394026b8843c22e3245388f7a"
+  },
+  {
+    "path": "CODE_OF_CONDUCT.md",
+    "lines": 40,
+    "sha256": "2adbfe625ddbf16bd9d00202b09e5cc07d0a051792fdc29c3f289822f1888b6c"
+  },
+  {
+    "path": "CONTRIBUTORS.md",
+    "lines": 118,
+    "sha256": "5d75dcc2152ea4570e06f1f33062aca2cae4b5cdb33d0c7bf0efbff98e221a88"
+  },
+  {
+    "path": "Contributing.md",
+    "lines": 118,
+    "sha256": "df3e74654c18efdee078ea25aa51699da016e0c683e5f09275f50bda340b3c88"
+  },
+  {
+    "path": "FAQs.md",
+    "lines": 142,
+    "sha256": "4c90aaff656514c91a303bb17069fa0e81a243d33b8d523b610d97fa83645521"
+  },
+  {
+    "path": "LICENSE.md",
+    "lines": 32,
+    "sha256": "3656ae0d75e08bdd8f23a967097aeae8f2bb0da41d280eb8c11335db03817ad7"
+  },
+  {
+    "path": "PRIVACY.md",
+    "lines": 59,
+    "sha256": "b473faa1e7208b6c7c0a1958959b7a78ec1999836a30bfa76b342e4ed58f3cce"
+  },
+  {
+    "path": "README.md",
+    "lines": 165,
+    "sha256": "2759129db5df21746cf1f8a22c14ac0070f1ad8c4931f9257c4659608a945ce3"
+  },
+  {
+    "path": "ROADMAP.md",
+    "lines": 176,
+    "sha256": "c49da9fccc3f7a2bdd304c65f8ee0bff143db54246ec883409cf41f90fcfbd4b"
+  },
+  {
+    "path": "SCREENSHOTS.md",
+    "lines": 7,
+    "sha256": "ea1d06aaacefbede66dfb4170dd5ec6220489f94f369ad4378287984978fba9b"
+  },
+  {
+    "path": "SOURCES.md",
+    "lines": 16,
+    "sha256": "67fb1eaeb4fb5660f69bf3f0eb367b0bcc346303d9ab3d7b8b3f3de183485e0d"
+  },
+  {
+    "path": "build.gradle.kts",
+    "lines": 10,
+    "sha256": "86b547f18328135e50f789aa24b13c1f0cd98716382c87d0a21b3731f95a8e8c"
+  },
+  {
+    "path": "settings.gradle.kts",
+    "lines": 21,
+    "sha256": "44b2deca75f94db517f4abdcafba70546f15827b2534e43bb0846e3b96d8650a"
+  },
+  {
+    "path": ".github/copilot-instructions.md",
+    "lines": 86,
+    "sha256": "c9d5f2f18708e4264fd06e9fb3a1506452d7dcc1ff449a5727f7961ab291e843"
+  },
+  {
+    "path": ".github/ISSUE_TEMPLATE/bug-report-only.md",
+    "lines": 48,
+    "sha256": "f41890e24edd7bec3855546f25566b99a4a34a68ed09dbc517ceaf140a4c2758"
+  },
+  {
+    "path": ".github/ISSUE_TEMPLATE/config.yml",
+    "lines": 1,
+    "sha256": "1f103c6a9dd07cd13a9a6f17ace6b813f47747eb9cb7e00488cb2073caaf91bb"
+  },
+  {
+    "path": ".github/workflows/buid-app-workflow.yaml",
+    "lines": 204,
+    "sha256": "461ce0f869391ad9b34c9c746d8b7ca1a6f99646f3f9d15c8c77bdd40b65505c"
+  },
+  {
+    "path": "ad-filter/README.md",
+    "lines": 6,
+    "sha256": "55f578a866d65d6cc03116539039b2478fd04619d5e35596d29acd5ca1851be4"
+  },
+  {
+    "path": "ad-filter/build.gradle.kts",
+    "lines": 72,
+    "sha256": "f7e9bb47d9755233a700cfbf7391cf454bed67e4609712ea09396affcbc94af3"
+  },
+  {
+    "path": "ad-filter/src/main/AndroidManifest.xml",
+    "lines": 4,
+    "sha256": "c0a8f34abb3d4be8096388610565ba6bee960c09117e6bab730b5beec5002fd2"
+  },
+  {
+    "path": "ad-filter/src/main/java/io/github/edsuns/adfilter/FilterViewModel.kt",
+    "lines": 78,
+    "sha256": "b6dd6d85aebffe4849d1a41d38befb54d7f279ce0de17ccde68f99140ae8ec6a"
+  },
+  {
+    "path": "ad-filter/src/main/java/io/github/edsuns/adfilter/impl/FilterViewModelImpl.kt",
+    "lines": 186,
+    "sha256": "d1125b3b04426e4815aaad4036ff9844fda5af47b60faad4eed7003d8405542d"
+  },
+  {
+    "path": "ad-filter/src/test/java/io/github/edsuns/adfilter/BinaryDataStoreTest.kt",
+    "lines": 67,
+    "sha256": "7c55c67f5464376a92629fd963466522757177964fc8fe56cc6be89084de4923"
+  },
+  {
+    "path": "ad-filter/src/test/java/io/github/edsuns/adfilter/script/NativeExtendedCssTest.kt",
+    "lines": 59,
+    "sha256": "548b2bef2e26c12170981baeec646d08e4d26834fab72eea4a52c2930dd57cb4"
+  },
+  {
+    "path": "ad-filter/scriptlets_src/README.md",
+    "lines": 8,
+    "sha256": "957e9647f6535f357cd207a48549c762beb404983c243abbc3141ba2912962c8"
+  },
+  {
+    "path": "adblock-client/src/androidTest/java/io/github/edsuns/adblockclient/AdBlockClientTest.kt",
+    "lines": 86,
+    "sha256": "a4aa4a938d8c5006bf8b699931ba2cf67b6bf12809987b9fba675060ceb38d34"
+  },
+  {
+    "path": "adblock-client/src/main/AndroidManifest.xml",
+    "lines": 1,
+    "sha256": "3c0ce337588febd1600d766e85766ca0caac1ac614f6678b6b94480134b2ef5a"
+  },
+  {
+    "path": "adblock-client/src/test/java/io/github/edsuns/adblockclient/RegexFilterSetTest.kt",
+    "lines": 197,
+    "sha256": "30de90ba67523b5d0da706817c9ece0860828f0dbb8e989a7d5497d4b5bc91f3"
+  },
+  {
+    "path": "app/build.gradle.kts",
+    "lines": 342,
+    "sha256": "c0238b782ab4af68438e238e1d51bb8f9bb48bda34ab77c248ec150b3b92442d"
+  },
+  {
+    "path": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/AiVaultTest.kt",
+    "lines": 31,
+    "sha256": "6e8ed7963e5abdc0b6a54c6ef6e742d80bc23f6bb396048368fa9a7c698e2a81"
+  },
+  {
+    "path": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/CodebaseUiTest.kt",
+    "lines": 34,
+    "sha256": "1ba9065a684e03b82f5660ffcde5e21d8c669f3c5edfae6b54123bd56df603d8"
+  },
+  {
+    "path": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/InternalBackendTest.kt",
+    "lines": 89,
+    "sha256": "c03af31ada370b9edfe1a6f95e77d0e4d9c38164a96edec65d04c4aba8926bbd"
+  },
+  {
+    "path": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/PersistenceTest.kt",
+    "lines": 49,
+    "sha256": "ab139896f3d6d5f1cb1d34306a8c440bd629a8a763c7179bc1be58098038290c"
+  },
+  {
+    "path": "app/src/androidTest/java/info/plateaukao/einkbro/searchhh/RelayProbeTest.kt",
+    "lines": 79,
+    "sha256": "f9e1aa6e6e09a3e2c924af26c01b4a5e59264aa6af9a2c024540fd05d3e3faea"
+  },
+  {
+    "path": "app/src/main/AndroidManifest.xml",
+    "lines": 314,
+    "sha256": "8fe013115f9dba1d75c079d3afdab82c0e72fd4f09b902c81af83c48afe64269"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/AdBlockSettingActivity.kt",
+    "lines": 215,
+    "sha256": "a7a9b2af51cd9d34b4e68cd2055b7268baccfd7d5a5ced1199f54fffc07d81ae"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/BrowserActivity.kt",
+    "lines": 1223,
+    "sha256": "4492cbdaf14a55fc0d4ca5b129a3e5552ae6042a88a1f287f6e43f990a1bd8f7"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/BrowserState.kt",
+    "lines": 36,
+    "sha256": "760f05b620048291419a0a6a296b64b7e837b2296da07d02cf02e89003591fb3"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/DataListActivity.kt",
+    "lines": 223,
+    "sha256": "84c0674d2376b39b560731328ba8d7330d57be8773e1b9fa2a474febff100424"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/DictActivity.kt",
+    "lines": 105,
+    "sha256": "69852556c977a5ed4c903459645770bf5c5f25ad962d2138d28ecc003d6d4bce"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/EpubReaderActivity.kt",
+    "lines": 154,
+    "sha256": "1daed0b52831751bc679cea48bc6682cce1dd7c55765fd39d9ad5d5c10d1bc94"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/ExtraBrowserActivity.kt",
+    "lines": 5,
+    "sha256": "fbbf4d32a8659bf439badd73b6c2ed89d0ac99537ddcb2e43249a00c95ae51c9"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/GptActionsActivity.kt",
+    "lines": 538,
+    "sha256": "d066c14a7101c33b0e147b7152ec59ceeb9e20ba2ccf5d87c4358e93f41819a6"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/GptQueryListActivity.kt",
+    "lines": 308,
+    "sha256": "f210f1459c9467958443b09fded3a10b243e6e175233b2a68ec761cb09a56d6e"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/HighlightsActivity.kt",
+    "lines": 406,
+    "sha256": "c229c97d7383c575a85019a945c4da3b52ce8d5c6abdc1be64555a2bde362b19"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/KeyHandler.kt",
+    "lines": 322,
+    "sha256": "905603b1a51aa6acfd05e2266c344c97c6934f8075a21863d26e980352c5b7fe"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/LocaleAwareComponentActivity.kt",
+    "lines": 27,
+    "sha256": "6fee138266e7e62d7e1a63ce1c0fc16e66b57ed9e26381af2701d78021caf16b"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/MenuItemHideActivity.kt",
+    "lines": 207,
+    "sha256": "69bf2707e25a5b8a1131c68609440974ebfc0c57156696a83e0915dd1954e754"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/SavedPagesActivity.kt",
+    "lines": 160,
+    "sha256": "4848c14901b85229cf36738299ed891c780760c2a2a32e44b4216fdc6c051d6b"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/SettingActivity.kt",
+    "lines": 695,
+    "sha256": "a71d3dce148594cc884058d55534fc9378613f18b66c6ad7113d8631e35b442f"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/SiteRuleListActivity.kt",
+    "lines": 241,
+    "sha256": "b67fb6b3abda24e01ab76cb7ba9e0a5a9e7233efa83db7fae510c015ef78647a"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/SiteSettingsActivity.kt",
+    "lines": 114,
+    "sha256": "aef49d157605e09ea5bc5be8e32b1d006cbc8943906be79797704a73bd6d8ef0"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/StatusbarConfigActivity.kt",
+    "lines": 228,
+    "sha256": "de5fdd99238c7cb8f318b1dd04755b26f8135739b080a2827ac42602e620d4b0"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt",
+    "lines": 416,
+    "sha256": "d13dd1b72b6f04e35bff17d348fc488465264c739bbac74cabf7f74a2c3d4cf3"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/UserScriptListActivity.kt",
+    "lines": 424,
+    "sha256": "0e68b73d8f7100436de0122c475d97427aed824255e12c488403264b0c183bb8"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/ActionModeDelegate.kt",
+    "lines": 356,
+    "sha256": "4d4c337eae03b1eb1ac5292d3ca09c4fe3ff8ccefee918e4fb939395b1142ccd"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TabManager.kt",
+    "lines": 517,
+    "sha256": "d5f3617f1ff526bf1e4c6feea935148d6b2d67f138a3efb1c2f468147aeab429"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/AiChatDelegate.kt",
+    "lines": 220,
+    "sha256": "4404c29636735b01f92bbc006442b643be57a78978661d097cb0582e9d4c9dff"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/BookmarkActionsDelegate.kt",
+    "lines": 82,
+    "sha256": "59073749fce5fc577be9e82900dc21c79f94076c880e81f0ef0cf89d3220a4fd"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/ChromeSetupDelegate.kt",
+    "lines": 412,
+    "sha256": "6c7ab1d09b35ea9a3244a697aa0668505ee9dab9a014991c6bd3b31392630bdb"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/ContextMenuDelegate.kt",
+    "lines": 202,
+    "sha256": "edc5a0db17071e578399c41c47437c7d9a561fe3a7077b97103d29f89f1ff21f"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/DisplayConfigDelegate.kt",
+    "lines": 143,
+    "sha256": "0c0bd8ab39055812a3e5778b8d9fff2ae2ee93464050d0f11daa52071b233461"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/ExternalSearchDelegate.kt",
+    "lines": 54,
+    "sha256": "372d56a21cd50a64decde427db007e41a2ae6c8607f9759eb575211c41135f34"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/FileHandlingDelegate.kt",
+    "lines": 423,
+    "sha256": "76a190f52c6decab3c4079557e2c4649f969106b77e6417c336094f9bf540909"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/FullscreenDelegate.kt",
+    "lines": 223,
+    "sha256": "63c3c94ba774a28998f364cd56b4a81d0fdc714dfb814349d5010cc035c590c8"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/InputBarDelegate.kt",
+    "lines": 218,
+    "sha256": "00821283ccd119472ed909917e4973e78fe4cb1374fb241ce7846c1b00c84c0e"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/InstapaperDelegate.kt",
+    "lines": 48,
+    "sha256": "3e563e4d64602730c0fde777384b8a08303a5b6ea63584b60b41db688a9520c5"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/IntentDispatchDelegate.kt",
+    "lines": 252,
+    "sha256": "06704ae46be7f8c621aacd5ca7085cf344f747b3bd1f37290d5d546a53dee2a5"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/SearchPanelDelegate.kt",
+    "lines": 122,
+    "sha256": "d36fa91bf407985fa1345561cf87f1397e309eb3cba62b65ec5fe26c70d00fe7"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TaskMenuDelegate.kt",
+    "lines": 137,
+    "sha256": "48ce10eea24301529065737bce324026b0dfedb40c57caecc9dc21b5e0dfc4b5"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TranslationDelegate.kt",
+    "lines": 286,
+    "sha256": "7ca0c4df408d0ab797d2936b34a9329b394d5a44950cb6f671d978b59f5d9aad"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/activity/delegates/TtsButtonDelegate.kt",
+    "lines": 41,
+    "sha256": "41d66bbb63e0e81b0abd6429973f7afbec03b0347b4451cebe5dca848058ff9a"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/browser/NinjaWebViewClient.kt",
+    "lines": 811,
+    "sha256": "e0f4d503ebb567e77798aff159a422a90dee8b13533c004aaa9d3384895451bb"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/browser/WebViewSslHandler.kt",
+    "lines": 91,
+    "sha256": "e805bbcc3acbd56693d77ca84feb1e699f6171d7145d4d09d2c25974a42a32e7"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/data/remote/GoogleDriveRepository.kt",
+    "lines": 285,
+    "sha256": "db3a3337ce26474e870a01c428994cf8584d0f9c48b324a5e5634120a7a0a092"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/data/remote/InstapaperRepository.kt",
+    "lines": 120,
+    "sha256": "95279fad29ceadc03d89e8ceb876c3f627276798f667950af008141077eef04a"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt",
+    "lines": 1118,
+    "sha256": "93a979850adcbdc301167b4fa77b66d78f1ed3edd837f1410f0b649c9f8925f3"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/data/remote/TranslateRepository.kt",
+    "lines": 379,
+    "sha256": "494ebafb2d7f5d47145b610e7ad66dcc09fff19104dcdd32f2ad1859e01bb1c7"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/database/RecordRepository.kt",
+    "lines": 181,
+    "sha256": "8eec1fe52d669a84b613b539d3b82d27c87b08f8504bef331f955e20d414e808"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/search/suggestion/GoogleSuggestionsRepository.kt",
+    "lines": 64,
+    "sha256": "2f81be48cabed9be2381413a4101a0bf9a5e28dbb9ab324f645ceb875de47464"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/search/suggestion/OpenSearchSuggestionsRepository.kt",
+    "lines": 100,
+    "sha256": "f493fc5d5b0599daa89e1bc07cdf41b4d9ecd878fe12ce8fc20441b16f3f843f"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/search/suggestion/SearchSuggestionViewModel.kt",
+    "lines": 99,
+    "sha256": "1f4b3d51792927d62382c91abfbe059e8a1ba50f8a2122cbcf3c82ee8aeb21e9"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/search/suggestion/SearchSuggestionsRepository.kt",
+    "lines": 32,
+    "sha256": "073baa61bf25c2ba65bf428d3fc4344e127a4cc4e6cecba00bf15b550c2f294f"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
+    "lines": 297,
+    "sha256": "a5be8c80e3a5bf56e217152acc3a4ce11d25ca277dd0cc289e5c0cf7a94c08ad"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeData.kt",
+    "lines": 141,
+    "sha256": "6dbe9e7a29c213ae91b564b0ca784663a1bd2bc70b388388361aa05933e5f706"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/setting/SettingComposeUi.kt",
+    "lines": 1020,
+    "sha256": "126d229300294a2aadb03065d001c7f9e664df3983136cd4a8535dbae29092f1"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/unit/ActivityTransitions.kt",
+    "lines": 14,
+    "sha256": "6fc920bf861c7b71632649497647e9c670d9b00627109931ac233e1224199728"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/util/WebViewUtil.kt",
+    "lines": 22,
+    "sha256": "90b8236f25263df1da88d168a99b702dd3071bb8c7db7cc1e9ce286f7236314d"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+    "lines": 1104,
+    "sha256": "bf36211f0e6838637720e8c313c3e06f508617e46065e374c73e63339ccd6db0"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/MainActivityLayout.kt",
+    "lines": 193,
+    "sha256": "35cf3f5126af6885d67d950cd1d8ec7e4d995fa76b127363efa3834db0b43370"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/SplashThemer.kt",
+    "lines": 64,
+    "sha256": "e74c7ea29d6e76d419bd54e5cd6e152661c6512d5b6e386d61d49c5f7f4cd1f1"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/ThemedBorders.kt",
+    "lines": 619,
+    "sha256": "c09e73371f962dc01b7dac032f891b29c54dbe6803004ff68d6b54b5de855973"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/ThemedEdgeBorderView.kt",
+    "lines": 156,
+    "sha256": "331367d0e83543d41041996b8fb89d891831222fcf3072c72cb065ee2d000707"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/WebViewConfigApplier.kt",
+    "lines": 282,
+    "sha256": "7dd1f86e16a99b3c9e3165d0dbacc654357e00908b59cceb8d5576a0e14e264a"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/WebViewJsBridge.kt",
+    "lines": 616,
+    "sha256": "ff01546dbe394f4d8b9f6afb774b0945acf4a73009f4682ade48c138138f8834"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/WebViewNavigationHelper.kt",
+    "lines": 215,
+    "sha256": "b87b563d255d9296a023faa3ce02b0cc9ef7eb3869b64a19a6f53898da3f2ce6"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/WebViewReaderHelper.kt",
+    "lines": 257,
+    "sha256": "837875893640a2270257de5e9fadb141095f1fc4d4650d3b6bcbdcf0a41e2021"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/WebViewTouchSimulator.kt",
+    "lines": 99,
+    "sha256": "2ca599de596444e1a7e39601575036ae431136c83fd3a5fe066dd53216531a12"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/WebViewTranslationHelper.kt",
+    "lines": 29,
+    "sha256": "571cd0d190d3992beafbc65bcd8a0a2ff76b3ab39203356d3e9d1fd03621f824"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/compose/AutoCompleteTextField.kt",
+    "lines": 287,
+    "sha256": "d83f16b1de1f3bb0ae349c6ce5a02ff7961753c5241009efa76da2db8f8f58a8"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/compose/ListScaffold.kt",
+    "lines": 89,
+    "sha256": "1e02bcd38be2336b18113615fa500626ae6a0a202d8158b8ae204941da6fdc38"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/compose/BrowseHistoryList.kt",
+    "lines": 341,
+    "sha256": "52fa07019524a6cb23d319bd450061f5601b042f45de5cc8433ec40fcc1c84f8"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/compose/HistoryAndTabs.kt",
+    "lines": 470,
+    "sha256": "01c267474289de20399904ea4d78f3afb5b29b7f20938deacfc353e99e83f292"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/compose/MyTheme.kt",
+    "lines": 552,
+    "sha256": "6b78a02badcf2b2e97c6703b56cd2f962f79154a2e4750e903c10bce6dd92d54"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/compose/SearchBar.kt",
+    "lines": 111,
+    "sha256": "9ade76c62f6627d2b4248793f97170d3a72ffc4ad3c9c982ac3b035978bd7c07"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/compose/SelectableItem.kt",
+    "lines": 45,
+    "sha256": "8ca12d16b1ebbcfc015f296b59703bfed7fbba59ee2cba18dd725a509102d33d"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/compose/Shapes.kt",
+    "lines": 61,
+    "sha256": "e525e6ca66346c7dda53ff391bb4b2f4d729d0e8e7709e1f7e3b29b3f0b2a2f8"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/compose/ThemedDialogFrame.kt",
+    "lines": 37,
+    "sha256": "9a50862972157e522f4eb83223d5942deba785eaf1ba8728af2a78327375e8a6"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/compose/Toolbar.kt",
+    "lines": 1053,
+    "sha256": "b9c0484b9171b43e70eb361dd01f06015c3ab651bf5276cdfd5db8ff0b672825"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ActionModeView.kt",
+    "lines": 206,
+    "sha256": "c110b280e402d520b708f417e11d7c37026071fa5b7ae92ffab19677f78be142"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemedCheckbox.kt",
+    "lines": 22,
+    "sha256": "c439f81248e50317be7803980fd3d6b2cfbcb3f0764f966e39f8b0bf050722d7"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/AuthenticationDialogFragment.kt",
+    "lines": 99,
+    "sha256": "d7b2a51c0714b69ae7a78faf59e08347eca8fc8bda027d3adae7b87bd37f6e2b"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarkContextMenuDlgFragment.kt",
+    "lines": 150,
+    "sha256": "be8dc1e9c0c06b1fbdb7d2804b40fad8b53844e036978eb1e1df5e405c7334a5"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/BookmarksDialogFragment.kt",
+    "lines": 737,
+    "sha256": "b7bee65015d3fa7192932c7ebafc90ddc472308ea40fe7ef96708bef549ae25d"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ComposeDialogFragment.kt",
+    "lines": 380,
+    "sha256": "5583adb9ec3174f5acba74b9426c1af8b4d6d02c80b17ecce44a4cd73ab96864"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ContextMenuDialogFragment.kt",
+    "lines": 343,
+    "sha256": "933be4a3f946b05c3d823cf970381d6bd80889577958fa6996d532ae272c5902"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/CustomTaskInputDialogFragment.kt",
+    "lines": 97,
+    "sha256": "fb2a8627136fff74dabd427165e5c0cd14686c04e29d27898a04ad10ac0d8f50"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/DraggableComposeDialogFragment.kt",
+    "lines": 70,
+    "sha256": "17a4b8cef0cc9c8bb5de29c6c90fd3401db0814100c0a5f5678d12e0dacb23b1"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ETtsVoiceDialogFragment.kt",
+    "lines": 125,
+    "sha256": "13e81d5aec5de1dfca02b878db153cf9fe70e77541f3eb0b4ed865be6f249918"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FastToggleDialogFragment.kt",
+    "lines": 237,
+    "sha256": "ef21e4e432f95e448c070a9f69d6de424384cde048ebfb10da8ea85942f0bc3f"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBoldnessDialogFragment.kt",
+    "lines": 64,
+    "sha256": "f62881f2d6e9570a703523e6a28f34922e067dbd375a0313108403783d236261"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontBrowserDialogFragment.kt",
+    "lines": 298,
+    "sha256": "82f3d73561bca1914e96639372381c8f4f8cfade20e52f4fba9532748259ae96"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/FontDialogFragment.kt",
+    "lines": 292,
+    "sha256": "7fad9a21dd038026e3f49cd8bcd6659d0ced31523ee225e2bb3b6746faf7aeea"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/HighlightStyleDialogFragment.kt",
+    "lines": 99,
+    "sha256": "f5d01dcdaac3e1181cf6bfb011ce11bd940648e7be5defe8aff606d4d73cc064"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/LanguageSettingDialogFragment.kt",
+    "lines": 100,
+    "sha256": "847b9e6b3c50ddb5c04692de3c24d4def801a56a38b3089ae651e900a04bbdab"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/MarkdownBlocksView.kt",
+    "lines": 111,
+    "sha256": "a1c0000b494bc27bc34222be3b9b50206521d4341a9ff296b81be3ce12aa9250"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/MenuDialogFragment.kt",
+    "lines": 751,
+    "sha256": "49af723ece1728793d006bb225c58cfcac70b1e890edb75c337ebf57f6dead17"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/PageAiActionDialogFragment.kt",
+    "lines": 175,
+    "sha256": "1de661ed2f682dd65fe5ff31caa167a69db9449bbad89ca0eeb0101f10988f40"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ReaderFontDialogFragment.kt",
+    "lines": 90,
+    "sha256": "d3f94f47fda956018a71619ac5bad24ff0aaa14c7a591f4d027a3f89b88bea0e"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ReaderSettingsDialogFragment.kt",
+    "lines": 202,
+    "sha256": "ed2a46e225d263f566fe837a6bdb27552a76794f02fdbe001994188ad0ccb38f"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ShowEditGptActionDialogFragment.kt",
+    "lines": 39,
+    "sha256": "e90e3bcf1fc0d989bbdf6617ba69c0ae1c67b3e1160ed0b52fa06ac98867fe00"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/SiteSettingsDialogFragment.kt",
+    "lines": 1376,
+    "sha256": "773c99096c789784cc6a1311588c3cb47500fd27bca936df82d5d3b4e5739be7"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TaskMenuDialogFragment.kt",
+    "lines": 91,
+    "sha256": "b1b6c412dfe30f3ae381a07423307671dad86941c4713da808ff6a08bc56a983"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TextEditorDialogFragment.kt",
+    "lines": 162,
+    "sha256": "6f9a00d1fdf39a9d40501d4628b5a014cbb674acd0840da5f9503dec772111ec"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ThemeColorDialogFragment.kt",
+    "lines": 710,
+    "sha256": "c4c646e36b2dc29fa768f9a97583e60751f72b23e4721d42c5ada7ecc0a060b3"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TocDialogFragment.kt",
+    "lines": 204,
+    "sha256": "8bed6291eb057b7bb627e2d7a0ef7fb64c1c4fc4f0d13514a77dacb26ccadd26"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ToolbarConfigDialogFragment.kt",
+    "lines": 231,
+    "sha256": "c486059775b9f3e03eee808c6f14ad020e535b2fdecd392f9b459f2c1c721062"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TouchAreaDialogFragment.kt",
+    "lines": 246,
+    "sha256": "1bd16871914043b5b95a8119ac877c0d9203ab1f7719847fa9da35fceb534339"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslateDialogFragment.kt",
+    "lines": 499,
+    "sha256": "0052e5230939739cf260bc63c0f92caf991219e70ac9a2568d3379659be87a7b"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TranslationConfigDlgFragment.kt",
+    "lines": 127,
+    "sha256": "067012308e23baf7249392ee1bea86054fff6735a986f5a7f220b070007c3122"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt",
+    "lines": 493,
+    "sha256": "1c8330aed91b65ee4a4fbe93b4f0f8334858ba65831f2026ad4d118a36de3c28"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/view/viewControllers/ComposeToolbarViewController.kt",
+    "lines": 192,
+    "sha256": "6cda0c5fa7aa23b83e8a446c798b787e0bcd66a266244f99eab561d2d9970730"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ActionModeMenuViewModel.kt",
+    "lines": 248,
+    "sha256": "7b5c7b82183d3528555b67a8615cdd5a7f19ef697276b0ca7ed1d75bb214f8c2"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/AlbumViewModel.kt",
+    "lines": 25,
+    "sha256": "439e8a92c11e5a815a414d23c513c2b9f3ffb95f5fbceb9968889ffb23dd9fba"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/BookmarkViewModel.kt",
+    "lines": 135,
+    "sha256": "5069370dbcb6277a60e0edf91063f05a26229b9a5f3f9c98369a71cd5d812a21"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/ExternalSearchViewModel.kt",
+    "lines": 34,
+    "sha256": "f6bcbbf54e5b91120aa63b55573cafcb77d07d866eb48881f727443ecc4ec59e"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/GptQueryViewModel.kt",
+    "lines": 69,
+    "sha256": "a5799833dfd660951279a3d1fbaa5a2f2d49841d0c1f6946f3ad79ef8a573775"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/HighlightViewModel.kt",
+    "lines": 60,
+    "sha256": "55bdc198b7def049d57c51c8f43504f79e242af669e297a608c0c2046e86533d"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/InstapaperViewModel.kt",
+    "lines": 112,
+    "sha256": "93d01c4549381266c754793dbccdd0b7a7a4d9b1bca3cca98e2ba20191ce5351"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/RemoteConnViewModel.kt",
+    "lines": 53,
+    "sha256": "a00744643082bf2ad2bd51b2585a7a16e8dc2466f1fdb88fe8667fe5bc150359"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/SavedPageViewModel.kt",
+    "lines": 22,
+    "sha256": "1a77b4674d4e9a2ec8dc27420b480487c30b77b470431737f5f57b52b07a5afc"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/SplitSearchViewModel.kt",
+    "lines": 23,
+    "sha256": "c908d3a08e7ac6eb691b5c6848d208c928de9b99c92fa4a96e937a3840ebddff"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/TranslationViewModel.kt",
+    "lines": 541,
+    "sha256": "c0a8be312a0dc54af22b9af6d346184eec9330db7021c61ffa1fcc33097ce4c2"
+  },
+  {
+    "path": "app/src/main/java/info/plateaukao/einkbro/viewmodel/TtsViewModel.kt",
+    "lines": 356,
+    "sha256": "46edc66b221fd3fc446d357abaadaaa0b8a933bd6bbc043fa545a3920e05ae07"
+  },
+  {
+    "path": "app/src/playRelease/AndroidManifest.xml",
+    "lines": 14,
+    "sha256": "98b60e006f24e7cd361de3e928f717f736a662f729a1c6ec7256300b2cdb068c"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/browser/BrowserActionCatalogTest.kt",
+    "lines": 55,
+    "sha256": "92980ae980cb15993013688b2eaf14f8bb9179dbc516b3922ebda9dbb8586352"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/browser/ImageRequestClassifierTest.kt",
+    "lines": 66,
+    "sha256": "49b36d71727b69f7fb37c30e71c3601a110d580e8eb9e133c97e6bfe7f82d5db"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/browser/UserScriptBridgeTest.kt",
+    "lines": 35,
+    "sha256": "411264d8cf460207361c7db03bf003aad5026033ce50068ed356ce57d36b82e9"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/caption/YouTubeCaptionFetcherTest.kt",
+    "lines": 105,
+    "sha256": "9f8a3717feb2fc4e342d77befbf2fdf64c06570d109e37c48dc3535de56cd4f4"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/data/remote/ChatRequestSerializationTest.kt",
+    "lines": 93,
+    "sha256": "3ffaf76b387afbd847262e88f6683f01f4ddd5b2cd913bbcf9d1ebee3300c667"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/data/remote/ThinkTagFilterTest.kt",
+    "lines": 83,
+    "sha256": "86ee9145699df75b84ace67aa1278547df3f1ef0222689838a81c497add95d23"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/epub/EpubCoverParserTest.kt",
+    "lines": 134,
+    "sha256": "e20cb19d611de23be3241a9f9fbe2ca767447e596e8fb86facba10cf2b060197"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/epub/EpubParserTest.kt",
+    "lines": 188,
+    "sha256": "19402b49c6b2bffe44fd2775886a18b2d3038bb365688dda6eecf8ec279a5bd1"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/epub/EpubTestFixtures.kt",
+    "lines": 29,
+    "sha256": "6cbc633c64a0319bbc51a992cdce17880967932e2482c592a01897d62534c595"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/epub/EpubXMLFileParserTest.kt",
+    "lines": 62,
+    "sha256": "e38f33f87b6869418b1efbf9f93fe0b3f18f7bf9824f2b093d554516aadcd87f"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/AiConfigTest.kt",
+    "lines": 192,
+    "sha256": "3255c378a5f6dcf909eae5defde7b148ff4c54c7850944d7d4a58819afccf57e"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/DisplayConfigTest.kt",
+    "lines": 102,
+    "sha256": "5decd48a65c2eadb5af7fa1e914a71abea280732a9fe587136481e2c2b5ee1ea"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/BrowserAndTranslationConfigTest.kt",
+    "lines": 117,
+    "sha256": "846d4fd177c1dadf0296d636394d2f720577e7c2da6d3cabd8833a58f7e85eec"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/DomainConfigManagerTest.kt",
+    "lines": 419,
+    "sha256": "016165bfdb64cd35ff168720473f34ce47d879fa39016d6758785e209cb0f7ab"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/FakeSharedPreferences.kt",
+    "lines": 105,
+    "sha256": "15cfbe9b79def2e7eb583541451847711394b3fce7c635dada0ebf5f1233bc82"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/PreferenceDelegatesTest.kt",
+    "lines": 97,
+    "sha256": "9a9d846e4461791a04a1898da0a060e2bd7859bc668cfe3ca061e8381ab02f6a"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/SerializableDataTest.kt",
+    "lines": 146,
+    "sha256": "813036d6848ffccdb33d98d875e86a86ab353bfc404aab5a6e56c8561315679d"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/TabConfigTest.kt",
+    "lines": 110,
+    "sha256": "59c092426ba9cb2027d39ef8c298c0ec29dd5978fccf466d2c3e41d030aa9705"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/TouchConfigTest.kt",
+    "lines": 76,
+    "sha256": "366fe3069c55b1fa94f0d28c58e615b164235a39c78be1a57e095d7accdad412"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/TtsConfigTest.kt",
+    "lines": 98,
+    "sha256": "6354dd67a0d2b23d3ac27954220fa3648ad5d203f4abd4fa399e1198e8262008"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/preference/UiConfigTest.kt",
+    "lines": 145,
+    "sha256": "98a3abfc68c3c0319dae1956a143e0f27fcf0ab15d5913f4df8818426bc58616"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/searchhh/ConnectionSettingsTest.kt",
+    "lines": 14,
+    "sha256": "99369e7c552ef1b396f64fd51574e9c47a960c9314f29ead5a431986b30766a8"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/searchhh/CrawlerExpansionTest.kt",
+    "lines": 113,
+    "sha256": "95d5bb5d4ee7d5bc1c2f8216bdf594950569f429c2cba45a1b69a504e85c205e"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/searchhh/LocalPolicyTest.kt",
+    "lines": 36,
+    "sha256": "65550ff56674e57592daaf4a59326d99f0cd67c77f9ba11bfafa71668aa52dc1"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/searchhh/OpportunityPipelineTest.kt",
+    "lines": 91,
+    "sha256": "3ffbb2bc816c0a882a001bb0010c0aeb6961030478a945abad396193ca577c06"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/service/OpenAiRepositoryTest.kt",
+    "lines": 502,
+    "sha256": "f3644dc67708207736cfcda4b57bad1b79587945adf152ae400c2303fb3731c7"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/task/ToolTextWindowTest.kt",
+    "lines": 79,
+    "sha256": "92fc4ebceb01347a2ed88f97588db4181af2e600d7b80b4e552d437f3c928929"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/unit/BackupUnitJsonTest.kt",
+    "lines": 217,
+    "sha256": "d53458be18352986bb5e0a8bc39c8c8d4e4c6479d734fbf8b4554f3b016df4d0"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/unit/DownloadHelperTest.kt",
+    "lines": 42,
+    "sha256": "ac8d7134b6fe741175bf088bf74a1ae134fa4f09738506e8e924b697c915b7cb"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/unit/FaviconCandidatesTest.kt",
+    "lines": 87,
+    "sha256": "f8bf9997ccb32972da0c32f9671293c11d02143b39155209226c988d23085f2a"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/unit/GithubUtilTest.kt",
+    "lines": 53,
+    "sha256": "e4fb6c9e33a220601867f5eef1ae985576b8e7ee5eceb8429a62c02c7979a1df"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/unit/HelperUnitTest.kt",
+    "lines": 98,
+    "sha256": "79a3b101e1f65645ed10bd8632eeefebc4b330c0cd383d8b8708fda5347f2513"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/unit/MarkdownBlocksTest.kt",
+    "lines": 51,
+    "sha256": "275bb26bd3510f770984d977f79f44bc6f1cdd7bbcc225e740f94cfb2a19f134"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/unit/MarkdownParserTest.kt",
+    "lines": 180,
+    "sha256": "2fb92c2663a45f8b14fe1b366fabad1ec046378be71a508f8267b3bb5afe8f19"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/unit/pdf/PdfTocEditorTest.kt",
+    "lines": 225,
+    "sha256": "f37f4b6f2611a117666c134eaaca0c3447f5c199bb1abe7586120c2586de7541"
+  },
+  {
+    "path": "app/src/test/java/info/plateaukao/einkbro/view/GestureTypeTest.kt",
+    "lines": 40,
+    "sha256": "94f7c3f9ce6258191ddbe330ee44a0c69666df0ae593e4d772c60d054b337a3b"
+  },
+  {
+    "path": "docs/searchhh/AI-HIVE-KEY-PLAN.md",
+    "lines": 137,
+    "sha256": "a5e1a40f931aa388c540dc558e84e0bba24a1206a2d109170a467a2f5c3be870"
+  },
+  {
+    "path": "docs/searchhh/AI-MODEL-AUDIT.md",
+    "lines": 120,
+    "sha256": "6384e8c9e9e1dac74660406b9a9ab62ba41e6ce5ea65c5722b976265eb190057"
+  },
+  {
+    "path": "docs/searchhh/CRAWLER-AUDIT.md",
+    "lines": 176,
+    "sha256": "a2ed6a1e7bed126f5ecd7caa1b9f97dd5079c01b89c55c540e2b12e56fcf4a6a"
+  },
+  {
+    "path": "docs/searchhh/INCLUDED-BACKEND.md",
+    "lines": 108,
+    "sha256": "868a04c0da52d95c1405eef98d867010bb736c579e6cf8c90f7bde03de0a3f93"
+  },
+  {
+    "path": "docs/searchhh/PLAN-0.3.md",
+    "lines": 267,
+    "sha256": "0ab650f9492840cc1439e2c36fcb9ee850c6de1f6e76625922d90e1e4673e0c7"
+  },
+  {
+    "path": "docs/searchhh/PLAN-0.4-CRAWLERS.md",
+    "lines": 52,
+    "sha256": "1d6d0cb94eaa7087bacc38f8c1a8ec1b7adb753c8bd11f67ad7fce80f1bac191"
+  },
+  {
+    "path": "docs/searchhh/RELEASE-0.2.md",
+    "lines": 40,
+    "sha256": "566c6ba47d8ff90f94b9269770c77b5ba2fc7f8431f9d1a65733fa3b27dae923"
+  },
+  {
+    "path": "docs/searchhh/RELEASE-0.3.md",
+    "lines": 117,
+    "sha256": "8f5585905dca244c24aa4b925d7a6fcc1878a16ee9dfdb37939dcc237a363821"
+  },
+  {
+    "path": "docs/searchhh/RELEASE-0.4.md",
+    "lines": 91,
+    "sha256": "ba9b02d579e60b35d7e7bc1c04d65cc942b1b6649e27a3c02926f72cabab4b4c"
+  },
+  {
+    "path": "docs/searchhh/SOURCES.md",
+    "lines": 97,
+    "sha256": "ac1e509f10717768fadb295a424bb91898c6b7f2d4716f5709972893dae979f6"
+  },
+  {
+    "path": "docs/searchhh/UPSTREAM-EINKBRO-README.md",
+    "lines": 19,
+    "sha256": "02ff66b3fecd0e84942d312e76e6f5262b5c5a040f33893a17709e3dfa611d47"
+  },
+  {
+    "path": "docs/searchhh/VALIDATION.md",
+    "lines": 180,
+    "sha256": "a2658b89835110de7040bb6769bdf9176fe5042723bee5aad413d60f064111c8"
+  },
+  {
+    "path": "gradle/libs.versions.toml",
+    "lines": 90,
+    "sha256": "be285a303d19ccd7f5725312dcf293582e042f262e140b51ede9de3670aaf4eb"
+  },
+  {
+    "path": "js-tests/README.md",
+    "lines": 55,
+    "sha256": "c1e96d4d099a6fa3dcd390660ad89df5ec7d09028f91890dc437ea41a1ee6a39"
+  }
+]

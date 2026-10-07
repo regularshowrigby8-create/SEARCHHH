@@ -1,0 +1,3 @@
+reference=pre-migration-orientation-semantics
+jpeg_pixel_comparisons=16
+scope=image-pipeline-not-full-screen

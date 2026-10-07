@@ -1,0 +1,312 @@
+{
+  "device_lint": [
+    {
+      "report": "app/build/reports/lint-results-debug.xml",
+      "groups": [
+        {
+          "id": "MissingTranslation",
+          "severity": "Error",
+          "count": 92,
+          "priority": 8,
+          "file": "app/src/main/res/values/strings.xml",
+          "line": "11"
+        },
+        {
+          "id": "Typos",
+          "severity": "Error",
+          "count": 3,
+          "priority": 7,
+          "file": "app/src/main/res/values-es/strings.xml",
+          "line": "71"
+        },
+        {
+          "id": "Recycle",
+          "severity": "Error",
+          "count": 1,
+          "priority": 7,
+          "file": "app/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt",
+          "line": "98"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Error",
+          "count": 83,
+          "priority": 6,
+          "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+          "line": "147"
+        },
+        {
+          "id": "ExifInterface",
+          "severity": "Error",
+          "count": 8,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+          "line": "244"
+        },
+        {
+          "id": "TrimLambda",
+          "severity": "Hint",
+          "count": 5,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+          "line": "606"
+        }
+      ],
+      "omitted_groups": 30,
+      "draw_allocation_count": 0
+    },
+    {
+      "report": "ad-filter/build/reports/lint-results-debug.xml",
+      "groups": [
+        {
+          "id": "UseKtx",
+          "severity": "Error",
+          "count": 2,
+          "priority": 6,
+          "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+          "line": "147"
+        },
+        {
+          "id": "OldTargetApi",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "adblock-client/build.gradle",
+          "line": "12"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        },
+        {
+          "id": "NewerVersionAvailable",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "3"
+        },
+        {
+          "id": "AndroidGradlePluginVersion",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "5"
+        },
+        {
+          "id": "UseTomlInstead",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        }
+      ],
+      "omitted_groups": 0,
+      "draw_allocation_count": 0
+    },
+    {
+      "report": "adblock-client/build/reports/lint-results-debug.xml",
+      "groups": [
+        {
+          "id": "OldTargetApi",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "adblock-client/build.gradle",
+          "line": "12"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Error",
+          "count": 1,
+          "priority": 6,
+          "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+          "line": "147"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        },
+        {
+          "id": "NewerVersionAvailable",
+          "severity": "Error",
+          "count": 23,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "3"
+        },
+        {
+          "id": "AndroidGradlePluginVersion",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "gradle/libs.versions.toml",
+          "line": "5"
+        },
+        {
+          "id": "UseTomlInstead",
+          "severity": "Error",
+          "count": 2,
+          "priority": 4,
+          "file": "adblock-client/build.gradle",
+          "line": "71"
+        }
+      ],
+      "omitted_groups": 0,
+      "draw_allocation_count": 0
+    }
+  ],
+  "device": {
+    "test_counts": {
+      "passed": 371,
+      "failure": 0,
+      "error": 0,
+      "skipped": 0
+    },
+    "new_tests": [
+      "BrowserMemoryTrimmerTest.foregroundAndUiHiddenDoNotPauseTabsOrDiscardPreloadedView:passed",
+      "BrowserMemoryTrimmerTest.absentActiveTabPausesAllRemainingTabs:passed",
+      "BrowserMemoryTrimmerTest.backgroundAndHigherPauseOnlyInactiveTabsAndReleasePreload:passed",
+      "WebViewSslHandlerTest.invalidCertificatesAreCancelledAndReportedWithoutBypass:passed",
+      "SearchhhRobotsTest.wildcardDelayAndSitemapsRemainAvailable:passed",
+      "SearchhhRobotsTest.namedAgentMatchingKeepsCaseAndLegacyPrefixSemantics:passed",
+      "SearchhhRouteTest.everyRegisteredIdRoundTripsAndHasUniqueSemantics:passed",
+      "SearchhhRouteTest.unknownAndMissingRoutesReturnHome:passed",
+      "ImageCacheTrimPolicyTest.legacyLevelsKeepTheirHistoricalCacheActions:passed",
+      "ImageCacheTrimPolicyTest.modernUiHiddenTrimsAndBackgroundOrHigherEvicts:passed",
+      "InternalBackendTest.initializesFromNameAndServesAuthenticatedMcp:passed",
+      "KtorAndroidCompatibilityTest.absentDesktopManagementApisLeaveKtorDebuggerDetectionDisabled:passed",
+      "NavigationBehaviorTest.enteredQuerySurvivesNavigationAndActivityRecreation:passed",
+      "NavigationBehaviorTest.everyRegisteredDestinationChangesSelectionAndBackReturnsHome:passed",
+      "ImageCacheBehaviorTest.trimEvictsRealMemoryWithoutDeletingTheDiskCopy:passed",
+      "ImageCacheBehaviorTest.failedDiskWriteLeavesTheMemoryEntryUsable:passed",
+      "EdgeBorderRenderingTest.dashEffectIsReusedAndRecreatedOnlyWhenDensityChanges:passed",
+      "EdgeBorderRenderingTest.renderedPixelsMatchPreFixAcrossStylesDensitySizeAndMirroring:passed",
+      "ComposeDialogWindowTest.panelUsesPublicThemeAndOkDismissesTheActualDialog:passed",
+      "TtsConfigTest.localeScriptAndRegionSurvivePersistence:passed",
+      "TtsConfigTest.legacyLanguageAndUnderscoreLocalesRemainReadable:passed",
+      "PersistenceTest.encryptedPreferencesReopenWithoutPlaintextCredentials:passed"
+    ],
+    "apk_files": [
+      "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+      "app/build/outputs/apk/debug/app-arm64-v8a-debug.apk",
+      "app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk",
+      "app/build/outputs/apk/debug/app-universal-debug.apk",
+      "app/build/outputs/apk/debug/app-x86-debug.apk",
+      "app/build/outputs/apk/debug/app-x86_64-debug.apk"
+    ]
+  },
+  "release_lint": [
+    {
+      "report": "app/build/reports/lint-results-release.xml",
+      "groups": [
+        {
+          "id": "MissingTranslation",
+          "severity": "Error",
+          "count": 92,
+          "priority": 8,
+          "file": "app/src/main/res/values/strings.xml",
+          "line": "11"
+        },
+        {
+          "id": "Typos",
+          "severity": "Error",
+          "count": 3,
+          "priority": 7,
+          "file": "app/src/main/res/values-es/strings.xml",
+          "line": "71"
+        },
+        {
+          "id": "Recycle",
+          "severity": "Error",
+          "count": 1,
+          "priority": 7,
+          "file": "app/src/main/java/info/plateaukao/einkbro/unit/SupernoteStorage.kt",
+          "line": "98"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Error",
+          "count": 83,
+          "priority": 6,
+          "file": "adblock-client/src/main/java/io/github/edsuns/adblockclient/AdBlockClient.kt",
+          "line": "147"
+        },
+        {
+          "id": "ExifInterface",
+          "severity": "Error",
+          "count": 8,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/unit/BookmarkRenderer.kt",
+          "line": "244"
+        },
+        {
+          "id": "TrimLambda",
+          "severity": "Hint",
+          "count": 5,
+          "priority": 6,
+          "file": "app/src/main/java/info/plateaukao/einkbro/view/EBWebView.kt",
+          "line": "606"
+        }
+      ],
+      "omitted_groups": 30,
+      "draw_allocation_count": 0
+    }
+  ],
+  "release": {
+    "test_counts": {
+      "passed": 327,
+      "failure": 0,
+      "error": 0,
+      "skipped": 0
+    },
+    "new_tests": [
+      "BrowserMemoryTrimmerTest.foregroundAndUiHiddenDoNotPauseTabsOrDiscardPreloadedView:passed",
+      "BrowserMemoryTrimmerTest.absentActiveTabPausesAllRemainingTabs:passed",
+      "BrowserMemoryTrimmerTest.backgroundAndHigherPauseOnlyInactiveTabsAndReleasePreload:passed",
+      "WebViewSslHandlerTest.invalidCertificatesAreCancelledAndReportedWithoutBypass:passed",
+      "SearchhhRobotsTest.wildcardDelayAndSitemapsRemainAvailable:passed",
+      "SearchhhRobotsTest.namedAgentMatchingKeepsCaseAndLegacyPrefixSemantics:passed",
+      "SearchhhRouteTest.everyRegisteredIdRoundTripsAndHasUniqueSemantics:passed",
+      "SearchhhRouteTest.unknownAndMissingRoutesReturnHome:passed",
+      "ImageCacheTrimPolicyTest.legacyLevelsKeepTheirHistoricalCacheActions:passed",
+      "ImageCacheTrimPolicyTest.modernUiHiddenTrimsAndBackgroundOrHigherEvicts:passed",
+      "TtsConfigTest.localeScriptAndRegionSurvivePersistence:passed",
+      "TtsConfigTest.legacyLanguageAndUnderscoreLocalesRemainReadable:passed"
+    ],
+    "apk_files": []
+  },
+  "source": "92484f60e89348bde7c4e7430e2fcabb28699256",
+  "run": 36605281071,
+  "overall": "FAILURE",
+  "border_issue": "CLOSED: zero DrawAllocation, two passing Android methods, asserted densities, 144 pixel cases, four valid identical-pair PNGs",
+  "images": {
+    "current-dashed.png": {
+      "bytes": 163,
+      "sha256": "72f90bb4f914bd5fa245b458fa1b0e7c3aa9bb95ccbedec32b81407785a081e2"
+    },
+    "reference-dashed.png": {
+      "bytes": 163,
+      "sha256": "72f90bb4f914bd5fa245b458fa1b0e7c3aa9bb95ccbedec32b81407785a081e2"
+    },
+    "current-stamp.png": {
+      "bytes": 2391,
+      "sha256": "ee3775c3b717055c320d51a797877f953c0287e819545637d8cce2cb4391b049"
+    },
+    "reference-stamp.png": {
+      "bytes": 2391,
+      "sha256": "ee3775c3b717055c320d51a797877f953c0287e819545637d8cce2cb4391b049"
+    }
+  },
+  "limitations": "Software-rendered border only, not full-screen screenshots or hardware/e-ink performance."
+}

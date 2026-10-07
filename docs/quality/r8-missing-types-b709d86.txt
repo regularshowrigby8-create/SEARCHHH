@@ -1,0 +1,12 @@
+Missing class com.google.errorprone.annotations.CheckReturnValue (referenced from: com.google.crypto.tink.InsecureSecretKeyAccess and 1 other context)
+Missing class com.google.errorprone.annotations.Immutable (referenced from: com.google.crypto.tink.InsecureSecretKeyAccess and 40 other contexts)
+Missing class com.google.errorprone.annotations.RestrictedApi (referenced from: com.google.crypto.tink.aead.AesEaxKey$Builder com.google.crypto.tink.aead.AesEaxKey.builder() and 6 other contexts)
+Missing class java.lang.management.ManagementFactory (referenced from: boolean io.ktor.util.debug.IntellijIdeaDebugDetector.isDebuggerConnected_delegate$lambda$0())
+Missing class java.lang.management.RuntimeMXBean (referenced from: boolean io.ktor.util.debug.IntellijIdeaDebugDetector.isDebuggerConnected_delegate$lambda$0())
+> Task :app:minifyReleaseWithR8 FAILED
+Lint found 470 errors and 14 hints. First failure:
+> Task :app:lintRelease FAILED
+Lint found 470 errors, 0 warnings, 14 hints. First failure:
+Execution failed for task ':app:minifyReleaseWithR8'.
+Execution failed for task ':app:lintRelease'.
+  Lint found 470 errors, 0 warnings, 14 hints. First failure:

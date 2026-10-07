@@ -1,0 +1,34 @@
+e: warnings found and -Werror specified
+w: app/src/main/java/info/plateaukao/einkbro/activity/ToolbarConfigActivity.kt:137:20 'fun setDecorFitsSystemWindows(p0: Boolean): Unit' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/activity/delegates/InputBarDelegate.kt:119:33 'fun setDecorFitsSystemWindows(p0: Boolean): Unit' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/activity/delegates/TaskMenuDelegate.kt:125:25 Redundant creation of Json format. Creating instances for each usage can be slow.
+w: app/src/main/java/info/plateaukao/einkbro/data/remote/OpenAiRepository.kt:865:48 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/preference/AiConfig.kt:223:9 Redundant creation of Json format. Creating instances for each usage can be slow.
+w: app/src/main/java/info/plateaukao/einkbro/preference/TtsConfig.kt:16:17 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhData.kt:5:8 'class EncryptedSharedPreferences : Any, SharedPreferences' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhData.kt:6:8 'class MasterKey : Any' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/searchhh/local/PortalCrawler.kt:43:70 'fun parseContent(p0: String!, p1: ByteArray!, p2: String!, p3: String!): SimpleRobotRules!' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/searchhh/local/PublicSearch.kt:130:46 'fun parseContent(p0: String!, p1: ByteArray!, p2: String!, p3: String!): SimpleRobotRules!' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/service/TtsNotificationManager.kt:116:17 'fun addAction(p0: Int, p1: CharSequence!, p2: PendingIntent!): Notification.Builder!' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/service/TtsNotificationManager.kt:122:17 'fun addAction(p0: Int, p1: CharSequence!, p2: PendingIntent!): Notification.Builder!' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/service/TtsNotificationManager.kt:130:13 'fun addAction(p0: Int, p1: CharSequence!, p2: PendingIntent!): Notification.Builder!' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/service/TtsNotificationManager.kt:133:13 'fun addAction(p0: Int, p1: CharSequence!, p2: PendingIntent!): Notification.Builder!' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/service/TtsNotificationManager.kt:155:38 This extension is shadowed by a member: 'fun addAction(p0: Int, p1: CharSequence!, p2: PendingIntent!): Notification.Builder!' defined in 'android/app/Notification.Builder'.
+w: app/src/main/java/info/plateaukao/einkbro/unit/EinkImageCache.kt:96:46 'static field TRIM_MEMORY_RUNNING_CRITICAL: Int' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/unit/EinkImageCache.kt:97:42 'static field TRIM_MEMORY_RUNNING_LOW: Int' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/unit/LocaleManager.kt:23:22 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/view/WebViewJsBridge.kt:138:13 'when' is exhaustive so 'else' is redundant here.
+w: app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ETtsVoiceDialogFragment.kt:77:28 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/ETtsVoiceDialogFragment.kt:110:19 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt:271:16 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+w: app/src/main/java/info/plateaukao/einkbro/view/dialog/compose/TtsSettingDialogFragment.kt:280:20 'constructor(p0: String!): Locale' is deprecated. Deprecated in Java.
+Lint found 52 errors. First failure:
+> Task :ad-filter:lintDebug FAILED
+Lint found 51 errors. First failure:
+> Task :adblock-client:lintDebug FAILED
+> Task :app:compileDebugKotlin FAILED
+Execution failed for task ':ad-filter:lintDebug'.
+  Lint found 52 errors. First failure:
+Execution failed for task ':adblock-client:lintDebug'.
+  Lint found 51 errors. First failure:
+Execution failed for task ':app:compileDebugKotlin'.

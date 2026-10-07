@@ -1,0 +1,316 @@
+# Adapted from plateaukao/einkbro v16.7.0 CI. Searchhh gates are sequential.
+name: Searchhh checks and APK
+on:
+  push:
+    branches: [arena/01a0ea36-searchhh]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  quality:
+    uses: ./.github/workflows/android-verification.yml
+    permissions:
+      contents: write
+      actions: read
+  framework:
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v6
+        with: {node-version: '22'}
+      - name: Test opportunity framework and security policy
+        run: |
+          pip install -r backend/requirements.txt
+          PYTHONPATH=backend pytest backend/tests -q
+      - name: Test reused browser JavaScript and locale resources
+        run: |
+          npm install --prefix js-tests --ignore-scripts
+          npm test --prefix js-tests -- --runInBand
+          python3 scripts/check_locale_strings.py
+  backend-integration:
+    needs: framework
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.11'}
+      - name: Start upstream services and adapters
+        working-directory: backend
+        run: |
+          printf 'POSTGRES_PASSWORD=%s\nSEARCHHH_ACCESS_TOKEN=%s\nSEARXNG_SECRET=%s\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env
+          docker compose --env-file .env up -d --build
+      - name: Exercise real PostgreSQL, Redis, RQ and SearXNG
+        run: |
+          pip install httpx==0.28.1
+          python3 backend/tests/stack_smoke.py
+      - name: Capture container diagnostics
+        if: always()
+        working-directory: backend
+        run: docker compose --env-file .env logs --no-color > stack.log
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: backend-diagnostics
+          path: backend/stack.log
+      - name: Stop test services
+        if: always()
+        working-directory: backend
+        run: docker compose --env-file .env down -v
+  android:
+    needs: backend-integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: '17'
+          cache: gradle
+      - name: Test, lint, then assemble installable universal test APK
+        shell: bash
+        run: ./gradlew testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest -PuniversalApk --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee android-build.log
+      - name: Report build failure diagnostics
+        if: failure()
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          p = Path('android-build.log')
+          if p.exists():
+              text = p.read_text(errors='replace')[-3000:]
+              print('::error title=Android build diagnostics::' + text.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
+          PYTHON
+      - name: Upload instrumented tests
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-instrumentation
+          path: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+          if-no-files-found: error
+      - name: Upload APK and reports
+        uses: actions/upload-artifact@v7
+        with:
+          name: searchhh-debug-apk
+          path: app/build/outputs/apk/debug/app-universal-debug.apk
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: android-test-reports
+          path: |
+            app/build/reports/tests/
+            app/build/reports/lint-results-debug.html
+            android-build.log
+  device-smoke:
+    needs: android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
+        with:
+          name: searchhh-debug-apk
+          path: apk
+      - uses: actions/download-artifact@v8
+        with:
+          name: android-instrumentation
+          path: instrumentation
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install and launch on Android 35
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          disable-animations: true
+          script: |
+            adb install apk/app-universal-debug.apk
+            adb install instrumentation/app-debug-androidTest.apk
+            adb logcat -c
+            adb shell am instrument -w app.searchhh.browser.test/androidx.test.runner.AndroidJUnitRunner > instrumentation.log
+            cat instrumentation.log
+            adb shell run-as app.searchhh.browser cat files/relay-probe.txt > relay-probe.txt
+            adb shell run-as app.searchhh.browser cat files/search-probe.txt > search-probe.txt
+            cat relay-probe.txt search-probe.txt
+            grep -q 'OK (' instrumentation.log
+            adb shell am start -W -n app.searchhh.browser/info.plateaukao.einkbro.searchhh.SearchhhActivity
+            sleep 5
+            adb shell pidof app.searchhh.browser
+            adb shell uiautomator dump /sdcard/searchhh-ui.xml
+            adb pull /sdcard/searchhh-ui.xml searchhh-ui.xml
+            grep -q 'Less noise.' searchhh-ui.xml
+            adb exec-out screencap -p > searchhh-screen.png
+            adb logcat -d -b crash > crash.log
+            test ! -s crash.log
+      - name: Report external service diagnostics
+        if: always()
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          for filename in ['relay-probe.txt', 'search-probe.txt']:
+              p = Path(filename)
+              if p.exists():
+                  text = p.read_text(errors='replace')[:2800]
+                  print('::notice title=External availability::' + text.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
+          PYTHON
+      - name: Surface device failure diagnostics
+        if: failure()
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          for filename in ['instrumentation.log', 'crash.log']:
+              p = Path(filename)
+              if p.exists():
+                  text = p.read_text(errors='replace')[-3000:]
+                  print('::error title=Device diagnostics::' + text.replace('%','%25').replace('\n','%0A'))
+          PYTHON
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: device-smoke
+          path: |
+            searchhh-screen.png
+            searchhh-ui.xml
+            crash.log
+            instrumentation.log
+            relay-probe.txt
+            search-probe.txt
+
+  release-build:
+    needs: device-smoke
+    if: github.event_name == 'push' && github.ref == 'refs/heads/arena/01a0ea36-searchhh'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with: {distribution: zulu, java-version: '17'}
+      - uses: gradle/actions/setup-gradle@v4
+        with: {cache-disabled: true}
+      - name: Prepare private production signing key
+        env:
+          SEARCHHH_RELEASE_KEYSTORE_BASE64: ${{ secrets.SEARCHHH_RELEASE_KEYSTORE_BASE64 }}
+          SEARCHHH_RELEASE_STORE_PASSWORD: ${{ secrets.SEARCHHH_RELEASE_STORE_PASSWORD }}
+          SEARCHHH_RELEASE_KEY_ALIAS: ${{ secrets.SEARCHHH_RELEASE_KEY_ALIAS }}
+          SEARCHHH_RELEASE_KEY_PASSWORD: ${{ secrets.SEARCHHH_RELEASE_KEY_PASSWORD }}
+          SEARCHHH_RELEASE_CERT_SHA256: ${{ vars.SEARCHHH_RELEASE_CERT_SHA256 }}
+        run: |
+          set -euo pipefail
+          for name in SEARCHHH_RELEASE_KEYSTORE_BASE64 SEARCHHH_RELEASE_STORE_PASSWORD SEARCHHH_RELEASE_KEY_ALIAS SEARCHHH_RELEASE_KEY_PASSWORD SEARCHHH_RELEASE_CERT_SHA256; do
+            test -n "${!name}" || { echo "::error::Configure $name through GitHub settings, not chat"; exit 1; }
+          done
+          umask 077
+          python3 - <<'PY'
+          import base64, os
+          from pathlib import Path
+          path = Path(os.environ['RUNNER_TEMP']) / 'searchhh-release.keystore'
+          path.write_bytes(base64.b64decode(os.environ['SEARCHHH_RELEASE_KEYSTORE_BASE64'], validate=True))
+          with open(os.environ['GITHUB_ENV'], 'a') as output:
+              output.write('SEARCHHH_RELEASE_STORE_FILE=' + str(path) + '\n')
+          PY
+      - name: Build signed optimized release with no configuration cache
+        env:
+          SEARCHHH_RELEASE_STORE_PASSWORD: ${{ secrets.SEARCHHH_RELEASE_STORE_PASSWORD }}
+          SEARCHHH_RELEASE_KEY_ALIAS: ${{ secrets.SEARCHHH_RELEASE_KEY_ALIAS }}
+          SEARCHHH_RELEASE_KEY_PASSWORD: ${{ secrets.SEARCHHH_RELEASE_KEY_PASSWORD }}
+        run: ./gradlew :app:testReleaseUnitTest :app:lintRelease :app:assembleRelease -PuniversalApk --no-configuration-cache --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC"
+      - name: Verify actual APK signature and decoded manifest
+        env:
+          EXPECTED_CERTIFICATE: ${{ vars.SEARCHHH_RELEASE_CERT_SHA256 }}
+        run: |
+          set -euo pipefail
+          apk=app/build/outputs/apk/release/app-universal-release.apk
+          signer=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
+          test -n "$signer"
+          mkdir -p release-checks release-delivery
+          "$signer" verify --verbose --print-certs "$apk" > release-checks/certificate.txt
+          "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" manifest print "$apk" > release-checks/manifest.xml
+          python3 tools/quality/release_apk.py --manifest release-checks/manifest.xml --certificate release-checks/certificate.txt --fingerprint "$EXPECTED_CERTIFICATE"
+          cp "$apk" release-delivery/Searchhh-0.4.1.apk
+          (cd release-delivery && sha256sum Searchhh-0.4.1.apk > SHA256SUMS)
+      - uses: actions/upload-artifact@v7
+        with:
+          name: searchhh-release-apk
+          path: release-delivery/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: release-checks
+          path: |
+            release-checks/
+            app/build/reports/
+      - name: Remove private signing material
+        if: always()
+        run: rm -f "$RUNNER_TEMP/searchhh-release.keystore"
+
+  release-smoke:
+    needs: release-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: searchhh-release-apk
+          path: apk
+      - name: Check exact release bytes
+        working-directory: apk
+        run: sha256sum --check SHA256SUMS
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install and launch the non-debug release APK
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          disable-animations: true
+          script: |
+            adb install apk/Searchhh-0.4.1.apk
+            adb logcat -c
+            adb shell am start -W -n app.searchhh.browser/info.plateaukao.einkbro.searchhh.SearchhhActivity > release-launch.txt
+            grep -q 'Status: ok' release-launch.txt
+            sleep 5
+            adb shell pidof app.searchhh.browser
+            if adb shell run-as app.searchhh.browser true; then echo 'Release unexpectedly allows debug run-as'; exit 1; fi
+            adb shell uiautomator dump /sdcard/release-ui.xml
+            adb pull /sdcard/release-ui.xml release-ui.xml
+            grep -q 'package="app.searchhh.browser"' release-ui.xml
+            adb exec-out screencap -p > release-screen.png
+            adb logcat -d -b crash > release-crash.log
+            test ! -s release-crash.log
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: release-smoke-evidence
+          path: |
+            release-launch.txt
+            release-ui.xml
+            release-screen.png
+            release-crash.log
+
+  publish-release-apk:
+    needs: release-smoke
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: searchhh-release-apk
+          path: apk
+      - name: Publish only the verified release APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          (cd apk && sha256sum --check SHA256SUMS)
+          gh release create v0.4.1 --target "$GITHUB_SHA" \
+            --title 'Searchhh 0.4.1' \
+            --notes 'Signed, non-debuggable Searchhh release APK. Repository quality checks and final release launch smoke must pass before this job runs. Tests and diagnostic reports remain separate CI artifacts; they are not release assets. This version label does not claim that every catalogued crawler is an integrated runtime.' \
+            apk/Searchhh-0.4.1.apk apk/SHA256SUMS

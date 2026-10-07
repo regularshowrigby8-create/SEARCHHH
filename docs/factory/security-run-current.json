@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "issue": "s00-current-security",
+  "source_commit": "3e450f8dcd426bfb829a6e1b2224c576732f036a",
+  "runner_exit": 1,
+  "job_counts": {
+    "FAIL": 1,
+    "BLOCKED": 6
+  },
+  "findings": [
+    {
+      "rule": "APP-CLEAR-001",
+      "path": "app/src/main/AndroidManifest.xml",
+      "line": 78,
+      "message": "Application permits cleartext traffic globally; constrain it or document an explicit compatibility decision."
+    },
+    {
+      "rule": "APP-CLEAR-002",
+      "path": "app/src/main/res/xml/network_security_config.xml",
+      "line": 3,
+      "message": "Network security config permits cleartext traffic globally."
+    },
+    {
+      "rule": "APP-SECRET-001",
+      "path": "app/src/main/java/info/plateaukao/einkbro/tts/ETts.kt",
+      "line": 192,
+      "message": "Possible hard-coded credential pattern; review without copying its value."
+    }
+  ],
+  "selected_tools": [
+    "app-security-policy",
+    "bandit",
+    "detect-secrets",
+    "gitleaks",
+    "osv-scanner",
+    "semgrep",
+    "trivy"
+  ],
+  "release_approved": false
+}
