@@ -29,6 +29,7 @@ object SearchhhTestTags {
     fun resultDetails(id: String) = "$RESULT_DETAILS:$id"
 
     fun sourceFilter(id: String) = "$SOURCE_FILTER:$id"
+
     const val BROWSER_URL = "browser_url"
     const val BROWSER_BACK = "browser_back"
     const val BROWSER_FORWARD = "browser_forward"

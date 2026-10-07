@@ -58,6 +58,5 @@ object CrawlerAdapters {
 
     fun byId(id: String?): CrawlerAdapter? = available.firstOrNull { it.id == id }
 
-    fun forEntry(entry: CodebaseEntry): CrawlerAdapter? =
-        available.firstOrNull { it.entryNumber == entry.number }
+    fun forEntry(entry: CodebaseEntry): CrawlerAdapter? = available.firstOrNull { it.entryNumber == entry.number }
 }

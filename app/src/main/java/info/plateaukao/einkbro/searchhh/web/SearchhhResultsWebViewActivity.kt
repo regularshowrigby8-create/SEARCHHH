@@ -88,35 +88,40 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
     }
 
     private fun buildView() {
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setBackgroundColor(Color.TRANSPARENT)
-        }
-        val toolbar = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            setPadding(12, 8, 12, 8)
-            setBackgroundColor(if (isDarkTheme()) Color.rgb(26, 33, 28) else Color.WHITE)
-        }
-        val back = Button(this).apply {
-            text = "Back"
-            contentDescription = "Go back or close results"
-            setOnClickListener { if (webView.canGoBack()) webView.goBack() else finish() }
-        }
-        statusText = TextView(this).apply {
-            text = "Searchhh WebView"
-            textSize = 16f
-            setTextColor(if (isDarkTheme()) Color.WHITE else Color.rgb(24, 32, 24))
-            gravity = Gravity.CENTER_VERTICAL
-            setPadding(12, 0, 12, 0)
-        }
-        val reload = Button(this).apply {
-            text = "Reload"
-            contentDescription = "Reload search results"
-            setOnClickListener {
-                if (sessionId != null && showingResults) refreshNow() else webView.reload()
+        val root =
+            LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setBackgroundColor(Color.TRANSPARENT)
             }
-        }
+        val toolbar =
+            LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(12, 8, 12, 8)
+                setBackgroundColor(if (isDarkTheme()) Color.rgb(26, 33, 28) else Color.WHITE)
+            }
+        val back =
+            Button(this).apply {
+                text = "Back"
+                contentDescription = "Go back or close results"
+                setOnClickListener { if (webView.canGoBack()) webView.goBack() else finish() }
+            }
+        statusText =
+            TextView(this).apply {
+                text = "Searchhh WebView"
+                textSize = 16f
+                setTextColor(if (isDarkTheme()) Color.WHITE else Color.rgb(24, 32, 24))
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(12, 0, 12, 0)
+            }
+        val reload =
+            Button(this).apply {
+                text = "Reload"
+                contentDescription = "Reload search results"
+                setOnClickListener {
+                    if (sessionId != null && showingResults) refreshNow() else webView.reload()
+                }
+            }
         toolbar.addView(back, LinearLayout.LayoutParams(WRAP, WRAP))
         toolbar.addView(statusText, LinearLayout.LayoutParams(0, WRAP, 1f))
         toolbar.addView(reload, LinearLayout.LayoutParams(WRAP, WRAP))
@@ -150,8 +155,10 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
         WebViewCompat.getCurrentWebViewPackage(webView)
         webView.webViewClient =
             object : WebViewClient() {
-                override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =
-                    handleNavigation(request.url)
+                override fun shouldOverrideUrlLoading(
+                    view: WebView,
+                    request: WebResourceRequest,
+                ): Boolean = handleNavigation(request.url)
 
                 override fun onReceivedSslError(
                     view: WebView,
@@ -170,14 +177,20 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
                     if (request.isForMainFrame) showError(error.description?.toString() ?: "The page could not be loaded")
                 }
 
-                override fun onPageFinished(view: WebView, url: String) {
+                override fun onPageFinished(
+                    view: WebView,
+                    url: String,
+                ) {
                     val uri = Uri.parse(url)
                     if (isResultsOrigin(uri) && currentStatus != null) showingResults = true
                     statusText.text =
                         if (isResultsOrigin(uri)) "Searchhh results" else uri.host ?: "Searchhh WebView"
                 }
 
-                override fun onRenderProcessGone(view: WebView, detail: android.webkit.RenderProcessGoneDetail): Boolean {
+                override fun onRenderProcessGone(
+                    view: WebView,
+                    detail: android.webkit.RenderProcessGoneDetail,
+                ): Boolean {
                     showError("The WebView renderer stopped unexpectedly")
                     return true
                 }
@@ -298,8 +311,7 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
             .getDefaultSharedPreferences(applicationContext)
             .getBoolean(BrowserConfig.K_ALLOW_HTTP, false)
 
-    private fun isResultsOrigin(uri: Uri): Boolean =
-        uri.scheme.equals("https", true) && uri.host.equals("searchhh.local", true)
+    private fun isResultsOrigin(uri: Uri): Boolean = uri.scheme.equals("https", true) && uri.host.equals("searchhh.local", true)
 
     private fun isDarkTheme(): Boolean =
         resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES

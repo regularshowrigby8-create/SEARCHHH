@@ -29,8 +29,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.work.*
 import com.google.gson.Gson
 import info.plateaukao.einkbro.searchhh.local.*
-import info.plateaukao.einkbro.searchhh.web.SearchhhResultsWebViewActivity
 import info.plateaukao.einkbro.searchhh.testing.SearchhhTestTags
+import info.plateaukao.einkbro.searchhh.web.SearchhhResultsWebViewActivity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -356,7 +356,15 @@ class SearchhhActivity : ComponentActivity() {
                                                         ConnectionSettings
                                                             .api(
                                                                 this@SearchhhActivity,
-                                                            ).start(StartRequest(query.trim(), mode, selected.toList(), crawl, selectedAdapter.id))
+                                                            ).start(
+                                                                StartRequest(
+                                                                    query.trim(),
+                                                                    mode,
+                                                                    selected.toList(),
+                                                                    crawl,
+                                                                    selectedAdapter.id,
+                                                                ),
+                                                            )
                                                     status = null
                                                     jobId = created.id
                                                     prefs
@@ -754,5 +762,4 @@ class SearchhhActivity : ComponentActivity() {
             }
         }
     }
-
 }

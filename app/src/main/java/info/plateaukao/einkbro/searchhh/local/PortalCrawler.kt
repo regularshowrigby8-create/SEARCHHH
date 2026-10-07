@@ -177,7 +177,8 @@ class PortalCrawler(
                     PortalParser.page(source, page.text, query, mode)
                 }
                 CrawlerAdapters.PHONE_SELECTOR.id,
-                CrawlerAdapters.PHONE_SCHEDULER.id -> PortalParser.listings(source, page.text, query, mode)
+                CrawlerAdapters.PHONE_SCHEDULER.id,
+                -> PortalParser.listings(source, page.text, query, mode)
                 else -> error("Unsupported crawler profile: ${adapter.id}")
             }
         return rows.map { it.copy(sources = (it.sources + "${adapter.upstreamName} profile").distinct()) }

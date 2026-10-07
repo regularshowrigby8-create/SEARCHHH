@@ -12,29 +12,30 @@ import org.junit.Test
 class SearchhhCrawlerAndHtmlTest {
     @Test
     fun reviewedCodebasesMapToRealAndroidCapabilities() {
-        val entries = listOf(1, 65, 66, 67).map { number ->
-            CodebaseEntry(
-                number = number,
-                original = true,
-                name = "entry-$number",
-                submittedUrl = "https://example.org/$number",
-                submittedLanguage = "Python",
-                reportedLanguage = "Python",
-                category = "crawler",
-                canonicalUrl = "https://example.org/$number",
-                sourceUrl = "https://example.org/$number",
-                evidenceUrl = null,
-                repositoryStatus = "verified",
-                license = "MIT",
-                archived = false,
-                revision = null,
-                integration = "catalog_only",
-                executionTarget = "android",
-                description = "description",
-                note = null,
-                configurationSupport = emptyMap(),
-            )
-        }
+        val entries =
+            listOf(1, 65, 66, 67).map { number ->
+                CodebaseEntry(
+                    number = number,
+                    original = true,
+                    name = "entry-$number",
+                    submittedUrl = "https://example.org/$number",
+                    submittedLanguage = "Python",
+                    reportedLanguage = "Python",
+                    category = "crawler",
+                    canonicalUrl = "https://example.org/$number",
+                    sourceUrl = "https://example.org/$number",
+                    evidenceUrl = null,
+                    repositoryStatus = "verified",
+                    license = "MIT",
+                    archived = false,
+                    revision = null,
+                    integration = "catalog_only",
+                    executionTarget = "android",
+                    description = "description",
+                    note = null,
+                    configurationSupport = emptyMap(),
+                )
+            }
 
         entries.forEach { assertNotNull(CrawlerAdapters.forEntry(it)) }
         assertEquals(4, CrawlerAdapters.available.size)

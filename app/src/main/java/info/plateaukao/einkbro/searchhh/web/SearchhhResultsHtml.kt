@@ -34,7 +34,8 @@ object SearchhhResultsHtml {
             }
         return page(
             title = "Searchhh results",
-            body = """
+            body =
+                """
                 <header class="hero">
                     <div class="eyebrow">SEARCHHH · OPPORTUNITY HIVE</div>
                     <h1>Collected results</h1>
@@ -45,21 +46,22 @@ object SearchhhResultsHtml {
                 $errors
                 $empty
                 <main class="results" aria-label="Crawler results">$cards</main>
-            """.trimIndent(),
+                """.trimIndent(),
         )
     }
 
     fun error(message: String): String =
         page(
             title = "Searchhh result error",
-            body = """
+            body =
+                """
                 <section class="empty error-state">
                     <div class="empty-icon">!</div>
                     <h1>Results are temporarily unavailable</h1>
                     <p>${message.escapeHtml()}</p>
                     <a class="button primary" href="searchhh://retry">Retry</a>
                 </section>
-            """.trimIndent(),
+                """.trimIndent(),
         )
 
     private fun resultCard(
@@ -71,28 +73,35 @@ object SearchhhResultsHtml {
         val saveAction = if (saved) "unsave" else "save"
         val saveLabel = if (saved) "Remove from saved" else "Save for later"
         val review =
-            result.review?.let {
-                """
-                <div class="review"><strong>AI relevance ${it.relevance}/100 · ${it.model.escapeHtml()}</strong><p>${it.summary.escapeHtml()}</p><blockquote>${it.quote.escapeHtml()}</blockquote>${it.deadlineQuote?.let { quote -> "<small>Deadline evidence: ${quote.escapeHtml()}</small>" }.orEmpty()}${it.eligibilityQuote?.let { quote -> "<small>Eligibility evidence: ${quote.escapeHtml()}</small>" }.orEmpty()}<small>AI-assisted review. Confirm conditions with the official programme.</small></div>
-                """.trimIndent()
-            }.orEmpty()
+            result.review
+                ?.let {
+                    """
+                    <div class="review"><strong>AI relevance ${it.relevance}/100 · ${it.model.escapeHtml()}</strong><p>${it.summary.escapeHtml()}</p><blockquote>${it.quote.escapeHtml()}</blockquote>${it.deadlineQuote?.let { quote ->
+                        "<small>Deadline evidence: ${quote.escapeHtml()}</small>"
+                    }.orEmpty()}${it.eligibilityQuote?.let { quote ->
+                        "<small>Eligibility evidence: ${quote.escapeHtml()}</small>"
+                    }.orEmpty()}<small>AI-assisted review. Confirm conditions with the official programme.</small></div>
+                    """.trimIndent()
+                }.orEmpty()
         val evidenceLink = evidence?.let { "<a href=\"${it.escapeHtml()}\">View source evidence ↗</a>" }.orEmpty()
         val openLink =
             url?.let {
                 "<a class=\"button primary\" href=\"${it.escapeHtml()}\">Open in WebView ↗</a>"
             } ?: "<span class=\"button disabled\">Invalid source URL</span>"
         return """
-            <article class="card" data-result-id="${result.id.escapeHtml()}">
-                <div class="card-top"><span class="kind">${result.kind.escapeHtml()}</span><span class="score">${result.score}/100</span></div>
-                <h2>${result.title.escapeHtml()}</h2>
-                <p>${result.description.escapeHtml()}</p>
-                <div class="meta"><span>${result.sources.joinToString(" · ").escapeHtml()}</span><span>${(result.published?.take(10) ?: "Date unknown").escapeHtml()}</span></div>
-                $review
-                <details><summary>Details</summary><dl><dt>Result ID</dt><dd>${result.id.escapeHtml()}</dd><dt>Discovered</dt><dd>${result.discovered.escapeHtml()}</dd><dt>Verified</dt><dd>${if (result.verified) "yes" else "no"}</dd></dl></details>
-                <div class="actions">$openLink <a class="button secondary" href="searchhh://$saveAction/${result.id.escapeHtml()}">$saveLabel</a></div>
-                $evidenceLink
-            </article>
-        """.trimIndent()
+                        <article class="card" data-result-id="${result.id.escapeHtml()}">
+                            <div class="card-top"><span class="kind">${result.kind.escapeHtml()}</span><span class="score">${result.score}/100</span></div>
+                            <h2>${result.title.escapeHtml()}</h2>
+                            <p>${result.description.escapeHtml()}</p>
+                            <div class="meta"><span>${result.sources.joinToString(
+            " · ",
+        ).escapeHtml()}</span><span>${(result.published?.take(10) ?: "Date unknown").escapeHtml()}</span></div>
+                            $review
+                            <details><summary>Details</summary><dl><dt>Result ID</dt><dd>${result.id.escapeHtml()}</dd><dt>Discovered</dt><dd>${result.discovered.escapeHtml()}</dd><dt>Verified</dt><dd>${if (result.verified) "yes" else "no"}</dd></dl></details>
+                            <div class="actions">$openLink <a class="button secondary" href="searchhh://$saveAction/${result.id.escapeHtml()}">$saveLabel</a></div>
+                            $evidenceLink
+                        </article>
+            """.trimIndent()
     }
 
     private fun page(

@@ -178,12 +178,27 @@ class CrawlerExpansionTest {
                     pause = {},
                 ).search("climate fellowship", listOf(source), "opportunities", false, CrawlerAdapters.PHONE_STRUCTURED)
             assertEquals(1, structured.rows.size)
-            assertTrue(structured.rows.single().sources.contains("Extruct profile"))
+            assertTrue(
+                structured.rows
+                    .single()
+                    .sources
+                    .contains("Extruct profile"),
+            )
 
             val article =
                 PortalCrawler(
                     fetch = { url, _ ->
-                        if (url.endsWith("robots.txt")) page("", code = 404) else page("<main><h1>Climate fellowship</h1><p>Students can apply for a fellowship.</p></main>")
+                        if (url.endsWith(
+                                "robots.txt",
+                            )
+                        ) {
+                            page(
+                                "",
+                                code = 404,
+                            )
+                        } else {
+                            page("<main><h1>Climate fellowship</h1><p>Students can apply for a fellowship.</p></main>")
+                        }
                     },
                     pause = {},
                 ).search("climate fellowship", listOf(source), "opportunities", false, CrawlerAdapters.PHONE_ARTICLE)
