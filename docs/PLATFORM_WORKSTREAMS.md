@@ -2,8 +2,8 @@
 
 Date: 2026-10-07
 Branch: `arena/3674d801-searchhh`
-Candidate SHA: `e74ffb2ce62cbdb45055e7903dc047ecc04299f0`
-Latest Android verification: [run 37556398995](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/37556398995)
+Current branch tip: `3bf206d0c9835614903c9b18cc3c155f9b28724c`
+Latest completed exact-SHA evidence: `e74ffb2ce62cbdb45055e7903dc047ecc04299f0` via [run 37556398995](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/37556398995)
 Status: **PARTIAL / BLOCKED**. This operating model distributes work; it does not turn a tracker or document into a build runner.
 
 ## Platform strengths and boundaries
