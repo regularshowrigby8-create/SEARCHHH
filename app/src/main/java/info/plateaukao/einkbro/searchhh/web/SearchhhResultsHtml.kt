@@ -88,20 +88,27 @@ object SearchhhResultsHtml {
             url?.let {
                 "<a class=\"button primary\" href=\"${it.escapeHtml()}\">Open in WebView ↗</a>"
             } ?: "<span class=\"button disabled\">Invalid source URL</span>"
-        return """
-                                                                                    <article class="card" data-result-id="${result.id.escapeHtml()}">
-                                                                                        <div class="card-top"><span class="kind">${result.kind.escapeHtml()}</span><span class="score">${result.score}/100</span></div>
-                                                                                        <h2>${result.title.escapeHtml()}</h2>
-                                                                                        <p>${result.description.escapeHtml()}</p>
-                                                                                        <div class="meta"><span>${result.sources.joinToString(
-            " · ",
-        ).escapeHtml()}</span><span>${(result.published?.take(10) ?: "Date unknown").escapeHtml()}</span></div>
-                                                                                        $review
-                                                                                        <details><summary>Details</summary><dl><dt>Result ID</dt><dd>${result.id.escapeHtml()}</dd><dt>Discovered</dt><dd>${result.discovered.escapeHtml()}</dd><dt>Verified</dt><dd>${if (result.verified) "yes" else "no"}</dd></dl></details>
-                                                                                        <div class="actions">$openLink <a class="button secondary" href="searchhh://$saveAction/${result.id.escapeHtml()}">$saveLabel</a></div>
-                                                                                        $evidenceLink
-                                                                                    </article>
-            """.trimIndent()
+        val metadata =
+            "<div class=\"meta\"><span>${result.sources.joinToString(" · ").escapeHtml()}</span>" +
+                "<span>${(result.published?.take(10) ?: "Date unknown").escapeHtml()}</span></div>"
+        val details =
+            "<details><summary>Details</summary><dl><dt>Result ID</dt><dd>${result.id.escapeHtml()}</dd>" +
+                "<dt>Discovered</dt><dd>${result.discovered.escapeHtml()}</dd><dt>Verified</dt>" +
+                "<dd>${if (result.verified) "yes" else "no"}</dd></dl></details>"
+        val saveLink =
+            "<a class=\"button secondary\" href=\"searchhh://$saveAction/${result.id.escapeHtml()}\">$saveLabel</a>"
+        return buildString {
+            appendLine("<article class=\"card\" data-result-id=\"${result.id.escapeHtml()}\">")
+            appendLine("<div class=\"card-top\"><span class=\"kind\">${result.kind.escapeHtml()}</span><span class=\"score\">${result.score}/100</span></div>")
+            appendLine("<h2>${result.title.escapeHtml()}</h2>")
+            appendLine("<p>${result.description.escapeHtml()}</p>")
+            appendLine(metadata)
+            appendLine(review)
+            appendLine(details)
+            appendLine("<div class=\"actions\">$openLink $saveLink</div>")
+            appendLine(evidenceLink)
+            appendLine("</article>")
+        }
     }
 
     private fun page(
