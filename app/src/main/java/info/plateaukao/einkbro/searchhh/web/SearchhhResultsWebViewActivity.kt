@@ -82,7 +82,6 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
 
     override fun onDestroy() {
         webView.stopLoading()
-        webView.webViewClient = null
         webView.destroy()
         super.onDestroy()
     }
@@ -152,7 +151,7 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
         }
         // Touches AndroidX WebKit at runtime and keeps this surface on the
         // supported WebView implementation rather than legacy Chromium hooks.
-        WebViewCompat.getCurrentWebViewPackage(webView)
+        WebViewCompat.getCurrentWebViewPackage(this)
         webView.webViewClient =
             object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(
