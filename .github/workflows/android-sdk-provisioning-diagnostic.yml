@@ -7,11 +7,14 @@ name: Android SDK provisioning diagnostic
 # This workflow gates nothing and can never fail a build: every branch ends in `echo`, so the
 # step exits 0 whether or not the packages exist.
 #
-# Trigger shape, and why it is not dispatch-only as originally specified: GitHub registers a
-# workflow only once its file exists on the default branch, and an unregistered workflow cannot
-# be dispatched. Measured on this repo - `gh workflow run android-sdk-provisioning-diagnostic.yml`
-# returned HTTP 404, and `GET /actions/workflows` lists the other 7 workflows but not this one,
-# so a dispatch-only probe sitting on a branch can never run and can never answer its question.
+# Trigger shape, and why it is not dispatch-only as originally specified: registration of an
+# Actions workflow is lazy, and a workflow that has neither a file on the default branch nor a
+# single run is absent from the registry, so dispatch has no endpoint to hit. Measured here:
+# `gh workflow run android-sdk-provisioning-diagnostic.yml` returned HTTP 404 while
+# `GET /actions/workflows` listed the other 7 workflows but not this one; after the first run
+# below it became `active` (id 377047595) and dispatch now resolves. A dispatch-only probe living
+# on a feature branch therefore cannot answer its own question - it needs a trigger that can fire
+# from the branch first.
 # A path-scoped `pull_request` trigger is therefore added so the very PR that introduces the probe
 # can produce the answer; `workflow_dispatch` is kept for use after the file reaches the default
 # branch. No push ever pays for it, and the path filter keeps unrelated PRs off it too.
@@ -103,3 +106,8 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
           echo "platform 36 present: $platform"
           echo "build-tools 35.0.0 present: $buildtools"
+          # Also surface the verdict as a check annotation. Raw job logs are not retrievable for
+          # this repository (blob-storage EOF), so without this line the probe would run, pass,
+          # and remain unreadable - which is the only reason it is not just printed to the log.
+          counts="platforms=$(ls -1 "$root/platforms" 2>/dev/null | wc -l),build_tools=$(ls -1 "$root/build-tools" 2>/dev/null | wc -l)"
+          echo "::notice title=Android SDK probe::platform36=$platform build_tools_35_0_0=$buildtools root=${root:-none} image=${ImageOS:-unknown}-${ImageVersion:-unknown} $counts"

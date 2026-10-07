@@ -66,9 +66,13 @@ found to be inert by measurement rather than assumption:
 * `GET /repos/…/actions/workflows` lists **7** registered workflows — every other file in
   `.github/workflows/` — and not this one.
 
-GitHub only registers a workflow once its file exists on the **default branch**; an unregistered
-workflow has no dispatch endpoint and no entry in the Actions UI, so a probe that lives solely on
-a feature branch and triggers only on `workflow_dispatch` can never answer its own question.
+Registration of an Actions workflow is lazy: with no file on the **default branch** and no runs
+yet, the workflow is absent from `GET /actions/workflows`, has no entry in the Actions UI, and
+`workflow_dispatch` has no endpoint to hit. So a probe that lives solely on a feature branch and
+triggers only on `workflow_dispatch` can never answer its own question. It registered itself into
+`active` state (id 377047595) the moment the trigger below produced its first run, from this same
+branch — i.e. the fix was to give it any trigger that can fire from the branch; dispatch works
+afterwards too.
 
 Resolution, keeping the brief's intent: `workflow_dispatch` stays (it works once the file reaches
 the default branch), and a **path-scoped `pull_request`** trigger is added so the PR that
