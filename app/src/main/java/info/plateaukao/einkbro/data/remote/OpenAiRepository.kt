@@ -180,6 +180,7 @@ class OpenAiRepository : KoinComponent {
                                 try {
                                     response.body?.string().orEmpty()
                                 } catch (e: Exception) {
+                                    Log.w("OpenAiRepository", "Could not read the error response body (HTTP $code)", e)
                                     ""
                                 }
                             } else {

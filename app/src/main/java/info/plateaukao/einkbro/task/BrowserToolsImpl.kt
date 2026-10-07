@@ -375,7 +375,8 @@ class BrowserToolsImpl(
             // Don't leave a 0-byte MediaStore entry in Downloads on failure.
             try {
                 context.contentResolver.delete(fileUri, null, null)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                android.util.Log.e("BrowserToolsImpl", "Could not delete the empty download entry after a failed EPUB save", e)
             }
             return null
         }
@@ -464,7 +465,8 @@ class BrowserToolsImpl(
             wv.stopLoading()
             wv.loadUrl("about:blank")
             wv.destroy()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            android.util.Log.w("BrowserToolsImpl", "Background webview teardown failed", e)
         }
         bgWebView = null
         currentLoadDeferred?.complete(false)

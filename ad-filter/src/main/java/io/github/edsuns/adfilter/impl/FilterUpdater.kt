@@ -135,7 +135,8 @@ internal class FilterUpdater(
         } finally {
             try {
                 binaryDataStore.clearData(rawDataName)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Timber.w(e, "Failed to clear the raw filter data: $rawDataName")
             }
         }
     }
