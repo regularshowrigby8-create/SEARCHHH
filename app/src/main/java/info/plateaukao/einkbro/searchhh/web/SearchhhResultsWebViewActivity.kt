@@ -305,6 +305,9 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
         webView.loadUrl(uri.toString())
     }
 
+    // Preserve the existing EinkBro preference store; the platform API is deprecated,
+    // but changing the store would silently reset the user's explicit HTTP decision.
+    @Suppress("DEPRECATION")
     private fun allowHttp(): Boolean =
         android.preference.PreferenceManager
             .getDefaultSharedPreferences(applicationContext)

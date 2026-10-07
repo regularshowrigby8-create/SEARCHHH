@@ -1152,252 +1152,252 @@
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 384
+    "line": 392
   },
   {
     "id": "UI-1f47b5eadcfa",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 390
+    "line": 398
   },
   {
     "id": "UI-4b0efd10e978",
     "screen": "SearchhhActivity",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 457
+    "line": 465
   },
   {
     "id": "UI-c5f40d009b59",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 459
+    "line": 467
   },
   {
     "id": "UI-f7102f40edf2",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 463
+    "line": 471
   },
   {
     "id": "UI-ccc59aaa4cf7",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 463
+    "line": 471
   },
   {
     "id": "UI-26adb61ccfed",
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 483
+    "line": 491
   },
   {
     "id": "UI-0eb088351923",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 483
+    "line": 491
   },
   {
     "id": "UI-ae1e92526a10",
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 484
+    "line": 492
   },
   {
     "id": "UI-fe7aa5a5eb5c",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 484
+    "line": 492
   },
   {
     "id": "UI-e2c41332bdac",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 494
+    "line": 502
   },
   {
     "id": "UI-70a0237c5727",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 494
+    "line": 502
   },
   {
     "id": "UI-1a146750990b",
     "screen": "SearchhhActivity",
     "control": "Checkbox",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 518
+    "line": 526
   },
   {
     "id": "UI-9aa638b142c2",
     "screen": "SearchhhActivity",
     "control": "onCheckedChange",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 520
+    "line": 528
   },
   {
     "id": "UI-a949b0dac3f3",
     "screen": "SearchhhActivity",
     "control": "OutlinedTextField",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 549
+    "line": 557
   },
   {
     "id": "UI-5f71afac3924",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 564
+    "line": 572
   },
   {
     "id": "UI-967329caeddf",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 564
+    "line": 572
   },
   {
     "id": "UI-77290f426771",
     "screen": "SearchhhActivity",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 599
+    "line": 607
   },
   {
     "id": "UI-a728c540ffa4",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 601
+    "line": 609
   },
   {
     "id": "UI-15ece7179369",
     "screen": "SearchhhActivity",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 624
+    "line": 632
   },
   {
     "id": "UI-3fd87605f5a1",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 624
+    "line": 632
   },
   {
     "id": "UI-d19b5940cef1",
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 628
+    "line": 636
   },
   {
     "id": "UI-d66269b767d9",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 628
+    "line": 636
   },
   {
     "id": "UI-da45fb596d34",
     "screen": "SearchhhActivity",
     "control": "Checkbox",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 638
+    "line": 646
   },
   {
     "id": "UI-a004da02e2c0",
     "screen": "SearchhhActivity",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 660
+    "line": 668
   },
   {
     "id": "UI-857703f031c5",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 660
+    "line": 668
   },
   {
     "id": "UI-1b6c17e26af7",
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 662
+    "line": 670
   },
   {
     "id": "UI-5179c52530b3",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 662
+    "line": 670
   },
   {
     "id": "UI-aa3c97789e2f",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 694
+    "line": 702
   },
   {
     "id": "UI-7f5822866d36",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 694
+    "line": 702
   },
   {
     "id": "UI-bb6b96fed4e6",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 732
+    "line": 740
   },
   {
     "id": "UI-a5744e85ad4a",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 732
+    "line": 740
   },
   {
     "id": "UI-5a7c0ecf5c79",
     "screen": "SearchhhActivity",
     "control": "OutlinedButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 743
+    "line": 751
   },
   {
     "id": "UI-65e07251a35c",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 743
+    "line": 751
   },
   {
     "id": "UI-208bf344b193",
     "screen": "SearchhhActivity",
     "control": "TextButton",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 748
+    "line": 756
   },
   {
     "id": "UI-6bfa62c5a145",
     "screen": "SearchhhActivity",
     "control": "onClick",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/SearchhhActivity.kt",
-    "line": 748
+    "line": 756
   },
   {
     "id": "UI-a32776f67327",
@@ -1575,18 +1575,18 @@
     "line": 72
   },
   {
-    "id": "UI-29d7edb8edb3",
+    "id": "UI-b9c1cd863d76",
     "screen": "SearchhhResultsWebViewActivity",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/web/SearchhhResultsWebViewActivity.kt",
-    "line": 101
+    "line": 103
   },
   {
-    "id": "UI-c8cec50cda0e",
+    "id": "UI-77c14056a57d",
     "screen": "SearchhhResultsWebViewActivity",
     "control": "Button",
     "file": "app/src/main/java/info/plateaukao/einkbro/searchhh/web/SearchhhResultsWebViewActivity.kt",
-    "line": 113
+    "line": 117
   },
   {
     "id": "UI-e6cdf36161d5",
