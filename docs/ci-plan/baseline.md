@@ -117,6 +117,15 @@ Wall clock 10.98 min. Executed runner-minutes 27.97. Seven caller jobs (`framewo
 `backend-integration`, `android`, `device-smoke`, `release-build`, `release-smoke`,
 `publish-release-apk`) were `skipped`, exactly as in the baseline.
 
+Two further samples on the follow-up head SHA
+`71601d11f2db50a51aa6f1d72614a1fc2a67313c`, after the concurrency correction: push run
+[37565529998](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/37565529998)
+(wall clock 10.4 min, 27.65 runner-min) and pull-request run
+[37565533435](https://github.com/regularshowrigby8-create/SEARCHHH/actions/runs/37565533435)
+(10.75 min, 25.88 runner-min). Both completed without cancelling each other, both still show
+`Android verification` runs for the branch = **0**, and both have the same job/step shape as the
+first run.
+
 Deltas against the table above, each tied to the step/annotation that shows it:
 
 * **Runs per pushed SHA: 4 → 2** (one `push` chain on the exact head SHA + one `pull_request`
@@ -132,7 +141,10 @@ Deltas against the table above, each tied to the step/annotation that shows it:
   which keeps the win — repeated pushes to the same ref still supersede their own kind — and leaves
   the exact-SHA evidence intact. Recorded here because the mistake and its correction are both
   evidence about the gate.
-* **Emulator sessions per pushed SHA: 3 executed → 1.**
+* **Emulator sessions per pushed SHA: 3 executed → 2** while a PR is open (one per surviving
+  chain), and 2 → 1 for a branch with no PR. Per chain it is now always exactly 1, and the device
+  job's duration is unchanged (9.42 and 8.42 min against a 9.3 min baseline average), i.e. the
+  session got lighter in duplicated work, not shorter by skipping its own job.
 * **Host lanes 4 → 3**, and ktlint now bites instead of self-healing: the detekt lane carries
   `> Task :ktlintKotlinScriptCheck FAILED`, `:ad-filter:ktlintMainSourceSetCheck FAILED`,
   `:adblock-client:ktlintMainSourceSetCheck FAILED` and fails the job.
@@ -143,11 +155,15 @@ Deltas against the table above, each tied to the step/annotation that shows it:
   `evidence.py` reads only `app/build/test-results` and `app/build/outputs/androidTest-results`,
   and the same run still recorded fresh app JVM results beside a live device
   (`test_counts: {passed: 371, failure: 0, error: 0, skipped: 0}`).
-* **Per-chain runner-minutes went up on this sample (21.0 avg → 27.97)**, driven by
-  `release-checks` 10.0 vs 8.1 avg and `build-test-lint` 5.9 vs 5.3 avg — consistent with a cold
-  Gradle cache on the first run of a new branch and with `ktlintCheck` joining the detekt lane.
-  One sample is not a trend. The saving is in run *count*: ~84 → ~28 runner-minutes per pushed
-  SHA. Re-measure over ≥5 pushes before making any per-run claim.
+* **Per-chain runner-minutes went up, and that is not explained away.** Three samples after the
+  change: 27.97 (`1ae2f44` PR), 27.65 (`71601d1` push), 25.88 (`71601d1` PR) against a 21.0
+  baseline average — driven by `release-checks` 10.0/8.1 and `build-test-lint` 5.9/5.3
+  (after/before averages), neither of which this change touches, plus `ktlintCheck` joining the
+  detekt lane. The saving therefore comes from chain *count*, not chain cost: per pushed SHA with
+  an open PR ≈84 → ≈54 executed runner-minutes (4 chains → 2), and ≈42 → ≈27 for a branch with no
+  PR. Three samples on two SHAs is still thin; re-measure over ≥5 pushes before quoting any trend,
+  and if per-chain cost stays above ~25 min the next task is release-checks, not the lanes A
+  changed.
 * **Nothing was relaxed to get there.** `required-quality` still fails, everything downstream is
   still skipped, and no baseline, `continue-on-error` or suppression was added.
 
