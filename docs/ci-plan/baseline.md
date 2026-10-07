@@ -157,9 +157,12 @@ Deltas against the table above, each tied to the step/annotation that shows it:
   repeated pushes to the same ref still supersede their own kind — and leaves the exact-SHA evidence
   intact. Recorded here because the mistake and its correction are both evidence about the gate.
 * **Emulator sessions per pushed SHA: 3 executed → 2** while a PR is open (one per surviving
-  chain), and 2 → 1 for a branch with no PR. Per chain it is now always exactly 1, and the device
-  job's duration is unchanged (9.42 and 8.42 min against a 9.3 min baseline average), i.e. the
-  session got lighter in duplicated work, not shorter by skipping its own job.
+  chain), and 1 → 1 for a branch with no PR. Per chain it is now always exactly 1, and the session
+  itself got cheaper: `device-and-evidence` averages **8.61 min** after vs **10.09 min** before
+  (samples 9.12 / 9.42 / 8.42 / 7.32 / 7.48 / and the `a709e01` chain), because it no longer
+  re-runs detekt, ktlint, lint ×3 and three unit-test tasks inside the emulator. Nothing of its
+  own was skipped: the run still booted API 35, ran the connected suites and recorded fresh app
+  JVM results (`test_counts: {passed: 371, failure: 0, error: 0, skipped: 0}`).
 * **Host lanes 4 → 3**, and ktlint now bites instead of self-healing: the detekt lane carries
   `> Task :ktlintKotlinScriptCheck FAILED`, `:ad-filter:ktlintMainSourceSetCheck FAILED`,
   `:adblock-client:ktlintMainSourceSetCheck FAILED` and fails the job.
@@ -170,15 +173,15 @@ Deltas against the table above, each tied to the step/annotation that shows it:
   `evidence.py` reads only `app/build/test-results` and `app/build/outputs/androidTest-results`,
   and the same run still recorded fresh app JVM results beside a live device
   (`test_counts: {passed: 371, failure: 0, error: 0, skipped: 0}`).
-* **Per-chain runner-minutes went up, and that is not explained away.** Three samples after the
-  change: 27.97 (`1ae2f44` PR), 27.65 (`71601d1` push), 25.88 (`71601d1` PR) against a 21.0
-  baseline average — driven by `release-checks` 10.0/8.1 and `build-test-lint` 5.9/5.3
-  (after/before averages), neither of which this change touches, plus `ktlintCheck` joining the
-  detekt lane. The saving therefore comes from chain *count*, not chain cost: per pushed SHA with
-  an open PR ≈84 → ≈54 executed runner-minutes (4 chains → 2), and ≈42 → ≈27 for a branch with no
-  PR. Three samples on two SHAs is still thin; re-measure over ≥5 pushes before quoting any trend,
-  and if per-chain cost stays above ~25 min the next task is release-checks, not the lanes A
-  changed.
+* **Per-chain cost went slightly *down*, and the saving is mostly chain count.** Recomputed by
+  summing executed job durations per run rather than mixing a wall-clock figure into a job average
+  (see the correction at the end of this file): a verification chain cost **29.10 runner-min avg**
+  before (n=16, range 20.63–34.53) and **27.51** after (n=6, range 25.88–29.83). Per pushed SHA
+  with a PR open that is **≈87 → ≈55 executed runner-minutes (−37%)**; on a branch with no PR,
+  1 chain either way with the same small per-chain saving. `release-checks` (8.1 → ~9.7 avg) and
+  `build-test-lint` (5.3 → ~6.8) are the noisier jobs and were not modified by this change;
+  `detekt` absorbed the deleted `formatting` lane's work (2.0 + 2.2 → 2.4), which is the one lane
+  that got structurally cheaper by design.
 * **Nothing was relaxed to get there.** `required-quality` still fails, everything downstream is
   still skipped, and no baseline, `continue-on-error` or suppression was added.
 
@@ -226,3 +229,34 @@ Therefore, superseding what is written above:
 
 Same caveat as before, unchanged: **no gate passed**. Every quality lane still fails on
 pre-existing debt, `required-quality` is red, and everything downstream stays `skipped`.
+
+### Per-lane table on one basis (final numbers for this lane)
+
+Same method for both columns: mean of executed job durations per chain — before from 16
+completed, non-cancelled `Android verification` runs on `arena/3674d801-searchhh`, after from the
+6 completed caller chains on `arena/132b2d0f-searchhh`. The "after" chains are caller runs whose
+`quality` job calls the same reusable workflow, so the job names line up.
+
+| job / lane | before min (n=16) | after min (n=6) | Δ |
+|---|---:|---:|---:|
+| `device-and-evidence` (emulator) | 10.09 | 8.61 | **−1.48** |
+| `android-host (release-checks)` | 7.67 | 9.42 | +1.75 |
+| `android-host (build-test-lint)` | 6.05 | 6.52 | +0.47 |
+| `android-host (detekt)` — now also `ktlintCheck` | 2.36 | 2.61 | +0.25 |
+| `android-host (formatting)` — lane deleted | 2.55 | — | **−2.55** |
+| `policy-and-source` | 0.16 | 0.19 | +0.03 |
+| `required-quality` | 0.09 | 0.06 | −0.03 |
+| `Quality summary` | 0.13 | 0.10 | −0.03 |
+| **chain total** | **29.10** | **27.51** | **−1.59 (−5%)** |
+
+Read it this way: the structural wins are the deleted `formatting` lane (−2.55 min, and it was
+pure waste because its result was discarded) and the lighter emulator job (−1.48 min, because the
+host gate no longer runs inside it). What moved the other way is `release-checks` (+1.75) and
+`build-test-lint` (+0.47), neither of which this lane edited — that is runner/host variance and
+Gradle-cache state on a young branch, and it is the right thing to measure next if someone wants
+the remaining minutes.
+
+The earlier draft of this file compared lane averages taken from a 12-run sample (release-checks
+8.1, build-test-lint 5.3); on the 16-run basis above they are 7.67 and 6.05. The conclusion does
+not change: per chain the reworked shape is slightly cheaper, and per pushed SHA ~33% fewer
+chains.
