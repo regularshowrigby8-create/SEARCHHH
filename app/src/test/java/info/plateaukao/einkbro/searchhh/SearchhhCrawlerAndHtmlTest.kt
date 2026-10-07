@@ -67,7 +67,7 @@ class SearchhhCrawlerAndHtmlTest {
         assertFalse(html.contains("<Apply & learn>"))
         assertTrue(html.contains("Extruct profile"))
         assertTrue(html.contains("Crawler profile: phone-structured"))
-        assertTrue(html.contains("searchhh://save:${result.id}"))
+        assertTrue(html.contains("searchhh://save/${result.id}"))
         assertTrue(html.contains("data-result-id=\"${result.id}\""))
     }
 }

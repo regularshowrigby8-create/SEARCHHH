@@ -28,6 +28,7 @@ import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
 import com.google.gson.Gson
+import info.plateaukao.einkbro.R
 import info.plateaukao.einkbro.preference.BrowserConfig
 import info.plateaukao.einkbro.searchhh.ConnectionSettings
 import info.plateaukao.einkbro.searchhh.JobStatus
@@ -101,13 +102,13 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
             }
         val back =
             Button(this).apply {
-                text = "Back"
+                text = getString(R.string.searchhh_webview_back)
                 contentDescription = "Go back or close results"
                 setOnClickListener { if (webView.canGoBack()) webView.goBack() else finish() }
             }
         statusText =
             TextView(this).apply {
-                text = "Searchhh WebView"
+                text = getString(R.string.searchhh_webview_title)
                 textSize = 16f
                 setTextColor(if (isDarkTheme()) Color.WHITE else Color.rgb(24, 32, 24))
                 gravity = Gravity.CENTER_VERTICAL
@@ -115,7 +116,7 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
             }
         val reload =
             Button(this).apply {
-                text = "Reload"
+                text = getString(R.string.searchhh_webview_reload)
                 contentDescription = "Reload search results"
                 setOnClickListener {
                     if (sessionId != null && showingResults) refreshNow() else webView.reload()
@@ -241,7 +242,7 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
     private fun renderResults(status: JobStatus) {
         currentStatus = status
         showingResults = true
-        statusText.text = "Searchhh results"
+        statusText.text = getString(R.string.searchhh_webview_results)
         webView.loadDataWithBaseURL(
             SearchhhResultsHtml.BASE_URL,
             SearchhhResultsHtml.render(status, savedIds),
@@ -253,7 +254,7 @@ class SearchhhResultsWebViewActivity : ComponentActivity() {
 
     private fun showError(message: String) {
         showingResults = false
-        statusText.text = "Searchhh WebView"
+        statusText.text = getString(R.string.searchhh_webview_title)
         webView.loadDataWithBaseURL(
             SearchhhResultsHtml.BASE_URL,
             SearchhhResultsHtml.error(message),

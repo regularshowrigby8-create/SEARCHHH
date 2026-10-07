@@ -739,4 +739,9 @@
     <string name="test_connection_failed">Connection failed: %1$s</string>
     <string name="setting_title_border">Border</string>
     <string name="setting_title_fill">Fill</string>
+
+    <string name="searchhh_webview_back">Back</string>
+    <string name="searchhh_webview_title">Searchhh WebView</string>
+    <string name="searchhh_webview_reload">Reload</string>
+    <string name="searchhh_webview_results">Searchhh results</string>
 </resources>
