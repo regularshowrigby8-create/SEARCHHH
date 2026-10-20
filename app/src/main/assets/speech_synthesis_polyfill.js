@@ -151,7 +151,7 @@
             synth.speaking = false;
             synth.pending = false;
             synth.paused = false;
-            try { androidApp.ttsCancel(); } catch (e) {}
+            try { androidApp.ttsCancel(); } catch (e) { console.error('einkbro speech synthesis: ttsCancel failed', e); }
             // Spec: removed utterances get an error event — 'interrupted' for
             // the one being spoken, 'canceled' for the still-queued ones.
             // Fired synchronously, before cancel() returns: the common
@@ -167,13 +167,13 @@
         pause: function () {
             if (!current || synth.paused) return;
             synth.paused = true;
-            try { androidApp.ttsPause(); } catch (e) {}
+            try { androidApp.ttsPause(); } catch (e) { console.error('einkbro speech synthesis: ttsPause failed', e); }
             fire(current.u, 'pause');
         },
         resume: function () {
             if (!synth.paused) return;
             synth.paused = false;
-            try { androidApp.ttsResume(); } catch (e) {}
+            try { androidApp.ttsResume(); } catch (e) { console.error('einkbro speech synthesis: ttsResume failed', e); }
             if (current) fire(current.u, 'resume');
         },
         addEventListener: function (type, fn) {

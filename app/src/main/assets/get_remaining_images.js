@@ -13,7 +13,9 @@
                 if (imgs[i].dataset && imgs[i].dataset.src) {
                     imgs[i].src = imgs[i].dataset.src;
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.error('einkbro image collection: a lazy-loaded image could not be read', e);
+            }
             var src = imgs[i].src;
             if (src && src.startsWith('http') &&
                 (src.toLowerCase().includes('jpg') || src.toLowerCase().includes('png'))) {

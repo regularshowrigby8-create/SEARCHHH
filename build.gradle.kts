@@ -115,6 +115,19 @@ tasks.register("searchhhJvmVerification") {
     )
 }
 
+tasks.register("searchhhDeviceEvidence") {
+    group = "verification"
+    description = """
+        Device-lane half of the master gate: instrumented runs plus the app JVM results the
+        evidence checker reads in the same workspace. Static host checks stay in
+        searchhhJvmVerification, which the parallel CI lanes already execute.
+        """.trimIndent()
+    dependsOn(
+        ":app:testDebugUnitTest",
+        verifyInteractionEvidence,
+    )
+}
+
 tasks.register("searchhhVerification") {
     group = "verification"
     description = "Full mandatory host, device, interaction and visual evidence gate; requires an emulator."

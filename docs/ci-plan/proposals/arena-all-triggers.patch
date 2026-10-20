@@ -1,0 +1,65 @@
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -35,6 +35,6 @@
+ - First assignment: **S00, reconcile semantic issue ownership and cross-report duplicates** using `docs/quality/recovered-6abf29b/README.md` and its verified raw occurrence export. Full report recovery is closed; the old 28 omitted lint groups are now recovered. Raw records are not stable root-cause tickets. Review newly exposed security findings before confirming the queued S01 mirrored-background correction.
+ - Preserve prior border/SAF/EXIF regressions, strict thresholds, stable app identity and production signing. No release or debug substitute between repairs.
+ - Update ticket/index, queue, sequential log and implementation report with code SHA, run/check IDs, failures and the exact next action. Never infer a passing gate from counts, absent annotations or old evidence.
+-- This handoff uses branch `arena/01a0ea36-searchhh`; push only that branch without force or switching branches. Observe all existing policy acknowledgment and review requirements.
++- Push only to the single `arena/*` working branch assigned to this task (CI accepts any branch under `arena/`); never force-push, and never switch the working branch mid-task. Observe all existing policy acknowledgment and review requirements.
+ 
+ Repository policy/CI cannot force readers or forks to agree. Required review/check enforcement needs GitHub administrator protection; do not claim it is active without evidence.
+--- a/.github/workflows/codeql.yml
++++ b/.github/workflows/codeql.yml
+@@ -1,7 +1,7 @@
+ name: CodeQL security analysis
+ on:
+   push:
+-    branches: [arena/01a0ea36-searchhh]
++    branches: [arena/**]
+   pull_request:
+     branches: [main]
+   schedule:
+--- a/.github/workflows/debug-apk-milestone.yml
++++ b/.github/workflows/debug-apk-milestone.yml
+@@ -2,7 +2,7 @@
+ # Hosted debug artifact retrieval is intentionally external to this workflow.
+ on:
+   push:
+-    branches: [arena/01a0ea36-searchhh]
++    branches: [arena/**]
+     paths:
+       - 'app/**'
+       - 'ad-filter/**'
+--- a/.github/workflows/external-tool-coverage.yml
++++ b/.github/workflows/external-tool-coverage.yml
+@@ -1,7 +1,7 @@
+ name: External tool coverage
+ on:
+   push:
+-    branches: [arena/01a0ea36-searchhh]
++    branches: [arena/**]
+     paths:
+       - '.mega-linter.yml'
+       - 'app/**'
+--- a/.github/workflows/factory.yml
++++ b/.github/workflows/factory.yml
+@@ -2,7 +2,7 @@
+ "on":
+   workflow_dispatch:
+   push:
+-    branches: [arena/01a0ea36-searchhh]
++    branches: [arena/**]
+     paths:
+       - "tools/factory/**"
+       - "tools/quality/tests/test_factory*.py"
+--- a/.github/workflows/quality-report-recovery.yml
++++ b/.github/workflows/quality-report-recovery.yml
+@@ -1,7 +1,7 @@
+ name: Recover existing quality reports
+ on:
+   push:
+-    branches: [arena/01a0ea36-searchhh]
++    branches: [arena/**]
+     paths:
+       - .github/workflows/quality-report-recovery.yml
+       - tools/quality/report_transport.py

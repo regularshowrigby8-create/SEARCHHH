@@ -34,7 +34,13 @@ capture_crashes() {
 trap capture_crashes EXIT
 adb logcat -c
 # Keep private test installs only on this disposable emulator until evidence capture/launch finishes.
-./gradlew --continue searchhhVerification -PuniversalApk --max-workers=2 \
+# The static host checks (detekt, ktlint, lint, assembly) already ran in their own lanes of
+# the same workflow; re-running them here doubled the cost of the only emulator session.
+# searchhhDeviceEvidence keeps exactly what the evidence gate needs beside a live device:
+# the app JVM JUnit results plus the three connected test runs, all recorded after the
+# provenance marker that beginVerificationRun writes. searchhhVerification itself is unchanged
+# and remains the canonical single-command gate for local and agent use.
+./gradlew --continue searchhhDeviceEvidence -PuniversalApk --max-workers=2 \
     -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \
     -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC" 2>&1 | tee quality-device.log
 adb shell am start -W -n app.searchhh.browser/info.plateaukao.einkbro.searchhh.SearchhhActivity \

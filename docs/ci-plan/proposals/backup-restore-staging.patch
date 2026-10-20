@@ -1,0 +1,70 @@
+diff --git a/app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt b/app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt
+index d195c24..8722c97 100644
+--- a/app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt
++++ b/app/src/main/java/info/plateaukao/einkbro/unit/BackupUnit.kt
+@@ -602,20 +602,26 @@ class BackupUnit(
+             false
+         }
+ 
+-    /** Legacy restore: restores everything from old-format zip (no manifest). */
++    /**
++     * Legacy restore: restores everything from old-format zip (no manifest).
++     *
++     * Every entry lands in a sibling `.restoring` file and is moved into place only once the whole
++     * archive has been read, and the database is released at that point rather than up front. A
++     * truncated or unreadable backup therefore leaves the live database and preferences untouched
++     * instead of half-overwriting them.
++     */
+     fun restoreLegacyBackupData(
+         context: Context,
+         uri: Uri,
+     ): Boolean {
++        val staged = mutableListOf<Pair<File, File>>()
+         try {
+-            bookmarkManager.database.close()
+-
+             val fis = context.contentResolver.openInputStream(uri) ?: return false
+             val zis = ZipInputStream(fis)
+ 
+             var zipEntry = zis.nextEntry
+             while (zipEntry != null) {
+-                val file =
++                val target =
+                     if (zipEntry.name.endsWith(".db") ||
+                         zipEntry.name.contains("einkbro_db")
+                     ) {
+@@ -623,14 +629,33 @@ class BackupUnit(
+                     } else {
+                         File(sharedPrefsDir, remapPrefsFileName(zipEntry.name))
+                     }
+-                writeStreamToFile(zis, file)
++                val staging = File(target.parentFile, target.name + ".restoring")
++                writeStreamToFile(zis, staging)
++                staged += staging to target
+                 zipEntry = zis.nextEntry
+             }
+             zis.close()
+             fis.close()
++
++            // Nothing above has touched live data yet, so this is the first point where closing the
++            // database is safe.
++            bookmarkManager.database.close()
++            staged.forEach { (staging, target) ->
++                target.delete()
++                if (!staging.renameTo(target)) {
++                    throw IOException("Could not move the restored ${target.name} into place")
++                }
++                // A -wal/-shm pair describes the file that used to be here. Left beside a freshly
++                // restored main database it is how a successful restore turns into "image is malformed".
++                if (target.name.endsWith(".db")) {
++                    File(target.parentFile, "${target.name}-wal").delete()
++                    File(target.parentFile, "${target.name}-shm").delete()
++                }
++            }
+             return true
+         } catch (e: IOException) {
+             e.printStackTrace()
++            staged.forEach { (staging, _) -> staging.delete() }
+             return false
+         }
+     }

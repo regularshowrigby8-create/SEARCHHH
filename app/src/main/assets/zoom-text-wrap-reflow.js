@@ -322,7 +322,9 @@
       medias?.forEach((media) => {
         try {
           media.pause();
-        } catch (e) {}
+        } catch (e) {
+            console.error('einkbro zoom reflow: a playing media element could not be paused', e);
+        }
       });
 
       if (DEBUG)

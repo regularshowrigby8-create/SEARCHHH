@@ -11,6 +11,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 
 /**
  * Created by Edsuns@qq.com on 2021/7/29.
@@ -100,14 +101,16 @@ internal class FilterViewModelImpl(
         // interrupted by process death rather than by a real failure, so pick it up
         // again (WorkManager used to persist and resume such work). Filters that
         // genuinely FAILED are left alone: nothing retries them automatically.
-        try {
-            filters.value.values.forEach { filter ->
-                if (filter.downloadState.isRunning) {
+        filters.value.values.forEach { filter ->
+            if (filter.downloadState.isRunning) {
+                // Per filter, not around the loop: one failing resume (a preferences read that
+                // throws, say) must not leave every later filter flagged as running forever.
+                try {
                     updater.download(filter)
+                } catch (e: Exception) {
+                    Timber.e(e, "Could not resume the interrupted download of filter ${filter.id}")
                 }
             }
-        } catch (_: Exception) {
-            // guard against SharedPreferences failures during init
         }
     }
 

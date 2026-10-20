@@ -122,7 +122,7 @@ function fetchNodesWithText(element) {
       }
 
       var parentDisplay = "";
-      try { parentDisplay = window.getComputedStyle(parent).display; } catch (e) {}
+      try { parentDisplay = window.getComputedStyle(parent).display; } catch (e) { console.warn('einkbro translate by paragraph: computed style unavailable, treating the parent as non-flex/grid', e); }
       if (/^(inline-)?(flex|grid)$/.test(parentDisplay)) {
         elementMembers.forEach(function (el) {
           if (el.textContent.trim().length > 0) {
@@ -220,6 +220,7 @@ function injectTranslateTag(node) {
   try {
     node.parentNode.insertBefore(pElement, node.nextSibling);
   } catch (error) {
+    console.error('einkbro translate by paragraph: the translation block could not be inserted', error);
   }
 }
 

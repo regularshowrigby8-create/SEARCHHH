@@ -99,6 +99,7 @@ object ShareUtil : KoinComponent {
                 try {
                     socket = MulticastSocket(multicastPort).apply { joinGroup(group) }
                 } catch (exception: SocketException) {
+                    android.util.Log.w("ShareUtil", "Multicast share discovery could not start on port $multicastPort", exception)
                     return@launch
                 }
                 while (true) {
@@ -196,6 +197,7 @@ object ShareUtil : KoinComponent {
                 try {
                     socket = MulticastSocket(multicastPort).apply { joinGroup(group) }
                 } catch (e: SocketException) {
+                    android.util.Log.w("ShareUtil", "Multicast share discovery could not start on port $multicastPort", e)
                     return@launch
                 }
                 while (true) {
