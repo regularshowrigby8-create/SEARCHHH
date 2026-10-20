@@ -633,7 +633,7 @@ exception entries nobody reviewed.
 
 Two things this pass turned up that are worth an owner's attention, and neither is a lint finding:
 
-1. **`BackupUnit.restoreLegacyBackupData` is not atomic** — and a fix now exists, unapplied, at
+1. **`BackupUnit.restoreLegacyBackupData` is not atomic** — tracked as **SAV-49** (High), with a fix written, unapplied, at
    `docs/ci-plan/proposals/backup-restore-staging.md` (+ its `.patch`). It closes the Room database
    *first*, then streams zip entries straight into `databasesDir`/`sharedPrefsDir`. An `IOException`
    halfway (disk full, truncated backup) returns `false`, but the already-written entries have replaced
