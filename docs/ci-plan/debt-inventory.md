@@ -654,7 +654,8 @@ Two things this pass turned up that are worth an owner's attention, and neither 
    correctly — owner + expiry + a regression test each — this note is about how weakly the last of the
    three is enforced.
 
-### 13.3 Why four of the seven new log calls use `android.util.Log` rather than `Timber`
+**A note on the fix batches, since the census is what prompted it: why four of the seven new log
+calls use `android.util.Log` rather than `Timber.**
 
 Someone will ask, because the repo's own baseline objects to `Log`. Both halves are measurable here:
 
