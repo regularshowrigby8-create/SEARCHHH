@@ -453,7 +453,8 @@ edit, and `quality/unfinished-exceptions.json` is still `[]`.
 | — | not done | 28 remaining `silent-catch`: fallbacks inside per-item / per-request loops (`BookmarkRenderer` ×3, the ad-block path parse, `BookmarkDao` and `ShareUtil`'s teardown/receive paths, `PublicSearch`'s discovery loop, `BackupUnit`'s enum-restore loop, `HelperUnit`'s host parse, `EinkBroApplication`'s Chromium-detection probe, `ChatWebInterface` which already returns the error to its caller) | 81 | — | **left alone deliberately**: a log line inside those loops converts one real failure into thousands on a device with no log buffer to spare. Needs per-site judgment, i.e. §9 question 3. |
 
 Nothing in the two batches above reduces a *lint* count, which is the point worth being blunt about:
-`required-quality` still fails on 81 unfinished findings + 465 lint errors + 2,602 Detekt issues +
+`required-quality` still fails on 81 unfinished findings (see §13: none of them hides another
+batch-C-shaped defect) + 465 lint errors + 2,602 Detekt issues +
 7 ktlint tasks, so there is still no APK. The code that ships is more debuggable, not greener.
 
 
@@ -601,4 +602,51 @@ sandbox can never build):
    contract check (an action followed by an assertion, plus fresh JUnit XML). Writing tests that
    pattern-match the checker without exercising behaviour is gate-gaming, not evidence, so it was
    not done. This is Lane B's territory, which I was told not to start.
+5. `policy-and-source` 81 — the paperwork route exists but is not cheap: each exception needs an owner,
+   a future expiry, a `reason` ≥ 30 chars and a named `regression_test` (see §13.2 for why that last
+   guard is existence-only). So closing the 28 by-design `silent-catch` and 34 API-shape findings means
+   writing tests that justify them, or accepting them in prose — not a signature. **I did not write
+   either side of that decision.**
 
+## 13 · Second-pass defect hunt — does the remaining 81 hide anything like batch C?
+
+Batch C found a real bug by asking one question of each silent guard: *what does a single per-item
+failure cost?* To make sure no more of that class was left behind, every `try {` in the 429
+Kotlin/Java sources was paired with its `catch`, and the pair kept only when **a loop sits inside the
+`try`** and the catch neither logs nor rethrows (indentation/brace walk, comments and string literals
+stripped before the log test — a candidate list, not a verdict). 12 candidates, all 12 read by hand:
+
+| site | verdict |
+|---|---|
+| `BookmarkDao.kt:412/438` | **already the correct shape** — the guard is per table inside the loop, comment: "Table might not exist in old db — skip silently". |
+| `BackupUnit.kt:381` | **already correct** — per file, comment: "Per-file so one malformed manifest entry can't abort the rest of the batch." |
+| `BackupUnit.kt:610`, `:1221` | error surfaced: one `return false`, one `Toast "Userscripts import failed"`. |
+| `DualCaptionProcessor.kt:34/93` | per-request fallback to the single-language caption, with a comment stating why. |
+| `TranslationDelegate.kt:262` | shows `EBToast.show(activity, "Failed to get image list")`. |
+| `InternalBackendService.kt:91/106` | `catch (e: CancellationException)` rethrow arms of a two-catch block. |
+| `ShareUtil.kt:249`, `UrlHelper.kt:206` | per-iteration teardown fallback / `return url` fallback. |
+
+**No further cascade defects.** The honest reading of the census is therefore: the 28 remaining
+`silent-catch` findings are mostly *deliberate* fallbacks that the checker cannot distinguish from
+negligence, which is exactly why they must not be "fixed" by adding logging in a loop or by adding
+exception entries nobody reviewed.
+
+Two things this pass turned up that are worth an owner's attention, and neither is a lint finding:
+
+1. **`BackupUnit.restoreLegacyBackupData` is not atomic.** It closes the Room database *first*, then
+   streams zip entries straight into `databasesDir`/`sharedPrefsDir`. An `IOException` halfway (disk
+   full, truncated backup) returns `false`, but the already-written files have replaced the live
+   database — so "restore failed" leaves the user with a corrupted profile, not the previous one. A
+   correct fix stages each entry to a temp file and renames into place, then reopens. That is a
+   behaviour change in the app's disaster-recovery path with no test coverage at all, so it is
+   recorded here rather than attempted in the dark.
+2. **The exception file's guard is weaker than it looks.** `apply_exceptions()` accepts an entry only
+   with `kind: "legitimate"`, a `reason` ≥ 30 chars, a non-empty `owner`, a future `expires`, and a
+   `regression_test` path — but the last is validated as *file existence* only
+   (`test.is_file()`), not as any test that covers the site. So the 34 findings in
+   `empty-function-review` + `constant-return-review` today (§8 C7 grouped 32 of them at census time)
+   could in principle be papered over by pointing every entry at one unrelated existing test file. The
+   mechanism is sound as intent and cheap to abuse in practice; if it should be tightened, a content or
+   ownership check on the named test is the place. §8 C7 and §9 question 3 already state the requirement
+   correctly — owner + expiry + a regression test each — this note is about how weakly the last of the
+   three is enforced.
