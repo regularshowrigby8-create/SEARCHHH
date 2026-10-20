@@ -633,13 +633,16 @@ exception entries nobody reviewed.
 
 Two things this pass turned up that are worth an owner's attention, and neither is a lint finding:
 
-1. **`BackupUnit.restoreLegacyBackupData` is not atomic.** It closes the Room database *first*, then
-   streams zip entries straight into `databasesDir`/`sharedPrefsDir`. An `IOException` halfway (disk
-   full, truncated backup) returns `false`, but the already-written files have replaced the live
-   database — so "restore failed" leaves the user with a corrupted profile, not the previous one. A
-   correct fix stages each entry to a temp file and renames into place, then reopens. That is a
-   behaviour change in the app's disaster-recovery path with no test coverage at all, so it is
-   recorded here rather than attempted in the dark.
+1. **`BackupUnit.restoreLegacyBackupData` is not atomic** — and a fix now exists, unapplied, at
+   `docs/ci-plan/proposals/backup-restore-staging.md` (+ its `.patch`). It closes the Room database
+   *first*, then streams zip entries straight into `databasesDir`/`sharedPrefsDir`. An `IOException`
+   halfway (disk full, truncated backup) returns `false`, but the already-written entries have replaced
+   the live database — so "restore failed" leaves the user with a corrupted profile, not the previous
+   one. A `.db` swapped in beside the *previous* `-wal`/`-shm` is the classic "database disk image is
+   malformed" on first open, and `SettingActivity.kt:168` shows **nothing at all** when the call returns
+   `false`. Staging each entry as `<name>.restoring` and renaming into place after the whole archive
+   reads is the fix; that is a behaviour change in the app's disaster-recovery path with no test
+   coverage at all, which is why it is a reviewable patch and not a commit into `app/`.
 2. **The exception file's guard is weaker than it looks.** `apply_exceptions()` accepts an entry only
    with `kind: "legitimate"`, a `reason` ≥ 30 chars, a non-empty `owner`, a future `expires`, and a
    `regression_test` path — but the last is validated as *file existence* only
@@ -650,3 +653,23 @@ Two things this pass turned up that are worth an owner's attention, and neither 
    ownership check on the named test is the place. §8 C7 and §9 question 3 already state the requirement
    correctly — owner + expiry + a regression test each — this note is about how weakly the last of the
    three is enforced.
+
+### 13.3 Why four of the seven new log calls use `android.util.Log` rather than `Timber`
+
+Someone will ask, because the repo's own baseline objects to `Log`. Both halves are measurable here:
+
+- `app/build.gradle.kts`'s `lint { }` block lists no `enable`/`disable`/`ignore` and sets
+  `warningsAsErrors = true`, so nothing is suppressed — and `LogNotTimber` **does not appear in the
+  rule groups CI publishes today** (point 4 of the six-point inert-baseline proof in §7). So the added
+  `Log.*` calls did not raise the 465 lint errors by one. I checked this because it was a regression
+  that this branch could plausibly have introduced.
+- `Timber.plant(Timber.DebugTree())` sits inside `if (BuildConfig.DEBUG)` at
+  `EinkBroApplication.kt:136-138` and is the **only** plant site in `app/`, `ad-filter/` and
+  `adblock-client/`. With no tree planted, `Timber.x()` is a no-op in a release build — which is exactly
+  when "the user tapped share and nothing happened" needs a trace.
+
+So the rule applied in `60e3733`/`06b44f2` was: files already logging via `Timber` got `Timber`
+(nothing changes for them), files whose convention is `android.util.Log` got `Log`, which survives into
+release. If anyone later re-enables `LogNotTimber` or standardises on Timber, **plant a release tree
+first** — otherwise that refactor converts working field diagnostics into silence while making the lint
+lane greener, which is the trade this branch refused in the other direction.
