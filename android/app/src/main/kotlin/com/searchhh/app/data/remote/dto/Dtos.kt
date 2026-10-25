@@ -89,6 +89,40 @@ data class FeedbackResponseDto(
 )
 
 @Serializable
+data class FundingMatchRequestDto(
+    val age: Int = 24,
+    val stage: String = "idea",
+    val registered: Boolean = false,
+    @SerialName("training_completed") val trainingCompleted: Boolean = false,
+    @SerialName("annual_turnover") val annualTurnover: Double = 0.0,
+    @SerialName("prior_funding") val priorFunding: Double = 0.0,
+)
+
+@Serializable
+data class FundingMatchDto(
+    val id: String,
+    val name: String,
+    val provider: String,
+    @SerialName("min_amount") val minAmount: Double = 0.0,
+    @SerialName("max_amount") val maxAmount: Double = 0.0,
+    val eligible: Boolean = false,
+    val status: String = "ineligible",
+    val blockers: List<String> = emptyList(),
+    val steps: List<String> = emptyList(),
+    val url: String = "",
+    val source: String = "",
+    val notes: String = "",
+)
+
+@Serializable
+data class FundingMatchResponseDto(
+    @SerialName("eligible_count") val eligibleCount: Int = 0,
+    val matches: List<FundingMatchDto> = emptyList(),
+    @SerialName("next_actions") val nextActions: List<String> = emptyList(),
+    @SerialName("rules_reviewed") val rulesReviewed: String = "",
+)
+
+@Serializable
 data class HealthDto(
     val status: String = "ok",
     val service: String = "",
@@ -153,6 +187,29 @@ fun InsightResponseDto.toDomain(): Insight = Insight(
     provider = provider,
     cached = cached,
 )
+
+fun FundingMatchDto.toDomain(): com.searchhh.app.data.model.FundingMatch =
+    com.searchhh.app.data.model.FundingMatch(
+        id = id,
+        name = name,
+        provider = provider,
+        minAmount = minAmount,
+        maxAmount = maxAmount,
+        status = status,
+        blockers = blockers,
+        steps = steps,
+        url = url,
+        source = source,
+        notes = notes,
+    )
+
+fun FundingMatchResponseDto.toDomain(): com.searchhh.app.data.model.FundingResult =
+    com.searchhh.app.data.model.FundingResult(
+        eligibleCount = eligibleCount,
+        matches = matches.map { it.toDomain() },
+        nextActions = nextActions,
+        rulesReviewed = rulesReviewed,
+    )
 
 fun HealthDto.toDomain(): HealthInfo = HealthInfo(
     status = status,

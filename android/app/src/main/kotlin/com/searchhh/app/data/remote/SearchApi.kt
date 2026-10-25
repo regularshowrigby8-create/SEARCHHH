@@ -4,6 +4,8 @@ import com.searchhh.app.data.remote.dto.CategoriesResponseDto
 import com.searchhh.app.data.remote.dto.EntryDto
 import com.searchhh.app.data.remote.dto.FeedbackRequestDto
 import com.searchhh.app.data.remote.dto.FeedbackResponseDto
+import com.searchhh.app.data.remote.dto.FundingMatchRequestDto
+import com.searchhh.app.data.remote.dto.FundingMatchResponseDto
 import com.searchhh.app.data.remote.dto.HealthDto
 import com.searchhh.app.data.remote.dto.InsightRequestDto
 import com.searchhh.app.data.remote.dto.InsightResponseDto
@@ -50,6 +52,9 @@ interface SearchApi {
 
     @POST("api/v1/feedback")
     suspend fun feedback(@Body body: FeedbackRequestDto): FeedbackResponseDto
+
+    @POST("api/v1/funding/match")
+    suspend fun fundingMatch(@Body body: FundingMatchRequestDto): FundingMatchResponseDto
 
     @GET("health")
     suspend fun health(): HealthDto

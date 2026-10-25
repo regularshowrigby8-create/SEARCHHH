@@ -5,11 +5,13 @@ import com.searchhh.app.core.PAGE_SIZE
 import com.searchhh.app.core.apiCall
 import com.searchhh.app.data.model.CategoryCount
 import com.searchhh.app.data.model.Entry
+import com.searchhh.app.data.model.FundingResult
 import com.searchhh.app.data.model.HealthInfo
 import com.searchhh.app.data.model.Insight
 import com.searchhh.app.data.model.SearchPage
 import com.searchhh.app.data.remote.SearchApi
 import com.searchhh.app.data.remote.dto.FeedbackRequestDto
+import com.searchhh.app.data.remote.dto.FundingMatchRequestDto
 import com.searchhh.app.data.remote.dto.InsightRequestDto
 import com.searchhh.app.data.remote.dto.toDomain
 import kotlinx.coroutines.sync.Mutex
@@ -38,6 +40,14 @@ interface SearchRepository {
     suspend fun entry(id: String): ApiResult<Entry>
     suspend fun insight(entryId: String, audience: String = "first-time buyer"): ApiResult<Insight>
     suspend fun feedback(message: String, rating: Int, entryId: String? = null): ApiResult<String>
+    suspend fun fundingMatch(
+        age: Int,
+        stage: String,
+        registered: Boolean,
+        trainingCompleted: Boolean,
+        annualTurnover: Double = 0.0,
+    ): ApiResult<FundingResult>
+
     suspend fun health(): ApiResult<HealthInfo>
     fun invalidateCache()
 }
@@ -148,6 +158,30 @@ class RemoteSearchRepository(
             is ApiResult.Failure -> ApiResult.Failure(result.error, result.cause)
             ApiResult.Loading -> ApiResult.Loading
         }
+
+    override suspend fun fundingMatch(
+        age: Int,
+        stage: String,
+        registered: Boolean,
+        trainingCompleted: Boolean,
+        annualTurnover: Double,
+    ): ApiResult<FundingResult> = when (
+        val result = apiCall {
+            api.fundingMatch(
+                FundingMatchRequestDto(
+                    age = age,
+                    stage = stage,
+                    registered = registered,
+                    trainingCompleted = trainingCompleted,
+                    annualTurnover = annualTurnover,
+                ),
+            ).toDomain()
+        }
+    ) {
+        is ApiResult.Success -> ApiResult.Success(result.data)
+        is ApiResult.Failure -> ApiResult.Failure(result.error, result.cause)
+        ApiResult.Loading -> ApiResult.Loading
+    }
 
     override suspend fun health(): ApiResult<HealthInfo> =
         when (val result = apiCall { api.health().toDomain() }) {

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SEARCHHH</string>
+    <string name="app_name">GradLink</string>
     <string name="notification_channel_id" translatable="false">searchhh_default</string>
-    <string name="notification_channel_name">Search alerts</string>
-    <string name="notification_channel_description">Price drops and saved-search alerts</string>
+    <string name="notification_channel_name">GradLink alerts</string>
+    <string name="notification_channel_description">New no-experience roles, funding deadlines and mentor slots</string>
 
     <!-- search -->
-    <string name="search_hint">Search services, food, jobs…</string>
+    <string name="search_hint">Search jobs, funding, mentors…</string>
     <string name="search_action">Search</string>
     <string name="clear_query">Clear query</string>
     <string name="suggestions">Suggestions</string>
@@ -32,7 +32,7 @@
     <!-- saved -->
     <string name="saved_title">Saved</string>
     <string name="saved_empty_title">No saved items yet</string>
-    <string name="saved_empty_body">Tap the bookmark on any result to keep it here — it works offline.</string>
+    <string name="saved_empty_body">Bookmark a role, grant or mentor to keep it here — it works offline.</string>
 
     <!-- settings -->
     <string name="settings">Settings</string>

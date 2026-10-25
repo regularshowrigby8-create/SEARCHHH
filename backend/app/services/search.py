@@ -76,16 +76,31 @@ STOPWORDS = frozenset(
 FIELD_WEIGHTS = {"title": 3.0, "subtitle": 1.6, "tags": 2.2, "category": 1.4, "description": 1.0}
 
 SYNONYMS: dict[str, tuple[str, ...]] = {
-    "cheap": ("budget", "affordable", "low"),
-    "affordable": ("cheap", "budget"),
-    "fast": ("quick", "express", "same-day"),
-    "near": ("close", "local"),
-    "food": ("meal", "eat", "restaurant", "groceries"),
-    "money": ("payment", "finance", "banking", "wallet"),
-    "student": ("campus", "university", "college"),
-    "job": ("work", "career", "internship", "gig"),
-    "secondhand": ("used", "preloved", "pre-owned"),
-    "wifi": ("internet", "data", "connectivity"),
+    # GradLink domain: two doors - employment, and building your own thing.
+    "job": ("work", "career", "vacancy", "employment", "role"),
+    "jobs": ("work", "career", "vacancies", "employment"),
+    "internship": ("work experience", "placement", "graduate programme", "yes"),
+    "experience": ("no experience", "work experience", "entry level", "placement"),
+    "no": ("none", "zero"),
+    "graduate": ("graduated", "qualification", "degree", "diploma", "student"),
+    "unemployed": ("jobless", "no experience", "seeking", "first job"),
+    "funding": ("grant", "finance", "capital", "loan", "money", "investment"),
+    "grant": ("funding", "nyda", "non-repayable", "capital"),
+    "money": ("funding", "capital", "grant", "finance", "cash"),
+    "loan": ("sefa", "funding", "credit", "finance"),
+    "startup": ("business", "venture", "entrepreneurship", "founder", "create"),
+    "business": ("startup", "enterprise", "company", "entrepreneur", "trade"),
+    "entrepreneur": ("founder", "startup", "business", "self-employed"),
+    "mentor": ("mentorship", "advisor", "coach", "guidance", "advice"),
+    "cofounder": ("co-founder", "partner", "team", "matching", "collaborate"),
+    "partner": ("co-founder", "cofounder", "team", "collaborator"),
+    "cv": ("resume", "curriculum vitae", "profile", "application"),
+    "resume": ("cv", "curriculum vitae"),
+    "interview": ("practice", "questions", "mock", "prepare"),
+    "apply": ("application", "applying", "vacancy", "deadline"),
+    "skill": ("upskilling", "course", "training", "learnership", "certificate"),
+    "course": ("training", "bootcamp", "learnership", "certificate", "upskilling"),
+    "free": ("no cost", "zero fee", "stipend", "funded"),
 }
 
 BM25_K1 = 1.5
@@ -105,11 +120,30 @@ def tokenize(text: str, *, keep_stopwords: bool = False) -> list[str]:
     return [t for t in tokens if t not in STOPWORDS and len(t) > 1]
 
 
-def expand(tokens: Sequence[str]) -> list[str]:
-    out = list(tokens)
+# What the user typed must dominate what we guessed. Literal matches are scored
+# on their own; synonym matches are scored separately and discounted, otherwise
+# a doc tagged "yes programme" outranks a title that literally says "internship".
+SYNONYM_SCORE_WEIGHT = 0.25
+
+
+def expand_weighted(tokens: Sequence[str]) -> dict[str, float]:
+    """Typed terms at weight 1.0, their synonyms at a small discount weight.
+
+    The two groups are scored separately in `search()`, which keeps recall
+    (typos, vocabulary mismatch) without letting guesses beat literal hits.
+    """
+    weights: dict[str, float] = dict.fromkeys(tokens, 1.0)
     for token in tokens:
-        out.extend(SYNONYMS.get(token, ()))
-    return list(dict.fromkeys(out))
+        for synonym in SYNONYMS.get(token, ()):
+            for part in synonym.split():
+                if part not in weights:
+                    weights[part] = 1.0
+    return weights
+
+
+def expand(tokens: Sequence[str]) -> list[str]:
+    """Flat term list (kept for callers that only need the vocabulary)."""
+    return list(expand_weighted(tokens).keys())
 
 
 @dataclass(slots=True)
@@ -227,7 +261,8 @@ class SearchEngine:
     def search(self, request: SearchRequest) -> SearchResponse:
         started = time.perf_counter()
         raw_q = (request.q or "").strip()
-        terms = expand(tokenize(raw_q))
+        typed_terms = tokenize(raw_q)
+        synonyms = {term for term in expand_weighted(typed_terms) if term not in typed_terms}
 
         scored: list[ScoredEntry] = []
         for doc in self.docs:
@@ -235,11 +270,15 @@ class SearchEngine:
             if request.category and normalise(entry.category) != normalise(request.category):
                 continue
 
-            if terms:
-                lexical = self._bm25(doc, terms)
+            if typed_terms:
+                literal = self._bm25(doc, dict.fromkeys(typed_terms, 1.0))
+                # Average the synonym group instead of summing it: six rare
+                # synonyms at full weight would otherwise outrank the word the
+                # user actually typed.
+                guessed = self._bm25(doc, dict.fromkeys(synonyms, 1.0)) * SYNONYM_SCORE_WEIGHT / max(1, len(synonyms))
                 fuzzy = self._fuzzy(doc, raw_q)
                 bonus = self._phrase_bonus(doc, raw_q)
-                score = lexical + fuzzy + bonus
+                score = literal + guessed + fuzzy + bonus
                 if score <= 0:
                     continue
             else:
@@ -247,7 +286,11 @@ class SearchEngine:
                 score = entry.rating / 5.0
 
             scored.append(
-                ScoredEntry(**entry.model_dump(), score=round(score, 4), highlights=self._highlights(doc, terms))
+                ScoredEntry(
+                    **entry.model_dump(),
+                    score=round(score, 4),
+                    highlights=self._highlights(doc, typed_terms),
+                )
             )
 
         scored.sort(key=self._sort_key(request.sort))

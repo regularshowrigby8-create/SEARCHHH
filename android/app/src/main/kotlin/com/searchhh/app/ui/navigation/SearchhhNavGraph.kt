@@ -2,6 +2,7 @@ package com.searchhh.app.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -25,6 +27,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.searchhh.app.di.AppContainer
 import com.searchhh.app.ui.detail.DetailRoute
+import com.searchhh.app.ui.funding.FundingRoute
+import com.searchhh.app.ui.funding.FundingViewModel
 import com.searchhh.app.ui.detail.DetailViewModel
 import com.searchhh.app.ui.home.HomeRoute
 import com.searchhh.app.ui.home.HomeViewModel
@@ -63,6 +67,12 @@ fun SearchhhNavGraph(
                         onClick = { navController.navigateTopLevel(Routes.HOME) },
                         icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
                         label = { Text("Home") },
+                    )
+                    NavigationBarItem(
+                        selected = currentRoute == Routes.FUNDING,
+                        onClick = { navController.navigateTopLevel(Routes.FUNDING) },
+                        icon = { Icon(Icons.Filled.AccountBalanceWallet, contentDescription = "Funding") },
+                        label = { Text("Funding") },
                     )
                     NavigationBarItem(
                         selected = currentRoute == Routes.SAVED,
@@ -148,6 +158,17 @@ fun SearchhhNavGraph(
                     ),
                 )
                 DetailRoute(viewModel = viewModel, onBack = { navController.popBackStack() })
+            }
+
+            composable(Routes.FUNDING) {
+                val uriHandler = LocalUriHandler.current
+                val viewModel: FundingViewModel = viewModel(
+                    factory = FundingViewModel.factory(container.searchRepository, container.dispatchers),
+                )
+                FundingRoute(
+                    viewModel = viewModel,
+                    onOpenUrl = { url -> runCatching { uriHandler.openUri(url) } },
+                )
             }
 
             composable(Routes.SAVED) {

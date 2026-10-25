@@ -28,7 +28,7 @@ fun SearchField(
     onQueryChange: (String) -> Unit,
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String = "Search services, food, jobs…",
+    placeholder: String = "Search jobs, funding, mentors…",
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
 

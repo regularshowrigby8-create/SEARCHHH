@@ -105,6 +105,41 @@ class TokenResponse(BaseModel):
     scopes: list[str]
 
 
+class FundingMatchRequest(BaseModel):
+    """Answers the question a graduate actually asks before applying."""
+
+    age: Annotated[int, Field(ge=15, le=80)] = 24
+    stage: Literal["idea", "survivalist", "startup", "growth", "expansion"] = "idea"
+    registered: bool = False
+    training_completed: bool = False
+    annual_turnover: Annotated[float, Field(ge=0, le=500_000_000)] = 0.0
+    prior_funding: Annotated[float, Field(ge=0, le=500_000_000)] = 0.0
+    province: str | None = None
+    sector: str | None = None
+
+
+class FundingMatch(BaseModel):
+    id: str
+    name: str
+    provider: str
+    min_amount: float
+    max_amount: float
+    eligible: bool
+    status: Literal["eligible", "steps_required", "ineligible"] = "eligible"
+    blockers: list[str] = Field(default_factory=list)
+    steps: list[str] = Field(default_factory=list)
+    url: str = ""
+    source: str = ""
+    notes: str = ""
+
+
+class FundingMatchResponse(BaseModel):
+    eligible_count: int
+    matches: list[FundingMatch]
+    next_actions: list[str]
+    rules_reviewed: str
+
+
 class IntegrationStatus(BaseModel):
     name: str
     configured: bool

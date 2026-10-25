@@ -31,16 +31,16 @@ def test_openapi_contract(client):
 
 
 def test_search_get(client):
-    response = client.get("/api/v1/search", params={"q": "coffee", "limit": 5})
+    response = client.get("/api/v1/search", params={"q": "nyda", "limit": 5})
     assert response.status_code == 200
     body = response.json()
-    assert body["query"] == "coffee"
-    assert body["results"][0]["id"] == "svc-001"
+    assert body["query"] == "nyda"
+    assert body["results"][0]["id"] == "gl-011"
 
 
 def test_search_post_matches_get(client):
-    get_body = client.get("/api/v1/search", params={"q": "gym"}).json()
-    post_body = client.post("/api/v1/search", json={"q": "gym", "limit": 20}).json()
+    get_body = client.get("/api/v1/search", params={"q": "mentor"}).json()
+    post_body = client.post("/api/v1/search", json={"q": "mentor", "limit": 20}).json()
     assert [r["id"] for r in get_body["results"]] == [r["id"] for r in post_body["results"]]
 
 
@@ -50,27 +50,27 @@ def test_search_validation(client):
 
 
 def test_get_single_entry_and_404(client):
-    assert client.get("/api/v1/search/svc-001").json()["title"] == "Campus Coffee Run"
+    assert client.get("/api/v1/search/gl-001").json()["title"] == "YES Programme Placement"
     missing = client.get("/api/v1/search/does-not-exist")
     assert missing.status_code == 404
     assert missing.json()["title"] == "not_found"
 
 
 def test_suggestions_and_categories(client):
-    assert client.get("/api/v1/search/suggest", params={"q": "cof"}).json()["suggestions"]
+    assert client.get("/api/v1/search/suggest", params={"q": "fund"}).json()["suggestions"]
     categories = client.get("/api/v1/search/categories").json()
     assert categories["count"] >= 5
 
 
 def test_insight_falls_back_to_heuristic(client):
-    body = client.post("/api/v1/insights", json={"entry_id": "svc-001", "audience": "hungry student"}).json()
+    body = client.post("/api/v1/insights", json={"entry_id": "gl-001", "audience": "unemployed graduate"}).json()
     assert body["provider"] == "heuristic"
-    assert "Campus Coffee Run" in body["insight"]
+    assert "YES Programme Placement" in body["insight"]
     assert client.post("/api/v1/insights", json={"entry_id": "nope"}).status_code == 404
 
 
 def test_insight_is_cached(client):
-    payload = {"entry_id": "svc-002", "audience": "budget shopper"}
+    payload = {"entry_id": "gl-011", "audience": "first-time founder"}
     assert client.post("/api/v1/insights", json=payload).json()["cached"] is False
     assert client.post("/api/v1/insights", json=payload).json()["cached"] is True
 
@@ -131,3 +131,26 @@ def test_security_headers_and_request_id(client):
 def test_problem_details_shape(client):
     body = client.get("/api/v1/search/missing-id").json()
     assert set(body) >= {"type", "title", "status", "detail", "instance"}
+
+
+def test_funding_match_endpoint(client):
+    response = client.post(
+        "/api/v1/funding/match",
+        json={"age": 24, "stage": "startup", "registered": True, "training_completed": True},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["eligible_count"] >= 1
+    assert any(m["id"] == "nyda-threshold-2" and m["eligible"] for m in body["matches"])
+    assert body["next_actions"]
+
+
+def test_funding_match_validation(client):
+    assert client.post("/api/v1/funding/match", json={"age": 5}).status_code == 422
+    assert client.post("/api/v1/funding/match", json={"stage": "series-a"}).status_code == 422
+
+
+def test_funding_rules_endpoint(client):
+    body = client.get("/api/v1/funding/rules").json()
+    assert body["count"] >= 6
+    assert all(rule["source"] for rule in body["rules"])

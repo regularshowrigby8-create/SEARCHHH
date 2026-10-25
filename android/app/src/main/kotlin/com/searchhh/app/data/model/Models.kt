@@ -74,3 +74,39 @@ enum class SortOption(val apiValue: String, val label: String) {
     PRICE_DESC("price_desc", "Priciest"),
     RECENT("recent", "Newest"),
 }
+
+/** Funding eligibility, mirroring backend/app/services/funding.py. */
+enum class FundingStage(val apiValue: String, val label: String) {
+    IDEA("idea", "Idea"),
+    SURVIVALIST("survivalist", "Selling already"),
+    STARTUP("startup", "Registered"),
+    GROWTH("growth", "Growing"),
+    EXPANSION("expansion", "Expanding"),
+}
+
+data class FundingMatch(
+    val id: String,
+    val name: String,
+    val provider: String,
+    val minAmount: Double,
+    val maxAmount: Double,
+    val status: String,
+    val blockers: List<String> = emptyList(),
+    val steps: List<String> = emptyList(),
+    val url: String = "",
+    val source: String = "",
+    val notes: String = "",
+) {
+    val isEligible: Boolean get() = status == "eligible"
+    val needsSteps: Boolean get() = status == "steps_required"
+
+    val amountLabel: String
+        get() = if (minAmount == maxAmount) "R${maxAmount.toInt()}" else "R${minAmount.toInt()} – R${maxAmount.toInt()}"
+}
+
+data class FundingResult(
+    val eligibleCount: Int = 0,
+    val matches: List<FundingMatch> = emptyList(),
+    val nextActions: List<String> = emptyList(),
+    val rulesReviewed: String = "",
+)

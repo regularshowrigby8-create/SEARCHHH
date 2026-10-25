@@ -95,12 +95,12 @@ fun HomeScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Find it in seconds",
+                            text = "Graduate. Then what?",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
-                            text = "Search 30+ campus services, offline-ready",
+                            text = "No experience? Start here — jobs, grants and mentors",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -170,7 +170,7 @@ fun HomeScreen(
                     modifier = Modifier.size(18.dp),
                 )
                 Spacer(Modifier.size(6.dp))
-                Text("Trending now", style = MaterialTheme.typography.titleMedium)
+                Text("Start here", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.weight(1f))
                 Text(
                     text = if (state.tookMs > 0) "${state.tookMs.toInt()} ms" else "",

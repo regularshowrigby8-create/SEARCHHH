@@ -9,6 +9,7 @@ import android.net.Uri
 object Routes {
     const val HOME = "home"
     const val SAVED = "saved"
+    const val FUNDING = "funding"
     const val SETTINGS = "settings"
 
     const val RESULTS = "results?q={q}&category={category}"
@@ -23,5 +24,5 @@ object Routes {
 
     fun detail(id: String): String = "detail/${Uri.encode(id)}"
 
-    val topLevel: Set<String> = setOf(HOME, SAVED, SETTINGS)
+    val topLevel: Set<String> = setOf(HOME, FUNDING, SAVED, SETTINGS)
 }

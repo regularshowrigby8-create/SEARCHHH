@@ -7,6 +7,8 @@ import com.searchhh.app.data.local.SavedEntryEntity
 import com.searchhh.app.core.ApiResult
 import com.searchhh.app.data.model.CategoryCount
 import com.searchhh.app.data.model.Entry
+import com.searchhh.app.data.model.FundingMatch
+import com.searchhh.app.data.model.FundingResult
 import com.searchhh.app.data.model.HealthInfo
 import com.searchhh.app.data.model.Insight
 import com.searchhh.app.data.model.SearchPage
@@ -73,6 +75,31 @@ class FakeSearchRepository(
 
     override suspend fun feedback(message: String, rating: Int, entryId: String?): ApiResult<String> =
         ApiResult.Success("feedback-1")
+
+    override suspend fun fundingMatch(
+        age: Int,
+        stage: String,
+        registered: Boolean,
+        trainingCompleted: Boolean,
+        annualTurnover: Double,
+    ): ApiResult<FundingResult> = ApiResult.Success(
+        FundingResult(
+            eligibleCount = 1,
+            matches = listOf(
+                FundingMatch(
+                    id = "nyda-threshold-1",
+                    name = "NYDA Grant — Idea generation & survivalist",
+                    provider = "NYDA",
+                    minAmount = 1_000.0,
+                    maxAmount = 10_000.0,
+                    status = if (trainingCompleted) "eligible" else "steps_required",
+                    steps = if (trainingCompleted) emptyList() else listOf("Book the free NYDA Business Management Training"),
+                ),
+            ),
+            nextActions = listOf("Book the free NYDA Business Management Training"),
+            rulesReviewed = "2026-10-22",
+        ),
+    )
 
     override suspend fun health(): ApiResult<HealthInfo> =
         ApiResult.Success(HealthInfo(status = "ok", service = "SEARCHHH API", version = "0.1.0", environment = "ci"))

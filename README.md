@@ -1,8 +1,13 @@
-# SEARCHHH
+# GradLink
 
-**A search-first Android app + FastAPI backend, assembled almost entirely from
-battle-tested open-source libraries.** Built to be demoed live, on a phone,
-with bad Wi-Fi, with no cloud account.
+**A graduate's first yes, on one screen.** GradLink answers two questions that
+keep South African graduates at home with a qualification: *how do I get work
+when every job wants experience I don't have?* and *how do I fund and build my
+own thing?*
+
+Built for the FNB App Academy brief, assembled almost entirely from
+battle-tested open-source libraries, and demoable on a phone with bad Wi-Fi and
+no cloud account.
 
 <p>
 <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-2.0.21-7F52FF">
@@ -18,16 +23,20 @@ with bad Wi-Fi, with no cloud account.
 
 | Screen | Behaviour |
 | --- | --- |
-| **Home** | Instant search field with debounced suggestions, category facets, "trending" discovery feed, live backend health badge |
+| **Home** | One search box over both doors: *no-experience roles* and *funding*. Debounced suggestions, category facets, "start here" feed, live backend badge |
+| **Funding** | "What can I get today?" — age/stage/CIPC/training inputs drive a rule-based NYDA, SEFA and YES matcher with blockers, steps and next actions |
 | **Results** | BM25 + fuzzy ranked results, sort chips (relevance / rating / cheapest / priciest / newest), offset pagination, offline fallback to the last good response |
-| **Detail** | Full entry, AI-generated "why this suits you" card (Gemini → OpenAI → deterministic fallback), bookmark, share sheet, deep link out, feedback dialog |
+| **Detail** | Full listing with source and verification, AI "why this suits you" card (Gemini → OpenAI → heuristic), bookmark, share, deep link, feedback |
 | **Saved** | Room-backed library that opens **with no network**, instant remove/clear |
 | **Settings** | Dark mode, telemetry opt-out, notification toggle, editable API base URL, live health check, push token, test-error button, build metadata |
 
-The domain catalogue (`backend/app/data/seed.json`) is a Bloemfontein student
-services marketplace: 30 entries across 14 categories. Swap that file for your
-own data - nothing else needs to change, because the ranking engine is
-schema-driven and the client renders whatever the API returns.
+The catalogue (`backend/app/data/seed.json`) holds 30 real GradLink opportunities
+across employment, funding, mentorship, community, guidance and upskilling —
+each with a source URL and a verified figure (YES stipend, NYDA tiers, SEFA
+limits). Swap that file for live data; nothing else changes, because the ranking
+engine is schema-driven.
+
+Product thesis, evidence and pitch: [`docs/GRADLINK.md`](docs/GRADLINK.md).
 
 ---
 
@@ -163,6 +172,7 @@ Makefile            install · dev · test · cov · lint · stack · apk
 
 ## Docs
 
+* [GradLink brief](docs/GRADLINK.md) - the problem, the evidence, the pitch
 * [Setup](docs/SETUP.md) - prerequisites, emulator vs device, LAN debugging
 * [Architecture](docs/ARCHITECTURE.md) - layers, data flow, ranking maths, decisions
 * [Hackathon checklist](docs/HACKATHON.md) - rule-by-rule mapping + demo script
