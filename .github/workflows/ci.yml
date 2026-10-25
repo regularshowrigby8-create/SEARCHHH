@@ -110,10 +110,30 @@ jobs:
         run: python scripts/check_kotlin.py
 
       - name: Unit tests
+        id: unit_tests
+        continue-on-error: true
         working-directory: android
         run: |
           set -o pipefail
           gradle :app:testDebugUnitTest --stacktrace --console=plain 2>&1 | tee gradle.log
+
+      # Test XML is the only reliable way to read failures without the log API.
+      - name: Report failing tests as annotations
+        if: steps.unit_tests.outcome == 'failure'
+        working-directory: android
+        run: |
+          python3 - <<'PY'
+          import glob, xml.etree.ElementTree as ET
+          files = glob.glob("app/build/test-results/testDebugUnitTest/*.xml")
+          if not files:
+              print("::error title=Tests::No test XML produced - the task failed before running tests")
+          for path in files:
+              for case in ET.parse(path).getroot().iter("testcase"):
+                  for failure in list(case.findall("failure")) + list(case.findall("error")):
+                      text = (failure.get("message") or "").replace("\n", " ")[:400]
+                      print(f"::error title={case.get('classname')}.{case.get('name')}::{text}")
+          PY
+          exit 1
 
       - name: Lint
         working-directory: android
