@@ -1,0 +1,127 @@
+# ---------------------------------------------------------------------------
+# CI - runs on every push to every branch (including arena/*) and on PRs.
+#
+#   backend   : ruff + pytest + coverage gate + stack audit
+#   android   : unit tests, lint, debug APK (uploaded as an artifact)
+#
+# No secrets are required: the app and the API both run in offline/demo mode.
+# ---------------------------------------------------------------------------
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+    tags-ignore: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.11"
+  GRADLE_VERSION: "8.10.2"
+
+jobs:
+  # ------------------------------------------------------------------------
+  backend:
+    name: Backend (lint, tests, coverage, stack audit)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements-dev.txt
+
+      - name: Ruff lint
+        run: python -m ruff check backend
+
+      - name: Ruff format check
+        run: python -m ruff format --check backend
+
+      - name: Pytest + coverage
+        run: |
+          python -m pytest backend/tests -q \
+            --cov=backend/app \
+            --cov-report=term-missing \
+            --cov-report=xml \
+            --cov-fail-under=80
+
+      - name: Stack audit (118 tools must all resolve)
+        run: python scripts/scan_stack.py --check
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: coverage.xml
+          if-no-files-found: warn
+
+  # ------------------------------------------------------------------------
+  android:
+    name: Android (unit tests, lint, APK)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: false
+
+      - name: Unit tests
+        working-directory: android
+        run: gradle :app:testDebugUnitTest --stacktrace
+
+      - name: Lint
+        working-directory: android
+        run: gradle :app:lintDebug --stacktrace
+
+      - name: Assemble debug APK
+        working-directory: android
+        run: gradle :app:assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: searchhh-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-reports
+          path: |
+            android/app/build/reports/tests/**
+            android/app/build/reports/lint-results-debug.html
+          if-no-files-found: warn
+          retention-days: 14

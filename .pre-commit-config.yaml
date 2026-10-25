@@ -1,0 +1,35 @@
+# Fast, local-only hooks. Install with: make precommit
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ["--maxkb=2048"]
+      - id: detect-private-key
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.2
+    hooks:
+      - id: ruff
+        args: ["--fix", "backend"]
+      - id: ruff-format
+        args: ["backend"]
+
+  - repo: local
+    hooks:
+      - id: pytest-fast
+        name: pytest (backend)
+        entry: .venv/bin/python -m pytest backend/tests -q
+        language: system
+        pass_filenames: false
+        files: ^backend/
+      - id: stack-audit
+        name: stack audit
+        entry: .venv/bin/python scripts/scan_stack.py --check
+        language: system
+        pass_filenames: false
+        files: ^(stack/|scripts/|android/gradle/|backend/requirements)

@@ -1,0 +1,1021 @@
+version: 1
+policy:
+  min_total: 100
+  rule: Every entry must be verifiable against the repo or the installed environment.
+counts:
+  android-ui: 6
+  compose: 12
+  architecture: 6
+  persistence: 5
+  network: 11
+  firebase: 5
+  observability: 2
+  testing: 4
+  build: 9
+  backend: 26
+  tooling: 12
+  transitive: 15
+  ci: 8
+items:
+- name: androidx.core:core-ktx
+  kind: gradle
+  category: android-ui
+  purpose: Backwards-compatible core APIs, KTX extensions
+  version: 1.13.1
+  coordinate: androidx.core:core-ktx
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.appcompat:appcompat
+  kind: gradle
+  category: android-ui
+  purpose: AppCompat resources + theme base for the splash theme
+  version: 1.7.0
+  coordinate: androidx.appcompat:appcompat
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.activity:activity-compose
+  kind: gradle
+  category: android-ui
+  purpose: setContent {}, edge-to-edge, activity result APIs
+  version: 1.9.3
+  coordinate: androidx.activity:activity-compose
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.core:core-splashscreen
+  kind: gradle
+  category: android-ui
+  purpose: Android 12+ splash screen API with backwards compatibility
+  version: 1.0.1
+  coordinate: androidx.core:core-splashscreen
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.profileinstaller:profileinstaller
+  kind: gradle
+  category: android-ui
+  purpose: Baseline profile installation for faster cold start
+  version: 1.4.0
+  coordinate: androidx.profileinstaller:profileinstaller
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.security:security-crypto
+  kind: gradle
+  category: android-ui
+  purpose: EncryptedSharedPreferences for tokens at rest
+  version: 1.1.0-alpha06
+  coordinate: androidx.security:security-crypto
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose:compose-bom
+  kind: gradle
+  category: compose
+  purpose: Aligns every Compose artifact to one tested version set
+  version: 2024.10.01
+  coordinate: androidx.compose:compose-bom
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.ui:ui
+  kind: gradle
+  category: compose
+  purpose: Declarative UI runtime and layout primitives
+  version: 2024.10.01
+  coordinate: androidx.compose.ui:ui
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.ui:ui-graphics
+  kind: gradle
+  category: compose
+  purpose: Canvas, brush and vector drawing
+  version: 2024.10.01
+  coordinate: androidx.compose.ui:ui-graphics
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.ui:ui-tooling
+  kind: gradle
+  category: compose
+  purpose: Layout inspector + @Preview rendering (debug)
+  version: 2024.10.01
+  coordinate: androidx.compose.ui:ui-tooling
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.ui:ui-tooling-preview
+  kind: gradle
+  category: compose
+  purpose: '@Preview annotations'
+  version: 2024.10.01
+  coordinate: androidx.compose.ui:ui-tooling-preview
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.ui:ui-test-junit4
+  kind: gradle
+  category: compose
+  purpose: Compose UI testing (instrumented)
+  version: 2024.10.01
+  coordinate: androidx.compose.ui:ui-test-junit4
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.ui:ui-test-manifest
+  kind: gradle
+  category: compose
+  purpose: Test activity for Compose UI tests (debug)
+  version: 2024.10.01
+  coordinate: androidx.compose.ui:ui-test-manifest
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.material3:material3
+  kind: gradle
+  category: compose
+  purpose: Material 3 components (cards, chips, nav bar, dialogs)
+  version: 2024.10.01
+  coordinate: androidx.compose.material3:material3
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.material3:material3-window-size-class
+  kind: gradle
+  category: compose
+  purpose: Responsive breakpoints for tablets/foldables
+  version: 2024.10.01
+  coordinate: androidx.compose.material3:material3-window-size-class
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.material:material-icons-extended
+  kind: gradle
+  category: compose
+  purpose: Extended icon set (bolt, cloud-off, bookmark)
+  version: 2024.10.01
+  coordinate: androidx.compose.material:material-icons-extended
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.foundation:foundation
+  kind: gradle
+  category: compose
+  purpose: LazyColumn, LazyRow, clickable, FlowRow
+  version: 2024.10.01
+  coordinate: androidx.compose.foundation:foundation
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.compose.runtime:runtime
+  kind: gradle
+  category: compose
+  purpose: State, composition and snapshot system
+  version: 2024.10.01
+  coordinate: androidx.compose.runtime:runtime
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.lifecycle:lifecycle-runtime-ktx
+  kind: gradle
+  category: architecture
+  purpose: Lifecycle-aware coroutine scopes
+  version: 2.8.7
+  coordinate: androidx.lifecycle:lifecycle-runtime-ktx
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.lifecycle:lifecycle-runtime-compose
+  kind: gradle
+  category: architecture
+  purpose: collectAsStateWithLifecycle()
+  version: 2.8.7
+  coordinate: androidx.lifecycle:lifecycle-runtime-compose
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.lifecycle:lifecycle-viewmodel-compose
+  kind: gradle
+  category: architecture
+  purpose: viewModel() and viewModelFactory {} in Compose
+  version: 2.8.7
+  coordinate: androidx.lifecycle:lifecycle-viewmodel-compose
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.lifecycle:lifecycle-viewmodel-ktx
+  kind: gradle
+  category: architecture
+  purpose: viewModelScope
+  version: 2.8.7
+  coordinate: androidx.lifecycle:lifecycle-viewmodel-ktx
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.lifecycle:lifecycle-process
+  kind: gradle
+  category: architecture
+  purpose: ProcessLifecycleOwner for app-level reactions
+  version: 2.8.7
+  coordinate: androidx.lifecycle:lifecycle-process
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.navigation:navigation-compose
+  kind: gradle
+  category: architecture
+  purpose: NavHost, typed route arguments, deep links
+  version: 2.8.4
+  coordinate: androidx.navigation:navigation-compose
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.room:room-runtime
+  kind: gradle
+  category: persistence
+  purpose: 'SQLite ORM: saved entries + recent queries'
+  version: 2.6.1
+  coordinate: androidx.room:room-runtime
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.room:room-ktx
+  kind: gradle
+  category: persistence
+  purpose: Flow/suspend support for Room DAOs
+  version: 2.6.1
+  coordinate: androidx.room:room-ktx
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.room:room-compiler
+  kind: gradle
+  category: persistence
+  purpose: KSP annotation processor that generates DAO code
+  version: 2.6.1
+  coordinate: androidx.room:room-compiler
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.datastore:datastore-preferences
+  kind: gradle
+  category: persistence
+  purpose: Typed key-value settings without SharedPreferences
+  version: 1.1.1
+  coordinate: androidx.datastore:datastore-preferences
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.work:work-runtime-ktx
+  kind: gradle
+  category: persistence
+  purpose: Periodic background sync with constraints
+  version: 2.9.1
+  coordinate: androidx.work:work-runtime-ktx
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: com.squareup.retrofit2:retrofit
+  kind: gradle
+  category: network
+  purpose: HTTP client with suspend functions
+  version: 2.11.0
+  coordinate: com.squareup.retrofit2:retrofit
+  license: Apache-2.0
+  repo: https://github.com/square/retrofit
+  declared_in: android/gradle/libs.versions.toml
+- name: com.squareup.retrofit2:converter-kotlinx-serialization
+  kind: gradle
+  category: network
+  purpose: JSON converter (no reflection)
+  version: 2.11.0
+  coordinate: com.squareup.retrofit2:converter-kotlinx-serialization
+  license: Apache-2.0
+  repo: https://github.com/square/retrofit
+  declared_in: android/gradle/libs.versions.toml
+- name: com.squareup.okhttp3:okhttp
+  kind: gradle
+  category: network
+  purpose: Connection pooling, timeouts, interceptors
+  version: 4.12.0
+  coordinate: com.squareup.okhttp3:okhttp
+  license: Apache-2.0
+  repo: https://github.com/square/okhttp
+  declared_in: android/gradle/libs.versions.toml
+- name: com.squareup.okhttp3:logging-interceptor
+  kind: gradle
+  category: network
+  purpose: Request/response logging in debug only
+  version: 4.12.0
+  coordinate: com.squareup.okhttp3:logging-interceptor
+  license: Apache-2.0
+  repo: https://github.com/square/okhttp
+  declared_in: android/gradle/libs.versions.toml
+- name: com.squareup.okhttp3:mockwebserver
+  kind: gradle
+  category: network
+  purpose: Real HTTP server for unit tests
+  version: 4.12.0
+  coordinate: com.squareup.okhttp3:mockwebserver
+  license: Apache-2.0
+  repo: https://github.com/square/okhttp
+  declared_in: android/gradle/libs.versions.toml
+- name: org.jetbrains.kotlinx:kotlinx-serialization-json
+  kind: gradle
+  category: network
+  purpose: Compile-time JSON codec
+  version: 1.7.3
+  coordinate: org.jetbrains.kotlinx:kotlinx-serialization-json
+  license: Apache-2.0
+  repo: https://github.com/Kotlin/kotlinx.serialization
+  declared_in: android/gradle/libs.versions.toml
+- name: org.jetbrains.kotlinx:kotlinx-coroutines-android
+  kind: gradle
+  category: network
+  purpose: Structured concurrency + Main dispatcher
+  version: 1.9.0
+  coordinate: org.jetbrains.kotlinx:kotlinx-coroutines-android
+  license: Apache-2.0
+  repo: https://github.com/Kotlin/kotlinx.coroutines
+  declared_in: android/gradle/libs.versions.toml
+- name: org.jetbrains.kotlinx:kotlinx-coroutines-test
+  kind: gradle
+  category: network
+  purpose: runTest, TestDispatcher, setMain
+  version: 1.9.0
+  coordinate: org.jetbrains.kotlinx:kotlinx-coroutines-test
+  license: Apache-2.0
+  repo: https://github.com/Kotlin/kotlinx.coroutines
+  declared_in: android/gradle/libs.versions.toml
+- name: org.jetbrains.kotlinx:kotlinx-datetime
+  kind: gradle
+  category: network
+  purpose: Cross-platform date/time types
+  version: 0.6.1
+  coordinate: org.jetbrains.kotlinx:kotlinx-datetime
+  license: Apache-2.0
+  repo: https://github.com/Kotlin/kotlinx-datetime
+  declared_in: android/gradle/libs.versions.toml
+- name: io.coil-kt:coil-compose
+  kind: gradle
+  category: network
+  purpose: Async image loading in Compose
+  version: 2.7.0
+  coordinate: io.coil-kt:coil-compose
+  license: Apache-2.0
+  repo: https://github.com/coil-kt/coil
+  declared_in: android/gradle/libs.versions.toml
+- name: com.jakewharton.timber:timber
+  kind: gradle
+  category: network
+  purpose: Structured logging facade
+  version: 5.0.1
+  coordinate: com.jakewharton.timber:timber
+  license: Apache-2.0
+  repo: https://github.com/JakeWharton/timber
+  declared_in: android/gradle/libs.versions.toml
+- name: com.google.firebase:firebase-bom
+  kind: gradle
+  category: firebase
+  purpose: Aligns Firebase SDK versions
+  version: 33.5.1
+  coordinate: com.google.firebase:firebase-bom
+  license: Apache-2.0
+  repo: https://github.com/firebase/firebase-android-sdk
+  declared_in: android/gradle/libs.versions.toml
+- name: com.google.firebase:firebase-messaging
+  kind: gradle
+  category: firebase
+  purpose: Push notifications + token lifecycle
+  version: 33.5.1
+  coordinate: com.google.firebase:firebase-messaging
+  license: Apache-2.0
+  repo: https://github.com/firebase/firebase-android-sdk
+  declared_in: android/gradle/libs.versions.toml
+- name: com.google.firebase:firebase-crashlytics
+  kind: gradle
+  category: firebase
+  purpose: Crash reports with deobfuscated stack traces
+  version: 33.5.1
+  coordinate: com.google.firebase:firebase-crashlytics
+  license: Apache-2.0
+  repo: https://github.com/firebase/firebase-android-sdk
+  declared_in: android/gradle/libs.versions.toml
+- name: com.google.firebase:firebase-analytics
+  kind: gradle
+  category: firebase
+  purpose: Product analytics events
+  version: 33.5.1
+  coordinate: com.google.firebase:firebase-analytics
+  license: Apache-2.0
+  repo: https://github.com/firebase/firebase-android-sdk
+  declared_in: android/gradle/libs.versions.toml
+- name: com.google.firebase:firebase-perf
+  kind: gradle
+  category: firebase
+  purpose: Startup/network performance traces
+  version: 33.5.1
+  coordinate: com.google.firebase:firebase-perf
+  license: Apache-2.0
+  repo: https://github.com/firebase/firebase-android-sdk
+  declared_in: android/gradle/libs.versions.toml
+- name: io.sentry:sentry-android
+  kind: gradle
+  category: observability
+  purpose: Crash + ANR + performance monitoring, no PII
+  version: 7.14.0
+  coordinate: io.sentry:sentry-android
+  license: see repo
+  repo: https://github.com/getsentry/sentry-java
+  declared_in: android/gradle/libs.versions.toml
+- name: io.sentry:sentry-okhttp
+  kind: gradle
+  category: observability
+  purpose: HTTP spans with request breadcrumbs
+  version: 7.14.0
+  coordinate: io.sentry:sentry-okhttp
+  license: see repo
+  repo: https://github.com/getsentry/sentry-java
+  declared_in: android/gradle/libs.versions.toml
+- name: junit:junit
+  kind: gradle
+  category: testing
+  purpose: JVM unit test runner
+  version: 4.13.2
+  coordinate: junit:junit
+  license: EPL-1.0
+  repo: https://github.com/junit-team/junit4
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.test.ext:junit
+  kind: gradle
+  category: testing
+  purpose: AndroidJUnit4 runner
+  version: 1.2.1
+  coordinate: androidx.test.ext:junit
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.test:core
+  kind: gradle
+  category: testing
+  purpose: Test application + instrumentation plumbing
+  version: 1.6.1
+  coordinate: androidx.test:core
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: androidx.test.espresso:espresso-core
+  kind: gradle
+  category: testing
+  purpose: View assertions alongside Compose tests
+  version: 3.6.1
+  coordinate: androidx.test.espresso:espresso-core
+  license: Apache-2.0
+  repo: https://github.com/androidx/androidx
+  declared_in: android/gradle/libs.versions.toml
+- name: com.android.application
+  kind: gradle-plugin
+  category: build
+  purpose: Android application packaging, R8, signing
+  version: 8.7.2
+  coordinate: com.android.tools.build:gradle
+  license: Apache-2.0
+  repo: https://github.com/google/android-gradle-plugin
+  declared_in: android/build.gradle.kts
+- name: org.jetbrains.kotlin.android
+  kind: gradle-plugin
+  category: build
+  purpose: Kotlin compiler for Android
+  version: 2.0.21
+  coordinate: org.jetbrains.kotlin:kotlin-gradle-plugin
+  license: Apache-2.0
+  repo: https://github.com/JetBrains/kotlin
+  declared_in: android/build.gradle.kts
+- name: org.jetbrains.kotlin.plugin.compose
+  kind: gradle-plugin
+  category: build
+  purpose: Compose compiler (Kotlin 2.0 plugin)
+  version: 2.0.21
+  coordinate: org.jetbrains.kotlin:compose-compiler-gradle-plugin
+  license: Apache-2.0
+  repo: https://github.com/JetBrains/kotlin
+  declared_in: android/build.gradle.kts
+- name: org.jetbrains.kotlin.plugin.serialization
+  kind: gradle-plugin
+  category: build
+  purpose: Generates @Serializable codecs
+  version: 2.0.21
+  coordinate: org.jetbrains.kotlin:kotlin-serialization
+  license: Apache-2.0
+  repo: https://github.com/JetBrains/kotlin
+  declared_in: android/build.gradle.kts
+- name: com.google.devtools.ksp
+  kind: gradle-plugin
+  category: build
+  purpose: Symbol processing for Room
+  version: 2.0.21-1.0.28
+  coordinate: com.google.devtools.ksp:symbol-processing-gradle-plugin
+  license: Apache-2.0
+  repo: https://github.com/google/ksp
+  declared_in: android/build.gradle.kts
+- name: com.google.gms.google-services
+  kind: gradle-plugin
+  category: build
+  purpose: Injects google-services.json (conditional)
+  version: 4.4.2
+  coordinate: com.google.gms:google-services
+  license: Apache-2.0
+  repo: https://github.com/google/gradle
+  declared_in: android/build.gradle.kts
+- name: com.google.firebase.crashlytics
+  kind: gradle-plugin
+  category: build
+  purpose: Uploads mapping file for readable crashes (conditional)
+  version: 3.0.2
+  coordinate: com.google.firebase:firebase-crashlytics-gradle
+  license: Apache-2.0
+  repo: https://github.com/firebase/firebase-android-sdk
+  declared_in: android/build.gradle.kts
+- name: gradle
+  kind: tool
+  category: build
+  purpose: Build system + wrapper
+  version: 8.10.2
+  license: Apache-2.0
+  repo: https://github.com/gradle/gradle
+  declared_in: android/gradle/wrapper/gradle-wrapper.properties
+  verify:
+    file: android/gradle/wrapper/gradle-wrapper.properties
+    contains: gradle-8.10.2
+- name: openjdk
+  kind: tool
+  category: build
+  purpose: JDK 17 toolchain for AGP/Kotlin
+  version: '17'
+  license: GPL-2.0 with Classpath Exception
+  repo: https://github.com/openjdk/jdk
+  declared_in: .github/workflows/ci.yml
+  verify:
+    file: .github/workflows/ci.yml
+    contains: 'java-version: ''17'''
+- name: fastapi
+  kind: pip
+  category: backend
+  purpose: 'ASGI framework: routing, validation, OpenAPI'
+  version: 0.162.0
+  license: MIT
+  repo: https://github.com/fastapi/fastapi
+  declared_in: backend/requirements.txt
+- name: uvicorn
+  kind: pip
+  category: backend
+  purpose: ASGI server with uvloop/httptools extras
+  version: 0.54.0
+  license: BSD-3-Clause
+  repo: https://github.com/encode/uvicorn
+  declared_in: backend/requirements.txt
+- name: pydantic
+  kind: pip
+  category: backend
+  purpose: Runtime validation and the API schema
+  version: 2.14.1
+  license: MIT
+  repo: https://github.com/pydantic/pydantic
+  declared_in: backend/requirements.txt
+- name: pydantic-settings
+  kind: pip
+  category: backend
+  purpose: 12-factor config from env/.env
+  version: 2.16.1
+  license: MIT
+  repo: https://github.com/pydantic/pydantic-settings
+  declared_in: backend/requirements.txt
+- name: python-dotenv
+  kind: pip
+  category: backend
+  purpose: Dotenv loading for local dev
+  version: 1.2.4
+  license: BSD-3-Clause
+  repo: https://github.com/theskumar/python-dotenv
+  declared_in: backend/requirements.txt
+- name: python-multipart
+  kind: pip
+  category: backend
+  purpose: Multipart form parsing
+  version: 0.0.32
+  license: Apache-2.0
+  repo: https://github.com/Kludex/python-multipart
+  declared_in: backend/requirements.txt
+- name: rapidfuzz
+  kind: pip
+  category: backend
+  purpose: Fuzzy + partial ratio scoring
+  version: 3.14.6
+  license: MIT
+  repo: https://github.com/rapidfuzz/RapidFuzz
+  declared_in: backend/requirements.txt
+- name: supabase
+  kind: pip
+  category: backend
+  purpose: PostgREST client, optional data plane
+  version: 2.33.0
+  license: MIT
+  repo: https://github.com/supabase/supabase-py
+  declared_in: backend/requirements.txt
+- name: httpx
+  kind: pip
+  category: backend
+  purpose: Async HTTP client for AI providers
+  version: 0.28.1
+  license: BSD-3-Clause
+  repo: https://github.com/encode/httpx
+  declared_in: backend/requirements.txt
+- name: cachetools
+  kind: pip
+  category: backend
+  purpose: TTL cache for AI insights
+  version: 7.2.5
+  license: MIT
+  repo: https://github.com/tkem/cachetools
+  declared_in: backend/requirements.txt
+- name: tenacity
+  kind: pip
+  category: backend
+  purpose: Retry policy helpers
+  version: 9.2.1
+  license: Apache-2.0
+  repo: https://github.com/jd/tenacity
+  declared_in: backend/requirements.txt
+- name: pyjwt
+  kind: pip
+  category: backend
+  purpose: JWT encode/decode (HS256)
+  version: 2.15.1
+  license: MIT
+  repo: https://github.com/jpadilla/pyjwt
+  declared_in: backend/requirements.txt
+- name: argon2-cffi
+  kind: pip
+  category: backend
+  purpose: Password hashing
+  version: 25.1.0
+  license: MIT
+  repo: https://github.com/hynek/argon2-cffi
+  declared_in: backend/requirements.txt
+- name: slowapi
+  kind: pip
+  category: backend
+  purpose: Per-route rate limiting
+  version: 0.1.10
+  license: MIT
+  repo: https://github.com/laurents/slowapi
+  declared_in: backend/requirements.txt
+- name: structlog
+  kind: pip
+  category: backend
+  purpose: Structured JSON logging
+  version: 26.1.0
+  license: Apache-2.0 / MIT
+  repo: https://github.com/hynek/structlog
+  declared_in: backend/requirements.txt
+- name: sentry-sdk
+  kind: pip
+  category: backend
+  purpose: Backend error + performance reporting
+  version: 2.73.0
+  license: see repo
+  repo: https://github.com/getsentry/sentry-python
+  declared_in: backend/requirements.txt
+- name: prometheus-fastapi-instrumentator
+  kind: pip
+  category: backend
+  purpose: /metrics endpoint
+  version: 8.1.0
+  license: ISC
+  repo: https://github.com/trallnag/prometheus-fastapi-instrumentator
+  declared_in: backend/requirements.txt
+- name: sqlalchemy
+  kind: pip
+  category: backend
+  purpose: Async ORM (optional Postgres)
+  version: 2.1.6
+  license: MIT
+  repo: https://github.com/sqlalchemy/sqlalchemy
+  declared_in: backend/requirements.txt
+- name: alembic
+  kind: pip
+  category: backend
+  purpose: Schema migrations
+  version: 1.20.1
+  license: MIT
+  repo: https://github.com/sqlalchemy/alembic
+  declared_in: backend/requirements.txt
+- name: asyncpg
+  kind: pip
+  category: backend
+  purpose: Postgres driver
+  version: 0.32.0
+  license: Apache-2.0
+  repo: https://github.com/MagicStack/asyncpg
+  declared_in: backend/requirements.txt
+- name: redis
+  kind: pip
+  category: backend
+  purpose: Shared rate-limit storage
+  version: 8.1.0
+  license: MIT
+  repo: https://github.com/redis/redis-py
+  declared_in: backend/requirements.txt
+- name: qrcode
+  kind: pip
+  category: backend
+  purpose: QR generation for share links
+  version: '8.2'
+  license: BSD-3-Clause
+  repo: https://github.com/lincolnloop/python-qrcode
+  declared_in: backend/requirements.txt
+- name: pillow
+  kind: pip
+  category: backend
+  purpose: Image processing for QR output
+  version: 13.0.0
+  license: HPND
+  repo: https://github.com/python-pillow/Pillow
+  declared_in: backend/requirements.txt
+- name: geopy
+  kind: pip
+  category: backend
+  purpose: Geocoding helpers for nearby search
+  version: 2.5.0
+  license: MIT
+  repo: https://github.com/geopy/geopy
+  declared_in: backend/requirements.txt
+- name: jinja2
+  kind: pip
+  category: backend
+  purpose: HTML template for the landing page
+  version: 3.1.6
+  license: BSD-3-Clause
+  repo: https://github.com/pallets/jinja
+  declared_in: backend/requirements.txt
+- name: pyyaml
+  kind: pip
+  category: backend
+  purpose: YAML parsing (stack manifest, configs)
+  version: 6.0.3
+  license: MIT
+  repo: https://github.com/yaml/pyyaml
+  declared_in: backend/requirements.txt
+- name: pytest
+  kind: pip
+  category: tooling
+  purpose: Test runner
+  version: 9.1.1
+  license: MIT
+  repo: https://github.com/pytest-dev/pytest
+  declared_in: backend/requirements-dev.txt
+- name: pytest-asyncio
+  kind: pip
+  category: tooling
+  purpose: async test support
+  version: 1.4.0
+  license: Apache-2.0
+  repo: https://github.com/pytest-dev/pytest-asyncio
+  declared_in: backend/requirements-dev.txt
+- name: pytest-cov
+  kind: pip
+  category: tooling
+  purpose: Coverage plugin
+  version: 7.1.0
+  license: MIT
+  repo: https://github.com/pytest-dev/pytest-cov
+  declared_in: backend/requirements-dev.txt
+- name: respx
+  kind: pip
+  category: tooling
+  purpose: Mock httpx transports
+  version: 0.23.1
+  license: BSD-3-Clause
+  repo: https://github.com/lundberg/respx
+  declared_in: backend/requirements-dev.txt
+- name: ruff
+  kind: pip
+  category: tooling
+  purpose: Lint + format (Rust)
+  version: 0.17.2
+  license: MIT
+  repo: https://github.com/astral-sh/ruff
+  declared_in: backend/requirements-dev.txt
+- name: mypy
+  kind: pip
+  category: tooling
+  purpose: Static type checking
+  version: 2.4.0
+  license: MIT
+  repo: https://github.com/python/mypy
+  declared_in: backend/requirements-dev.txt
+- name: pre-commit
+  kind: pip
+  category: tooling
+  purpose: Git hooks for lint/format/secret scanning
+  version: 4.7.0
+  license: MIT
+  repo: https://github.com/pre-commit/pre-commit
+  declared_in: backend/requirements-dev.txt
+- name: faker
+  kind: pip
+  category: tooling
+  purpose: Synthetic demo data
+  version: 40.43.0
+  license: MIT
+  repo: https://github.com/joke2k/faker
+  declared_in: backend/requirements-dev.txt
+- name: freezegun
+  kind: pip
+  category: tooling
+  purpose: Deterministic timestamps in tests
+  version: 1.5.5
+  license: Apache-2.0
+  repo: https://github.com/spulec/freezegun
+  declared_in: backend/requirements-dev.txt
+- name: pip-audit
+  kind: pip
+  category: tooling
+  purpose: Known-vulnerability scan
+  version: 2.10.1
+  license: Apache-2.0
+  repo: https://github.com/pypa/pip-audit
+  declared_in: backend/requirements-dev.txt
+- name: pip-licenses
+  kind: pip
+  category: tooling
+  purpose: Authoritative license report
+  version: 5.5.5
+  license: MIT
+  repo: https://github.com/raimon49/pip-licenses
+  declared_in: backend/requirements-dev.txt
+- name: bandit
+  kind: pip
+  category: tooling
+  purpose: Security linting
+  version: 1.9.4
+  license: Apache-2.0
+  repo: https://github.com/PyCQA/bandit
+  declared_in: backend/requirements-dev.txt
+- name: starlette
+  kind: pip
+  category: transitive
+  purpose: ASGI toolkit underneath FastAPI
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: anyio
+  kind: pip
+  category: transitive
+  purpose: Async I/O abstraction
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: h11
+  kind: pip
+  category: transitive
+  purpose: HTTP/1.1 state machine
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: httpcore
+  kind: pip
+  category: transitive
+  purpose: Sync/async HTTP transports for httpx
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: certifi
+  kind: pip
+  category: transitive
+  purpose: CA bundle for TLS verification
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: idna
+  kind: pip
+  category: transitive
+  purpose: Internationalised domain names
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: click
+  kind: pip
+  category: transitive
+  purpose: CLI parsing (uvicorn)
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: uvloop
+  kind: pip
+  category: transitive
+  purpose: Fast event loop (uvicorn[standard])
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: httptools
+  kind: pip
+  category: transitive
+  purpose: HTTP parser (uvicorn[standard])
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: watchfiles
+  kind: pip
+  category: transitive
+  purpose: Reloader for --reload
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: websockets
+  kind: pip
+  category: transitive
+  purpose: WS support in the ASGI server
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: typing-extensions
+  kind: pip
+  category: transitive
+  purpose: Backported typing features used by pydantic/FastAPI
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: annotated-types
+  kind: pip
+  category: transitive
+  purpose: Typed metadata for pydantic field constraints
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: packaging
+  kind: pip
+  category: transitive
+  purpose: Version parsing shared by tooling
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: urllib3
+  kind: pip
+  category: transitive
+  purpose: HTTP transport used by tooling and SDKs
+  license: see repo
+  declared_in: backend/requirements.txt
+- name: actions/checkout
+  kind: action
+  category: ci
+  purpose: Clone the repo in CI
+  version: v4
+  license: MIT
+  repo: https://github.com/actions/checkout
+  declared_in: .github/workflows/
+- name: actions/setup-python
+  kind: action
+  category: ci
+  purpose: Provision Python 3.11 + pip cache
+  version: v5
+  license: MIT
+  repo: https://github.com/actions/setup-python
+  declared_in: .github/workflows/
+- name: actions/setup-java
+  kind: action
+  category: ci
+  purpose: Provision Temurin JDK 17
+  version: v4
+  license: MIT
+  repo: https://github.com/actions/setup-java
+  declared_in: .github/workflows/
+- name: gradle/actions/setup-gradle
+  kind: action
+  category: ci
+  purpose: Gradle provisioning + build cache
+  version: v4
+  license: MIT
+  repo: https://github.com/gradle/actions/setup-gradle
+  declared_in: .github/workflows/
+- name: actions/upload-artifact
+  kind: action
+  category: ci
+  purpose: Publish APK + coverage artifacts
+  version: v4
+  license: MIT
+  repo: https://github.com/actions/upload-artifact
+  declared_in: .github/workflows/
+- name: android-actions/setup-android
+  kind: action
+  category: ci
+  purpose: Android SDK + licenses on the runner
+  version: v3
+  license: MIT
+  repo: https://github.com/android-actions/setup-android
+  declared_in: .github/workflows/
+- name: softprops/action-gh-release
+  kind: action
+  category: ci
+  purpose: Attach the APK to a GitHub Release
+  version: v2
+  license: MIT
+  repo: https://github.com/softprops/action-gh-release
+  declared_in: .github/workflows/
+- name: github/codeql-action
+  kind: action
+  category: ci
+  purpose: Static analysis (security-extended)
+  version: v3
+  license: MIT
+  repo: https://github.com/github/codeql-action
+  declared_in: .github/workflows/

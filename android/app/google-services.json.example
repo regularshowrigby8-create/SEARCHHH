@@ -1,0 +1,30 @@
+{
+  "_comment": "Rename to app/google-services.json. Until this file exists the Firebase Gradle plugins are NOT applied and all Firebase calls are skipped at runtime, so the app builds and runs fine without it.",
+  "project_info": {
+    "project_number": "000000000000",
+    "project_id": "searchhh-demo",
+    "storage_bucket": "searchhh-demo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+        "android_client_info": {
+          "package_name": "com.searchhh.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "REPLACE_WITH_FIREBASE_API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
