@@ -102,15 +102,38 @@ jobs:
 
       - name: Unit tests
         working-directory: android
-        run: gradle :app:testDebugUnitTest --stacktrace
+        run: |
+          set -o pipefail
+          gradle :app:testDebugUnitTest --stacktrace --console=plain 2>&1 | tee gradle.log
 
       - name: Lint
         working-directory: android
-        run: gradle :app:lintDebug --stacktrace
+        run: |
+          set -o pipefail
+          gradle :app:lintDebug --stacktrace --console=plain 2>&1 | tee -a gradle.log
 
       - name: Assemble debug APK
         working-directory: android
-        run: gradle :app:assembleDebug --stacktrace
+        run: |
+          set -o pipefail
+          gradle :app:assembleDebug --stacktrace --console=plain 2>&1 | tee -a gradle.log
+
+      # The Actions log endpoint is not reachable from every network; emitting
+      # compiler errors as annotations makes them readable through the Checks API.
+      - name: Surface build errors as annotations
+        if: failure()
+        working-directory: android
+        run: |
+          if [ ! -f gradle.log ]; then
+            echo "::error title=CI::gradle.log was not produced - the failure happened before Gradle ran"
+            exit 0
+          fi
+          grep -E "^(e: |w: .*error|FAILURE:|\* What went wrong:|Execution failed|> Task .* FAILED)" gradle.log \
+            | head -40 \
+            | while IFS= read -r line; do
+                clean=$(printf '%s' "$line" | tr -d '\r' | cut -c1-900)
+                echo "::error title=Gradle::$clean"
+              done
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
