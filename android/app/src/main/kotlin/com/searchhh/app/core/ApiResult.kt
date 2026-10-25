@@ -33,8 +33,11 @@ enum class AppError {
 
 /** Convert a raw exception into the small, UI-friendly enum. */
 fun Throwable.toAppError(): AppError = when (this) {
-    is UnknownHostException, is IOException -> AppError.OFFLINE
+    // Order matters: SocketTimeoutException and UnknownHostException both extend
+    // IOException, so the specific cases must come first.
     is SocketTimeoutException -> AppError.TIMEOUT
+    is UnknownHostException -> AppError.OFFLINE
+    is IOException -> AppError.OFFLINE
     is SerializationException -> AppError.PARSE
     is HttpException -> when (code()) {
         401, 403 -> AppError.UNAUTHORIZED
