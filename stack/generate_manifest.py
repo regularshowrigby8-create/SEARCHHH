@@ -174,6 +174,11 @@ items.append(item("gradle", "tool", "build", "Build system + wrapper", version="
                   repo="https://github.com/gradle/gradle",
                   declared_in="android/gradle/wrapper/gradle-wrapper.properties",
                   verify={"file": "android/gradle/wrapper/gradle-wrapper.properties", "contains": "gradle-8.10.2"}))
+items.append(item("Android SDK cmdline-tools", "tool", "build",
+                  "sdkmanager: platform 35, build-tools 35.0.0, license acceptance", version="35.0.0",
+                  license_="Apache-2.0", repo="https://github.com/android/sdk-tools",
+                  declared_in=".github/workflows/ci.yml",
+                  verify={"file": ".github/workflows/ci.yml", "contains": "sdkmanager"}))
 items.append(item("openjdk", "tool", "build", "JDK 17 toolchain for AGP/Kotlin", version="17",
                   license_="GPL-2.0 with Classpath Exception", repo="https://github.com/openjdk/jdk",
                   declared_in=".github/workflows/ci.yml",
@@ -264,7 +269,6 @@ for action, ver, purpose, lic in [
     ("actions/setup-java", "v4", "Provision Temurin JDK 17", "MIT"),
     ("gradle/actions/setup-gradle", "v4", "Gradle provisioning + build cache", "MIT"),
     ("actions/upload-artifact", "v4", "Publish APK + coverage artifacts", "MIT"),
-    ("android-actions/setup-android", "v3", "Android SDK + licenses on the runner", "MIT"),
     ("softprops/action-gh-release", "v2", "Attach the APK to a GitHub Release", "MIT"),
     ("github/codeql-action", "v3", "Static analysis (security-extended)", "MIT"),
 ]:

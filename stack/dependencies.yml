@@ -11,11 +11,11 @@ counts:
   firebase: 5
   observability: 2
   testing: 4
-  build: 9
+  build: 10
   backend: 26
   tooling: 12
   transitive: 15
-  ci: 8
+  ci: 7
 items:
 - name: androidx.core:core-ktx
   kind: gradle
@@ -550,6 +550,17 @@ items:
   verify:
     file: android/gradle/wrapper/gradle-wrapper.properties
     contains: gradle-8.10.2
+- name: Android SDK cmdline-tools
+  kind: tool
+  category: build
+  purpose: 'sdkmanager: platform 35, build-tools 35.0.0, license acceptance'
+  version: 35.0.0
+  license: Apache-2.0
+  repo: https://github.com/android/sdk-tools
+  declared_in: .github/workflows/ci.yml
+  verify:
+    file: .github/workflows/ci.yml
+    contains: sdkmanager
 - name: openjdk
   kind: tool
   category: build
@@ -994,14 +1005,6 @@ items:
   version: v4
   license: MIT
   repo: https://github.com/actions/upload-artifact
-  declared_in: .github/workflows/
-- name: android-actions/setup-android
-  kind: action
-  category: ci
-  purpose: Android SDK + licenses on the runner
-  version: v3
-  license: MIT
-  repo: https://github.com/android-actions/setup-android
   declared_in: .github/workflows/
 - name: softprops/action-gh-release
   kind: action
