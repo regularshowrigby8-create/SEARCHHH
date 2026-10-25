@@ -13,6 +13,7 @@ Checks
      escapes, char literals) - reports unterminated comments/strings
   2. brace / paren / bracket balance outside strings and comments
   3. `import com.searchhh.*` targets actually exist on disk
+  3b. every `by` delegate has its getValue/setValue imports (Compose State)
   4. no stray `*/` or `/*` inside string literals
   5. TODO/FIXME budget, and no `System.out`/`printStackTrace`
 
@@ -177,6 +178,45 @@ def scan_file(path: Path, result: Result) -> None:
     result.todos += len(re.findall(r"\b(TODO|FIXME)\b", text))
 
 
+DELEGATE_PATTERNS = (
+    "collectAsStateWithLifecycle(",
+    "collectAsState(",
+    "remember {",
+    "remember(",
+    "rememberSaveable",
+    "mutableStateOf(",
+    "mutableIntStateOf(",
+    "mutableFloatStateOf(",
+    "mutableStateListOf(",
+    "derivedStateOf",
+    "viewModel(",
+)
+
+# `val x by ...` needs getValue; `var x by ...` needs getValue + setValue.
+# Omitting them produces: "Type 'State<T>' has no method 'getValue(...)'".
+IMPORT_GETVALUE = "import androidx.compose.runtime.getValue"
+IMPORT_SETVALUE = "import androidx.compose.runtime.setValue"
+
+
+def check_delegates(path: Path, result: Result) -> None:
+    text = path.read_text(encoding="utf-8")
+    uses_delegate = any(pattern in text for pattern in DELEGATE_PATTERNS)
+    if not uses_delegate:
+        return
+    if re.search(r"\b(val|var)\s+\w+\s+by\s+", text) and IMPORT_GETVALUE not in text:
+        result.add(
+            path,
+            1,
+            "delegated property (`by`) without `import androidx.compose.runtime.getValue`",
+        )
+    if re.search(r"\bvar\s+\w+\s+by\s+", text) and IMPORT_SETVALUE not in text:
+        result.add(
+            path,
+            1,
+            "`var … by` without `import androidx.compose.runtime.setValue`",
+        )
+
+
 def check_imports(path: Path, result: Result) -> None:
     """Every `import com.searchhh.x.Y` must resolve to a file in the sources."""
     text = path.read_text(encoding="utf-8")
@@ -236,6 +276,7 @@ def main() -> int:
             result.files += 1
             scan_file(path, result)
             check_imports(path, result)
+            check_delegates(path, result)
 
     for issue in result.errors:
         print(f"ERROR  {issue.path.relative_to(ROOT)}:{issue.line}: {issue.message}")

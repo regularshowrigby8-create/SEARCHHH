@@ -94,6 +94,7 @@ class RemoteSearchRepository(
         return when (val result = apiCall { api.suggest(query, limit = 5) }) {
             is ApiResult.Success -> result.data.suggestions
             is ApiResult.Failure -> emptyList()
+            ApiResult.Loading -> emptyList()
         }
     }
 
@@ -104,13 +105,14 @@ class RemoteSearchRepository(
             lastCategories = result.data
             result
         }
-        is ApiResult.Failure -> if (lastCategories.isNotEmpty()) ApiResult.Success(lastCategories) else result
-        ApiResult.Loading -> result
+        is ApiResult.Failure ->
+            if (lastCategories.isNotEmpty()) ApiResult.Success(lastCategories)
+            else ApiResult.Failure(result.error, result.cause)
     }
 
     override suspend fun entry(id: String): ApiResult<Entry> {
-        val direct = apiCall { api.entry(id).toDomain() }
-        if (direct is ApiResult.Success) return direct
+        val direct: ApiResult<Entry> = apiCall { api.entry(id).toDomain() }
+        if (direct is ApiResult.Success) return ApiResult.Success(direct.data)
         // Offline: try to reconstruct it from a cached page.
         cache.values.firstOrNull { page -> page.results.any { it.id == id } }
             ?.let { page -> page.results.first { it.id == id } }
@@ -120,9 +122,9 @@ class RemoteSearchRepository(
 
     override suspend fun insight(entryId: String, audience: String): ApiResult<Insight> =
         when (val result = apiCall { api.insight(InsightRequestDto(entryId, audience)).toDomain() }) {
-            is ApiResult.Success -> result
-            is ApiResult.Failure -> result
-            ApiResult.Loading -> result
+            is ApiResult.Success -> ApiResult.Success(result.data)
+            is ApiResult.Failure -> ApiResult.Failure(result.error, result.cause)
+            ApiResult.Loading -> ApiResult.Loading
         }
 
     override suspend fun feedback(message: String, rating: Int, entryId: String?): ApiResult<String> =
@@ -139,15 +141,15 @@ class RemoteSearchRepository(
             }
         ) {
             is ApiResult.Success -> ApiResult.Success(result.data.id)
-            is ApiResult.Failure -> result
-            ApiResult.Loading -> result
+            is ApiResult.Failure -> ApiResult.Failure(result.error, result.cause)
+            ApiResult.Loading -> ApiResult.Loading
         }
 
     override suspend fun health(): ApiResult<HealthInfo> =
         when (val result = apiCall { api.health().toDomain() }) {
-            is ApiResult.Success -> result
-            is ApiResult.Failure -> result
-            ApiResult.Loading -> result
+            is ApiResult.Success -> ApiResult.Success(result.data)
+            is ApiResult.Failure -> ApiResult.Failure(result.error, result.cause)
+            ApiResult.Loading -> ApiResult.Loading
         }
 
     override fun invalidateCache() {

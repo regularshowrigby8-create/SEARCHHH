@@ -170,7 +170,9 @@ for name, ver, repo, purpose, coord in [
     items.append(item(name, "gradle-plugin", "build", purpose, version=ver, license_="Apache-2.0",
                       repo=repo, coordinate=coord, declared_in="android/build.gradle.kts"))
 
-items.append(item("gradle", "tool", "build", "Build system + wrapper", version="8.10.2", license_="Apache-2.0",
+items.append(item("gradle", "tool", "build",
+                  "Build system; wrapper jar + launcher scripts taken verbatim from gradle/gradle at v8.10.2",
+                  version="8.10.2", license_="Apache-2.0",
                   repo="https://github.com/gradle/gradle",
                   declared_in="android/gradle/wrapper/gradle-wrapper.properties",
                   verify={"file": "android/gradle/wrapper/gradle-wrapper.properties", "contains": "gradle-8.10.2"}))

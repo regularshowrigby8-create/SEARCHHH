@@ -542,7 +542,7 @@ items:
 - name: gradle
   kind: tool
   category: build
-  purpose: Build system + wrapper
+  purpose: Build system; wrapper jar + launcher scripts taken verbatim from gradle/gradle at v8.10.2
   version: 8.10.2
   license: Apache-2.0
   repo: https://github.com/gradle/gradle

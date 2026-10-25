@@ -65,7 +65,8 @@ object NetworkModule {
             .retryOnConnectionFailure(true)
             .addInterceptor(baseUrlInterceptor(baseUrlProvider))
             .addInterceptor(logging)
-            .addInterceptor(SentryOkHttpInterceptor(treat404AsError = false))
+            // Default constructor across Sentry 7.x; captures failures as breadcrumbs.
+            .addInterceptor(SentryOkHttpInterceptor())
             .build()
     }
 
