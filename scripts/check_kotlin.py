@@ -14,6 +14,7 @@ Checks
   2. brace / paren / bracket balance outside strings and comments
   3. `import com.searchhh.*` targets actually exist on disk
   3b. every `by` delegate has its getValue/setValue imports (Compose State)
+  3c. every `when` over the sealed ApiResult has all three branches
   4. no stray `*/` or `/*` inside string literals
   5. TODO/FIXME budget, and no `System.out`/`printStackTrace`
 
@@ -217,6 +218,69 @@ def check_delegates(path: Path, result: Result) -> None:
         )
 
 
+def _block_after(text: str, start: int) -> tuple[str, int]:
+    """Return the balanced `{...}` body of `when (...) { ... }` at `start`.
+
+    The subject of `when` may itself contain braces (`apiCall { ... }`), so we
+    first skip to the matching `)` of the `when (` and only then look for `{`.
+    """
+    paren_at = text.find("(", start)
+    if paren_at == -1:
+        return "", start
+    depth = 0
+    i = paren_at
+    while i < len(text):
+        if text[i] == "(":
+            depth += 1
+        elif text[i] == ")":
+            depth -= 1
+            if depth == 0:
+                break
+        i += 1
+    open_at = text.find("{", i)
+    if open_at == -1:
+        return "", start
+    depth = 0
+    i = open_at
+    while i < len(text):
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return text[open_at : i + 1], i
+        i += 1
+    return text[open_at:], len(text)
+
+
+def check_when_exhaustive(path: Path, result: Result) -> None:
+    """A `when` over ApiResult must handle Success, Failure and Loading.
+
+    ApiResult is a sealed interface; a missing branch is a hard compile error
+    ("'when' expression must be exhaustive"), and the compiler reports only one
+    at a time, so catching them all up front saves build cycles.
+    """
+    text = path.read_text(encoding="utf-8")
+    for match in re.finditer(r"\bwhen\s*\(", text):
+        body, _ = _block_after(text, match.start())
+        if "ApiResult.Success" not in body:
+            continue
+        missing = [
+            branch
+            for branch, marker in (
+                ("Failure", "ApiResult.Failure"),
+                ("Loading", "ApiResult.Loading"),
+            )
+            if marker not in body
+        ]
+        if missing and "else ->" not in body:
+            result.add(
+                path,
+                line_of(text, match.start()),
+                f"`when` over ApiResult is not exhaustive - missing: {', '.join(missing)}",
+            )
+
+
 def check_imports(path: Path, result: Result) -> None:
     """Every `import com.searchhh.x.Y` must resolve to a file in the sources."""
     text = path.read_text(encoding="utf-8")
@@ -277,6 +341,7 @@ def main() -> int:
             scan_file(path, result)
             check_imports(path, result)
             check_delegates(path, result)
+            check_when_exhaustive(path, result)
 
     for issue in result.errors:
         print(f"ERROR  {issue.path.relative_to(ROOT)}:{issue.line}: {issue.message}")

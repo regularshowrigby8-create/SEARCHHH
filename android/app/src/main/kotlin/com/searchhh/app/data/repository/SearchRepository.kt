@@ -106,8 +106,12 @@ class RemoteSearchRepository(
             result
         }
         is ApiResult.Failure ->
-            if (lastCategories.isNotEmpty()) ApiResult.Success(lastCategories)
-            else ApiResult.Failure(result.error, result.cause)
+            if (lastCategories.isNotEmpty()) {
+                ApiResult.Success(lastCategories)
+            } else {
+                ApiResult.Failure(result.error, result.cause)
+            }
+        ApiResult.Loading -> ApiResult.Loading
     }
 
     override suspend fun entry(id: String): ApiResult<Entry> {
