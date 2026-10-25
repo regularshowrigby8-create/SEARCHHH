@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GradLink — 10 original UI concepts</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0b0b0d;color:#ededf0;
+       font:14px/1.55 -apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+       -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1380px;margin:0 auto;padding:44px 24px 90px}
+  .head h1{font-size:36px;letter-spacing:-.035em;margin:0 0 10px;font-weight:650}
+  .head p{color:#95959d;max-width:74ch;margin:0 0 8px;font-size:14px}
+  .head .kicker{font-size:10px;letter-spacing:.22em;color:#6f6f78;text-transform:uppercase;margin-bottom:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:22px}
+  .legend b{font-weight:600;background:#17171b;border:1px solid #29292f;border-radius:999px;
+            padding:5px 12px;font-size:12px;color:#c8c8d0}
+  .legend b i{font-style:normal;color:#6f6f78;margin-right:6px;font-variant-numeric:tabular-nums}
+  .grid{display:grid;gap:26px;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));margin-top:38px}
+  .c{background:#141418;border:1px solid #26262c;border-radius:20px;padding:20px 20px 16px}
+  .ctop{display:flex;align-items:baseline;gap:10px}
+  .cnum{font-size:11px;letter-spacing:.14em;color:#6f6f78;font-variant-numeric:tabular-nums}
+  .ctop h2{margin:0;font-size:16.5px;letter-spacing:-.015em;font-weight:600}
+  .thesis{color:#95959d;font-size:12.5px;margin:5px 0 16px;min-height:36px}
+  .device{width:346px;margin:0 auto;background:#000;border-radius:38px;padding:7px;
+          box-shadow:0 22px 54px rgba(0,0,0,.6),0 0 0 1px #2b2b32}
+  .screen{height:632px;border-radius:31px;overflow:hidden;position:relative}
+  .notes{margin-top:16px;display:flex;flex-direction:column;gap:7px}
+  .note{font-size:11.5px;color:#8d8d95;display:flex;gap:8px}
+  .note b{color:#c9c9d1;font-weight:600;min-width:62px;flex:0 0 62px}
+  .cost{display:inline-block;margin-top:2px;font-size:10px;letter-spacing:.1em;
+        text-transform:uppercase;color:#7d7d86;border:1px solid #2e2e35;border-radius:999px;padding:3px 9px}
+
+  /* ============ 01 THE PATH ============ */
+  #c1 .screen{background:#F6F3EC;color:#17130E;padding:20px 18px;
+              font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+  .p-top{display:flex;justify-content:space-between;align-items:center;
+         font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8A8073}
+  .p-mark{font-size:13.5px;font-weight:700;letter-spacing:-.02em;text-transform:none;color:#17130E}
+  .p-rail{position:absolute;left:18px;right:18px;top:88px;bottom:90px;padding-left:26px;
+          display:flex;flex-direction:column;justify-content:space-between}
+  .p-rail:before{content:"";position:absolute;left:5px;top:8px;bottom:10px;width:1px;
+                 background:linear-gradient(#17130E 0%,#B8442A 42%,#DCD3C4 100%)}
+  .p-node{position:relative}
+  .p-dot{position:absolute;left:-26px;top:3px;width:11px;height:11px;border-radius:50%;
+         background:#F6F3EC;border:1px solid #C9BFB0;box-sizing:border-box}
+  .p-node.done .p-dot{background:#17130E;border-color:#17130E}
+  .p-node.now .p-dot{background:#B8442A;border-color:#B8442A;box-shadow:0 0 0 5px rgba(184,68,42,.15)}
+  .p-tag{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#A79C8C;margin-bottom:3px}
+  .p-node.now .p-tag{color:#B8442A}
+  .p-title{font-size:14.5px;font-weight:600;letter-spacing:-.015em;line-height:1.25}
+  .p-meta{font-size:10px;color:#8A8073;margin-top:3px}
+  .p-node.future .p-title{color:#A79C8C;font-weight:500}
+  .p-node.future .p-meta{color:#B7AD9E}
+  .p-cta{position:absolute;left:18px;right:18px;bottom:20px;background:#17130E;color:#F6F3EC;
+         border-radius:999px;padding:14px 20px;display:flex;justify-content:space-between;
+         align-items:center;font-size:12px;font-weight:600}
+
+  /* ============ 02 PROOF ============ */
+  #c2 .screen{background:#FAFAF6;color:#0E0E0C;padding:18px 16px}
+  .pr-top{display:flex;justify-content:space-between;align-items:baseline;
+          font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#8C8C82}
+  .pr-logo{font-size:13.5px;font-weight:800;letter-spacing:-.045em;text-transform:none;color:#0E0E0C}
+  .pr-deck{position:relative;height:404px;margin-top:20px}
+  .pr-card{position:absolute;border-radius:18px;border:1px solid #E4E2D8;background:#fff}
+  .pr-back2{top:26px;left:16px;right:16px;height:352px;background:#EDECE3;transform:rotate(-4.5deg)}
+  .pr-back1{top:14px;left:8px;right:8px;height:364px;background:#F6F5EE;transform:rotate(2.5deg)}
+  .pr-front{top:0;left:0;right:0;height:376px;padding:17px;overflow:hidden;
+            box-shadow:0 18px 40px rgba(14,14,12,.16)}
+  .pr-badge{position:absolute;right:-30px;top:20px;transform:rotate(38deg);background:#C6F24E;
+            color:#0E0E0C;font-size:7.5px;letter-spacing:.22em;padding:4px 34px;font-weight:800}
+  .pr-kicker{font-size:8.5px;letter-spacing:.2em;color:#8C8C82}
+  .pr-num{font-family:Georgia,'Times New Roman',serif;font-size:70px;line-height:.82;
+          letter-spacing:-.05em;margin:8px 0 4px}
+  .pr-head{font-size:19px;font-weight:700;letter-spacing:-.035em;line-height:1.12}
+  .pr-body{font-size:10.5px;color:#5C5C54;margin-top:8px;line-height:1.5}
+  .pr-strip{height:5px;background:#EDECE3;border-radius:99px;margin-top:16px;overflow:hidden}
+  .pr-strip i{display:block;height:100%;background:#0E0E0C}
+  .pr-foot{position:absolute;bottom:17px;left:17px;right:17px;display:flex;justify-content:space-between;
+           font-size:8.5px;color:#8C8C82;letter-spacing:.06em}
+  .pr-actions{display:flex;gap:9px;margin-top:16px}
+  .pr-actions span{flex:1;text-align:center;padding:12px;border-radius:999px;font-size:11px;font-weight:700}
+  .pr-x{border:1px solid #D9D7CC;color:#5C5C54}
+  .pr-y{background:#0E0E0C;color:#C6F24E}
+  .pr-cap{position:absolute;left:16px;right:16px;bottom:22px;text-align:center;
+          font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#8C8C82;
+          line-height:1.7}
+
+  /* ============ 03 RANDS ============ */
+  #c3 .screen{background:#0A0C10;color:#F3F5F7;padding:18px 16px}
+  .r-top{display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.24em;color:#6E7681}
+  .r-live{color:#B6FF3C}
+  .r-gauge{position:relative;width:238px;height:238px;margin:38px auto 0}
+  .r-ring{position:absolute;inset:0;border-radius:50%;
+          background:conic-gradient(from 180deg,#B6FF3C 0 46%,#1B2028 46% 100%);
+          -webkit-mask:radial-gradient(closest-side,transparent calc(100% - 13px),#000 calc(100% - 13px));
+          mask:radial-gradient(closest-side,transparent calc(100% - 13px),#000 calc(100% - 13px))}
+  .r-center{position:absolute;inset:0;display:flex;flex-direction:column;
+            align-items:center;justify-content:center;text-align:center;padding-top:12px}
+  .r-cap{font-size:7.5px;letter-spacing:.26em;color:#6E7681}
+  .r-big{font-size:47px;font-weight:700;letter-spacing:-.045em;line-height:1;margin-top:8px;
+         font-variant-numeric:tabular-nums}
+  .r-big small{font-size:21px;color:#B6FF3C;letter-spacing:0}
+  .r-sub{font-size:8.5px;color:#8A929C;margin-top:7px;letter-spacing:.04em}
+  .r-scale{margin-top:34px}
+  .r-ruler{display:flex;align-items:flex-end;height:36px;border-bottom:1px solid #232A33}
+  .r-ruler i{flex:1;border-left:1px solid #232A33;height:8px}
+  .r-ruler i.big{height:20px;border-left-color:#4A525C}
+  .r-lab{display:flex;justify-content:space-between;font-size:8px;color:#6E7681;
+         margin-top:7px;letter-spacing:.12em}
+  .r-next{position:absolute;left:16px;right:16px;bottom:78px;border-top:1px solid #232A33;
+          padding-top:12px;display:flex;justify-content:space-between;align-items:baseline}
+  .r-next div{font-size:7.5px;letter-spacing:.2em;color:#6E7681}
+  .r-next b{display:block;font-size:11px;letter-spacing:-.01em;color:#F3F5F7;margin-top:5px}
+  .r-next em{font-style:normal;font-size:15px;font-weight:700;letter-spacing:-.03em;color:#B6FF3C;
+             font-variant-numeric:tabular-nums}
+  .r-chips{position:absolute;left:16px;right:16px;bottom:20px;display:flex;gap:6px}
+  .r-chips span{flex:1;text-align:center;border:1px solid #232A33;border-radius:10px;
+                padding:9px 0;font-size:7.5px;letter-spacing:.1em;color:#8A929C}
+  .r-chips span.on{background:#B6FF3C;color:#0A0C10;border-color:#B6FF3C;font-weight:700}
+
+  /* ============ 04 RINGS ============ */
+  #c4 .screen{background:#14163A;color:#F2EFE6;padding:18px 16px}
+  .g-top{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.18em;
+         text-transform:uppercase;color:#8E92C4}
+  .g-mark{font-size:13.5px;font-weight:700;letter-spacing:-.02em;text-transform:none;color:#F2EFE6}
+  .g-field{position:relative;width:300px;height:300px;margin:28px auto 0}
+  .g-ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%}
+  .g-r1{width:300px;height:300px}
+  .g-r2{width:206px;height:206px}
+  .g-r3{width:118px;height:118px}
+  .g-line{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;
+          border:1px solid rgba(242,239,230,.13)}
+  .g-arc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;
+         -webkit-mask:radial-gradient(closest-side,transparent calc(100% - 3px),#000 calc(100% - 3px));
+         mask:radial-gradient(closest-side,transparent calc(100% - 3px),#000 calc(100% - 3px))}
+  .g-a1{width:300px;height:300px;
+        background:conic-gradient(from 200deg,#FF6B4A 0 62deg,transparent 62deg 360deg)}
+  .g-a2{width:206px;height:206px;
+        background:conic-gradient(from 20deg,#5BE0C6 0 44deg,transparent 44deg 130deg,#F2EFE6 130deg 158deg,transparent 158deg 360deg)}
+  .g-a3{width:118px;height:118px;
+        background:conic-gradient(from 300deg,#8E92C4 0 38deg,transparent 38deg 360deg)}
+  .g-me{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:82px;height:82px;
+        border-radius:50%;background:#FF6B4A;color:#14163A;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;box-shadow:0 0 0 9px rgba(255,107,74,.13)}
+  .g-me b{font-size:12px;font-weight:800;letter-spacing:-.02em}
+  .g-me small{font-size:7px;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+  .g-pin{position:absolute;font-size:6.5px;letter-spacing:.18em;color:#8E92C4;text-align:center}
+  .g-pin b{display:block;font-size:9.5px;letter-spacing:-.01em;color:#F2EFE6;margin-top:1px;font-weight:600}
+  .g-pin:before{content:"";position:absolute;left:50%;top:-8px;width:4px;height:4px;border-radius:50%;
+                background:#FF6B4A;transform:translateX(-50%)}
+  .g-p1{top:2px;left:50%;transform:translateX(-50%)}
+  .g-p2{bottom:26px;left:6px}
+  .g-p3{bottom:26px;right:2px}
+  .g-pin.alt:before{background:#5BE0C6}
+  .g-legend{text-align:center;font-size:8.5px;letter-spacing:.14em;color:#8E92C4;margin-top:16px}
+  .g-stats{position:absolute;left:16px;right:16px;bottom:82px;display:flex;gap:8px}
+  .g-stats div{flex:1;border:1px solid rgba(242,239,230,.16);border-radius:12px;padding:9px 10px}
+  .g-stats b{display:block;font-size:17px;font-weight:700;letter-spacing:-.03em;line-height:1}
+  .g-stats span{display:block;font-size:6.5px;letter-spacing:.16em;color:#8E92C4;margin-top:5px}
+  .g-stats .hot{background:#FF6B4A;border-color:#FF6B4A;color:#14163A}
+  .g-stats .hot span{color:rgba(20,22,58,.72)}
+  .g-nav{position:absolute;left:14px;right:14px;bottom:18px;display:flex;justify-content:space-between}
+  .g-nav span{width:46px;height:46px;border-radius:50%;border:1px solid rgba(242,239,230,.18);
+              display:grid;place-items:center;font-size:7px;letter-spacing:.1em;color:#9EA3D0}
+  .g-nav span:nth-child(1){transform:translateY(9px)}
+  .g-nav span:nth-child(2){transform:translateY(2px)}
+  .g-nav span:nth-child(3){transform:translateY(2px)}
+  .g-nav span:nth-child(4){transform:translateY(9px)}
+  .g-nav span.on{background:#F2EFE6;color:#14163A;border-color:#F2EFE6;font-weight:700}
+
+  /* ============ 05 SIGNAL ============ */
+  #c5 .screen{background:#F2F0E9;color:#111;padding:15px 14px 0}
+  .n-cond{font-family:'Arial Narrow',Impact,'Haettenschweiler',sans-serif;font-weight:900}
+  .n-rule{height:1px;background:#111;margin:6px 0}
+  .n-thick{height:3px;margin:5px 0}
+  .n-mast{font-size:31px;line-height:.86;letter-spacing:-.025em;text-transform:uppercase}
+  .n-sub{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:6.5px;
+         letter-spacing:.24em;margin-top:4px;font-weight:400;text-transform:uppercase}
+  .n-ticker{position:relative;height:15px;overflow:hidden;background:#111;margin:0 -14px}
+  .n-run{position:absolute;white-space:nowrap;color:#F2F0E9;font-family:ui-monospace,Menlo,monospace;
+         font-size:7.5px;line-height:15px;letter-spacing:.16em;text-transform:uppercase;
+         animation:marq 18s linear infinite;padding-left:100%}
+  @keyframes marq{to{transform:translateX(-100%)}}
+  .n-lead{display:flex;gap:9px;margin-top:9px}
+  .n-half{width:100px;height:118px;flex:0 0 100px;background:#111;
+          background-image:radial-gradient(#F2F0E9 1.1px,transparent 1.2px);background-size:4.6px 4.6px}
+  .n-kick{font-family:ui-monospace,Menlo,monospace;font-size:6.5px;letter-spacing:.2em;color:#666}
+  .n-head{font-size:25px;line-height:.85;letter-spacing:-.015em;text-transform:uppercase;margin:3px 0 5px}
+  .n-deck{font-family:Georgia,'Times New Roman',serif;font-size:8.5px;line-height:1.44;color:#3a3a3a}
+  .n-cols{display:flex;gap:9px;margin-top:10px}
+  .n-item{flex:1;border-top:1px solid #111;padding-top:4px}
+  .n-item h4{font-family:'Arial Narrow',Impact,sans-serif;font-weight:900;font-size:12.5px;
+             line-height:.95;text-transform:uppercase;margin:2px 0 3px;letter-spacing:-.01em}
+  .n-item p{font-family:ui-monospace,Menlo,monospace;font-size:6.5px;line-height:1.5;color:#4a4a4a;margin:0}
+  .n-stats{display:flex;border-top:1px solid #111;border-bottom:1px solid #111;margin-top:10px}
+  .n-stats div{flex:1;padding:6px 5px;border-left:1px solid #111}
+  .n-stats div:first-child{border-left:0}
+  .n-stats b{display:block;font-family:'Arial Narrow',Impact,sans-serif;font-weight:900;
+            font-size:17px;line-height:1;letter-spacing:-.02em}
+  .n-stats span{display:block;font-family:ui-monospace,Menlo,monospace;font-size:5px;
+                letter-spacing:.14em;color:#5a5a5a;margin-top:3px}
+  .n-class{border:1px solid #111;padding:6px 7px;margin-top:9px;
+           font-family:ui-monospace,Menlo,monospace;font-size:6.5px;line-height:1.55;letter-spacing:.04em}
+  .n-class b{letter-spacing:.18em}
+  .n-more{margin-top:10px}
+  .n-more div{display:flex;justify-content:space-between;align-items:baseline;
+              border-top:1px solid rgba(17,17,17,.35);padding:6px 0}
+  .n-more h5{font-family:'Arial Narrow',Impact,sans-serif;font-weight:900;font-size:11px;
+             text-transform:uppercase;margin:0;line-height:1.05;letter-spacing:-.01em}
+  .n-more em{font-family:ui-monospace,Menlo,monospace;font-style:normal;font-size:6px;
+             letter-spacing:.12em;color:#5a5a5a;white-space:nowrap;margin-left:8px}
+  .n-foot{position:absolute;left:0;right:0;bottom:0;height:34px;background:#111;color:#F2F0E9;
+          display:flex;align-items:center;justify-content:space-between;padding:0 14px;
+          font-family:ui-monospace,Menlo,monospace;font-size:7px;letter-spacing:.18em;text-transform:uppercase}
+  .n-foot b{font-family:'Arial Narrow',Impact,sans-serif;font-size:11px;letter-spacing:.02em}
+
+  /* ============ 06 BLOOM ============ */
+  #c6 .screen{background:#0B0714;color:#fff;padding:18px 16px}
+  .b-blob{position:absolute;border-radius:50%;filter:blur(42px);opacity:.9}
+  .b1{width:240px;height:240px;background:#FF5F9E;left:-80px;top:-70px}
+  .b2{width:260px;height:260px;background:#7B5CFF;right:-100px;top:96px}
+  .b3{width:230px;height:230px;background:#00D4C8;left:30px;bottom:-90px;opacity:.55}
+  .b-top{position:relative;display:flex;justify-content:space-between;align-items:center;
+         font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+  .b-logo{font-size:13.5px;font-weight:700;letter-spacing:-.03em;text-transform:none;color:#fff}
+  .b-hero{position:relative;margin-top:52px}
+  .b-h1{font-size:34px;line-height:.97;font-weight:600;letter-spacing:-.05em}
+  .b-h1 em{font-family:Georgia,serif;font-style:italic;font-weight:400;letter-spacing:-.02em}
+  .b-orbit{position:relative;height:0}
+  .b-chip{position:absolute;font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;
+          border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:5px 10px;
+          background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+  .b-c1{left:6px;top:-24px;transform:rotate(-7deg)}
+  .b-c2{right:2px;top:-4px;transform:rotate(6deg)}
+  .b-list{position:relative;margin-top:124px}
+  .b-row{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;
+         border-bottom:1px solid rgba(255,255,255,.15)}
+  .b-row b{font-size:10.5px;font-weight:600;letter-spacing:-.005em}
+  .b-row span{font-size:8px;letter-spacing:.1em;color:rgba(255,255,255,.55)}
+  .b-glass{position:absolute;left:16px;right:16px;bottom:78px;border-radius:26px;padding:16px;
+           background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.24);
+           backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  .b-k{font-size:7.5px;letter-spacing:.24em;color:rgba(255,255,255,.6)}
+  .b-t{font-size:17px;font-weight:600;letter-spacing:-.03em;margin-top:5px}
+  .b-n{font-size:22px;font-weight:700;letter-spacing:-.04em;margin-top:2px}
+  .b-pills{display:flex;gap:5px;margin-top:9px}
+  .b-pills span{font-size:7px;letter-spacing:.1em;padding:3px 8px;border-radius:999px;
+                background:rgba(255,255,255,.14);color:rgba(255,255,255,.8)}
+  .b-cta{position:absolute;left:16px;right:16px;bottom:18px;background:#fff;color:#0B0714;
+         border-radius:999px;padding:14px;text-align:center;font-size:12px;font-weight:700;
+         letter-spacing:-.01em}
+
+  /* ============ 07 BLUEPRINT ============ */
+  #c7 .screen{background:#0E1A24;color:#DCEAF2;padding:15px 14px;
+              font-family:ui-monospace,Menlo,Consolas,monospace}
+  .bp-grid{position:absolute;inset:0;background-image:radial-gradient(#2A4557 1px,transparent 1px);
+           background-size:13px 13px}
+  .bp-top{position:relative;display:flex;justify-content:space-between;
+          font-size:6.5px;letter-spacing:.2em;color:#7FA0B2}
+  .bp-frame{position:relative;margin-top:14px;border:1px solid rgba(79,209,197,.55);padding:13px}
+  .bp-corner{position:absolute;width:9px;height:9px;border:1px solid #4FD1C5}
+  .bp-tl{top:-1px;left:-1px;border-right:0;border-bottom:0}
+  .bp-tr{top:-1px;right:-1px;border-left:0;border-bottom:0}
+  .bp-bl{bottom:-1px;left:-1px;border-right:0;border-top:0}
+  .bp-br{bottom:-1px;right:-1px;border-left:0;border-top:0}
+  .bp-sheet{font-size:6.5px;letter-spacing:.2em;color:#4FD1C5}
+  .bp-mod{font-size:10px;font-weight:700;letter-spacing:-.01em;margin-top:3px;color:#EAF5FB}
+  .bp-dim{display:flex;align-items:center;font-size:6.5px;letter-spacing:.12em;color:#7FA0B2;margin:10px 0 8px}
+  .bp-dim i{flex:1;height:1px;background:rgba(127,160,178,.5);margin:0 6px;position:relative}
+  .bp-dim i:before,.bp-dim i:after{content:"";position:absolute;top:-3px;width:1px;height:7px;
+            background:rgba(127,160,178,.5)}
+  .bp-dim i:before{left:0}.bp-dim i:after{right:0}
+  .bp-row{display:flex;align-items:baseline;font-size:9px;padding:6px 0;
+          border-bottom:1px dashed rgba(79,209,197,.22)}
+  .bp-row span{font-size:7px;letter-spacing:.14em;color:#8FB2C4}
+  .bp-row i{flex:1;border-bottom:1px dotted rgba(143,178,196,.45);margin:0 7px;transform:translateY(-2px)}
+  .bp-row b{font-size:8.5px;font-weight:600;color:#EAF5FB}
+  .bp-ok{color:#7DFFC4!important}.bp-no{color:#FF8A8A!important}
+  .bp-frame.m2{margin-top:9px;border-style:dashed;border-color:rgba(127,160,178,.4)}
+  .bp-frame.m2 .bp-sheet{color:#7FA0B2}
+  .bp-frame.m2 .bp-mod{color:#9FC2D4;font-weight:600}
+  .bp-badge{float:right;font-size:6px;letter-spacing:.16em;color:#7DFFC4;
+            border:1px solid rgba(125,255,196,.4);padding:2px 5px;font-weight:400}
+  .bp-badge.no{color:#FF8A8A;border-color:rgba(255,138,138,.4)}
+  .bp-link{position:relative;margin-top:12px;padding:9px 11px;border:1px dashed rgba(79,209,197,.5);
+           font-size:7px;letter-spacing:.1em;color:#9FC2D4}
+  .bp-link b{display:block;font-size:9.5px;letter-spacing:-.01em;color:#EAF5FB;margin-top:3px}
+  .bp-cta{position:absolute;left:14px;right:14px;bottom:16px;background:#4FD1C5;color:#0E1A24;
+          padding:12px;text-align:center;font-size:9px;letter-spacing:.14em;font-weight:700;
+          text-transform:uppercase}
+
+  /* ============ 08 LEDGER ============ */
+  #c8 .screen{background:#E4DDCC;color:#1F1A14;padding:22px 15px}
+  .l-paper{background:#FBF7EF;padding:15px 14px 20px;position:relative;
+           box-shadow:0 12px 26px rgba(31,26,20,.22)}
+  .l-paper:after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:10px;
+      background:radial-gradient(circle at 7px 0,#FBF7EF 6.5px,transparent 7px) 0 0/14px 10px repeat-x}
+  .l-brand{font-family:'Arial Narrow',Impact,sans-serif;font-weight:900;font-size:13px;
+           letter-spacing:.16em;text-transform:uppercase}
+  .l-mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:6.5px;letter-spacing:.14em;
+          color:#7A7266;margin-top:3px}
+  .l-hr{border-top:1px dashed rgba(31,26,20,.35);margin:10px 0 8px}
+  .l-row{display:flex;align-items:baseline;font-size:8.5px;padding:7px 0;
+         font-family:ui-monospace,Menlo,monospace}
+  .l-row i{flex:1;border-bottom:1px dotted rgba(31,26,20,.35);margin:0 5px;transform:translateY(-2px)}
+  .l-row b{font-weight:600;letter-spacing:-.02em;font-size:9.5px}
+  .l-row.mut b{color:#8C8375}
+  .l-total{display:flex;justify-content:space-between;align-items:baseline;
+           border-top:2px solid #1F1A14;margin-top:9px;padding-top:8px;
+           font-family:ui-monospace,Menlo,monospace;font-size:8px;letter-spacing:.12em}
+  .l-total b{font-size:15px;letter-spacing:-.03em}
+  .l-stamp{position:absolute;right:12px;top:52px;transform:rotate(-13deg);
+           border:2px solid #A8382B;color:#A8382B;font-size:10px;letter-spacing:.2em;
+           padding:4px 8px;font-weight:700;font-family:'Arial Narrow',Impact,sans-serif}
+  .l-hand{font-family:'Segoe Script','Bradley Hand','Comic Sans MS',cursive;color:#2E6B4F;
+          font-size:11.5px;transform:rotate(-2.5deg);margin-top:16px;line-height:1.3}
+  .l-paper2{background:#FBF7EF;margin-top:20px;padding:11px 13px;
+            box-shadow:0 8px 18px rgba(31,26,20,.16)}
+  .l-paper2 .l-mono{margin-top:0}
+  .l-p2row{display:flex;justify-content:space-between;font-size:8px;
+           font-family:ui-monospace,Menlo,monospace;padding:5px 0;
+           border-bottom:1px dotted rgba(31,26,20,.3)}
+  .l-p2row:last-child{border-bottom:0;padding-bottom:0}
+  .l-note{position:absolute;left:15px;right:15px;bottom:22px;font-size:8px;
+          font-family:ui-monospace,Menlo,monospace;letter-spacing:.1em;color:#6E6557;text-align:center}
+
+  /* ============ 09 CONSTELLATION ============ */
+  #c9 .screen{background:#05060A;color:#E8EEFF;padding:18px 16px}
+  .s-top{display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.2em;
+         text-transform:uppercase;color:#6B7BA8}
+  .s-mark{font-size:13.5px;font-weight:600;letter-spacing:-.02em;text-transform:none;color:#E8EEFF}
+  .s-map{margin-top:10px}
+  .s-pulse{animation:pulse 3.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.35}50%{opacity:.85}}
+  .s-sheet{position:absolute;left:14px;right:14px;bottom:16px;background:#F3F5FA;color:#0B1020;
+           border-radius:20px;padding:14px}
+  .s-k{font-size:7px;letter-spacing:.24em;color:#6B7BA8}
+  .s-h{font-size:14px;font-weight:600;letter-spacing:-.03em;margin-top:4px;line-height:1.25}
+  .s-av{display:flex;margin-top:10px;align-items:center;gap:6px}
+  .s-av i{width:22px;height:22px;border-radius:50%;border:1.5px solid #0B1020;margin-left:-7px;display:block}
+  .s-av i:first-child{margin-left:0}
+  .s-av span{font-size:7.5px;letter-spacing:.1em;color:#48506B;margin-left:4px}
+  .s-btn{margin-top:11px;background:#0B1020;color:#fff;border-radius:999px;padding:10px;
+         text-align:center;font-size:10px;font-weight:600;letter-spacing:-.01em}
+
+  /* ============ 10 TEMPO ============ */
+  #c10 .screen{background:#fff;color:#0A0A0A;padding:18px 16px}
+  .t-top{display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.2em;
+         text-transform:uppercase;color:#8A8A8A}
+  .t-mark{font-size:13.5px;font-weight:800;letter-spacing:-.05em;text-transform:none;color:#0A0A0A}
+  .t-kin{font-size:40px;font-weight:900;letter-spacing:-.055em;line-height:.84;
+         text-transform:uppercase;margin-top:26px}
+  .t-ghost{display:block;color:transparent;-webkit-text-stroke:1.2px #0A0A0A}
+  .t-eq{display:flex;align-items:flex-end;gap:3px;height:132px;margin-top:22px}
+  .t-eq i{flex:1;background:#0A0A0A;border-radius:2px;min-height:4px}
+  .t-eq i.hot{background:#D8EA00}
+  .t-eqlab{display:flex;justify-content:space-between;font-size:7px;letter-spacing:.16em;
+           color:#8A8A8A;margin-top:7px}
+  .t-week{display:flex;justify-content:space-between;margin-top:16px}
+  .t-week span{width:27px;height:27px;border-radius:50%;border:1.5px solid #E0E0E0;
+               display:grid;place-items:center;font-size:7px;letter-spacing:.02em;color:#B0B0B0}
+  .t-week span.on{background:#0A0A0A;border-color:#0A0A0A;color:#fff}
+  .t-week span.today{background:#D8EA00;border-color:#0A0A0A;color:#0A0A0A;font-weight:800}
+  .t-card{border:1.5px solid #0A0A0A;border-radius:14px;padding:12px;margin-top:16px;
+          position:relative;overflow:hidden}
+  .t-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:#0A0A0A}
+  .t-k{font-size:7px;letter-spacing:.22em;color:#8A8A8A}
+  .t-h{font-size:14px;font-weight:700;letter-spacing:-.03em;margin-top:3px}
+  .t-m{font-size:8.5px;color:#5A5A5A;margin-top:3px}
+  .t-cta{position:absolute;left:16px;right:16px;bottom:18px;background:#0A0A0A;color:#D8EA00;
+         border-radius:12px;padding:14px;text-align:center;font-size:12px;font-weight:800;
+         letter-spacing:.02em;text-transform:uppercase}
+  .t-streak{position:absolute;right:16px;top:18px;width:44px;height:44px;border-radius:50%;
+            border:1.5px solid #0A0A0A;display:grid;place-items:center;text-align:center;
+            font-size:6px;letter-spacing:.1em;line-height:1.25;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div class="kicker">GradLink · visual direction</div>
+    <h1>Ten original UI concepts</h1>
+    <p>Every pixel below is drawn from scratch — no templates, no screenshots, no borrowed layouts.
+    What differs is not the colour, it is the <strong>structure</strong>: each concept organises the
+    same content a different way, because that is what actually makes a product feel like itself.
+    All ten are buildable in Compose with the libraries already in the app.</p>
+    <p>Pick a number. I build that one into the theme and the home screen — not the other nine.</p>
+    <div class="legend">
+      <b><i>01</i>The Path</b><b><i>02</i>Proof</b><b><i>03</i>Rands</b><b><i>04</i>Rings</b><b><i>05</i>Signal</b>
+      <b><i>06</i>Bloom</b><b><i>07</i>Blueprint</b><b><i>08</i>Ledger</b><b><i>09</i>Constellation</b><b><i>10</i>Tempo</b>
+    </div>
+  </div>
+
+  <div class="grid">
+
+  <!-- 01 ============================================================ -->
+  <article class="c" id="c1">
+    <div class="ctop"><span class="cnum">01</span><h2>The Path</h2></div>
+    <p class="thesis">The app is not a menu, it is a route. One vertical rail from "I've done nothing" to "I'm earning", with you standing on it.</p>
+    <div class="device"><div class="screen">
+      <div class="p-top"><div class="p-mark">GradLink</div><div>Fri 25 Oct</div></div>
+      <div class="p-rail">
+        <div class="p-node done">
+          <span class="p-dot"></span>
+          <div class="p-tag">Done</div>
+          <div class="p-title">Registered on SAYouth</div>
+          <div class="p-meta">2 min · used no data</div>
+        </div>
+        <div class="p-node now">
+          <span class="p-dot"></span>
+          <div class="p-tag">You are here</div>
+          <div class="p-title">One application left today</div>
+          <div class="p-meta">YES Programme · closes in 6 days</div>
+        </div>
+        <div class="p-node future">
+          <span class="p-dot"></span>
+          <div class="p-tag">Next</div>
+          <div class="p-title">Free NYDA training</div>
+          <div class="p-meta">Unlocks R200 000 grant</div>
+        </div>
+        <div class="p-node future">
+          <span class="p-dot"></span>
+          <div class="p-tag">Later</div>
+          <div class="p-title">Register the business</div>
+          <div class="p-meta">CIPC · R125</div>
+        </div>
+        <div class="p-node future">
+          <span class="p-dot"></span>
+          <div class="p-tag">Then</div>
+          <div class="p-title">First paying customer</div>
+          <div class="p-meta">Where all of this is going</div>
+        </div>
+      </div>
+      <div class="p-cta"><span>Send your first application</span><span>→</span></div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><b>Why it's new</b>No competitor leads with sequence. Jobs boards are lists; this is a route with exactly one next step.</div>
+      <div class="note"><b>Risk</b>One-path-fits-all feels wrong for someone who already has a business idea.</div>
+      <span class="cost">Compose · low effort · Canvas rail + Column</span>
+    </div>
+  </article>
+
+  <!-- 02 ============================================================ -->
+  <article class="c" id="c2">
+    <div class="ctop"><span class="cnum">02</span><h2>Proof</h2></div>
+    <p class="thesis">Reframes the whole product: you don't have "no experience", you have proof that nobody has collected yet. The home screen is a deck of it.</p>
+    <div class="device"><div class="screen">
+      <div class="pr-top"><span class="pr-logo">gradlink</span><span>3 of 7</span></div>
+      <div class="pr-deck">
+        <div class="pr-card pr-back2"></div>
+        <div class="pr-card pr-back1"></div>
+        <div class="pr-card pr-front">
+          <div class="pr-badge">VERIFIED</div>
+          <div class="pr-kicker">PROOF № 03</div>
+          <div class="pr-num">03</div>
+          <div class="pr-head">Ran a six-week<br>tutoring round</div>
+          <div class="pr-body">12 learners · R1 440 earned · 2 references<br>Counts as: management, sales, admin</div>
+          <div class="pr-strip"><i style="width:62%"></i></div>
+          <div class="pr-foot"><span>Added by you · 3 Apr</span><span>62% strong</span></div>
+        </div>
+      </div>
+      <div class="pr-actions"><span class="pr-x">Not mine</span><span class="pr-y">Keep this proof</span></div>
+      <div class="pr-cap">Your deck grows every time<br>you finish something</div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><b>Why it's new</b>Turns "no experience" from a deficit into unfinished admin. Swipe deck = the first screen is a task, not a feed.</div>
+      <div class="note"><b>Risk</b>Needs a genuinely good proof-generation loop behind it or it's decoration.</div>
+      <span class="cost">Compose · medium · stacked cards + drag gesture</span>
+    </div>
+  </article>
+
+  <!-- 03 ============================================================ -->
+  <article class="c" id="c3">
+    <div class="ctop"><span class="cnum">03</span><h2>Rands</h2></div>
+    <p class="thesis">For a broke graduate the only number that matters is money. So the home screen is one measurement, given the whole display.</p>
+    <div class="device"><div class="screen">
+      <div class="r-top"><span>GRADLINK</span><span class="r-live">● LIVE</span></div>
+      <div class="r-gauge">
+        <div class="r-ring"></div>
+        <div class="r-center">
+          <div class="r-cap">MONTHLY INCOME</div>
+          <div class="r-big">R5<small>241</small></div>
+          <div class="r-sub">YES placement · 12 months</div>
+        </div>
+      </div>
+      <div class="r-scale">
+        <div class="r-ruler">
+          <i class="big"></i><i></i><i></i><i></i><i class="big"></i><i></i><i></i><i></i><i class="big"></i><i></i><i></i><i></i><i class="big"></i>
+        </div>
+        <div class="r-lab"><span>R0 TODAY</span><span>R9 000 TARGET</span></div>
+      </div>
+      <div class="r-next">
+        <div>NEXT MILESTONE<b>Finish NYDA training</b></div>
+        <em>+R200k</em>
+      </div>
+      <div class="r-chips">
+        <span class="on">NOW</span><span>FUNDING</span><span>PEOPLE</span><span>LEARN</span>
+      </div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><b>Why it's new</b>Every screen in the app would be anchored to a rand figure. Brutal, honest, impossible to mistake for a job board.</div>
+      <div class="note"><b>Risk</b>Hides the community pillar almost completely.</div>
+      <span class="cost">Compose · low · gauge is a masked Canvas arc</span>
+    </div>
+  </article>
+
+  <!-- 04 ============================================================ -->
+  <article class="c" id="c4">
+    <div class="ctop"><span class="cnum">04</span><h2>Rings</h2></div>
+    <p class="thesis">Ubuntu as geometry: you, then your peers, then your mentors, then the funders. Distance from the centre is distance in real life.</p>
+    <div class="device"><div class="screen">
+      <div class="g-top"><span class="g-mark">GradLink</span><span>Bloem · 25°C</span></div>
+      <div class="g-field">
+        <div class="g-ring g-line g-r1"></div>
+        <div class="g-ring g-line g-r2"></div>
+        <div class="g-ring g-line g-r3"></div>
+        <div class="g-ring g-arc g-a1"></div>
+        <div class="g-ring g-arc g-a2"></div>
+        <div class="g-ring g-arc g-a3"></div>
+        <div class="g-me"><b>Thabo</b><small>you</small></div>
+        <div class="g-pin g-p1"><span>SPONSOR</span><b>NYDA</b></div>
+        <div class="g-pin alt g-p2"><span>MENTOR</span><b>Naledi M.</b></div>
+        <div class="g-pin alt g-p3"><span>PEER</span><b>Sipho</b></div>
+      </div>
+      <div class="g-legend">RINGS = DISTANCE, NOT RANK</div>
+      <div class="g-stats">
+        <div class="hot"><b>3</b><span>ONE STEP AWAY</span></div>
+        <div><b>12</b><span>MENTORS NEAR</span></div>
+        <div><b>4</b><span>OPEN GRANTS</span></div>
+      </div>
+      <div class="g-nav"><span>WORK</span><span class="on">YOU</span><span>FUND</span><span>LEARN</span></div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><b>Why it's new</b>Radial navigation instead of a bottom tab bar, and the matching model is visible instead of hidden in a list.</div>
+      <div class="note"><b>Risk</b>Rotated labels on arcs are hard to keep readable and accessible.</div>
+      <span class="cost">Compose · high · custom arc drawing + hit testing</span>
+    </div>
+  </article>
+
+  <!-- 05 ============================================================ -->
+  <article class="c" id="c5">
+    <div class="ctop"><span class="cnum">05</span><h2>Signal</h2></div>
+    <p class="thesis">Opportunity as newsprint. A ticker, a lead story, classifieds — because for a graduate, a job opening is literally news with a closing date.</p>
+    <div class="device"><div class="screen">
+      <div class="n-mast n-cond">GRADLINK<span class="n-sub">Opportunity desk · Free State edition</span></div>
+      <div class="n-rule n-thick"></div>
+      <div class="n-ticker"><div class="n-run">NYDA GRANTS OPEN &nbsp;·&nbsp; 14 NEW LEARNERSHIPS NEAR BLOEM &nbsp;·&nbsp; YES HIRING NOW &nbsp;·&nbsp; CO-FOUNDER WANTED &nbsp;·&nbsp;</div></div>
+      <div class="n-rule"></div>
+      <div class="n-lead">
+        <div class="n-half"></div>
+        <div>
+          <div class="n-kick">LEAD STORY</div>
+          <div class="n-head n-cond">No experience needed. Again.</div>
+          <div class="n-deck">58.7% of unemployed young South Africans have never held a job. The fix is a first yes — not a better CV.</div>
+        </div>
+      </div>
+      <div class="n-cols">
+        <div class="n-item">
+          <div class="n-kick">GRANT · R200 000</div>
+          <h4>NYDA opens youth fund</h4>
+          <p>Training first. Then cash. 18–35.</p>
+        </div>
+        <div class="n-item">
+          <div class="n-kick">PLACEMENT · 12 MO</div>
+          <h4>YES is hiring</h4>
+          <p>R5 241 pm. No degree needed.</p>
+        </div>
+      </div>
+      <div class="n-stats">
+        <div><b>30</b><span>OPPORTUNITIES</span></div>
+        <div><b>12</b><span>CLOSING SOON</span></div>
+        <div><b>7</b><span>NO EXPERIENCE</span></div>
+      </div>
+      <div class="n-class"><b>CLASSIFIEDS —</b> co-founder wanted for a delivery hustle in Heidedal. Needs a partner with a bakkie. Reply in-app.</div>
+      <div class="n-more">
+        <div><h5>Learnership: call centre, 40 seats</h5><em>CLOSES 3 NOV</em></div>
+        <div><h5>Free CV clinic, Thursdays</h5><em>WALK IN</em></div>
+        <div><h5>Bakkie needed: delivery partner</h5><em>HEIDEDAL</em></div>
+        <div><h5>R50 data bundles for applicants</h5><em>ZERO-RATED</em></div>
+      </div>
+      <div class="n-foot"><b>Read all 30 →</b><span>FREE · ZERO-RATED</span></div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><b>Why it's new</b>Editorial layout in a utility app. It makes scarcity feel like abundance — there is always a front page.</div>
+      <div class="note"><b>Risk</b>Dense type fails accessibility checks; the joke wears off in a week.</div>
+      <span class="cost">Compose · medium · custom type scale, marquee</span>
+    </div>
+  </article>
+
+  <!-- 06 ============================================================ -->
+  <article class="c" id="c6">
+    <div class="ctop"><span class="cnum">06</span><h2>Bloom</h2></div>
+    <p class="thesis">Built from light, not boxes. Generative colour fields, glass surfaces, nothing on a grid. Made to look alive on a mid-range phone.</p>
+    <div class="device"><div class="screen">
+      <div class="b-blob b1"></div><div class="b-blob b2"></div><div class="b-blob b3"></div>
+      <div class="b-top"><span class="b-logo">GradLink</span><span>⌘</span></div>
+      <div class="b-hero">
+        <div class="b-h1">Your first<br><em>yes</em> is<br>closer.</div>
+        <div class="b-orbit">
+          <span class="b-chip b-c1">no experience</span>
+          <span class="b-chip b-c2">18–34</span>
+        </div>
+      </div>
+      <div class="b-list">
+        <div class="b-row"><b>YES placement</b><span>1 STEP</span></div>
+        <div class="b-row"><b>NYDA grant</b><span>2 STEPS</span></div>
+        <div class="b-row"><b>Mentor: Naledi M.</b><span>INTRO OPEN</span></div>
+      </div>
+      <div class="b-glass">
+        <div class="b-k">TODAY'S BEST MATCH</div>
+        <div class="b-t">YES Programme</div>
+        <div class="b-n">R5 241 / month</div>
+        <div class="b-pills"><span>12 months</span><span>no degree</span><span>apply in 4 min</span></div>
+      </div>
+      <div class="b-cta">Start the application →</div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><b>Why it's new</b>Most "modern" apps are still rectangles on a grid. This has no straight edges at all — the identity is the colour behaviour.</div>
+      <div class="note"><b>Risk</b>Blur is expensive on cheap Android; needs a static-gradient fallback.</div>
+      <span class="cost">Compose · medium · radial gradients, no blur needed</span>
+    </div>
+  </article>
+
+  <!-- 07 ============================================================ -->
+  <article class="c" id="c7">
+    <div class="ctop"><span class="cnum">07</span><h2>Blueprint</h2></div>
+    <p class="thesis">Eligibility is not a vibe, it is a spec. Draw the rules like an engineering sheet: modules, tolerances, pass/fail, one missing input highlighted.</p>
+    <div class="device"><div class="screen">
+      <div class="bp-grid"></div>
+      <div class="bp-top"><span>SHEET 01 / ELIGIBILITY</span><span>REV 2026-10</span></div>
+      <div class="bp-frame">
+        <span class="bp-corner bp-tl"></span><span class="bp-corner bp-tr"></span>
+        <span class="bp-corner bp-bl"></span><span class="bp-corner bp-br"></span>
+        <div class="bp-sheet">MODULE A</div>
+        <div class="bp-mod">NYDA GRANT · R200 000</div>
+        <div class="bp-dim"><span>18–34</span><i></i><span>100% YOUTH-OWNED</span></div>
+        <div class="bp-row"><span>AGE</span><i></i><b>24</b></div>
+        <div class="bp-row"><span>AGE GATE</span><i></i><b class="bp-ok">PASS</b></div>
+        <div class="bp-row"><span>TRAINING</span><i></i><b class="bp-no">MISSING</b></div>
+        <div class="bp-row"><span>CIPC</span><i></i><b class="bp-no">MISSING</b></div>
+      </div>
+      <div class="bp-frame m2">
+        <span class="bp-sheet">MODULE B</span><span class="bp-badge">OPEN</span>
+        <div class="bp-mod">YES PLACEMENT · R5 241 PM</div>
+        <div class="bp-row"><span>EXPERIENCE</span><i></i><b class="bp-ok">NOT REQUIRED</b></div>
+        <div class="bp-row"><span>AGE</span><i></i><b class="bp-ok">PASS</b></div>
+      </div>
+      <div class="bp-frame m2" style="margin-top:7px">
+        <span class="bp-sheet">MODULE C</span><span class="bp-badge no">BLOCKED</span>
+        <div class="bp-mod">SEFA LOAN · R250 000</div>
+        <div class="bp-row"><span>REGISTRATION</span><i></i><b class="bp-no">CIPC FIRST</b></div>
+      </div>
+      <div class="bp-link">▲ 1 INPUT BLOCKS THIS MODULE<b>Book the free training (2 days)</b></div>
+      <div class="bp-cta">Resolve blocker</div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><b>Why it's new</b>Makes bureaucracy legible instead of hiding it behind friendly copy. Very distinctive and honestly useful.</div>
+      <div class="note"><b>Risk</b>Cold. Reads like a tool for officials, not for a 24-year-old.</div>
+      <span class="cost">Compose · low-medium · dotted grid + dashed borders</span>
+    </div>
+  </article>
+
+  <!-- 08 ============================================================ -->
+  <article class="c" id="c8">
+    <div class="ctop"><span class="cnum">08</span><h2>Ledger</h2></div>
+    <p class="thesis">The answer to "how much can I actually get" is a till slip. Paper, perforations, a rubber stamp, a handwritten note from someone who's done it.</p>
+    <div class="device"><div class="screen">
+      <div class="l-paper">
+        <div class="l-brand">GradLink</div>
+        <div class="l-mono">STATEMENT OF ACCESS · 25/10/26 · NO. 0041</div>
+        <div class="l-hr"></div>
+        <div class="l-row"><span>NYDA Grant</span><i></i><b>R200 000</b></div>
+        <div class="l-row"><span>YES stipend</span><i></i><b>R62 892</b></div>
+        <div class="l-row"><span>SEFA loan</span><i></i><b>R250 000</b></div>
+        <div class="l-row"><span>SA Youth access</span><i></i><b>FREE</b></div>
+        <div class="l-row"><span>Business training</span><i></i><b>FREE</b></div>
+        <div class="l-row mut"><span>NYDA · tier 2</span><i></i><b>LOCKED</b></div>
+        <div class="l-row mut"><span>Agri / tech bonus</span><i></i><b>LOCKED</b></div>
+        <div class="l-total"><span>TOTAL ACCESSIBLE</span><b>R262 892</b></div>
+        <div class="l-hand">start with the CIPC slip —<br>it unlocks everything below</div>
+        <div class="l-stamp">ELIGIBLE</div>
+      </div>
+      <div class="l-paper2">
+        <div class="l-mono">AFTER CIPC + TRAINING</div>
+        <div class="l-p2row"><span>Unlocked</span><b>+R200 000</b></div>
+        <div class="l-p2row"><span>Time to unlock</span><b>~3 weeks</b></div>
+      </div>
+      <div class="l-note">NOT A CREDIT OFFER · RULES REVIEWED 22 OCT</div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><b>Why it's new</b>Turns a scary financial decision into a piece of paper you can screenshot and show your mother. Totally ownable.</div>
+      <div class="note"><b>Risk</b>Textured paper + mono is hard to keep readable at 360dp.</div>
+      <span class="cost">Compose · medium · perforation is a repeating gradient</span>
+    </div>
+  </article>
+
+  <!-- 09 ============================================================ -->
+  <article class="c" id="c9">
+    <div class="ctop"><span class="cnum">09</span><h2>Constellation</h2></div>
+    <p class="thesis">Matching shown as proximity, not as a list of cards. You are a point in a sky, and the people who can change your year are the ones lit up nearby.</p>
+    <div class="device"><div class="screen">
+      <div class="s-top"><span class="s-mark">GradLink</span><span>MAP</span></div>
+      <svg class="s-map" width="314" height="352" viewBox="0 0 314 352" fill="none">
+        <g stroke="#2A3A66" stroke-width="1">
+          <line x1="157" y1="150" x2="62" y2="72"/>
+          <line x1="157" y1="150" x2="252" y2="96"/>
+          <line x1="157" y1="150" x2="86" y2="248"/>
+          <line x1="157" y1="150" x2="236" y2="240"/>
+          <line x1="62" y1="72" x2="252" y2="96"/>
+          <line x1="86" y1="248" x2="236" y2="240"/>
+        </g>
+        <g stroke="#4E6BA8" stroke-width="1" stroke-dasharray="2 4">
+          <line x1="157" y1="150" x2="196" y2="300"/>
+          <line x1="157" y1="150" x2="42" y2="170"/>
+        </g>
+        <circle cx="157" cy="150" r="34" fill="#8FB4FF" opacity=".12" class="s-pulse"/>
+        <circle cx="157" cy="150" r="5" fill="#FFF1C1"/>
+        <circle cx="157" cy="150" r="11" stroke="#FFF1C1" stroke-width="1" opacity=".5"/>
+        <circle cx="62" cy="72" r="18" fill="#8FB4FF" opacity=".10"/>
+        <circle cx="62" cy="72" r="3.5" fill="#8FB4FF"/>
+        <circle cx="252" cy="96" r="22" fill="#FFB17A" opacity=".10"/>
+        <circle cx="252" cy="96" r="4" fill="#FFB17A"/>
+        <circle cx="86" cy="248" r="16" fill="#8FB4FF" opacity=".10"/>
+        <circle cx="86" cy="248" r="3" fill="#8FB4FF"/>
+        <circle cx="236" cy="240" r="3" fill="#8FB4FF"/>
+        <circle cx="196" cy="300" r="2.5" fill="#5B6FA0"/>
+        <circle cx="42" cy="170" r="2.5" fill="#5B6FA0"/>
+        <g font-family="-apple-system,Segoe UI,Roboto,sans-serif" text-anchor="middle">
+          <text x="157" y="128" fill="#FFF1C1" font-size="8" letter-spacing="1.6">YOU</text>
+          <text x="62" y="52" fill="#C9D8F8" font-size="6.5" letter-spacing="1.4">MENTOR</text>
+          <text x="62" y="90" fill="#8FB4FF" font-size="8">Naledi M.</text>
+          <text x="252" y="76" fill="#FFD2AF" font-size="6.5" letter-spacing="1.4">FUNDER</text>
+          <text x="252" y="118" fill="#FFB17A" font-size="8">NYDA</text>
+          <text x="86" y="228" fill="#C9D8F8" font-size="6.5" letter-spacing="1.4">CO-FOUNDER</text>
+          <text x="86" y="270" fill="#8FB4FF" font-size="8">Sipho K.</text>
+          <text x="236" y="222" fill="#C9D8F8" font-size="6.5" letter-spacing="1.4">PEER</text>
+          <text x="236" y="262" fill="#8FB4FF" font-size="8">Lerato</text>
+        </g>
+      </svg>
+      <div class="s-sheet">
+        <div class="s-k">THREE PEOPLE ARE ONE STEP AWAY</div>
+        <div class="s-h">Naledi mentors two graduates a year. You match on logistics and Heidedal.</div>
+        <div class="s-av"><i style="background:#FFB17A"></i><i style="background:#8FB4FF"></i><i style="background:#5BE0C6"></i><span>+4 INTROS OPEN</span></div>
+        <div class="s-btn">Ask for an intro</div>
+      </div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><b>Why it's new</b>Nobody visualises mentorship. The map makes the community pillar feel like the hero, and "one step away" is a better promise than "browse 400 mentors".</div>
+      <div class="note"><b>Risk</b>Fiddly on a small screen; deep-link targets get tiny.</div>
+      <span class="cost">Compose · medium-high · Canvas with tap regions</span>
+    </div>
+  </article>
+
+  <!-- 10 ============================================================ -->
+  <article class="c" id="c10">
+    <div class="ctop"><span class="cnum">10</span><h2>Tempo</h2></div>
+    <p class="thesis">The real enemy is giving up. So data is drawn as rhythm: a weekly beat you keep, a streak, bars that go quiet when you stop.</p>
+    <div class="device"><div class="screen">
+      <div class="t-top"><span class="t-mark">GradLink</span><span>WK 42</span></div>
+      <div class="t-streak">7<br>DAYS</div>
+      <div class="t-kin">Apply<span class="t-ghost">every day</span></div>
+      <div class="t-eq">
+        <i style="height:18%"></i><i style="height:34%"></i><i style="height:26%"></i>
+        <i style="height:52%"></i><i style="height:40%"></i><i style="height:68%"></i>
+        <i style="height:48%"></i><i style="height:82%"></i><i class="hot" style="height:100%"></i>
+        <i style="height:58%"></i><i style="height:30%"></i><i style="height:12%"></i>
+      </div>
+      <div class="t-eqlab"><span>WHERE YOU'D BE AT 3/WEEK</span><span>YOU: 2 THIS WEEK</span></div>
+      <div class="t-week">
+        <span class="on">M</span><span class="on">T</span><span>W</span><span class="on">T</span>
+        <span class="today">F</span><span>S</span><span>S</span>
+      </div>
+      <div class="t-card">
+        <div class="t-k">KEEP THE BEAT</div>
+        <div class="t-h">One more application today</div>
+        <div class="t-m">YES Programme · 6 days left · 4 min</div>
+      </div>
+      <div class="t-cta">Go</div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><b>Why it's new</b>Behaviour design as the visual language, not a bolted-on streak counter. It is the only concept that treats consistency as the product.</div>
+      <div class="note"><b>Risk</b>Can read as gamified/childish for a serious funding decision.</div>
+      <span class="cost">Compose · low · animated bars, trivial</span>
+    </div>
+  </article>
+
+  </div>
+
+  <p style="margin-top:44px;color:#6f6f78;font-size:12.5px;max-width:72ch">
+    Rendered live in CSS at 360dp, which is the width of the cheap Android devices this app is
+    actually for. Fonts fall back to what is installed on the viewer's machine — in Compose the
+    type is bundled, so the real build will be tighter than this.
+  </p>
+</div>
+</body>
+</html>
