@@ -26,6 +26,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "SEARCHHH"
 include(":app")
-
-// CI builds are reproducible: the Gradle daemon is not reused across jobs.
-gradle.startParameter.parallelProjectExecutionEnabled = true
