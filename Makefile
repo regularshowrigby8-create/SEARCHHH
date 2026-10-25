@@ -4,7 +4,7 @@ SHELL := /bin/bash
 PY := .venv/bin/python
 PIP := .venv/bin/pip
 
-.PHONY: help venv install dev test cov lint fmt typecheck audit precommit stack licenses apk apk-debug clean
+.PHONY: help venv install dev test cov lint kcheck fmt typecheck audit precommit stack licenses apk apk-debug clean
 
 help:  ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -26,8 +26,11 @@ test:  ## Run the test suite
 cov:  ## Run tests with coverage (fails under 80%)
 	$(PY) -m pytest backend/tests -q --cov=backend/app --cov-report=term-missing --cov-fail-under=80
 
-lint:  ## Ruff lint
+lint:  ## Ruff lint (backend)
 	$(PY) -m ruff check backend
+
+kcheck:  ## Static Kotlin sanity checks (no JVM needed)
+	$(PY) scripts/check_kotlin.py
 
 fmt:  ## Ruff format
 	$(PY) -m ruff format backend

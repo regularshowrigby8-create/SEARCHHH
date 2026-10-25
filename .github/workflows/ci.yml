@@ -61,8 +61,11 @@ jobs:
             --cov-report=xml \
             --cov-fail-under=80
 
-      - name: Stack audit (118 tools must all resolve)
+      - name: Stack audit (every tool must resolve)
         run: python scripts/scan_stack.py --check
+
+      - name: Kotlin static checks (fast syntax gate)
+        run: python scripts/check_kotlin.py
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
@@ -99,6 +102,12 @@ jobs:
         with:
           gradle-version: ${{ env.GRADLE_VERSION }}
           cache-read-only: false
+
+      # Fails in ~2s on unbalanced brackets / unterminated comments, long before
+      # Gradle would report it. Runs on the Python job too, so a syntax error is
+      # visible without waiting for the Android job.
+      - name: Kotlin static checks
+        run: python scripts/check_kotlin.py
 
       - name: Unit tests
         working-directory: android
