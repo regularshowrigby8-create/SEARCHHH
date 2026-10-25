@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GradLink — design index</title>
+<style>
+  :root{--ink:#f2f2f5;--muted:#8d8d95;--line:#26262c;--bg:#0b0b0d;--card:#141418}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:15px/1.6 -apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+       -webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:64px 24px 80px}
+  .kick{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#6f6f78}
+  h1{font-size:38px;line-height:1.05;letter-spacing:-.04em;margin:14px 0 12px;font-weight:650}
+  h1 em{font-style:italic;font-family:Georgia,serif;font-weight:400;color:#c9c9d1}
+  .lede{color:var(--muted);max-width:60ch;margin:0 0 34px}
+  a.card{display:flex;justify-content:space-between;align-items:center;gap:18px;
+         background:var(--card);border:1px solid var(--line);border-radius:16px;
+         padding:18px 20px;margin-bottom:12px;text-decoration:none;color:inherit;
+         transition:border-color .15s,transform .15s}
+  a.card:hover{border-color:#3a3a44;transform:translateY(-1px)}
+  a.card .t{font-size:16px;font-weight:600;letter-spacing:-.015em}
+  a.card .d{font-size:12.5px;color:var(--muted);margin-top:3px}
+  a.card .n{font-size:11px;letter-spacing:.14em;color:#6f6f78;white-space:nowrap}
+  a.primary{background:#f2f2f5;color:#0b0b0d;border-color:#f2f2f5}
+  a.primary .d{color:#4a4a52}
+  a.primary .n{color:#4a4a52}
+  footer{margin-top:40px;color:#5f5f68;font-size:12px;border-top:1px solid var(--line);padding-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kick">GradLink · design</div>
+  <h1>Ten original<br><em>directions</em>.</h1>
+  <p class="lede">The same home screen, organised ten different ways — different navigation,
+  different card model, different way of showing data. Every pixel is drawn from scratch.</p>
+
+  <a class="card primary" href="ui-concepts.html">
+    <div>
+      <div class="t">Open the 10 concepts →</div>
+      <div class="d">The Path · Proof · Rands · Rings · Signal · Bloom · Blueprint · Ledger · Constellation · Tempo</div>
+    </div>
+    <div class="n">START HERE</div>
+  </a>
+
+  <a class="card" href="https://github.com/regularshowrigby8-create/SEARCHHH/blob/arena/01ba5df7-searchhh/docs/GRADLINK.md">
+    <div>
+      <div class="t">Product brief</div>
+      <div class="d">The problem, the evidence, the three pillars, and the two user journeys.</div>
+    </div>
+    <div class="n">GRADLINK.MD</div>
+  </a>
+
+  <a class="card" href="https://github.com/regularshowrigby8-create/SEARCHHH/blob/arena/01ba5df7-searchhh/docs/ARCHITECTURE.md">
+    <div>
+      <div class="t">Architecture</div>
+      <div class="d">Android client, FastAPI backend, and how the search and funding matching work.</div>
+    </div>
+    <div class="n">ARCHITECTURE</div>
+  </a>
+
+  <a class="card" href="https://github.com/regularshowrigby8-create/SEARCHHH">
+    <div>
+      <div class="t">Repository</div>
+      <div class="d">Source, tests, and the build workflow that produces the APK.</div>
+    </div>
+    <div class="n">GITHUB</div>
+  </a>
+
+  <footer>
+    Rendered live in CSS at 360dp — the width of the devices this app is built for.
+    No template, screenshot or asset from any existing product is used.
+  </footer>
+</div>
+</body>
+</html>
